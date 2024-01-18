@@ -1,0 +1,26 @@
+import { Route, Routes } from "react-router-dom";
+import Home from "../pages/home/home";
+import Coaches from "../pages/coaches/coaches";
+import Arcades from "../pages/arcades/arcades";
+import About from "../pages/about/about";
+import Login from "../pages/login/login";
+import Signup from "../pages/signup/signup";
+import Profiles from "../pages/profiles/profiles";
+
+const AppRoutes = () => {
+    return (
+        <>
+            <Routes>
+                <Route index element={<Home />}/>
+                <Route path="coaches" element={<Coaches/>} />
+                <Route path="arcades" element={<Arcades/>}/>
+                <Route path="about" element={<About/>}/>
+                <Route path="login" element={<Login/>}/>
+                <Route path="signup" element={<Signup/>}/>
+                <Route path="profile/:id" element={<Profiles/>}/>
+            </Routes>
+        </>
+    );
+}
+
+export default AppRoutes;
