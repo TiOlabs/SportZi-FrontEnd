@@ -6,6 +6,7 @@ const CoachCardSection = () => {
     background: "#0092ff",
     padding: "8px 0",
   };
+
   return (
     <>
       <div
@@ -19,22 +20,71 @@ const CoachCardSection = () => {
           background: "rgba(27, 93, 183, 0.07)",
         }}
       >
-        <div>
-          <h1>Our Best Coaches</h1>
+        <div
+          style={{ width: "100%", alignItems: "center", textAlign: "center" }}
+        >
+          <h1 style={{ color: " #0E458E" }}>Our Best Coaches</h1>
         </div>
+        <button
+          style={{
+            color: "#1B5DB7",
+            background: "none",
+            border: "none",
+            fontFamily: "Kanit",
+            fontSize: "18px",
+            position: "absolute",
+            zIndex: "999",
+          }}
+        >
+          See More
+        </button>
 
-        <div style={{ marginBottom: "5%" }}>
-          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col className="gutter-row" span={6}>
+        <div
+          style={{
+            marginBottom: "5%",
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Row
+            style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          >
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+            >
               <CoachCard />
             </Col>
-            <Col className="gutter-row" span={6}>
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+            >
               <CoachCard />
             </Col>
-            <Col className="gutter-row" span={6}>
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+            >
               <CoachCard />
             </Col>
-            <Col className="gutter-row" span={6}>
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+            >
               <CoachCard />
             </Col>
           </Row>

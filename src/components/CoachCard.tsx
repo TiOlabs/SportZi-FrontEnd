@@ -12,7 +12,7 @@ const CoachCard = () => {
         <div className="mainCardsec1"></div>
         <div className="mainCardsec2">
           <div className="nameDiscription">
-            <div>
+            <div style={{ marginTop: "8px" }}>
               <p>Sandun Malage</p>
               <p className="coachPosition">level one Rugby Coach</p>
             </div>
@@ -53,7 +53,7 @@ const CoachCard = () => {
             <div className="price">
               <p
                 style={{
-                  color: "##5587CC;",
+                  color: "#5587CC",
                   fontSize: "16px",
                   fontWeight: "700",
                 }}
