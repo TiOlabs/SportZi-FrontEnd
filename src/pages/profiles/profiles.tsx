@@ -1,15 +1,11 @@
-import ArcadeProfile from "./arcadeProfile";
-import CoachProfile from "./coachProfile";
 import PlayerProfile from "./playerProfile";
 
 const Profiles = () => {
-    return ( 
-        <>
-        <ArcadeProfile/>
-        <CoachProfile/>
-        <PlayerProfile/>
-        </>
-     );
-}
- 
+  return (
+    <>
+      <PlayerProfile />
+    </>
+  );
+};
+
 export default Profiles;
