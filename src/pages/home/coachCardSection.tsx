@@ -45,28 +45,15 @@ const CoachCardSection = () => {
                 width: "100%",
                 justifyContent: "center",
                 alignItems: "center",
+                flexDirection: "column",
               }}
             >
-              <button
-                style={{
-                  color: "#1B5DB7",
-                  background: "none",
-                  border: "none",
-                  fontFamily: "Kanit",
-                  fontSize: "18px",
-                  position: "absolute",
-                  zIndex: "999",
-                  top: "90px",
-                  right: "100px",
-                }}
-              >
-                See More
-              </button>
               <Row
                 style={{
                   width: "100%",
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Col
@@ -75,6 +62,10 @@ const CoachCardSection = () => {
                   md={{ span: 8 }}
                   lg={{ span: 5 }}
                   xl={{ span: 5 }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
                 >
                   <CoachCard />
                 </Col>
@@ -84,6 +75,10 @@ const CoachCardSection = () => {
                   md={{ span: 8 }}
                   lg={{ span: 5 }}
                   xl={{ span: 5 }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
                 >
                   <CoachCard />
                 </Col>
@@ -93,6 +88,10 @@ const CoachCardSection = () => {
                   md={{ span: 8 }}
                   lg={{ span: 5 }}
                   xl={{ span: 5 }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
                 >
                   <CoachCard />
                 </Col>
@@ -102,11 +101,27 @@ const CoachCardSection = () => {
                   md={{ span: 8 }}
                   lg={{ span: 5 }}
                   xl={{ span: 5 }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
                 >
-                  {" "}
                   <CoachCard />
                 </Col>
               </Row>
+              <div>
+                <button
+                  style={{
+                    color: "#1B5DB7",
+                    background: "none",
+                    border: "none",
+                    fontFamily: "Kanit",
+                    fontSize: "18px",
+                  }}
+                >
+                  See More
+                </button>
+              </div>
             </div>
           </div>
         </Col>
