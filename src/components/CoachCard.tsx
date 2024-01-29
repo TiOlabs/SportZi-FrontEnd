@@ -55,18 +55,22 @@ const CoachCard = () => {
                 style={{
                   color: "#5587CC",
                   fontSize: "16px",
-                  fontWeight: "700",
+                  fontWeight: "500",
                 }}
               >
                 100$
               </p>
-              <p style={{ fontWeight: "300", fontSize: "16px" }}>per hour</p>
+              <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
               <Button
                 type="primary"
                 size="small"
-                style={{ fontSize: "10px", background: "#5587CC" }}
+                style={{
+                  fontSize: "10px",
+                  background: "#5587CC",
+                  fontWeight: "400",
+                }}
               >
                 Book Coach
               </Button>
