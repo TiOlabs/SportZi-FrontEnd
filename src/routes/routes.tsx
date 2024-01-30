@@ -6,6 +6,7 @@ import About from "../pages/about/about";
 import Login from "../pages/login/login";
 import Signup from "../pages/signup/signup";
 import Profiles from "../pages/profiles/profiles";
+import BookingForm from "../pages/bookingForm/bookingForm";
 
 const AppRoutes = () => {
     return (
@@ -17,7 +18,9 @@ const AppRoutes = () => {
                 <Route path="about" element={<About/>}/>
                 <Route path="login" element={<Login/>}/>
                 <Route path="signup" element={<Signup/>}/>
+                <Route path="bookings" element={<BookingForm/>}/>
                 <Route path="profile/:id" element={<Profiles/>}/>
+
             </Routes>
         </>
     );
