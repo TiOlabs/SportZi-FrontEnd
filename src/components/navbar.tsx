@@ -1,10 +1,10 @@
-import { Col, Row } from 'antd';
-const Navbar = () => {
-    return ( 
-        <Row>
-            <h1>NavBar</h1>
-        </Row>
-     );
+
+import React from 'react'
+
+function navbar() {
+  return (
+    <div>navbar</div>
+  )
 }
- 
-export default Navbar;
+
+export default navbar
