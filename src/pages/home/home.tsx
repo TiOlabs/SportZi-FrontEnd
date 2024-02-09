@@ -10,15 +10,19 @@ import AppFooter from "../../components/footer";
 
 const Home = () => {
     return (
+        <>
+        <Navbar/>
         <div style={{display:"flex", flexDirection:"column",justifyContent:"center",alignItems:"center",lineHeight:"3"}}>
-            <Navbar/>
+            
             <HeroSection/>
             <CoachCardSection/>
             <DiscoutCardsSection/>
             <MapSction/>
             <ArcadeRatingCardsSection/>
-            <AppFooter/>
+            
         </div>
+        <AppFooter/>
+        </>
     );
 }
 
