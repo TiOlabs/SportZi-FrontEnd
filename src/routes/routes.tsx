@@ -7,6 +7,8 @@ import Login from "../pages/login/login";
 import Signup from "../pages/signup/signup";
 import Profiles from "../pages/profiles/profiles";
 import BookingForm from "../pages/bookingForm/bookingForm";
+import DiscountCardForm from "../pages/forms/discountCard.form";
+
 
 const AppRoutes = () => {
     return (
@@ -20,6 +22,7 @@ const AppRoutes = () => {
                 <Route path="signup" element={<Signup/>}/>
                 <Route path="bookings" element={<BookingForm/>}/>
                 <Route path="profile/:id" element={<Profiles/>}/>
+                <Route path="forms/discountcardform" element={<DiscountCardForm/>}/>
 
             </Routes>
         </>

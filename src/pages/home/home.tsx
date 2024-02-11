@@ -7,25 +7,19 @@ import MapSction from "./mapSection";
 import AppFooter from "../../components/footer";
 
 const Home = () => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        lineHeight: "3",
-      }}
-    >
-      <Navbar />
-      <HeroSection />
-      <CoachCardSection />
-      <DiscoutCardsSection />
-      <MapSction />
-      <ArcadeRatingCardsSection />
-      <AppFooter />
-    </div>
-  );
-};
+
+    return (
+        <div style={{}}>
+            <Navbar/>
+            <HeroSection/>
+            <CoachCardSection/>
+            <DiscoutCardsSection/>
+            <MapSction/>
+            <ArcadeRatingCardsSection/>
+            <AppFooter/>
+        </div>
+    );
+}
+
 
 export default Home;
