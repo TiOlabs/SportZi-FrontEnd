@@ -2,6 +2,9 @@ import { MenuOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import logo from "../assents/logo.png"
+
 
 const Navbar: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -24,17 +27,107 @@ const Navbar: React.FC = () => {
   const [arcadeHovered, setArcadeHovered] = useState(false);
   const [aboutHovered, setAboutHovered] = useState(false);
   const [contactHovered, setContactHovered] = useState(false);
+
+  const [homeUnderlineStyle, homeSetUnderlineStyle] = useState({
+    width: 0,
+    left: "50%",
+    transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+  });
+
+  const homeHandleMouseEnter = () => {
+    homeSetUnderlineStyle({
+      width: 50,
+      left: "0",
+      transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+    });
+  };
+
+  const homeHandleMouseLeave = () => {
+    homeSetUnderlineStyle({
+      width: 0,
+      left: "50%",
+      transition: "width 0.5s ease-in-out, left 0.5s ease-in-out",
+    });
+  };
+  const [coachesUnderlineStyle, coachesSetUnderlineStyle] = useState({
+    width: 0,
+    left: "50%",
+    transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+  });
+
+  const coachesHandleMouseEnter = () => {
+    coachesSetUnderlineStyle({
+      width: 75,
+      left: "0",
+      transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+    });
+  };
+
+  const coachesHandleMouseLeave = () => {
+    coachesSetUnderlineStyle({
+      width: 0,
+      left: "50%",
+      transition: "width 0.5s ease-in-out, left 0.5s ease-in-out",
+    });
+  };
+  const [arcadeUnderlineStyle, arcadeSetUnderlineStyle] = useState({
+    width: 0,
+    left: "50%",
+    transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+  });
+
+  const arcadeHandleMouseEnter = () => {
+    arcadeSetUnderlineStyle({
+      width: 60,
+      left: "0",
+      transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+    });
+  };
+
+  const arcadeHandleMouseLeave = () => {
+    arcadeSetUnderlineStyle({
+      width: 0,
+      left: "50%",
+      transition: "width 0.5s ease-in-out, left 0.5s ease-in-out",
+    });
+  };
+  const [contactUnderlineStyle, contactSetUnderlineStyle] = useState({
+    width: 0,
+    left: "50%",
+    transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+  });
+
+  const contactHandleMouseEnter = () => {
+    contactSetUnderlineStyle({
+      width: 70,
+      left: "0",
+      transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+    });
+  };
+
+  const contactHandleMouseLeave = () => {
+    contactSetUnderlineStyle({
+      width: 0,
+      left: "50%",
+      transition: "width 0.5s ease-in-out, left 0.5s ease-in-out",
+    });
+  };
+
   return (
-    <Row style={{ backgroundColor: 'none', width: "100%", height: "50px"}}>
+    <Row style={{ backgroundColor: '#1B5DA9', width: "100%", height: "50px" , position:"fixed" , zIndex:"2"}}>
       <Col xs={1}></Col>
       <Col xs={17} md={19} lg={7}>
+      
         <div className="navBarLogo">
+        <Link to="/">
           <img
-            src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
+            src={logo}
             alt="Original Image"
-            style={{ width: "30px", height: "30px", marginTop: "10px" }}
+            style={{ width: "40px", height: "40px", marginTop: "10px"}}
           />
+          </Link>
         </div>
+        
       </Col>
       <Col xs={6} md={4} lg={0}>
         <div className="navBarMenu">
@@ -42,7 +135,7 @@ const Navbar: React.FC = () => {
             onClick={handleToggle}
             style={{
               backgroundColor: "none",
-              color: "black",
+              color: "white",
               fontSize: "16px",
               fontWeight: "bold",
               fontStyle: "normal",
@@ -137,7 +230,7 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => setHomeHovered(false)}
           
             >
-              Home
+              <Link to="/home">Home</Link>
             </Menu.Item>
             <Menu.Item
               key="coaches"
@@ -176,7 +269,7 @@ const Navbar: React.FC = () => {
               onMouseEnter={() => setArcadeHovered(true)}
               onMouseLeave={() => setArcadeHovered(false)}
             >
-              Arcades
+              <Link to="/arcades">Arcade</Link>
             </Menu.Item>
             <Menu.Item
               key="aboutUs"
@@ -195,7 +288,7 @@ const Navbar: React.FC = () => {
               onMouseEnter={() => setAboutHovered(true)}
               onMouseLeave={() => setAboutHovered(false)}
             >
-              About Us
+              <Link to="/about">About Us</Link>
             </Menu.Item>
             <Menu.Item
               key="contactUs"
@@ -214,7 +307,7 @@ const Navbar: React.FC = () => {
               onMouseEnter={() => setContactHovered(true)}
               onMouseLeave={() => setContactHovered(false)}
             >
-              Contact Us
+              <Link to="/contact">Contact Us</Link>
             </Menu.Item>
           </Menu>
         </div>
@@ -229,12 +322,109 @@ const Navbar: React.FC = () => {
             height: "50px",
           }}
         >
-          <div style={{fontSize: "20px", fontWeight: "bold"}}><a style={{color:"black"}} href="#">Home</a></div>
-          <div style={{fontSize: "20px", fontWeight: "bold" }}><a style={{color:"black"}} href="#">Coaches</a></div>
-          <div style={{fontSize: "20px", fontWeight: "bold" }}><a style={{color:"black"}} href="#">Arcade</a></div>
-          <div style={{fontSize: "20px", fontWeight: "bold" }}><a style={{color:"black"}} href="#">Contact Us</a></div>
-          <div>
-            <img
+<div style={{fontSize: "20px", fontWeight: "bold"}}>
+            <Link to="/home"
+              style={{
+                color: "white",
+                textDecoration: "none",
+                position: "relative",
+                display: "inline-block",
+              }}
+              onMouseEnter={homeHandleMouseEnter}
+              onMouseLeave={homeHandleMouseLeave}
+            >
+              Home
+              <span
+                style={{
+                  position: "absolute",
+                  width: homeUnderlineStyle.width,
+                  height: "3px",
+                  bottom: "0",
+                  left: homeUnderlineStyle.left,
+                  backgroundColor: "white",
+                  transition: homeUnderlineStyle.transition,
+                }}
+              ></span>
+            </Link>
+          </div>
+          <div style={{fontSize: "20px", fontWeight: "bold"}}>
+            <Link to="/coaches" 
+              style={{
+                color: "white",
+                textDecoration: "none",
+                position: "relative",
+                display: "inline-block",
+              }}
+              onMouseEnter={coachesHandleMouseEnter}
+              onMouseLeave={coachesHandleMouseLeave}
+            >
+              Coaches
+              <span
+                style={{
+                  position: "absolute",
+                  width: coachesUnderlineStyle.width,
+                  height: "3px",
+                  bottom: "0",
+                  left: coachesUnderlineStyle.left,
+                  backgroundColor: "white",
+                  transition: coachesUnderlineStyle.transition,
+                }}
+              ></span>
+            </Link>
+          </div>
+  
+          <div style={{fontSize: "20px", fontWeight: "bold"}}>
+            <Link to="/arcades" 
+              style={{
+                color: "white",
+                textDecoration: "none",
+                position: "relative",
+                display: "inline-block",
+              }}
+              onMouseEnter={arcadeHandleMouseEnter}
+              onMouseLeave={arcadeHandleMouseLeave}
+            >
+              Arcade
+              <span
+                style={{
+                  position: "absolute",
+                  width: arcadeUnderlineStyle.width,
+                  height: "3px",
+                  bottom: "0",
+                  left: arcadeUnderlineStyle.left,
+                  backgroundColor: "white",
+                  transition: arcadeUnderlineStyle.transition,
+                }}
+              ></span>
+            </Link>
+          </div>
+          <div style={{fontSize: "20px", fontWeight: "bold"}}>
+            <Link to="/about" 
+              style={{
+                color: "white",
+                textDecoration: "none",
+                position: "relative",
+                display: "inline-block",
+              }}
+              onMouseEnter={contactHandleMouseEnter}
+              onMouseLeave={contactHandleMouseLeave}
+            >
+              Contact
+              <span
+                style={{
+                  position: "absolute",
+                  width: contactUnderlineStyle.width,
+                  height: "3px",
+                  bottom: "0",
+                  left: contactUnderlineStyle.left,
+                  backgroundColor: "white",
+                  transition: contactUnderlineStyle.transition,
+                }}
+              ></span>
+            </Link>
+          </div>
+          <div className="navBarUserProfile">
+            <img className="NavBarUserProfileImg"
               src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
               alt="Original Image"
               style={{
