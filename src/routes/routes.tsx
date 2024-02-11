@@ -6,6 +6,7 @@ import About from "../pages/about/about";
 import Login from "../pages/login/login";
 import Signup from "../pages/signup/signup";
 import Profiles from "../pages/profiles/profiles";
+import DiscountCardForm from "../pages/forms/discountCard.form";
 
 const AppRoutes = () => {
     return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
                 <Route path="login" element={<Login/>}/>
                 <Route path="signup" element={<Signup/>}/>
                 <Route path="profile/:id" element={<Profiles/>}/>
+                <Route path="forms/discountcardform" element={<DiscountCardForm/>}/>
             </Routes>
         </>
     );

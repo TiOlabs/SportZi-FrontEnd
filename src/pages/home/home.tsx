@@ -10,7 +10,7 @@ import AppFooter from "../../components/footer";
 
 const Home = () => {
     return (
-        <div style={{display:"flex", flexDirection:"column",justifyContent:"center",alignItems:"center",lineHeight:"3"}}>
+        <div style={{}}>
             <Navbar/>
             <HeroSection/>
             <CoachCardSection/>
