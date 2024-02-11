@@ -214,8 +214,7 @@ const PlayerProfile = () => {
                 fontWeight: "200",
                 color: "#000",
                 fontFamily: "kanit",
-
-                fontSize: "20px",
+                lineHeight: "0.5",
               }}
               itemLayout="horizontal"
               dataSource={["T20", "T20", "T20"]}
@@ -236,10 +235,20 @@ const PlayerProfile = () => {
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
+                      fontSize: "20px",
+                      fontFamily: "kanit",
                     }}
                   >
                     {" "}
-                    <span style={{ fontSize: "30px" }}>&#8226;</span>
+                    <span
+                      style={{
+                        fontSize: "30px",
+                        marginLeft: "10px",
+                        marginRight: "10px",
+                      }}
+                    >
+                      &#8226;
+                    </span>
                     {item}
                   </div>
                 </List.Item>
@@ -263,9 +272,13 @@ const PlayerProfile = () => {
             <List
               style={{
                 padding: "0px",
+                fontWeight: "200",
+                color: "#000",
+                fontFamily: "kanit",
+                lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
+              dataSource={["T20", "Cricket", "T20"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -283,10 +296,20 @@ const PlayerProfile = () => {
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
+                      fontFamily: "kanit",
+                      fontSize: "20px",
                     }}
                   >
                     {" "}
-                    <span style={{ fontSize: "30px" }}>&#8226;</span>
+                    <span
+                      style={{
+                        fontSize: "30px",
+                        marginLeft: "10px",
+                        marginRight: "10px",
+                      }}
+                    >
+                      &#8226;
+                    </span>
                     {item}
                   </div>
                 </List.Item>
