@@ -1,8 +1,11 @@
 import { Col, Row } from "antd";
 import DiscountCard from "../../components/discountCard";
 import { useEffect, useState } from "react";
+import { Discount } from "../../types";
+
+
 const DiscoutCardsSection = () => {
-  const [discounts, setDiscounts] = useState([]);
+  const [discounts, setDiscounts] = useState<Discount[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -37,7 +40,7 @@ const DiscoutCardsSection = () => {
           overflow: "auto",
         }}
       >
-        {discounts.map((discount: any) => (
+        {discounts.map((discount: Discount) => (
           <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
             <DiscountCard
               discount_percentage={discount.discount_percentage}
