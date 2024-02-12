@@ -3,8 +3,9 @@ import { Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assents/logo.png"
-
+import logo from "../assents/logo.png";
+import { Popover } from "antd";
+import { Button } from "antd/es/radio";
 
 const Navbar: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -113,21 +114,130 @@ const Navbar: React.FC = () => {
     });
   };
 
+  const [open, setOpen] = useState(false);
+
+  const hide = () => {
+    setOpen(false);
+  };
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+  };
+
+  const content = (
+    <div className="NavBarUserProfileClickDetail">
+      <div
+        className="NavBarUserProfileLaptop"
+        style={{
+          backgroundColor: "white",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          height: "150px",
+        }}
+      >
+        <div
+          className="NavBarUserProfileImgLaptop"
+          style={{ justifyContent: "center", display: "flex" }}
+        >
+          <img
+            src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
+            alt="Original Image"
+            style={{
+              width: "50px",
+              height: "50px",
+              marginLeft: "10px",
+              marginTop: "10px",
+              borderRadius: "50%",
+              border: "1px solid black",
+            }}
+          />
+        </div>
+        <div
+          className="NavBarUserProfileNameLaptop"
+          style={{
+            color: "#1B5DB7",
+            justifyContent: "center",
+            display: "flex",
+            fontSize: "20px",
+            fontFamily: "kanit",
+            fontWeight: "bold",
+            marginTop: "10px",
+          }}
+        >
+          Sasindu Dhanushka
+        </div>
+        <div
+          className="NavBarUserProfileStatusLaptop"
+          style={{
+            color: "black",
+            justifyContent: "center",
+            display: "flex",
+            fontSize: "15px",
+            fontWeight: "bold",
+          }}
+        >
+          student
+        </div>
+      </div>
+      <div>
+        <Button
+          type="primary"
+          style={{
+            width: "100%",
+            marginTop: "10px",
+            backgroundColor: "#1B5DB7",
+            borderColor: "#1B5DB7",
+            color: "white",
+            justifyContent: "center",
+            display: "flex",
+            borderRadius: "5px",
+          }}
+        >
+          Log Out
+        </Button>
+        <Button
+          type="primary"
+          onClick={hide}
+          style={{
+            width: "100%",
+            marginTop: "10px",
+            backgroundColor: "#1B5DB7",
+            borderColor: "#1B5DB7",
+            color: "white",
+            justifyContent: "center",
+            display: "flex",
+            borderRadius: "5px",
+          }}
+        >
+          {" "}
+          Close
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
-    <Row style={{ backgroundColor: '#1B5DA9', width: "100%", height: "50px" , position:"fixed" , zIndex:"2"}}>
+    <Row
+      style={{
+        backgroundColor: "#1B5DA9",
+        width: "100%",
+        height: "50px",
+        position: "fixed",
+        zIndex: "2",
+      }}
+    >
       <Col xs={1}></Col>
       <Col xs={17} md={19} lg={7}>
-      
         <div className="navBarLogo">
-        <Link to="/">
-          <img
-            src={logo}
-            alt="Original Image"
-            style={{ width: "40px", height: "40px", marginTop: "10px"}}
-          />
+          <Link to="/">
+            <img
+              src={logo}
+              alt="Original Image"
+              style={{ width: "40px", height: "40px", marginTop: "10px" }}
+            />
           </Link>
         </div>
-        
       </Col>
       <Col xs={6} md={4} lg={0}>
         <div className="navBarMenu">
@@ -193,13 +303,12 @@ const Navbar: React.FC = () => {
                     fontSize: "20px",
                     fontFamily: "kanit",
                     fontWeight: "bold",
-
                   }}
                 >
                   Sasindu Dhanushka
                 </div>
                 <div
-                  className="NavBarUserProfileName"
+                  className="NavBarUserProfileStatus"
                   style={{
                     color: "black",
                     justifyContent: "center",
@@ -224,11 +333,9 @@ const Navbar: React.FC = () => {
                 fontWeight: "bold",
                 backgroundColor: homeHovered ? "#1B5DB7" : "white",
                 color: homeHovered ? "white" : "#1B5DB7",
-                
               }}
               onMouseEnter={() => setHomeHovered(true)}
               onMouseLeave={() => setHomeHovered(false)}
-          
             >
               <Link to="/home">Home</Link>
             </Menu.Item>
@@ -244,13 +351,11 @@ const Navbar: React.FC = () => {
                 fontWeight: "bold",
                 backgroundColor: coachesHovered ? "#1B5DB7" : "white",
                 color: coachesHovered ? "white" : "#1B5DB7",
-                
               }}
               onMouseEnter={() => setCoachesHovered(true)}
               onMouseLeave={() => setCoachesHovered(false)}
-              
             >
-              <div className="MenuItemHover" >Coaches</div>
+              <div className="MenuItemHover">Coaches</div>
             </Menu.Item>
             <Menu.Item
               key="arcade"
@@ -264,7 +369,6 @@ const Navbar: React.FC = () => {
                 fontWeight: "bold",
                 backgroundColor: arcadeHovered ? "#1B5DB7" : "white",
                 color: arcadeHovered ? "white" : "#1B5DB7",
-                
               }}
               onMouseEnter={() => setArcadeHovered(true)}
               onMouseLeave={() => setArcadeHovered(false)}
@@ -283,7 +387,6 @@ const Navbar: React.FC = () => {
                 fontWeight: "bold",
                 backgroundColor: aboutHovered ? "#1B5DB7" : "white",
                 color: aboutHovered ? "white" : "#1B5DB7",
-                
               }}
               onMouseEnter={() => setAboutHovered(true)}
               onMouseLeave={() => setAboutHovered(false)}
@@ -302,12 +405,55 @@ const Navbar: React.FC = () => {
                 fontWeight: "bold",
                 backgroundColor: contactHovered ? "#1B5DB7" : "white",
                 color: contactHovered ? "white" : "#1B5DB7",
-                
               }}
               onMouseEnter={() => setContactHovered(true)}
               onMouseLeave={() => setContactHovered(false)}
             >
               <Link to="/contact">Contact Us</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <div
+                style={{
+                  display: "flex",
+                  borderRadius: "0px",
+                  flexDirection: "row",
+                  backgroundColor: "white",
+                  width: "200px",
+                }}
+              >
+                <div style={{ marginLeft: "20px" }}>
+                  <Button
+                    type="primary"
+                    style={{
+                      width: "80px",
+                      backgroundColor: "#1B5DB7",
+                      borderColor: "#1B5DB7",
+                      color: "white",
+                      justifyContent: "center",
+                      display: "flex",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    Log Out
+                  </Button>
+                </div>
+                <div style={{ marginLeft: "20px" }}>
+                  <Button
+                    type="primary"
+                    style={{
+                      width: "80px",
+                      backgroundColor: "#1B5DB7",
+                      borderColor: "#1B5DB7",
+                      color: "white",
+                      justifyContent: "center",
+                      display: "flex",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    Sign In
+                  </Button>
+                </div>
+              </div>
             </Menu.Item>
           </Menu>
         </div>
@@ -322,8 +468,9 @@ const Navbar: React.FC = () => {
             height: "50px",
           }}
         >
-<div style={{fontSize: "20px", fontWeight: "bold"}}>
-            <Link to="/home"
+          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+            <Link
+              to="/home"
               style={{
                 color: "white",
                 textDecoration: "none",
@@ -347,8 +494,9 @@ const Navbar: React.FC = () => {
               ></span>
             </Link>
           </div>
-          <div style={{fontSize: "20px", fontWeight: "bold"}}>
-            <Link to="/coaches" 
+          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+            <Link
+              to="/coaches"
               style={{
                 color: "white",
                 textDecoration: "none",
@@ -372,9 +520,10 @@ const Navbar: React.FC = () => {
               ></span>
             </Link>
           </div>
-  
-          <div style={{fontSize: "20px", fontWeight: "bold"}}>
-            <Link to="/arcades" 
+
+          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+            <Link
+              to="/arcades"
               style={{
                 color: "white",
                 textDecoration: "none",
@@ -398,8 +547,9 @@ const Navbar: React.FC = () => {
               ></span>
             </Link>
           </div>
-          <div style={{fontSize: "20px", fontWeight: "bold"}}>
-            <Link to="/about" 
+          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+            <Link
+              to="/about"
               style={{
                 color: "white",
                 textDecoration: "none",
@@ -424,18 +574,29 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
           <div className="navBarUserProfile">
-            <img className="NavBarUserProfileImg"
-              src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
-              alt="Original Image"
-              style={{
-                width: "35px",
-                height: "35px",
-                marginLeft: "10px",
-                marginTop: "8px",
-                borderRadius: "50%",
-                border: "1px solid black",
-              }}
-            />
+            <Popover
+              content={content}
+              trigger="click"
+              open={open}
+              onOpenChange={handleOpenChange}
+              style={{display:"fixed" , backgroundColor:"black"}}
+            >
+              <a className="NavBarUserProfileImgThumsup">
+                <img
+                  className="NavBarUserProfileImg"
+                  src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
+                  alt="Original Image"
+                  style={{
+                    width: "35px",
+                    height: "35px",
+                    marginLeft: "10px",
+                    marginTop: "5px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                />
+              </a>
+            </Popover>
           </div>
         </div>
       </Col>
