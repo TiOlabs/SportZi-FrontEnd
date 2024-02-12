@@ -1,10 +1,23 @@
-import { Col, Flex, Row } from "antd";
+import { Button, Col, Flex, Row } from "antd";
 import { url } from "inspector";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
-import profilePic from "../../assents/Home-pic-2.png.png";
+import profilePic from "../../assents/pro.png";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { List } from "antd";
+import { Image } from "antd";
+import AddPhotoButton from "../../components/addPhotoButton";
+import CoachRequstRow from "../../components/coachrequstrow";
+import CoachReqRowMin from "../../components/coachReqRowMin";
+
+// const widthSelection = () => {
+//   if (window.innerWidth > 576) {
+//     <CoachRequstRow />;
+//   } else {
+//     <CoachReqRowMin />;
+//   }
+// };
+
 const PlayerProfile = () => {
   return (
     <>
@@ -29,16 +42,8 @@ const PlayerProfile = () => {
             alignItems: "center",
           }}
         >
-          <div
-            style={{
-              width: "345px",
-              height: "327px",
-              //   backgroundImage: `url(${profilePic})`,
-              //   backgroundSize: "cover",
-              //   backgroundPosition: "center",
-              background: "black",
-            }}
-          ></div>
+          {" "}
+          <Image width={300} src={profilePic} preview={{ src: profilePic }} />
         </Col>
         <Col
           xs={24}
@@ -320,13 +325,157 @@ const PlayerProfile = () => {
       </Row>
       <div
         style={{
-          background: "white",
-          height: "500px",
-          backgroundSize: "cover",
-          backgroundRepeat: "noRepeat",
           width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
-      ></div>
+      >
+        <p
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "32px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          Photos
+        </p>
+      </div>
+      <div
+        style={{
+          width: "95%",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <AddPhotoButton />
+      </div>
+
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <p
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "32px",
+            paddingBottom: "10px",
+          }}
+        >
+          Requset for Coaching
+        </p>
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Coach
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Time
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          ></Col>
+        </Row>
+        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
+        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
+        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
+        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
+
+        <Button
+          style={{
+            alignItems: "center",
+            color: "#062C60",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "18px",
+          }}
+          type="link"
+        >
+          See more
+        </Button>
+      </div>
     </>
   );
 };
