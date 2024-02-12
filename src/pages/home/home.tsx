@@ -1,6 +1,4 @@
-import { Footer } from "antd/es/layout/layout";
 import Navbar from "../../components/navbar";
-import ArcadeCardSection from "../arcades/arcadeCardSection";
 import ArcadeRatingCardsSection from "./arcadeRatingCardSection";
 import CoachCardSection from "./coachCardSection";
 import DiscoutCardsSection from "./discountCardSection";
@@ -9,8 +7,9 @@ import MapSction from "./mapSection";
 import AppFooter from "../../components/footer";
 
 const Home = () => {
+
     return (
-        <div style={{display:"flex", flexDirection:"column",justifyContent:"center",alignItems:"center",lineHeight:"3"}}>
+        <div style={{}}>
             <Navbar/>
             <HeroSection/>
             <CoachCardSection/>
@@ -21,5 +20,6 @@ const Home = () => {
         </div>
     );
 }
+
 
 export default Home;
