@@ -1,4 +1,12 @@
-import { Button, Form, Input, InputNumber, Upload, UploadFile, message } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Upload,
+  UploadFile,
+  message,
+} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import axios from "axios";
@@ -40,15 +48,10 @@ const DiscountCardForm = () => {
     h_100: fill(100), //resize the image to the given height
     c_fit: "fit", //applies the fit crop mode
     cropingAspectRatio: 1, //crop the image to the given aspect ratio
-    croppingCoordinatesMode: 'custom', //crop the image to the given aspect ratio
+    croppingCoordinatesMode: "custom", //crop the image to the given aspect ratio
     croppingShowDimensions: true, //crop the image to the given aspect ratio
     croppingDefaultSelectionRatio: 1, //crop the image to the given aspect ratio
     croppingValidateDimensions: true, //crop the image to the given aspect ratio
-
-
-
-
-    
   });
 
   const cld = new Cloudinary({
@@ -57,14 +60,13 @@ const DiscountCardForm = () => {
     },
   });
 
-
   const imgObject = cld.image(publicId);
 
   const handleFinish = async () => {
     const discountint = parseInt(discount);
     console.log(discount, description);
-    console.log(imgObject)
-    console.log(publicId)
+    console.log(imgObject);
+    console.log(publicId);
     try {
       const res = await axios.post(
         "http://localhost:8000/api/adddiscoutcardvalues",
@@ -96,8 +98,8 @@ const DiscountCardForm = () => {
         label="Add Discount Percentage"
         rules={[
           {
-            type: 'number',
-            message: 'Please enter a valid number!',
+            type: "number",
+            message: "Please enter a valid number!",
           },
           {
             required: true,
@@ -108,7 +110,7 @@ const DiscountCardForm = () => {
         <InputNumber
           placeholder="Discount"
           style={{ width: "100%" }}
-          onChange={(value) => setDiscount(value?.toString() || '')}
+          onChange={(value) => setDiscount(value?.toString() || "")}
         />
       </Form.Item>
       <Form.Item
@@ -132,10 +134,9 @@ const DiscountCardForm = () => {
 
       <Form.Item label="Upload Image">
         <CloudinaryUploadWidget uwConfig={uwConfig} setPublicId={setPublicId} />
-        
+
         <AdvancedImage
-        
-          style={{ maxWidth: "100px", }}
+          style={{ maxWidth: "100px" }}
           cldImg={imgObject}
           plugins={[responsive(), placeholder()]}
         />
