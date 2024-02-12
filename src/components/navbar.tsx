@@ -1,5 +1,5 @@
-import { MenuOutlined } from "@ant-design/icons";
-import { Menu } from "antd";
+import { CloseCircleOutlined, EditOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
+import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -28,6 +28,8 @@ const Navbar: React.FC = () => {
   const [arcadeHovered, setArcadeHovered] = useState(false);
   const [aboutHovered, setAboutHovered] = useState(false);
   const [contactHovered, setContactHovered] = useState(false);
+  const [editProfileButtonHovered, setEditProfileButtonHovered] =useState(false);
+  const [logOutButtonHovered, setLogOutButtonHovered] = useState(false);
 
   const [homeUnderlineStyle, homeSetUnderlineStyle] = useState({
     width: 0,
@@ -179,7 +181,9 @@ const Navbar: React.FC = () => {
         >
           student
         </div>
+        <Divider style={{ }}/>
       </div>
+      
       <div>
         <Button
           type="primary"
@@ -194,6 +198,7 @@ const Navbar: React.FC = () => {
             borderRadius: "5px",
           }}
         >
+          <LogoutOutlined style={{fontSize:"20px",marginRight:"10px",marginTop:"5px"}}/>
           Log Out
         </Button>
         <Button
@@ -210,7 +215,7 @@ const Navbar: React.FC = () => {
             borderRadius: "5px",
           }}
         >
-          {" "}
+          <CloseCircleOutlined style={{fontSize:"20px",marginRight:"10px",marginTop:"5px"}}/>
           Close
         </Button>
       </div>
@@ -319,6 +324,7 @@ const Navbar: React.FC = () => {
                 >
                   student
                 </div>
+                <Divider style={{ color:"black" }}/>
               </div>
             </Menu.Item>
             <Menu.Item
@@ -411,49 +417,43 @@ const Navbar: React.FC = () => {
             >
               <Link to="/contact">Contact Us</Link>
             </Menu.Item>
-            <Menu.Item>
-              <div
-                style={{
-                  display: "flex",
-                  borderRadius: "0px",
-                  flexDirection: "row",
-                  backgroundColor: "white",
-                  width: "200px",
-                }}
-              >
-                <div style={{ marginLeft: "20px" }}>
-                  <Button
-                    type="primary"
-                    style={{
-                      width: "80px",
-                      backgroundColor: "#1B5DB7",
-                      borderColor: "#1B5DB7",
-                      color: "white",
-                      justifyContent: "center",
-                      display: "flex",
-                      borderRadius: "5px",
-                    }}
-                  >
-                    Log Out
-                  </Button>
-                </div>
-                <div style={{ marginLeft: "20px" }}>
-                  <Button
-                    type="primary"
-                    style={{
-                      width: "80px",
-                      backgroundColor: "#1B5DB7",
-                      borderColor: "#1B5DB7",
-                      color: "white",
-                      justifyContent: "center",
-                      display: "flex",
-                      borderRadius: "5px",
-                    }}
-                  >
-                    Sign In
-                  </Button>
-                </div>
-              </div>
+            <Menu.Item
+              key="contactUs"
+              style={{
+                fontFamily: "kanit",
+                fontSize: editProfileButtonHovered ? "20px" : "15px",
+                fontWeight: editProfileButtonHovered ? "bold" : "normal",
+                marginTop: "-2px",
+                borderRadius: "10px",
+                justifyContent: "center",
+                display: "flex",
+                backgroundColor:"#1B5DB7",
+                color:"white",
+              }}
+              onMouseEnter={() => setEditProfileButtonHovered(true)}
+              onMouseLeave={() => setEditProfileButtonHovered(false)}
+            >
+              <EditOutlined style={{fontSize:"20px",marginRight:"10px"}}/>
+              Edit Profile
+            </Menu.Item>
+            <Menu.Item
+              key="contactUs"
+              style={{
+                fontFamily: "kanit",
+                fontSize: logOutButtonHovered ? "20px" : "15px",
+                fontWeight: logOutButtonHovered ? "bold" : "normal",
+                marginTop: "-2px",
+                borderRadius: "10px",
+                justifyContent: "center",
+                display: "flex",
+                backgroundColor:"#1B5DB7",
+                color:"white",
+              }}
+              onMouseEnter={() => setLogOutButtonHovered(true)}
+              onMouseLeave={() => setLogOutButtonHovered(false)}
+            >
+              <LogoutOutlined style={{fontSize:"20px",marginRight:"10px"}}/>
+              Log Out
             </Menu.Item>
           </Menu>
         </div>
@@ -579,7 +579,7 @@ const Navbar: React.FC = () => {
               trigger="click"
               open={open}
               onOpenChange={handleOpenChange}
-              style={{display:"fixed" , backgroundColor:"black"}}
+              style={{ display: "fixed", backgroundColor: "black" }}
             >
               <a className="NavBarUserProfileImgThumsup">
                 <img
