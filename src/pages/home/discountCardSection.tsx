@@ -36,7 +36,7 @@ const DiscoutCardsSection = () => {
         style={{
           display: "flex",
           justifyContent: "center",
-          height: "415px",
+          height: "450px",
           overflow: "auto",
         }}
       >
