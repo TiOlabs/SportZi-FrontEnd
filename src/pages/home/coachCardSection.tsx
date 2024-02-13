@@ -55,7 +55,6 @@ const CoachCardSection = () => {
                
               }}
             >
-              {/* <h1 style={{ color: " #0E458E" }}>Our Best Coaches</h1> */}
               <Typography
                 style={{
                   color: " #0E458E",
@@ -80,24 +79,6 @@ const CoachCardSection = () => {
               >
                 See More
               </Button>
-
-              {/* <button
-                  style={{
-                    color: "#1B5DB7",
-                    background: "none",
-                    border: "none",
-                    fontFamily: "Kanit",
-                    fontSize: "18px",
-                    justifyContent: "right",
-                    alignItems: "right",
-                    position: "absolute",
-                    right: "0",
-                    top: "35%",
-                   
-                  }}
-                >
-                  See More
-                </button> */}
             </Row>
 
             <div
