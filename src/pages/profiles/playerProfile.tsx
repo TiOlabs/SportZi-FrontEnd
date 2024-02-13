@@ -1,4 +1,4 @@
-import { Button, Col, Flex, Row } from "antd";
+import { Button, Col, Modal, Row, Typography } from "antd";
 import { url } from "inspector";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -8,10 +8,11 @@ import { List } from "antd";
 import { Image } from "antd";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
-import CoachReqRowMin from "../../components/coachReqRowMin";
 
-import ShowMore from "react-show-more-button";
+import { Grid } from "antd";
 import { useMemo, useState } from "react";
+import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
+import PhotoCollage from "../../components/photoCollage";
 
 const requestList = [
   <CoachRequstRow />,
@@ -24,9 +25,22 @@ const requestList = [
   <CoachRequstRow />,
 ];
 
+const AvailableMeetingList = [
+  <AvailableMetingstoPlayer />,
+  <AvailableMetingstoPlayer />,
+  <AvailableMetingstoPlayer />,
+  <AvailableMetingstoPlayer />,
+  <AvailableMetingstoPlayer />,
+  <AvailableMetingstoPlayer />,
+  <AvailableMetingstoPlayer />,
+];
 const PlayerProfile = () => {
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
+
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [show3, setShow3] = useState(false);
 
   const toggleItems = () => {
     setShowMore(!showMore);
@@ -36,6 +50,9 @@ const PlayerProfile = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
+
+  const { useBreakpoint } = Grid;
+  const { lg, md, sm, xs } = useBreakpoint();
   return (
     <>
       <style>
@@ -53,7 +70,7 @@ const PlayerProfile = () => {
             backgroundImage: `url(${profileBackground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            height: "700px",
+            height: "500px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -367,10 +384,12 @@ const PlayerProfile = () => {
           width: "95%",
           display: "flex",
           justifyContent: "flex-end",
+          marginBottom: "10px",
         }}
       >
         <AddPhotoButton />
       </div>
+      <PhotoCollage />
 
       <div
         style={{
@@ -383,6 +402,7 @@ const PlayerProfile = () => {
       >
         <p
           style={{
+            marginTop: "50px",
             alignItems: "center",
             color: "#0E458E",
             fontFamily: "kanit",
@@ -488,6 +508,162 @@ const PlayerProfile = () => {
             {request}
           </div>
         ))}
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </div>
+
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <p
+          style={{
+            marginTop: "80px",
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "32px",
+            paddingBottom: "10px",
+          }}
+        >
+          Available Meetings For You
+        </p>
+
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Coach
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Time
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            >
+              Venue
+            </Col>
+          )}
+        </Row>
+
+        {AvailableMeetingList.slice(0, numberOfItemsShown).map(
+          (request, index) => (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              key={index}
+            >
+              {request}
+            </div>
+          )
+        )}
 
         {showMore ? (
           <Button
