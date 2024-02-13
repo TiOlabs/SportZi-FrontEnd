@@ -1,0 +1,13 @@
+.animated-button {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .animated-button:hover {
+    transform: scale(1.03); 
+    background-color: #c7ced5; 
+    color: #fff;
+  }
+
+  .select-background {
+    background-color: #d2f0ef;
+  }

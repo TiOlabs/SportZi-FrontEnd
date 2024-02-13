@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@prisma/client": "^5.9.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -11,6 +12,8 @@
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "antd": "^5.13.1",
+    "prisma": "^5.9.1",
+    "rc-select": "^14.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.2",
