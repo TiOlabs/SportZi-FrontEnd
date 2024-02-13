@@ -9,15 +9,24 @@ import AppFooter from "../../components/footer";
 const Home = () => {
 
     return (
-        <div style={{}}>
+
+        <>
+
+       
+            
+
+       
             <Navbar/>
+
             <HeroSection/>
             <CoachCardSection/>
             <DiscoutCardsSection/>
             <MapSction/>
             <ArcadeRatingCardsSection/>
-            <AppFooter/>
-        </div>
+            
+     
+        <AppFooter/>
+        </>
     );
 }
 
