@@ -10,15 +10,32 @@ import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
 import CoachReqRowMin from "../../components/coachReqRowMin";
 
-// const widthSelection = () => {
-//   if (window.innerWidth > 576) {
-//     <CoachRequstRow />;
-//   } else {
-//     <CoachReqRowMin />;
-//   }
-// };
+import ShowMore from "react-show-more-button";
+import { useMemo, useState } from "react";
+
+const requestList = [
+  <CoachRequstRow />,
+  <CoachRequstRow />,
+  <CoachRequstRow />,
+  <CoachRequstRow />,
+  <CoachRequstRow />,
+  <CoachRequstRow />,
+  <CoachRequstRow />,
+  <CoachRequstRow />,
+];
 
 const PlayerProfile = () => {
+  const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
+  const [showMore, setShowMore] = useState(true);
+
+  const toggleItems = () => {
+    setShowMore(!showMore);
+    if (showMore) {
+      setNumberOfItemsShown(requestList.length); // Show all items
+    } else {
+      setNumberOfItemsShown(4); // Show only the first 5 items
+    }
+  };
   return (
     <>
       <style>
@@ -458,23 +475,49 @@ const PlayerProfile = () => {
             xl={6}
           ></Col>
         </Row>
-        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
-        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
-        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
-        {window.innerWidth > 576 ? <CoachRequstRow /> : <CoachReqRowMin />}
 
-        <Button
-          style={{
-            alignItems: "center",
-            color: "#062C60",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: "18px",
-          }}
-          type="link"
-        >
-          See more
-        </Button>
+        {requestList.slice(0, numberOfItemsShown).map((request, index) => (
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+            key={index}
+          >
+            {request}
+          </div>
+        ))}
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
       </div>
     </>
   );
