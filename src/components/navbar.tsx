@@ -1,5 +1,5 @@
 
-import { CloseCircleOutlined, EditOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, EditOutlined, LoginOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useState } from "react";
@@ -82,7 +82,7 @@ const Navbar: React.FC = () => {
 
   const arcadeHandleMouseEnter = () => {
     arcadeSetUnderlineStyle({
-      width: 60,
+      width: 63,
       left: "0",
       transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
     });
@@ -95,22 +95,22 @@ const Navbar: React.FC = () => {
       transition: "width 0.5s ease-in-out, left 0.5s ease-in-out",
     });
   };
-  const [contactUnderlineStyle, contactSetUnderlineStyle] = useState({
+  const [aboutUnderlineStyle, aboutSetUnderlineStyle] = useState({
     width: 0,
     left: "50%",
     transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
   });
 
-  const contactHandleMouseEnter = () => {
-    contactSetUnderlineStyle({
-      width: 70,
+  const aboutHandleMouseEnter = () => {
+    aboutSetUnderlineStyle({
+      width: 85,
       left: "0",
       transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
     });
   };
 
-  const contactHandleMouseLeave = () => {
-    contactSetUnderlineStyle({
+  const aboutHandleMouseLeave = () => {
+    aboutSetUnderlineStyle({
       width: 0,
       left: "50%",
       transition: "width 0.5s ease-in-out, left 0.5s ease-in-out",
@@ -119,9 +119,6 @@ const Navbar: React.FC = () => {
 
   const [open, setOpen] = useState(false);
 
-  const hide = () => {
-    setOpen(false);
-  };
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
@@ -164,7 +161,6 @@ const Navbar: React.FC = () => {
             display: "flex",
             fontSize: "20px",
             fontFamily: "kanit",
-            fontWeight: "bold",
             marginTop: "10px",
           }}
         >
@@ -177,7 +173,6 @@ const Navbar: React.FC = () => {
             justifyContent: "center",
             display: "flex",
             fontSize: "15px",
-            fontWeight: "bold",
           }}
         >
           student
@@ -199,12 +194,11 @@ const Navbar: React.FC = () => {
             borderRadius: "5px",
           }}
         >
-          <LogoutOutlined style={{fontSize:"20px",marginRight:"10px",marginTop:"5px"}}/>
-          Log Out
+          <LoginOutlined style={{fontSize:"20px",marginRight:"10px",marginTop:"5px"}}/>
+          Log In
         </Button>
         <Button
           type="primary"
-          onClick={hide}
           style={{
             width: "100%",
             marginTop: "10px",
@@ -216,8 +210,8 @@ const Navbar: React.FC = () => {
             borderRadius: "5px",
           }}
         >
-          <CloseCircleOutlined style={{fontSize:"20px",marginRight:"10px",marginTop:"5px"}}/>
-          Close
+          <LogoutOutlined style={{fontSize:"20px",marginRight:"10px",marginTop:"5px"}}/>
+          Log Out
         </Button>
       </div>
     </div>
@@ -308,7 +302,6 @@ const Navbar: React.FC = () => {
                     display: "flex",
                     fontSize: "20px",
                     fontFamily: "kanit",
-                    fontWeight: "bold",
                   }}
                 >
                   Sasindu Dhanushka
@@ -320,7 +313,7 @@ const Navbar: React.FC = () => {
                     justifyContent: "center",
                     display: "flex",
                     fontSize: "15px",
-                    fontWeight: "bold",
+
                   }}
                 >
                   student
@@ -337,14 +330,13 @@ const Navbar: React.FC = () => {
                 borderRadius: "0px",
                 justifyContent: "center",
                 display: "flex",
-                fontWeight: "bold",
                 backgroundColor: homeHovered ? "#1B5DB7" : "white",
                 color: homeHovered ? "white" : "#1B5DB7",
               }}
               onMouseEnter={() => setHomeHovered(true)}
               onMouseLeave={() => setHomeHovered(false)}
             >
-              <Link to="/home">Home</Link>
+              <Link to="/">Home</Link>
             </Menu.Item>
             <Menu.Item
               key="coaches"
@@ -355,14 +347,13 @@ const Navbar: React.FC = () => {
                 borderRadius: "0px",
                 justifyContent: "center",
                 display: "flex",
-                fontWeight: "bold",
                 backgroundColor: coachesHovered ? "#1B5DB7" : "white",
                 color: coachesHovered ? "white" : "#1B5DB7",
               }}
               onMouseEnter={() => setCoachesHovered(true)}
               onMouseLeave={() => setCoachesHovered(false)}
             >
-              <div className="MenuItemHover">Coaches</div>
+              <Link to="/Coaches">Coaches</Link>
             </Menu.Item>
             <Menu.Item
               key="arcade"
@@ -373,7 +364,6 @@ const Navbar: React.FC = () => {
                 borderRadius: "0px",
                 justifyContent: "center",
                 display: "flex",
-                fontWeight: "bold",
                 backgroundColor: arcadeHovered ? "#1B5DB7" : "white",
                 color: arcadeHovered ? "white" : "#1B5DB7",
               }}
@@ -391,7 +381,6 @@ const Navbar: React.FC = () => {
                 borderRadius: "0px",
                 justifyContent: "center",
                 display: "flex",
-                fontWeight: "bold",
                 backgroundColor: aboutHovered ? "#1B5DB7" : "white",
                 color: aboutHovered ? "white" : "#1B5DB7",
               }}
@@ -409,7 +398,6 @@ const Navbar: React.FC = () => {
                 borderRadius: "0px",
                 justifyContent: "center",
                 display: "flex",
-                fontWeight: "bold",
                 backgroundColor: contactHovered ? "#1B5DB7" : "white",
                 color: contactHovered ? "white" : "#1B5DB7",
               }}
@@ -422,8 +410,8 @@ const Navbar: React.FC = () => {
               key="contactUs"
               style={{
                 fontFamily: "kanit",
-                fontSize: editProfileButtonHovered ? "20px" : "15px",
-                fontWeight: editProfileButtonHovered ? "bold" : "normal",
+                fontSize: editProfileButtonHovered ? "18px" : "15px",
+                fontWeight: editProfileButtonHovered ? "20px" : "normal",
                 marginTop: "-2px",
                 borderRadius: "10px",
                 justifyContent: "center",
@@ -441,8 +429,8 @@ const Navbar: React.FC = () => {
               key="contactUs"
               style={{
                 fontFamily: "kanit",
-                fontSize: logOutButtonHovered ? "20px" : "15px",
-                fontWeight: logOutButtonHovered ? "bold" : "normal",
+                fontSize: logOutButtonHovered ? "18px" : "15px",
+                fontWeight: logOutButtonHovered ? "20px" : "normal",
                 marginTop: "-2px",
                 borderRadius: "10px",
                 justifyContent: "center",
@@ -469,9 +457,9 @@ const Navbar: React.FC = () => {
             height: "50px",
           }}
         >
-          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+          <div style={{ fontSize: "20px"}}>
             <Link
-              to="/home"
+              to="/"
               style={{
                 color: "white",
                 textDecoration: "none",
@@ -495,7 +483,7 @@ const Navbar: React.FC = () => {
               ></span>
             </Link>
           </div>
-          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+          <div style={{ fontSize: "20px"}}>
             <Link
               to="/coaches"
               style={{
@@ -522,7 +510,7 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+          <div style={{ fontSize: "20px"}}>
             <Link
               to="/arcades"
               style={{
@@ -548,7 +536,7 @@ const Navbar: React.FC = () => {
               ></span>
             </Link>
           </div>
-          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+          <div style={{ fontSize: "20px"}}>
             <Link
               to="/about"
               style={{
@@ -557,19 +545,19 @@ const Navbar: React.FC = () => {
                 position: "relative",
                 display: "inline-block",
               }}
-              onMouseEnter={contactHandleMouseEnter}
-              onMouseLeave={contactHandleMouseLeave}
+              onMouseEnter={aboutHandleMouseEnter}
+              onMouseLeave={aboutHandleMouseLeave}
             >
-              Contact
+              About Us
               <span
                 style={{
                   position: "absolute",
-                  width: contactUnderlineStyle.width,
+                  width: aboutUnderlineStyle.width,
                   height: "3px",
                   bottom: "0",
-                  left: contactUnderlineStyle.left,
+                  left: aboutUnderlineStyle.left,
                   backgroundColor: "white",
-                  transition: contactUnderlineStyle.transition,
+                  transition: aboutUnderlineStyle.transition,
                 }}
               ></span>
             </Link>
