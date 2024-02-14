@@ -1,21 +1,18 @@
+
+import "./signup.css";
+
 import { Flex } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
-import "./signup.css";
-// import React, { useState } from 'react';
 import { Button, Checkbox, Form, Input, TimePicker, Select } from "antd";
 import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 
-//form
-const { Option } = Select;
+
+
 
 //responsiveness
 const formItemLayout = {
-  // labelCol: {
-  //   xs: { span: 24 },
-  //   sm: { span: 8 },
-  // },
   wrapperCol: {
     xl: { span: 24 },
     lg: { span: 24 },
@@ -42,46 +39,57 @@ const buttonFormItemLayout = {
   },
 };
 
+
+
+
 //css
 const commonInputStyle = {
-  backgroundColor: "#d2f0ef",
+  // backgroundColor: "#d2f0ef",
   height: "40px",
+  
 };
 
 const commonLabelStyle = {
   color: "blue",
   fontSize: "16px",
+  
 };
 
-// const config = {
-//   rules: [
-//     { type: "object" as const, required: true, message: "Please select Date!" },
-//   ],
-// };
+
+const { Option } = Select;
+
 
 const validatePhoneNumber = (_: any, value: string) => {
-  // Use a regular expression to validate the phone number format
-  const phoneRegex = /^[0-9]{10}$/; // Adjust the regex based on your specific requirements
-
+  const phoneRegex = /^[0-9]{10}$/; 
   if (phoneRegex.test(value)) {
     return Promise.resolve();
   }
-
   return Promise.reject("Invalid phone number");
 };
 
+
+
+
 // function starting
 const SignupArcadeManager = () => {
+
+
   const [form] = Form.useForm();
+  const validatePassword = async (_: any, value: string) => {
+    if (value && value.length < 8) {
+      return Promise.reject("Password must be at least 8 characters");
+    }
+    return Promise.resolve();
+  };
 
   // const onFinish = (values: any) => {
   //   console.log("Received values of form: ", values);
+  //   alert("Form is submitted");
   // };
 
   const onFinish = async (values: any) => {
     try {
-      // Send form data to backend endpoint
-      const response = await fetch("http://localhost:5000/signupArcadeManager", {
+      const response = await fetch("http://localhost:5000/signupPlayer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,20 +111,11 @@ const SignupArcadeManager = () => {
     }
   };
 
-  const customFontStyle = {
-    fontFamily: "'YourFontFamily', sans-serif", // Replace 'YourFontFamily' with the actual font name
-  };
-
-  const validatePassword = async (_: any, value: string) => {
-    if (value && value.length < 8) {
-      return Promise.reject("Password must be at least 8 characters");
-    }
-    return Promise.resolve();
-  };
-
   return (
     <>
       <Row>
+
+        {/* left column */}
         <Col
           sm={24}
           md={24}
@@ -124,16 +123,15 @@ const SignupArcadeManager = () => {
           xl={12}
           style={{ padding: 50, backgroundColor: "#c6d0d3" }}
         >
-
-          {/* left column */}
-          <div style={{ textAlign: "center" }}>
-            <Flex vertical gap="small" style={{ width: "100%" }}>
+          
+          <div style={{ textAlign: "center"}}>
+            <Flex vertical gap="large" style={{ width: "100%" , }}>
               <Link to="/signupPlayer">
               <Button
                 type="default"
                 block
-                className="animated-button"
-                style={{ color: "#125485", fontFamily: "sans-serif",fontWeight:"bold" }}
+                className="animated-button kanit-regular"
+                
               >
                 I'm an Athlete
               </Button>
@@ -143,8 +141,8 @@ const SignupArcadeManager = () => {
                 <Button
                   type="default"
                   block
-                  className="animated-button"
-                  style={{ color: "#125485", fontFamily: "sans-serif",fontWeight:"bold" }}
+                  className="animated-button kanit-regular"
+                
                 >
                   I'm a Coach
                 </Button>
@@ -153,8 +151,11 @@ const SignupArcadeManager = () => {
                 <Button
                   type="default"
                   block
-                  className="animated-button"
-                  style={{ color: "#125485", fontFamily: "sans-serif",fontWeight:"bold" }}
+                  className="animated-button kanit-regular"
+                  style={{
+                    backgroundColor:"#2E5488",
+                    color:"#fff",
+                }}
                 >
                   I'm an Arcade Manager
                 </Button>
@@ -171,21 +172,18 @@ const SignupArcadeManager = () => {
               width: "100%",
             }}
           >
-            <Image
-              width={400}
-              // src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp"
+            <Image 
+              className="img1"
               src={img1}
             />
           </div>
-
+            
           {/* description */}
           <Col span={20} offset={2}>
-            <div
+            <div className="kanit-regular"
               style={{
-                textAlign: "center",
-                width: "100%",
-                fontFamily: "'Open Sans', serif",
-                fontWeight: "bold",
+                fontSize:"16px",
+                textAlign:"center"
               }}
             >
               Maximize your athletic journey – sign up now! Join our vibrant
@@ -196,23 +194,21 @@ const SignupArcadeManager = () => {
               make a lasting impact – sign up today for an exhilarating athletic
               adventure!
             </div>
+            
           </Col>
         </Col>
-
 
         {/* right column */}
         <Col sm={24} md={24} lg={12} xl={12} style={{ padding: 50 }}>
           {/* form */}
           <div
             style={{
-              padding: 50,
-              // paddingLeft: 0,
-              // border: "2px solid #000",
-              // borderRadius: "10px",
+              padding: 20,
             }}
           >
             <Form
               {...formItemLayout}
+              method="POST"
               layout="vertical"
               form={form}
               name="register"
@@ -223,25 +219,26 @@ const SignupArcadeManager = () => {
               style={{ maxWidth: "100%" }}
               scrollToFirstError
               colon={false}
+              labelCol={{
+                className: 'custom-label'
+              }}
             >
-              <Col span={18} offset={3}>
-                <div
+              <Col span={24}>
+                <div className="kanit-regular"
                   style={{
-                    textAlign: "center",
-                    paddingBottom: 20,
-                    fontFamily: "'Open Sans', serif",
-                    fontSize: 20,
-                    color: "#125485",
+                    fontSize:"28px",
+                    textAlign:"center",
+                    paddingBottom:"20px"
+                    
                   }}
                 >
-                  <h3>
                     Join Us and Unleash Your Potential with Our Expert Coaches
-                  </h3>
                 </div>
               </Col>
 
-              {/* name */}
-              <Form.Item
+
+         {/* name */}
+         <Form.Item
                 name="name"
                 label="Name"
                 rules={[
@@ -383,6 +380,7 @@ const SignupArcadeManager = () => {
                 />
               </Form.Item>
 
+
               <Form.Item
                 name="agreement"
                 valuePropName="checked"
@@ -396,20 +394,28 @@ const SignupArcadeManager = () => {
                 ]}
                 {...agreebtnLayout}
               >
-                <Checkbox>
+                <Checkbox className="kanit-regular">
                   I agree to the <a href="">Terms and Conditions</a> and
                   <a href=""> Privacy Policy</a>
                 </Checkbox>
               </Form.Item>
 
-              <Form.Item {...buttonFormItemLayout}>
-                <Button htmlType="submit" className="animated-button">
+              <Form.Item >
+                <Button htmlType="submit" className="animated-button kanit-regular" 
+                style={{
+                  height:"40px",
+                  fontSize:"16px",
+                  width:"100%",
+                  backgroundColor:"#2E5488",
+                  color:"#fff"
+                  
+                  }}>
                   Sign Up
                 </Button>
               </Form.Item>
 
               <Form.Item {...buttonFormItemLayout}>
-                <div style={{}}>
+                <div className="kanit-regular">
                   Already have an account <a href="">Sign in here</a>
                 </div>
               </Form.Item>
