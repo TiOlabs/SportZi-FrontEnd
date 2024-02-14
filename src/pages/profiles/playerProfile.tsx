@@ -261,7 +261,7 @@ const PlayerProfile = () => {
                 <List.Item
                   style={{
                     position: "relative",
-                    top: "-20px",
+
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -322,7 +322,7 @@ const PlayerProfile = () => {
                 <List.Item
                   style={{
                     position: "relative",
-                    top: "-20px",
+
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -363,6 +363,7 @@ const PlayerProfile = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginTop: "60px",
         }}
       >
         <p
