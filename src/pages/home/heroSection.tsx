@@ -22,7 +22,7 @@ const HeroSection = () => {
           zIndex: "0",
           position: "absolute",
           marginTop: md ? (xl ? "50px" : "75px") : "95px",
-          marginLeft: sm ? (md ? (xl ? "925px" : "350px") : "145px") : "145px",
+          marginLeft: sm ? (md ? (xl ? "925px" : "350px") : "95px") : "95px",
           overflow: "hidden",
         }}
       />
