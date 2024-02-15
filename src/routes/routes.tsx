@@ -9,6 +9,7 @@ import Profiles from "../pages/profiles/profiles";
 import BookingForm from "../pages/bookingForm/bookingForm";
 import DiscountCardForm from "../pages/forms/discountCard.form";
 import PlayerProfileUser from "../pages/profiles/PlayerProfileUsers";
+import CoachAssignDetailsForm from "../pages/forms/coachAssignDetails.form";
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
         <Route path="bookings" element={<BookingForm />} />
         <Route path="profile/:id" element={<Profiles />} />
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
+        <Route path="forms/coachassigndetailsform" element={<CoachAssignDetailsForm />} />
         <Route path="PlayerUSer" element={<PlayerProfileUser />} />
       </Routes>
     </>

@@ -2,10 +2,19 @@ import { Col, Row, Button, Flex } from "antd";
 import "./CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
+import { useState } from "react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage } from "@cloudinary/react";
 
-const CoachCard = () => {
+const CoachCard = (props: any) => {
   setTwoToneColor("blue");
   getTwoToneColor();
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <div className="mainCard">
@@ -38,7 +47,7 @@ const CoachCard = () => {
               />
             </div>
             <div>
-              <p className="coachDiscription"> discription about coacoach </p>
+              <p className="coachDiscription"> {props.description} </p>
             </div>
           </div>
           <div
@@ -58,7 +67,7 @@ const CoachCard = () => {
                   fontWeight: "500",
                 }}
               >
-                100$
+                {props.rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
@@ -77,7 +86,16 @@ const CoachCard = () => {
             </div>
           </div>
         </div>
-        <div className="coachpicture"></div>
+        <div className="coachpicture">
+          {" "}
+          <AdvancedImage
+            cldImg={
+              cld.image(props.discount_image)
+              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+              // .resize(Resize.scale().width(200).height(200))
+            }
+          />
+        </div>
       </div>
     </>
   );

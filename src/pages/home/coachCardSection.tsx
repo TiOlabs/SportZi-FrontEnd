@@ -2,8 +2,23 @@ import { Button, Col, Row, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import { md } from "node-forge";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import { useEffect, useState } from "react";
+import { CoachAssignDetails } from "../../types";
 
 const CoachCardSection = () => {
+  const [coachAssignDetails, setCoachAssignDetails] = useState<
+    CoachAssignDetails[]
+  >([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
+      const data = await res.json();
+      setCoachAssignDetails(data);
+      console.log(data);
+    }
+    fetchData();
+  }, []);
   const style: React.CSSProperties = {
     background: "#0092ff",
     padding: "8px 0",
@@ -27,7 +42,21 @@ const CoachCardSection = () => {
           whiteSpace: "nowrap",
         }}
       >
-        <Col
+        {coachAssignDetails.map((coachAssignDetail: CoachAssignDetails) => (
+          <Col
+            lg={{ span: 5 }}
+            md={{ span: 8 }}
+            sm={{ span: 12 }}
+            xs={{ span: 24 }}
+          >
+            <CoachCard
+              rate={coachAssignDetail.rate}
+              duration={coachAssignDetail.duration}
+              description={coachAssignDetail.description}
+            />
+          </Col>
+        ))}
+        {/* <Col
           xs={{ span: 24 }}
           sm={{ span: 24 }}
           md={{ span: 24 }}
@@ -48,7 +77,7 @@ const CoachCardSection = () => {
                 width: "100%",
                 alignItems: "center",
                 textAlign: "center",
-                borderStyle: "dotted",
+              
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
@@ -221,7 +250,7 @@ const CoachCardSection = () => {
               </Row>
             </div>
           </Row>
-        </Col>
+        </Col> */}
       </Row>
     </>
   );
