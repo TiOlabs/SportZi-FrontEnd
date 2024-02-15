@@ -220,7 +220,7 @@ const Navbar: React.FC = () => {
   return (
     <Row
       style={{
-        backgroundColor: "#1B5DA9",
+        backgroundColor: "none",
         width: "100%",
         height: "50px",
         position: "fixed",

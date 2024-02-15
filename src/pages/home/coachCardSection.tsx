@@ -64,7 +64,7 @@ const CoachCardSection = () => {
                 width: "100%",
                 alignItems: "center",
                 textAlign: "center",
-                borderStyle: "dotted",
+
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
@@ -113,29 +113,28 @@ const CoachCardSection = () => {
                   overflowY: "scroll",
                   flexWrap: "nowrap",
                 }}
-              >{coachAssignDetails.map((coachAssignDetail: CoachAssignDetails) => (
-                <Col
-                  lg={{ span: 5 }}
-                  md={{ span: 8 }}
-                  sm={{ span: 12 }}
-                  xs={{ span: 24 }}
-                >
-                  <CoachCard
-                    rate={coachAssignDetail.rate}
-                    duration={coachAssignDetail.duration}
-                    description={coachAssignDetail.description}
-                  />
-                </Col>
-              ))}
-                
-                
-                  
-                
+              >
+                {coachAssignDetails.map(
+                  (coachAssignDetail: CoachAssignDetails) => (
+                    <Col
+                      lg={{ span: 5 }}
+                      md={{ span: 8 }}
+                      sm={{ span: 12 }}
+                      xs={{ span: 24 }}
+                    >
+                      <CoachCard
+                        rate={coachAssignDetail.rate}
+                        duration={coachAssignDetail.duration}
+                        description={coachAssignDetail.description}
+                      />
+                    </Col>
+                  )
+                )}
               </Row>
             </div>
           </Row>
         </Col>
-        
+
         {/* <Col
           xs={{ span: 24 }}
           sm={{ span: 24 }}
