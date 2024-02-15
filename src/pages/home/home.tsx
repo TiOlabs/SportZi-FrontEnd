@@ -10,12 +10,15 @@ const Home = () => {
 
     return (
 
+
+
         <>
 
        
             
 
        
+
             <Navbar/>
 
             <HeroSection/>
@@ -24,7 +27,6 @@ const Home = () => {
             <MapSction/>
             <ArcadeRatingCardsSection/>
             
-     
         <AppFooter/>
         </>
     );
