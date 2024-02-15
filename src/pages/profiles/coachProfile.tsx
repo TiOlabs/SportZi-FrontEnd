@@ -720,6 +720,10 @@ const CoachProfile = () => {
           </Button>
         )}
       </Row>
+      <Typography>
+        if you are cancel Accepted meeting before 24 hours your ratings shoud be
+        decrease by 1%. i you are agree then cancel
+      </Typography>
     </>
   );
 };

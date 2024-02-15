@@ -11,6 +11,8 @@ const CoachAccepteLst = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isModalOpenWarning, setIsModalOpenWarning] = useState(false);
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -23,6 +25,17 @@ const CoachAccepteLst = () => {
     setIsModalOpen(false);
   };
 
+  const showModelWarning = () => {
+    setIsModalOpenWarning(true);
+  };
+
+  const handleOkWaning = () => {
+    setIsModalOpenWarning(false);
+  };
+
+  const handleCancelWarning = () => {
+    setIsModalOpenWarning(false);
+  };
   return (
     <>
       <Row
@@ -132,10 +145,168 @@ const CoachAccepteLst = () => {
       </Row>
 
       <Modal
-        title="Are You Shure"
+        title="Discription of Meeting"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        footer={[
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#0E458E",
+              border: "1px solid #0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            key="back"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>,
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#FF0000",
+              border: "1px solid #FF0000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            key="submit"
+            type="primary"
+            onClick={showModelWarning}
+          >
+            Cancel Meeting
+          </Button>,
+        ]}
+      >
+        <Row
+          style={{
+            padding: "10px",
+            width: "90%",
+            height: "auto",
+            display: "flex",
+            justifyContent: "center",
+
+            border: "1px solid #EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+            <Row style={{ width: "100%" }}>
+              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                <div
+                  style={{
+                    backgroundColor: "#000",
+                    width: "90px",
+                    height: "81px",
+                    borderRadius: "50%",
+                    marginRight: "10px",
+                    backgroundImage: `url(${profilePic})`,
+                    backgroundSize: "cover",
+                  }}
+                ></div>
+              </Col>
+              <Col
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+                  fontWeight: "300",
+                  fontSize: "18px",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                xl={12}
+              >
+                kanishka jj
+              </Col>
+            </Row>
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+            xl={12}
+          >
+            Date
+          </Col>
+        </Row>
+
+        <Row
+          style={{
+            padding: "10px",
+            width: "90%",
+            height: "auto",
+            display: "flex",
+            justifyContent: "center",
+
+            border: "1px solid #EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              marginTop: "10px",
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+            xl={12}
+          >
+            Time
+          </Col>
+
+          <Col
+            style={{
+              marginTop: "10px",
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+            xl={12}
+          >
+            Venue
+          </Col>
+        </Row>
+      </Modal>
+
+      <Modal
+        title="Discription of Meeting"
+        open={isModalOpenWarning}
+        onOk={handleOkWaning}
+        onCancel={handleCancelWarning}
         footer={[
           <Button
             style={{
@@ -168,10 +339,7 @@ const CoachAccepteLst = () => {
           </Button>,
         ]}
       >
-        <Typography>
-          if you are cancel Accepted meeting before 24 hours your ratings shoud
-          be decrease by 1%. i you are agree then cancel
-        </Typography>
+        <p>pakaya</p>
       </Modal>
     </>
   );
