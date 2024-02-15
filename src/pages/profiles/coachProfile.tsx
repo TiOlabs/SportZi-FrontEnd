@@ -10,7 +10,8 @@ import AddPhotoButton from "../../components/addPhotoButton";
 import CoachAccepteLst from "../../components/CoachAcceptedList";
 import { useState } from "react";
 import CoachReqestList from "../../components/CoachRequestList";
-
+import reviewBacground from "../../assents/ReviewBackground.png";
+import ReviewCard from "../../components/ReviewCard";
 const acceptedMeetings = [
   <CoachAccepteLst />,
   <CoachAccepteLst />,
@@ -732,10 +733,6 @@ const CoachProfile = () => {
           </Button>
         )}
       </Row>
-      <Typography>
-        if you are cancel Accepted meeting before 24 hours your ratings shoud be
-        decrease by 1%. i you are agree then cancel
-      </Typography>
 
       <Row
         style={{
@@ -898,6 +895,145 @@ const CoachProfile = () => {
             See Less
           </Button>
         )}
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          height: "650px",
+          marginTop: "100px",
+        }}
+      >
+        <Col
+          style={{
+            backgroundImage: `url(${reviewBacground})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "650px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+          xs={24}
+          sm={24}
+          md={24}
+          lg={24}
+          xl={24}
+        >
+          <Typography
+            style={{
+              marginTop: "50px",
+              fontFamily: "kanit",
+              fontWeight: md ? "400" : "300",
+              fontSize: md ? "32px" : "24px",
+              color: "#0E458E",
+            }}
+          >
+            Reviews
+          </Typography>
+          <Row
+            style={{
+              width: "100%",
+              height: "300px",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+          </Row>
+          <Row
+            style={{
+              width: "100%",
+              height: "300px",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+          </Row>
+        </Col>
       </Row>
     </>
   );
