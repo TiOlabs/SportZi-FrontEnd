@@ -28,9 +28,7 @@ const AppRoutes = () => {
         <Route path="bookings" element={<BookingForm />} />
         <Route path="profile/:id" element={<Profiles />} />
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
-
         <Route path="coacheProfile" element={<CoachProfile />} />
-
         <Route path="forms/coachassigndetailsform" element={<CoachAssignDetailsForm />} />
         <Route path="PlayerUSer" element={<PlayerProfileUser />} />
 
