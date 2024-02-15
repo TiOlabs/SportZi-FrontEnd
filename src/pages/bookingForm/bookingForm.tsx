@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Row, Col, Form, Button, Select, Input, InputNumber } from "antd";
-import BookingFormPicture from "../../assents/BookingFormPicture.png";
+import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 const { Option } = Select;
