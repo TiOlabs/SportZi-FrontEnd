@@ -42,20 +42,100 @@ const CoachCardSection = () => {
           whiteSpace: "nowrap",
         }}
       >
-        {coachAssignDetails.map((coachAssignDetail: CoachAssignDetails) => (
-          <Col
-            lg={{ span: 5 }}
-            md={{ span: 8 }}
-            sm={{ span: 12 }}
-            xs={{ span: 24 }}
+        <Col
+          xs={{ span: 24 }}
+          sm={{ span: 24 }}
+          md={{ span: 24 }}
+          lg={{ span: 24 }}
+          xl={{ span: 24 }}
+        >
+          <Row
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              background: "rgba(27, 93, 183, 0.07)",
+            }}
           >
-            <CoachCard
-              rate={coachAssignDetail.rate}
-              duration={coachAssignDetail.duration}
-              description={coachAssignDetail.description}
-            />
-          </Col>
-        ))}
+            {" "}
+            <Row
+              style={{
+                width: "100%",
+                alignItems: "center",
+                textAlign: "center",
+                borderStyle: "dotted",
+                position: "relative",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Typography
+                style={{
+                  color: " #0E458E",
+                  fontSize: md ? "30px" : "20px",
+                  fontFamily: "Kanit",
+                }}
+              >
+                Our Best Coaches
+              </Typography>
+              <Button
+                style={{
+                  position: "absolute",
+                  right: "0",
+                  top: "35%",
+                  color: "#1B5DB7",
+                  background: "none",
+                  border: "none",
+                  fontFamily: "Kanit",
+                  fontSize: "18px",
+                }}
+              >
+                See More
+              </Button>
+            </Row>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <Row
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "450px",
+                  overflowY: "scroll",
+                  flexWrap: "nowrap",
+                }}
+              >{coachAssignDetails.map((coachAssignDetail: CoachAssignDetails) => (
+                <Col
+                  lg={{ span: 5 }}
+                  md={{ span: 8 }}
+                  sm={{ span: 12 }}
+                  xs={{ span: 24 }}
+                >
+                  <CoachCard
+                    rate={coachAssignDetail.rate}
+                    duration={coachAssignDetail.duration}
+                    description={coachAssignDetail.description}
+                  />
+                </Col>
+              ))}
+                
+                
+                  
+                
+              </Row>
+            </div>
+          </Row>
+        </Col>
+        
         {/* <Col
           xs={{ span: 24 }}
           sm={{ span: 24 }}
