@@ -25,12 +25,14 @@ const CoachAccepteLst = () => {
     setIsModalOpen(false);
   };
 
-  const showModelWarning = () => {
+  const showModalWarning = () => {
     setIsModalOpenWarning(true);
   };
 
-  const handleOkWaning = () => {
+  const handleOkWarning = () => {
+    setIsModalOpen(false);
     setIsModalOpenWarning(false);
+    // Close the first modal as well
   };
 
   const handleCancelWarning = () => {
@@ -71,7 +73,7 @@ const CoachAccepteLst = () => {
                 color: "#000",
                 fontFamily: "kanit",
                 fontWeight: "300",
-                fontSize: "18px",
+                fontSize: md ? "18px" : "16px",
                 display: "flex",
                 justifyContent: "flex-start",
                 alignItems: "center",
@@ -91,7 +93,7 @@ const CoachAccepteLst = () => {
             color: "#000",
             fontFamily: "kanit",
             fontWeight: "300",
-            fontSize: "18px",
+            fontSize: md ? "18px" : "16px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -109,7 +111,7 @@ const CoachAccepteLst = () => {
             color: "#000",
             fontFamily: "kanit",
             fontWeight: "300",
-            fontSize: "18px",
+            fontSize: md ? "18px" : "16px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -128,7 +130,7 @@ const CoachAccepteLst = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "300",
-              fontSize: "18px",
+              fontSize: md ? "18px" : "16px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -175,7 +177,7 @@ const CoachAccepteLst = () => {
             }}
             key="submit"
             type="primary"
-            onClick={showModelWarning}
+            onClick={showModalWarning}
           >
             Cancel Meeting
           </Button>,
@@ -213,7 +215,7 @@ const CoachAccepteLst = () => {
                   color: "#000",
                   fontFamily: "kanit",
                   fontWeight: "300",
-                  fontSize: "18px",
+                  fontSize: md ? "18px" : "16px",
                   display: "flex",
                   justifyContent: "flex-start",
                   alignItems: "center",
@@ -233,7 +235,7 @@ const CoachAccepteLst = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "300",
-              fontSize: "18px",
+              fontSize: md ? "18px" : "16px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -266,7 +268,7 @@ const CoachAccepteLst = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "300",
-              fontSize: "18px",
+              fontSize: md ? "18px" : "16px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -286,7 +288,7 @@ const CoachAccepteLst = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "300",
-              fontSize: "18px",
+              fontSize: md ? "18px" : "16px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -303,9 +305,9 @@ const CoachAccepteLst = () => {
       </Modal>
 
       <Modal
-        title="Discription of Meeting"
+        title="Are you Shure"
         open={isModalOpenWarning}
-        onOk={handleOkWaning}
+        onOk={handleOkWarning}
         onCancel={handleCancelWarning}
         footer={[
           <Button
@@ -318,7 +320,7 @@ const CoachAccepteLst = () => {
               fontSize: "18px",
             }}
             key="back"
-            onClick={handleCancel}
+            onClick={handleCancelWarning}
           >
             Cancel
           </Button>,
@@ -333,13 +335,16 @@ const CoachAccepteLst = () => {
             }}
             key="submit"
             type="primary"
-            onClick={handleOk}
+            onClick={handleOkWarning}
           >
             Cancel Meeting
           </Button>,
         ]}
       >
-        <p>pakaya</p>
+        <Typography>
+          If you are cancel meeting after 24h for meetying. your rating is
+          decreese and you payment is return
+        </Typography>
       </Modal>
     </>
   );

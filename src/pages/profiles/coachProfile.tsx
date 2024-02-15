@@ -9,6 +9,7 @@ import PhotoCollage from "../../components/photoCollage";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachAccepteLst from "../../components/CoachAcceptedList";
 import { useState } from "react";
+import CoachReqestList from "../../components/CoachRequestList";
 
 const acceptedMeetings = [
   <CoachAccepteLst />,
@@ -17,6 +18,17 @@ const acceptedMeetings = [
   <CoachAccepteLst />,
   <CoachAccepteLst />,
   <CoachAccepteLst />,
+];
+
+const RequestedMeetings = [
+  <CoachReqestList />,
+  <CoachReqestList />,
+  <CoachReqestList />,
+  <CoachReqestList />,
+  <CoachReqestList />,
+  <CoachReqestList />,
+  <CoachReqestList />,
+  <CoachReqestList />,
 ];
 
 const CoachProfile = () => {
@@ -724,6 +736,169 @@ const CoachProfile = () => {
         if you are cancel Accepted meeting before 24 hours your ratings shoud be
         decrease by 1%. i you are agree then cancel
       </Typography>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          {" "}
+          Requests For Coaching
+        </Typography>
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Coach
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            ></Col>
+          )}
+          {sm && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            ></Col>
+          )}
+        </Row>
+        {RequestedMeetings.slice(0, numberOfItemsShown).map(
+          (request, index) => (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              key={index}
+            >
+              {request}
+            </div>
+          )
+        )}
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </Row>
     </>
   );
 };
