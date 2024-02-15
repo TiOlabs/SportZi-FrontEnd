@@ -4,7 +4,7 @@ import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assents/logo.png";
+import logo from "../assets/logo.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 
@@ -141,7 +141,7 @@ const Navbar: React.FC = () => {
           style={{ justifyContent: "center", display: "flex" }}
         >
           <img
-            src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
+            src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
             alt="Original Image"
             style={{
               width: "50px",
@@ -220,7 +220,7 @@ const Navbar: React.FC = () => {
   return (
     <Row
       style={{
-        backgroundColor: "#1B5DA9",
+        backgroundColor: "none",
         width: "100%",
         height: "50px",
         position: "fixed",
@@ -282,7 +282,7 @@ const Navbar: React.FC = () => {
                   style={{ justifyContent: "center", display: "flex" }}
                 >
                   <img
-                    src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
+                    src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
                     alt="Original Image"
                     style={{
                       width: "50px",
@@ -573,7 +573,7 @@ const Navbar: React.FC = () => {
               <a className="NavBarUserProfileImgThumsup">
                 <img
                   className="NavBarUserProfileImg"
-                  src="https://ucarecdn.com/0e1d8b2e-6e1c-4f0d-8f9b-0e3e7e5f6a0e/-/preview/400x300/image.png"
+                  src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
                   alt="Original Image"
                   style={{
                     width: "35px",
