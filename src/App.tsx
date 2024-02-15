@@ -1,14 +1,12 @@
-import React from 'react';
-import logo from './logo.svg';
-import ArcadeRatingCardSection from './pages/home/arcadeRatingCardSection'
-import HeroSection from './pages/home/heroSection'
-import { Routes } from 'react-router-dom';
-import AppRoutes from './routes/routes';
+import React from "react";
+import logo from "./logo.svg";
+import ArcadeRatingCardSection from "./pages/home/arcadeRatingCardSection";
+import HeroSection from "./pages/home/heroSection";
+import { Routes } from "react-router-dom";
+import AppRoutes from "./routes/routes";
 
 function App() {
-  return (
-    <AppRoutes />
-  );
+  return <AppRoutes />;
 }
 
 export default App;
