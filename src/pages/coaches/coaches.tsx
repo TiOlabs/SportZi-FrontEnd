@@ -8,6 +8,7 @@ const Coaches = () => {
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3" }}>
             <HeroSection />
             <CoachCardSection />
+
         </div>
         </> 
      );
