@@ -2,8 +2,23 @@ import { Button, Col, Row, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import { md } from "node-forge";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import { useEffect, useState } from "react";
+import { CoachAssignDetails } from "../../types";
 
 const CoachCardSection = () => {
+  const [coachAssignDetails, setCoachAssignDetails] = useState<
+    CoachAssignDetails[]
+  >([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
+      const data = await res.json();
+      setCoachAssignDetails(data);
+      console.log(data);
+    }
+    fetchData();
+  }, []);
   const style: React.CSSProperties = {
     background: "#0092ff",
     padding: "8px 0",
@@ -43,6 +58,7 @@ const CoachCardSection = () => {
               background: "rgba(27, 93, 183, 0.07)",
             }}
           >
+            {" "}
             <Row
               style={{
                 width: "100%",
@@ -52,10 +68,102 @@ const CoachCardSection = () => {
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
+              }}
+            >
+              <Typography
+                style={{
+                  color: " #0E458E",
+                  fontSize: md ? "30px" : "20px",
+                  fontFamily: "Kanit",
+                }}
+              >
+                Our Best Coaches
+              </Typography>
+              <Button
+                style={{
+                  position: "absolute",
+                  right: "0",
+                  top: "35%",
+                  color: "#1B5DB7",
+                  background: "none",
+                  border: "none",
+                  fontFamily: "Kanit",
+                  fontSize: "18px",
+                }}
+              >
+                See More
+              </Button>
+            </Row>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <Row
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "450px",
+                  overflowY: "scroll",
+                  flexWrap: "nowrap",
+                }}
+              >{coachAssignDetails.map((coachAssignDetail: CoachAssignDetails) => (
+                <Col
+                  lg={{ span: 5 }}
+                  md={{ span: 8 }}
+                  sm={{ span: 12 }}
+                  xs={{ span: 24 }}
+                >
+                  <CoachCard
+                    rate={coachAssignDetail.rate}
+                    duration={coachAssignDetail.duration}
+                    description={coachAssignDetail.description}
+                  />
+                </Col>
+              ))}
+                
+                
+                  
+                
+              </Row>
+            </div>
+          </Row>
+        </Col>
+        
+        {/* <Col
+          xs={{ span: 24 }}
+          sm={{ span: 24 }}
+          md={{ span: 24 }}
+          lg={{ span: 24 }}
+          xl={{ span: 24 }}
+        >
+          <Row
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              background: "rgba(27, 93, 183, 0.07)",
+            }}
+          >
+            <Row
+              style={{
+                width: "100%",
+                alignItems: "center",
+                textAlign: "center",
+              
+                position: "relative",
+                display: "flex",
+                justifyContent: "center",
                
               }}
             >
-              {/* <h1 style={{ color: " #0E458E" }}>Our Best Coaches</h1> */}
               <Typography
                 style={{
                   color: " #0E458E",
@@ -80,24 +188,6 @@ const CoachCardSection = () => {
               >
                 See More
               </Button>
-
-              {/* <button
-                  style={{
-                    color: "#1B5DB7",
-                    background: "none",
-                    border: "none",
-                    fontFamily: "Kanit",
-                    fontSize: "18px",
-                    justifyContent: "right",
-                    alignItems: "right",
-                    position: "absolute",
-                    right: "0",
-                    top: "35%",
-                   
-                  }}
-                >
-                  See More
-                </button> */}
             </Row>
 
             <div
@@ -240,7 +330,7 @@ const CoachCardSection = () => {
               </Row>
             </div>
           </Row>
-        </Col>
+        </Col> */}
       </Row>
     </>
   );
