@@ -160,7 +160,6 @@ const CoachCardSection = () => {
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
-               
               }}
             >
               <Typography
@@ -168,7 +167,6 @@ const CoachCardSection = () => {
                   color: " #0E458E",
                   fontSize: md ? "30px" : "20px",
                   fontFamily: "Kanit",
-                 
                 }}
               >
                 Our Best Coaches

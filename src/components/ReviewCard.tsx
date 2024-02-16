@@ -7,7 +7,8 @@ const ReviewCard = () => {
     <>
       <Row
         style={{
-          width: "330px",
+          minWidth: "330px",
+          maxWidth: "330px",
           height: "200px",
           backgroundColor: "#fff",
           marginTop: "30px",
