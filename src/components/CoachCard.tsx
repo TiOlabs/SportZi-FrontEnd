@@ -15,6 +15,8 @@ const CoachCard = (props: any) => {
       cloudName,
     },
   });
+  console.log("props image hiiiiii", props.coach_image);
+  console.log("props", props);
   return (
     <>
       <div className="mainCard">
@@ -87,13 +89,16 @@ const CoachCard = (props: any) => {
           </div>
         </div>
         <div className="coachpicture">
-          {" "}
-          <AdvancedImage
+        
+          <AdvancedImage style={{width: "80px", height: "80px", borderRadius: "50%"}}
             cldImg={
-              cld.image(props.discount_image)
+              cld.image(props.coach_image)
               // .resize(Resize.crop().width(200).height(200).gravity('auto'))
               // .resize(Resize.scale().width(200).height(200))
-            }
+            } 
+            // border-radius: 50%;
+            // width: 80px;
+            // height: 80px;
           />
         </div>
       </div>
