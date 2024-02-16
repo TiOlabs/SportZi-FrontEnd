@@ -8,6 +8,8 @@ import profileBackground from "../../assents/profileBackground.png";
 import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
+import AppFooter from "../../components/footer";
+import Navbar from "../../components/navbar";
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
@@ -19,6 +21,7 @@ const CoachProfileUser = () => {
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
+      <Navbar />
       <Row>
         <Col
           xs={24}
@@ -674,6 +677,8 @@ const CoachProfileUser = () => {
           </Row>
         </Col>
       </Row>
+      <Row style={{ height: "50px" }}></Row>
+      <AppFooter />
     </>
   );
 };
