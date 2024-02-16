@@ -899,17 +899,17 @@ const CoachProfile = () => {
 
       <Row
         style={{
-          width: "100%",
-          height: "650px",
+          minWidth: "100%",
+          minHeight: "650px",
+          height: "max-content",
           marginTop: "100px",
+          backgroundImage: `url(${reviewBacground})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <Col
           style={{
-            backgroundImage: `url(${reviewBacground})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            height: "650px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -933,8 +933,10 @@ const CoachProfile = () => {
           </Typography>
           <Row
             style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
               width: "100%",
-              height: "300px",
             }}
           >
             <Col
@@ -984,8 +986,10 @@ const CoachProfile = () => {
           </Row>
           <Row
             style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
               width: "100%",
-              height: "300px",
             }}
           >
             <Col
