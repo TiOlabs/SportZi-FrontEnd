@@ -5,6 +5,7 @@ import { AdvancedImage, placeholder, responsive } from "@cloudinary/react";
 import { useState } from "react";
 import { Cloudinary, CloudinaryImage } from "@cloudinary/url-gen";
 import axios from "axios";
+import AppFooter from "../../components/footer";
 
 const CoachAssignDetailsForm = () => {
   const [duration, setDuration] = useState("");
@@ -104,8 +105,8 @@ const CoachAssignDetailsForm = () => {
         />
       </Form.Item>
       <Form.Item
-        name="discription"
-        label="Add Discription About Discount"
+        name="description"
+        label="Add Discription About you"
         rules={[
           {
             required: true,
@@ -115,7 +116,7 @@ const CoachAssignDetailsForm = () => {
       >
         <TextArea
           rows={4}
-          placeholder="Discription"
+          placeholder="Description"
           onChange={(e) => setDescription(e.target.value)}
         />
       </Form.Item>
@@ -136,6 +137,7 @@ const CoachAssignDetailsForm = () => {
           Submit
         </Button>
       </Form.Item>
+      <AppFooter/>
     </Form>
   );
 };

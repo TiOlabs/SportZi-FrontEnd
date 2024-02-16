@@ -4,6 +4,7 @@ import { Row, Col, Form, Button, Select, Input, InputNumber } from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
+import AppFooter from "../../components/footer";
 const { Option } = Select;
 
 const BookingForm = () => {
@@ -124,7 +125,7 @@ const BookingForm = () => {
                   flexDirection: "column",
                   rowGap: "20px",
                   width: "80%",
-                  height: "80%",
+                  height: "600px",
                   justifyContent: "center",
                   alignItems: "center",
                   alignSelf: "center",
@@ -136,42 +137,85 @@ const BookingForm = () => {
                   onClick={() => setTime("9")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  9
+                  9.00-10.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("12")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  12
+                  10.00-11.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("13")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  13
+                  11.00-12.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("14")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  14
+                  12.00-13.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("15")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  15
+                  13.00-14.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("16")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  16
+                  14.00-15.00
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTime("17")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  15.00-16.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("18")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  16.00-17.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("19")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  17.00-18.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("20")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  18.00-19.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("21")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  19.00-20.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("22")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  20.00-21.00
                 </button>
               </div>
             </div>
@@ -223,9 +267,9 @@ const BookingForm = () => {
                 <InputNumber
                   style={{
                     height: "50px",
-                    width:"100%",
+                    width: "100%",
                     display: "flex",
-                   alignItems: "center",
+                    alignItems: "center",
                   }}
                   onChange={(value) => setPcount(value?.toString() || "")}
                 />
@@ -287,6 +331,9 @@ const BookingForm = () => {
           </Col>
         </Row>
       </Form>
+      <div style={{ marginTop: "40px" }}>
+        <AppFooter />
+      </div>
     </div>
   );
 };

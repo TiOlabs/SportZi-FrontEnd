@@ -2,6 +2,7 @@ import Navbar2 from "../../components/NavBar2";
 import Navbar from "../../components/navbar";
 import ArcadeCardSection from "./arcadeCardSection";
 import HeroSection from "./heroSection";
+import AppFooter from "../../components/footer";
 
 const Arcades = () => {
     return ( 
@@ -10,6 +11,7 @@ const Arcades = () => {
           
               <HeroSection />
               <ArcadeCardSection />
+              <AppFooter/>
          </div>
          </>
      );

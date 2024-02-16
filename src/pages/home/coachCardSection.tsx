@@ -126,6 +126,7 @@ const CoachCardSection = () => {
                         rate={coachAssignDetail.rate}
                         duration={coachAssignDetail.duration}
                         description={coachAssignDetail.description}
+                        coach_image={coachAssignDetail.coach_image}
                       />
                     </Col>
                   )
@@ -160,7 +161,6 @@ const CoachCardSection = () => {
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
-               
               }}
             >
               <Typography
@@ -168,7 +168,6 @@ const CoachCardSection = () => {
                   color: " #0E458E",
                   fontSize: md ? "30px" : "20px",
                   fontFamily: "Kanit",
-                 
                 }}
               >
                 Our Best Coaches

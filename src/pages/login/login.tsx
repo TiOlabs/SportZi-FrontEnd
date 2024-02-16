@@ -1,6 +1,9 @@
+import AppFooter from "../../components/footer";
 const Login = () => {
     return ( 
-        <></>
+        <>
+        <AppFooter/>
+        </>
      );
 }
  

@@ -9,4 +9,5 @@ export interface CoachAssignDetails {
   duration: String;
   state: String;
   rate: string;
+  coach_image: String;
 }
