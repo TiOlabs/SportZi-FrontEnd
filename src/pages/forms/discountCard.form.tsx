@@ -14,6 +14,7 @@ import { Cloudinary, CloudinaryImage } from "@cloudinary/url-gen";
 import CloudinaryUploadWidget from "../../components/cloudinaryUploadWidget";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
+import AppFooter from "../../components/footer";  
 const DiscountCardForm = () => {
   const [discount, setDiscount] = useState("");
   const [description, setDescription] = useState("");
@@ -146,7 +147,9 @@ const DiscountCardForm = () => {
           Create
         </Button>
       </Form.Item>
+      <AppFooter/>  
     </Form>
+   
   );
 };
 

@@ -4,6 +4,7 @@ import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
 import { Image } from "antd";
+import AppFooter from "../../components/footer";
 
 import PhotoCollage from "../../components/photoCollage";
 const PlayerProfileUser = () => {
@@ -345,6 +346,7 @@ const PlayerProfileUser = () => {
         }}
       ></div>
       <PhotoCollage />
+      <AppFooter />
     </>
   );
 };

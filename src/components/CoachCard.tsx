@@ -1,5 +1,5 @@
 import { Col, Row, Button, Flex } from "antd";
-import "./CoachCard.css";
+import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
 import { useState } from "react";

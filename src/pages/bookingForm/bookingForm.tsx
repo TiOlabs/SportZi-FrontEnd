@@ -4,6 +4,7 @@ import { Row, Col, Form, Button, Select, Input, InputNumber } from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
+import AppFooter from "../../components/footer";
 const { Option } = Select;
 
 const BookingForm = () => {
@@ -287,6 +288,7 @@ const BookingForm = () => {
           </Col>
         </Row>
       </Form>
+      <AppFooter/>
     </div>
   );
 };

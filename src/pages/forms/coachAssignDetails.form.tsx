@@ -5,6 +5,7 @@ import { AdvancedImage, placeholder, responsive } from "@cloudinary/react";
 import { useState } from "react";
 import { Cloudinary, CloudinaryImage } from "@cloudinary/url-gen";
 import axios from "axios";
+import AppFooter from "../../components/footer";
 
 const CoachAssignDetailsForm = () => {
   const [duration, setDuration] = useState("");
@@ -136,6 +137,7 @@ const CoachAssignDetailsForm = () => {
           Submit
         </Button>
       </Form.Item>
+      <AppFooter/>
     </Form>
   );
 };

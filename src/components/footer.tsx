@@ -197,7 +197,7 @@ const AppFooter = () => {
                 </div>
               </a>
 
-              <a href="/Home" style={{ color: "#646464" }}>
+              <a href="/" style={{ color: "#646464" }}>
                 <div
                   style={{
                     fontSize: 14,
@@ -395,7 +395,7 @@ const AppFooter = () => {
               >
                 Follow us on
               </div>
-              <div style={{color:"#858484"}}>
+              <div style={{ color: "#858484" }}>
                 <FacebookFilled /> &emsp;
                 <GoogleOutlined /> &emsp;
                 <LinkedinFilled /> &emsp;
@@ -415,10 +415,32 @@ const AppFooter = () => {
         <Row>
           <Col xs={0} lg={10}></Col>
           <Col xs={12} lg={10}>
-            <div style={{display:"flex",alignItems:"right",justifyContent: "center",fontSize:14,color:"#818487",fontFamily:"kanit,sans-serif"}}>privacy policy | copyrights</div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "right",
+                justifyContent: "center",
+                fontSize: 14,
+                color: "#818487",
+                fontFamily: "kanit,sans-serif",
+              }}
+            >
+              privacy policy | copyrights
+            </div>
           </Col>
           <Col xs={12} lg={4}>
-            <div  style={{display:"flex",alignItems:"right",justifyContent: "center",fontSize:14,color:"#818487",fontFamily:"kanit,sans-serif"}}>@powerd by batch21</div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "right",
+                justifyContent: "center",
+                fontSize: 14,
+                color: "#818487",
+                fontFamily: "kanit,sans-serif",
+              }}
+            >
+              @powerd by batch21
+            </div>
           </Col>
         </Row>
       </Col>
