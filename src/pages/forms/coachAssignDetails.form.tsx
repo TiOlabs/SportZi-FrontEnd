@@ -105,8 +105,8 @@ const CoachAssignDetailsForm = () => {
         />
       </Form.Item>
       <Form.Item
-        name="discription"
-        label="Add Discription About Discount"
+        name="description"
+        label="Add Discription About you"
         rules={[
           {
             required: true,
@@ -116,7 +116,7 @@ const CoachAssignDetailsForm = () => {
       >
         <TextArea
           rows={4}
-          placeholder="Discription"
+          placeholder="Description"
           onChange={(e) => setDescription(e.target.value)}
         />
       </Form.Item>
