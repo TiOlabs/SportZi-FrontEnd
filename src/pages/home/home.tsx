@@ -20,7 +20,6 @@ const Home = () => {
        
 
             <Navbar/>
-
             <HeroSection/>
             <CoachCardSection/>
             <DiscoutCardsSection/>
