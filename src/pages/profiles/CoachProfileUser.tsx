@@ -1,4 +1,14 @@
-import { Button, Col, Grid, List, Row, Typography } from "antd";
+import {
+  Button,
+  Col,
+  Flex,
+  Grid,
+  Input,
+  List,
+  Modal,
+  Row,
+  Typography,
+} from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import profilePic from "../../assents/pro.png";
@@ -10,10 +20,29 @@ import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
 import Navbar from "../../components/navbar";
+import { useState } from "react";
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
+  const { TextArea } = Input;
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    console.log("Change:", e.target.value);
+  };
+
+  const [ismodelopen, setismodelopen] = useState(false);
+
+  const showModal = () => {
+    setismodelopen(true);
+  };
+  const handleOk = () => {
+    setismodelopen(false);
+  };
+  const handleCancel = () => {
+    setismodelopen(false);
+  };
 
   return (
     <>
@@ -86,7 +115,7 @@ const CoachProfileUser = () => {
               style={{
                 position: "absolute",
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -106,6 +135,7 @@ const CoachProfileUser = () => {
                   fontWeight: "300",
                   lineHeight: "normal",
                   textAlign: "center",
+                  marginBottom: "40px",
 
                   fontSize: lg ? "18px" : "14px",
                 }}
@@ -117,6 +147,17 @@ const CoachProfileUser = () => {
                 rugby league was halfback and I had the honour of representing
                 QLD in the State Of Origin
               </Typography>
+              <Button
+                style={{
+                  backgroundColor: "#5587CC",
+                  fontFamily: "kanit",
+                  color: "#fff",
+                  borderRadius: "3px",
+                }}
+              >
+                {" "}
+                Request for Booking
+              </Button>
             </Col>
           </Row>
         </Col>
@@ -542,7 +583,7 @@ const CoachProfileUser = () => {
       <Row
         style={{
           width: "100%",
-          height: "650px",
+          minHeight: "650px",
           marginTop: "100px",
         }}
       >
@@ -551,10 +592,11 @@ const CoachProfileUser = () => {
             backgroundImage: `url(${reviewBacground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            height: "650px",
+            minHeight: "650px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            paddingBottom: "20px",
           }}
           xs={24}
           sm={24}
@@ -573,10 +615,14 @@ const CoachProfileUser = () => {
           >
             Reviews
           </Typography>
+
           <Row
             style={{
               width: "100%",
-              height: "300px",
+              minHeight: "300px",
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
             }}
           >
             <Col
@@ -627,7 +673,11 @@ const CoachProfileUser = () => {
           <Row
             style={{
               width: "100%",
-              height: "300px",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
             }}
           >
             <Col
@@ -674,11 +724,79 @@ const CoachProfileUser = () => {
               {" "}
               <ReviewCard />
             </Col>
+          </Row>
+          <Row>
+            {" "}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: "90%",
+              }}
+            >
+              {" "}
+              <Button
+                style={{
+                  backgroundColor: "#5587CC",
+                  fontFamily: "kanit",
+                  color: "#fff",
+                  borderRadius: "3px",
+                }}
+                onClick={showModal}
+              >
+                {" "}
+                Request for Booking
+              </Button>
+            </div>
           </Row>
         </Col>
       </Row>
       <Row style={{ height: "50px" }}></Row>
       <AppFooter />
+
+      <Modal
+        title="Give feedback "
+        open={ismodelopen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#0E458E",
+              border: "1px solid #0E458E",
+              fontFamily: "kanit",
+            }}
+            key="back"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>,
+          <Button
+            style={{
+              backgroundColor: "#5587CC",
+              fontFamily: "kanit",
+              color: "#fff",
+              borderRadius: "3px",
+            }}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
+            Give Reveiw
+          </Button>,
+        ]}
+      >
+        <Flex vertical gap={32}>
+          <TextArea
+            showCount
+            maxLength={60}
+            onChange={onChange}
+            placeholder="Write your feedback"
+            style={{ height: 120, resize: "none", marginBottom: "20px" }}
+          />
+        </Flex>
+      </Modal>
     </>
   );
 };
