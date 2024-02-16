@@ -906,6 +906,7 @@ const CoachProfile = () => {
           backgroundImage: `url(${reviewBacground})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
+          marginBottom: "20px",
         }}
       >
         <Col
