@@ -12,6 +12,7 @@ import { useState } from "react";
 import CoachReqestList from "../../components/CoachRequestList";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import ReviewCard from "../../components/ReviewCard";
+import AppFooter from "../../components/footer";
 const acceptedMeetings = [
   <CoachAccepteLst />,
   <CoachAccepteLst />,
@@ -1034,6 +1035,7 @@ const CoachProfile = () => {
             </Col>
           </Row>
         </Col>
+        <AppFooter/>
       </Row>
     </>
   );

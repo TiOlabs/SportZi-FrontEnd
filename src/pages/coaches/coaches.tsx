@@ -1,6 +1,7 @@
 import Navbar from "../../components/navbar";
 import CoachCardSection from "./coachCardSection";
 import HeroSection from "./heroSection";
+import AppFooter from "../../components/footer";
 
 const Coaches = () => {
     return (
@@ -10,6 +11,7 @@ const Coaches = () => {
             <CoachCardSection />
 
         </div>
+        <AppFooter/>
         </> 
      );
 }
