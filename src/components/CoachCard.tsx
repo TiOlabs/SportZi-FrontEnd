@@ -1,4 +1,4 @@
-import { Col, Row, Button, Flex } from "antd";
+import { Col, Row, Button, Flex, Skeleton } from "antd";
 import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Row, Col, Form, Button, Select, Input, InputNumber } from "antd";
+import { Row, Col, Form, Button, Select, Input, InputNumber,message } from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
@@ -54,6 +54,24 @@ const BookingForm = () => {
       console.log("Error");
       console.log(err);
     }
+  };
+  const [messageApi, contextHolder] = message.useMessage();
+  const key = 'updatable';
+
+  const openMessage = () => {
+    messageApi.open({
+      key,
+      type: 'loading',
+      content: 'Loading...',
+    });
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type: 'success',
+        content: 'Booking Successfull!',
+        duration: 2,
+      });
+    }, 1000);
   };
 
   return (
@@ -313,10 +331,11 @@ const BookingForm = () => {
                 justifyContent: "center",
                 marginTop: "0%",
               }}
-            >
+            >{contextHolder}
               <Button
                 type="primary"
                 htmlType="submit"
+                onClick={openMessage}
                 style={{
                   width: "90%",
                   height: "50px",

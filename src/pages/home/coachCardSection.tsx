@@ -1,4 +1,4 @@
-import { Button, Col, Row, Typography } from "antd";
+import { Button, Col, Row, Skeleton, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import { md } from "node-forge";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
@@ -126,7 +126,7 @@ const CoachCardSection = () => {
                       sm={{ span: 12 }}
                       xs={{ span: 24 }}
                     >
-                      <CoachCard
+                      <CoachCard 
                         rate={coachAssignDetail.rate}
                         duration={coachAssignDetail.duration}
                         description={coachAssignDetail.description}
