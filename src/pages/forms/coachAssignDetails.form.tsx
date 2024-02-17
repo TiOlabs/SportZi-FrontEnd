@@ -1,4 +1,4 @@
-import { Button, Form, InputNumber } from "antd";
+import { Button, Form, InputNumber,message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "../../components/cloudinaryUploadWidget";
 import { AdvancedImage, placeholder, responsive } from "@cloudinary/react";
@@ -24,6 +24,24 @@ const CoachAssignDetailsForm = () => {
     folder: "Coaches-SportZi", //upload files to the specified folder
     resize: "fill",
   });
+  const [messageApi, contextHolder] = message.useMessage();
+  const key = 'updatable';
+
+  const openMessage = () => {
+    messageApi.open({
+      key,
+      type: 'loading',
+      content: 'Loading...',
+    });
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type: 'success',
+        content: 'Loaded!',
+        duration: 2,
+      });
+    }, 1000);
+  };
   const cld = new Cloudinary({
     cloud: {
       cloudName,
@@ -133,7 +151,8 @@ const CoachAssignDetailsForm = () => {
         />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+      {contextHolder}
+        <Button type="primary" htmlType="submit" onClick={openMessage}>
           Submit
         </Button>
       </Form.Item>
