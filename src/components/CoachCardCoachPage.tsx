@@ -1,22 +1,11 @@
-import { Col, Row, Button, Flex, Skeleton } from "antd";
+import { Col, Row, Button, Flex } from "antd";
 import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
-import { useState } from "react";
-import { Cloudinary } from "@cloudinary/url-gen";
-import { AdvancedImage } from "@cloudinary/react";
 
-const CoachCard = (props: any) => {
+const CoachCardCoachPage = () => {
   setTwoToneColor("blue");
   getTwoToneColor();
-  const [cloudName] = useState("dle0txcgt");
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName,
-    },
-  });
-  console.log("props image hiiiiii", props.coach_image);
-  console.log("props", props);
   return (
     <>
       <div className="mainCard">
@@ -49,7 +38,7 @@ const CoachCard = (props: any) => {
               />
             </div>
             <div>
-              <p className="coachDiscription"> {props.description} </p>
+              <p className="coachDiscription"> discription about coacoach </p>
             </div>
           </div>
           <div
@@ -69,7 +58,7 @@ const CoachCard = (props: any) => {
                   fontWeight: "500",
                 }}
               >
-                {props.rate}
+                100$
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
@@ -88,22 +77,10 @@ const CoachCard = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="coachpicture">
-        
-          <AdvancedImage style={{width: "80px", height: "80px", borderRadius: "50%"}}
-            cldImg={
-              cld.image(props.coach_image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            } 
-            // border-radius: 50%;
-            // width: 80px;
-            // height: 80px;
-          />
-        </div>
+        <div className="coachpicture"></div>
       </div>
     </>
   );
 };
 
-export default CoachCard;
+export default CoachCardCoachPage;

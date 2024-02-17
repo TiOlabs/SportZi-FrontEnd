@@ -1,59 +1,56 @@
+import {
+  Button,
+  Col,
+  Flex,
+  Grid,
+  Input,
+  List,
+  Modal,
+  Row,
+  Typography,
+} from "antd";
+import PhotoCollage from "../../components/photoCollage";
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
-import { Button, Col, Grid, List, Row, Typography } from "antd";
+import profilePic from "../../assents/pro.png";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
-import profilePic from "../../assents/pro.png";
+
 import { Image } from "antd";
-
-import PhotoCollage from "../../components/photoCollage";
-import AddPhotoButton from "../../components/addPhotoButton";
-import CoachAccepteLst from "../../components/CoachAcceptedList";
-import { useState } from "react";
-import CoachReqestList from "../../components/CoachRequestList";
-import reviewBacground from "../../assents/ReviewBackground.png";
 import ReviewCard from "../../components/ReviewCard";
+import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
-const acceptedMeetings = [
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-];
+import Navbar from "../../components/navbar";
+import { useState } from "react";
 
-const RequestedMeetings = [
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-];
-
-const CoachProfile = () => {
+const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-
-  const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
-  const [showMore, setShowMore] = useState(true);
-
-  const toggleItems = () => {
-    setShowMore(!showMore);
-    if (showMore) {
-      setNumberOfItemsShown(acceptedMeetings.length); // Show all items
-    } else {
-      setNumberOfItemsShown(4); // Show only the first 5 items
-    }
+  const { TextArea } = Input;
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    console.log("Change:", e.target.value);
   };
+
+  const [ismodelopen, setismodelopen] = useState(false);
+
+  const showModal = () => {
+    setismodelopen(true);
+  };
+  const handleOk = () => {
+    setismodelopen(false);
+  };
+  const handleCancel = () => {
+    setismodelopen(false);
+  };
+
   return (
     <>
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
+      <Navbar />
       <Row>
         <Col
           xs={24}
@@ -118,7 +115,7 @@ const CoachProfile = () => {
               style={{
                 position: "absolute",
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -138,6 +135,7 @@ const CoachProfile = () => {
                   fontWeight: "300",
                   lineHeight: "normal",
                   textAlign: "center",
+                  marginBottom: "40px",
 
                   fontSize: lg ? "18px" : "14px",
                 }}
@@ -149,6 +147,17 @@ const CoachProfile = () => {
                 rugby league was halfback and I had the honour of representing
                 QLD in the State Of Origin
               </Typography>
+              <Button
+                style={{
+                  backgroundColor: "#5587CC",
+                  fontFamily: "kanit",
+                  color: "#fff",
+                  borderRadius: "3px",
+                }}
+              >
+                {" "}
+                Request for Booking
+              </Button>
             </Col>
           </Row>
         </Col>
@@ -568,352 +577,26 @@ const CoachProfile = () => {
         }}
       >
         {" "}
-        <AddPhotoButton />{" "}
       </div>
       <PhotoCollage />
 
       <Row
         style={{
           width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "60px",
-        }}
-      >
-        <Typography
-          style={{
-            alignItems: "center",
-            color: "#0E458E",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: lg ? "32px" : "24px",
-            paddingBottom: "10px",
-            marginBottom: "0px",
-          }}
-        >
-          {" "}
-          Available Meetings For You
-        </Typography>
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Row
-          style={{
-            borderRadius: "3px 3px 0px 0px",
-            width: "90%",
-            height: "97px",
-            display: "flex",
-            justifyContent: "center",
-            backgroundColor: "#EFF4FA",
-            alignItems: "center",
-          }}
-        >
-          <Col
-            style={{
-              color: "#000",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "28px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            xs={8}
-            sm={8}
-            md={8}
-            lg={6}
-            xl={6}
-          >
-            Coach
-          </Col>
-          <Col
-            style={{
-              color: "#000",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "28px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            xs={8}
-            sm={8}
-            md={8}
-            lg={6}
-            xl={6}
-          >
-            Date
-          </Col>
-          <Col
-            style={{
-              color: "#000",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "28px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            xs={8}
-            sm={8}
-            md={8}
-            lg={6}
-            xl={6}
-          >
-            Time
-          </Col>
-          {lg && (
-            <Col
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontWeight: "400",
-                fontSize: "28px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              xs={8}
-              sm={8}
-              md={8}
-              lg={6}
-              xl={6}
-            >
-              Venue
-            </Col>
-          )}
-        </Row>
-        {acceptedMeetings.slice(0, numberOfItemsShown).map((request, index) => (
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-            key={index}
-          >
-            {request}
-          </div>
-        ))}
-
-        {showMore ? (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See More
-          </Button>
-        ) : (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See Less
-          </Button>
-        )}
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "60px",
-        }}
-      >
-        <Typography
-          style={{
-            alignItems: "center",
-            color: "#0E458E",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: lg ? "32px" : "24px",
-            paddingBottom: "10px",
-            marginBottom: "0px",
-          }}
-        >
-          {" "}
-          Requests For Coaching
-        </Typography>
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Row
-          style={{
-            borderRadius: "3px 3px 0px 0px",
-            width: "90%",
-            height: "97px",
-            display: "flex",
-            justifyContent: "center",
-            backgroundColor: "#EFF4FA",
-            alignItems: "center",
-          }}
-        >
-          <Col
-            style={{
-              color: "#000",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: md ? "28px" : "20px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            xs={8}
-            sm={8}
-            md={8}
-            lg={6}
-            xl={6}
-          >
-            Coach
-          </Col>
-          <Col
-            style={{
-              color: "#000",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: md ? "28px" : "20px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            xs={8}
-            sm={8}
-            md={8}
-            lg={6}
-            xl={6}
-          >
-            Date
-          </Col>
-          {lg && (
-            <Col
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontWeight: "400",
-                fontSize: "28px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              xs={8}
-              sm={8}
-              md={8}
-              lg={6}
-              xl={6}
-            ></Col>
-          )}
-          {sm && (
-            <Col
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontWeight: "400",
-                fontSize: "28px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              xs={8}
-              sm={8}
-              md={8}
-              lg={6}
-              xl={6}
-            ></Col>
-          )}
-        </Row>
-        {RequestedMeetings.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
-
-        {showMore ? (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See More
-          </Button>
-        ) : (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See Less
-          </Button>
-        )}
-      </Row>
-
-      <Row
-        style={{
-          minWidth: "100%",
           minHeight: "650px",
-          height: "max-content",
           marginTop: "100px",
-          backgroundImage: `url(${reviewBacground})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
         }}
       >
         <Col
           style={{
+            backgroundImage: `url(${reviewBacground})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            minHeight: "650px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            paddingBottom: "20px",
           }}
           xs={24}
           sm={24}
@@ -932,12 +615,14 @@ const CoachProfile = () => {
           >
             Reviews
           </Typography>
+
           <Row
             style={{
+              width: "100%",
+              minHeight: "300px",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
+              alignContent: "center",
             }}
           >
             <Col
@@ -987,10 +672,12 @@ const CoachProfile = () => {
           </Row>
           <Row
             style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
+              alignContent: "center",
             }}
           >
             <Col
@@ -1037,12 +724,80 @@ const CoachProfile = () => {
               {" "}
               <ReviewCard />
             </Col>
+          </Row>
+          <Row>
+            {" "}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: "90%",
+              }}
+            >
+              {" "}
+              <Button
+                style={{
+                  backgroundColor: "#5587CC",
+                  fontFamily: "kanit",
+                  color: "#fff",
+                  borderRadius: "3px",
+                }}
+                onClick={showModal}
+              >
+                {" "}
+                Request for Booking
+              </Button>
+            </div>
           </Row>
         </Col>
-        <AppFooter/>
       </Row>
+      <Row style={{ height: "50px" }}></Row>
+      <AppFooter />
+
+      <Modal
+        title="Give feedback "
+        open={ismodelopen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#0E458E",
+              border: "1px solid #0E458E",
+              fontFamily: "kanit",
+            }}
+            key="back"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>,
+          <Button
+            style={{
+              backgroundColor: "#5587CC",
+              fontFamily: "kanit",
+              color: "#fff",
+              borderRadius: "3px",
+            }}
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+          >
+            Give Reveiw
+          </Button>,
+        ]}
+      >
+        <Flex vertical gap={32}>
+          <TextArea
+            showCount
+            maxLength={60}
+            onChange={onChange}
+            placeholder="Write your feedback"
+            style={{ height: 120, resize: "none", marginBottom: "20px" }}
+          />
+        </Flex>
+      </Modal>
     </>
   );
 };
-
-export default CoachProfile;
+export default CoachProfileUser;

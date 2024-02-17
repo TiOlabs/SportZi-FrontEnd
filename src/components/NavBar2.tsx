@@ -1,14 +1,13 @@
-
 import { CloseCircleOutlined, EditOutlined, LoginOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
-
-const Navbar: React.FC = () => {
+import logoBlack from "../assets/logoBlack.png";
+import { none } from "@cloudinary/url-gen/qualifiers/fontHinting";
+const Navbar2: React.FC = () => {
   const [visible, setVisible] = useState(false);
 
   const handleToggle = () => {
@@ -232,7 +231,7 @@ const Navbar: React.FC = () => {
         <div className="navBarLogo">
           <Link to="/">
             <img
-              src={logo}
+              src={logoBlack}
               alt="Original Image"
               style={{ width: "40px", height: "40px", marginTop: "10px" }}
             />
@@ -245,7 +244,7 @@ const Navbar: React.FC = () => {
             onClick={handleToggle}
             style={{
               backgroundColor: "none",
-              color: "white",
+              color: "#1B5DB7",
               fontSize: "16px",
               fontWeight: "bold",
               fontStyle: "normal",
@@ -436,7 +435,7 @@ const Navbar: React.FC = () => {
                 justifyContent: "center",
                 display: "flex",
                 backgroundColor:"#1B5DB7",
-                color:"white",
+                color:"#0E458E",
               }}
               onMouseEnter={() => setLogOutButtonHovered(true)}
               onMouseLeave={() => setLogOutButtonHovered(false)}
@@ -461,7 +460,7 @@ const Navbar: React.FC = () => {
             <Link
               to="/"
               style={{
-                color: "white",
+                color: "#0E458E",
                 textDecoration: "none",
                 position: "relative",
                 display: "inline-block",
@@ -477,7 +476,7 @@ const Navbar: React.FC = () => {
                   height: "3px",
                   bottom: "0",
                   left: homeUnderlineStyle.left,
-                  backgroundColor: "white",
+                  backgroundColor: "#0E458E",
                   transition: homeUnderlineStyle.transition,
                 }}
               ></span>
@@ -487,7 +486,7 @@ const Navbar: React.FC = () => {
             <Link
               to="/coaches"
               style={{
-                color: "white",
+                color: "#0E458E",
                 textDecoration: "none",
                 position: "relative",
                 display: "inline-block",
@@ -503,7 +502,7 @@ const Navbar: React.FC = () => {
                   height: "3px",
                   bottom: "0",
                   left: coachesUnderlineStyle.left,
-                  backgroundColor: "white",
+                  backgroundColor: "#0E458E",
                   transition: coachesUnderlineStyle.transition,
                 }}
               ></span>
@@ -514,7 +513,7 @@ const Navbar: React.FC = () => {
             <Link
               to="/arcades"
               style={{
-                color: "white",
+                color: "#0E458E",
                 textDecoration: "none",
                 position: "relative",
                 display: "inline-block",
@@ -530,7 +529,7 @@ const Navbar: React.FC = () => {
                   height: "3px",
                   bottom: "0",
                   left: arcadeUnderlineStyle.left,
-                  backgroundColor: "white",
+                  backgroundColor: "#0E458E",
                   transition: arcadeUnderlineStyle.transition,
                 }}
               ></span>
@@ -540,7 +539,7 @@ const Navbar: React.FC = () => {
             <Link
               to="/about"
               style={{
-                color: "white",
+                color: "#0E458E",
                 textDecoration: "none",
                 position: "relative",
                 display: "inline-block",
@@ -556,7 +555,7 @@ const Navbar: React.FC = () => {
                   height: "3px",
                   bottom: "0",
                   left: aboutUnderlineStyle.left,
-                  backgroundColor: "white",
+                  backgroundColor: "#0E458E",
                   transition: aboutUnderlineStyle.transition,
                 }}
               ></span>
@@ -593,5 +592,5 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export default Navbar2;
 

@@ -8,14 +8,17 @@ const DiscoutCardsSection = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await fetch("http://localhost:8000/api/getdiscoutcardvalues");
-      const data = await res.json();
-      setDiscounts(data);
-
-      console.log(data);
+    try{
+      const fetchData = async () => {
+        const res = await fetch("http://localhost:8000/api/getdiscoutcardvalues");
+        const data = await res.json();
+        setDiscounts(data);
+      }
+      fetchData();
     }
-    fetchData();
+    catch(e){
+      console.log(e);
+    }
   }, []);
   console.log(discounts);
   return (
@@ -40,7 +43,7 @@ const DiscoutCardsSection = () => {
           overflow: "auto",
         }}
       >
-        {discounts.map((discount: Discount) => (
+        {discounts?.map((discount: Discount) => (
           <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
             <DiscountCard
               discount_percentage={discount.discount_percentage}

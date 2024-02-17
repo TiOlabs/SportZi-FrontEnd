@@ -10,21 +10,22 @@ const Home = () => {
 
     return (
 
+
+
         <>
 
        
             
 
        
-            <Navbar/>
 
+            <Navbar/>
             <HeroSection/>
             <CoachCardSection/>
             <DiscoutCardsSection/>
             <MapSction/>
             <ArcadeRatingCardsSection/>
             
-     
         <AppFooter/>
         </>
     );

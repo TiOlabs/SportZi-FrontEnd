@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Col, Row, Typography } from "antd";
 import { Button, Flex } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Modal, Upload } from "antd";
@@ -146,11 +146,12 @@ const CoachRequstRow = () => {
             >
               Warning
             </p>
-            <p>
+            <Typography>
+              {" "}
               Are you sure you want to cancel this meeting? Please note that
               cancellations made within 24 hours of the meeting may incur
               charges.
-            </p>
+            </Typography>
           </Modal>
         </Col>
       </Row>

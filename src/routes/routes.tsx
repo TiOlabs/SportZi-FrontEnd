@@ -11,6 +11,14 @@ import SignupPlayer from "../pages/signup/signupPlayer";
 import SignupCoach from "../pages/signup/signupCoach";
 import SignupArcadeManager from "../pages/signup/signupArcadeManager";
 
+import CoachProfile from "../pages/profiles/coachProfile";
+
+import PlayerProfileUser from "../pages/profiles/PlayerProfileUsers";
+import CoachAssignDetailsForm from "../pages/forms/coachAssignDetails.form";
+
+
+import CoachProfileUser from "../pages/profiles/CoachProfileUser";
+
 
 const AppRoutes = () => {
     return (
@@ -29,9 +37,11 @@ const AppRoutes = () => {
                 <Route path="signupArcadeManager" element={<SignupArcadeManager/>}/>
 
 
-            </Routes>
-        </>
-    );
-}
+        <Route path="CoachUser" element={<CoachProfileUser />} />
+
+      </Routes>
+    </>
+  );
+};
 
 export default AppRoutes;
