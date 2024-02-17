@@ -11,13 +11,17 @@ const CoachCardSection = () => {
   >([]);
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
-      const data = await res.json();
-      setCoachAssignDetails(data);
-      console.log(data);
+    try{
+      const fetchData = async () => {
+        const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
+        const data = await res.json();
+        setCoachAssignDetails(data);
+      }
+      fetchData();
     }
-    fetchData();
+    catch(e){
+      console.log(e);
+    }
   }, []);
   const style: React.CSSProperties = {
     background: "#0092ff",
@@ -114,7 +118,7 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-                {coachAssignDetails.map(
+                {coachAssignDetails?.map(
                   (coachAssignDetail: CoachAssignDetails) => (
                     <Col
                       lg={{ span: 5 }}
