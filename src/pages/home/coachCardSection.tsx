@@ -11,15 +11,19 @@ const CoachCardSection = () => {
   >([]);
 
   useEffect(() => {
-    try{
+    try {
       const fetchData = async () => {
         const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
+        // const res = await fetch(
+        //   `${process.env.API_URL}api/getcoachassignvalues`
+        // );
+        console.log(process.env);
+
         const data = await res.json();
         setCoachAssignDetails(data);
-      }
+      };
       fetchData();
-    }
-    catch(e){
+    } catch (e) {
       console.log(e);
     }
   }, []);
@@ -126,7 +130,7 @@ const CoachCardSection = () => {
                       sm={{ span: 12 }}
                       xs={{ span: 24 }}
                     >
-                      <CoachCard 
+                      <CoachCard
                         rate={coachAssignDetail.rate}
                         duration={coachAssignDetail.duration}
                         description={coachAssignDetail.description}

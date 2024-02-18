@@ -23,19 +23,19 @@ const DiscountCardForm = () => {
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
   const [messageApi, contextHolder] = message.useMessage();
-  const key = 'updatable';
+  const key = "updatable";
 
   const openMessage = () => {
     messageApi.open({
       key,
-      type: 'loading',
-      content: 'Loading...',
+      type: "loading",
+      content: "Loading...",
     });
     setTimeout(() => {
       messageApi.open({
         key,
-        type: 'success',
-        content: 'Discount Added Successfully!',
+        type: "success",
+        content: "Discount Added Successfully!",
         duration: 2,
       });
     }, 1000);
@@ -87,7 +87,7 @@ const DiscountCardForm = () => {
     console.log(publicId);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/adddiscoutcardvalues",
+        `${process.env.API_URL}/api/adddiscountcardvalues`,
         {
           discount_percentage: discountint,
           description: description,
