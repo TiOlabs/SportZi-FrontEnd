@@ -4,6 +4,7 @@ import { md } from "node-forge";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState } from "react";
 import { CoachAssignDetails } from "../../types";
+import axios from "axios";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<
@@ -13,13 +14,10 @@ const CoachCardSection = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
-        // const res = await fetch(
-        //   `${process.env.API_URL}api/getcoachassignvalues`
-        // );
-        console.log(process.env);
-
-        const data = await res.json();
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/getcoachassignvalues`
+        );
+        const data = await res.data;
         setCoachAssignDetails(data);
       };
       fetchData();
@@ -27,10 +25,6 @@ const CoachCardSection = () => {
       console.log(e);
     }
   }, []);
-  const style: React.CSSProperties = {
-    background: "#0092ff",
-    padding: "8px 0",
-  };
 
   const { lg, md, sm, xs } = useBreakpoint();
 
