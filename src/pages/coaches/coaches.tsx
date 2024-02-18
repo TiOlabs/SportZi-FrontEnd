@@ -6,7 +6,7 @@ import AppFooter from "../../components/footer";
 
 const Coaches = () => {
     return (
-        <><Navbar2 />
+        <><Navbar/>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3" }}>
             <HeroSection />
             <CoachCardSection />
