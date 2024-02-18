@@ -2,21 +2,22 @@ import { Col, Row } from "antd";
 import DiscountCard from "../../components/discountCard";
 import { useEffect, useState } from "react";
 import { Discount } from "../../types";
-
+import axios from "axios";
 
 const DiscoutCardsSection = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
 
   useEffect(() => {
-    try{
+    try {
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getdiscoutcardvalues");
-        const data = await res.json();
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/getdiscountcardvalues`
+        );
+        const data = await res.data;
         setDiscounts(data);
-      }
+      };
       fetchData();
-    }
-    catch(e){
+    } catch (e) {
       console.log(e);
     }
   }, []);
