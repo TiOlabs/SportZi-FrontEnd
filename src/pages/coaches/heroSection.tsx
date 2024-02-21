@@ -5,6 +5,8 @@ import type { SearchProps } from "antd/es/input/Search";
 import { DownOutlined, UserOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Button, Dropdown, message, Space, Tooltip } from "antd";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+
 
 <style>
   @import
@@ -57,6 +59,7 @@ const HeroSection = () => {
   const onSearch: SearchProps["onSearch"] = (value: any, _e: any, info: any) =>
     console.log(info?.source, value);
 
+    const { md } = useBreakpoint();
   return (
     <div style={{ margin: "2%" }}>
       <Row justify="center" align="middle">
@@ -69,7 +72,7 @@ const HeroSection = () => {
               textAlign: "center",
               color: "#0E458E",
               fontFamily: "Kanit, sans-serif",
-              fontSize: 36,
+              fontSize: md? "36px":"24px",
               fontWeight: 200,
               lineHeight: 1.1,
               marginTop: "15%",
@@ -100,7 +103,6 @@ const HeroSection = () => {
                 textAlign: "center",
                 fontFamily: "Kanit, sans-serif",
                 fontSize: 18,
-                marginTop: "-8%",
               }}
             >
               Explore our expert coaches across various sports, each dedicated

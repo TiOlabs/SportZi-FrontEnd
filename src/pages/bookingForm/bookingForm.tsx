@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Row, Col, Form, Button, Select, Input, InputNumber,message } from "antd";
+import {
+  Row,
+  Col,
+  Form,
+  Button,
+  Select,
+  Input,
+  InputNumber,
+  message,
+} from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
@@ -41,7 +50,7 @@ const BookingForm = () => {
     const pcountint = parseInt(pcount);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/addarcadebooking",
+        `${process.env.REACT_APP_API_URL}/api/addbookingvalues`,
         {
           booking_date: date,
           booking_time: time,
@@ -56,19 +65,19 @@ const BookingForm = () => {
     }
   };
   const [messageApi, contextHolder] = message.useMessage();
-  const key = 'updatable';
+  const key = "updatable";
 
   const openMessage = () => {
     messageApi.open({
       key,
-      type: 'loading',
-      content: 'Loading...',
+      type: "loading",
+      content: "Loading...",
     });
     setTimeout(() => {
       messageApi.open({
         key,
-        type: 'success',
-        content: 'Booking Successfull!',
+        type: "success",
+        content: "Booking Successfull!",
         duration: 2,
       });
     }, 1000);
@@ -331,7 +340,8 @@ const BookingForm = () => {
                 justifyContent: "center",
                 marginTop: "0%",
               }}
-            >{contextHolder}
+            >
+              {contextHolder}
               <Button
                 type="primary"
                 htmlType="submit"
