@@ -90,7 +90,9 @@ const SignupPlayer = () => {
       gender
     );
     try {
-      const res = await axios.post("http://localhost:8000/api/addplayer", {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addplayer`, {
+        
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -99,6 +101,7 @@ const SignupPlayer = () => {
         dob: selectedDateString,
         gender: gender,
       });
+      
       console.log(res);
       alert("Form submitted successfully!");
     } catch (err) {

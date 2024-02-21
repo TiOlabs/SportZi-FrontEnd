@@ -122,7 +122,8 @@ const SignupCoach = () => {
       sport
     );
     try {
-      const res = await axios.post("http://localhost:8000/api/addcoach", {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addcoach`, {
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -140,6 +141,8 @@ const SignupCoach = () => {
       alert("Internal server error");
     }
   };
+ 
+    
 
   return (
     <>

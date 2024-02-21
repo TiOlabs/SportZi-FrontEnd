@@ -13,14 +13,14 @@ const CoachCardSection = () => {
 
   useEffect(() => {
     try {
-      const fetchData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/getcoachassignvalues`
-        );
-        const data = await res.data;
-        setCoachAssignDetails(data);
-      };
-      fetchData();
+      // const fetchData = async () => {
+      //   const res = await axios.get(
+      //     `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`
+      //   );
+      //   const data = await res.data;
+      //   setCoachAssignDetails(data);
+      // };
+      // fetchData();
     } catch (e) {
       console.log(e);
     }

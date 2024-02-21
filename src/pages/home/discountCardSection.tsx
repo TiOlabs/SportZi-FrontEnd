@@ -10,11 +10,11 @@ const DiscoutCardsSection = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/getdiscountcardvalues`
-        );
-        const data = await res.data;
-        setDiscounts(data);
+        // const res = await axios.get(
+        //   `${process.env.REACT_APP_API_URL}/api/getdiscountcardvalues`
+        // );
+        // const data = await res.data;
+        // setDiscounts(data);
       };
       fetchData();
     } catch (e) {
