@@ -10,17 +10,30 @@ const DiscoutCardsSection = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        // const res = await axios.get(
-        //   `${process.env.REACT_APP_API_URL}/api/getdiscountcardvalues`
-        // );
-        // const data = await res.data;
-        // setDiscounts(data);
+        const res = await fetch(
+          "http://localhost:3000/api/getdiscountcardvalues"
+        );
+        const data = await res.json();
+        setDiscounts(data);
       };
       fetchData();
     } catch (e) {
       console.log(e);
     }
   }, []);
+
+  // try{
+  //   const fetchData = async () => {
+  //     const res = await fetch( `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`);
+  //     const data = await res.json();
+  //     setCoachAssignDetails(data);
+  //   }
+  //   fetchData();
+  // }
+  // catch(e){
+  //   console.log(e);
+  // }
+  // }, []);
   console.log(discounts);
   return (
     <Row
