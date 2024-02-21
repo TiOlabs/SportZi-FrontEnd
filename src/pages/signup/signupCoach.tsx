@@ -1,4 +1,4 @@
-import "./signup.css";
+import "../../styles/signup.css";
 
 import { Flex } from "antd";
 import { Image } from "antd";
@@ -8,7 +8,9 @@ import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
-import  {Moment}  from "moment";
+
+import moment, { Moment } from "moment";
+
 
 //responsiveness
 const formItemLayout = {
