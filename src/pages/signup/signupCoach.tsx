@@ -1,4 +1,4 @@
-import "./signup.css";
+import "../../styles/signup.css";
 
 import { Flex } from "antd";
 import { Image } from "antd";

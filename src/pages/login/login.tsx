@@ -1,4 +1,4 @@
-import "./login.css";
+import "../../styles/login.css";
 import AppFooter from "../../components/footer";
 import { Form, Input, Row, Col, Button, Checkbox } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
