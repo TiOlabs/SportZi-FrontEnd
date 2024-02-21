@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
-import moment, { Moment } from "moment";
+import  {Moment}  from "moment";
 
 //responsiveness
 const formItemLayout = {
