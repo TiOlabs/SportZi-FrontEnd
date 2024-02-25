@@ -87,7 +87,7 @@ const DiscountCardForm = () => {
     console.log(publicId);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/adddiscoutcardvalues",
+        "http://localhost:8000/api/adddiscountcardvalues",
         {
           discount_percentage: discountint,
           description: description,

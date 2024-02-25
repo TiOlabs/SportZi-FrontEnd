@@ -10,7 +10,8 @@ const DiscoutCardsSection = () => {
   useEffect(() => {
     try{
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getdiscoutcardvalues");
+        const res = await fetch("http://localhost:8000/api/getdiscountcardvalues");
+        console.log(res);
         const data = await res.json();
         setDiscounts(data);
       }
