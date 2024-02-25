@@ -4,15 +4,16 @@ import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
 import { Image } from "antd";
-
-import PhotoCollage from "../../components/photoCollage";
-import AddPhotoButton from "../../components/addPhotoButton";
-import CoachAccepteLst from "../../components/CoachAcceptedList";
 import { useState } from "react";
+import PhotoCollage from "../../components/photoCollage";
+import CoachAccepteLst from "../../components/CoachAcceptedList";
 import CoachReqestList from "../../components/CoachRequestList";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
+import CloudinaryUploadWidget from "../../components/cloudinaryUploadWidget";
+import { AdvancedImage, placeholder, responsive } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 const acceptedMeetings = [
   <CoachAccepteLst />,
   <CoachAccepteLst />,
@@ -34,6 +35,9 @@ const RequestedMeetings = [
 ];
 
 const CoachProfile = () => {
+  const [cloudName] = useState("dle0txcgt");
+  const [uploadPreset] = useState("hppy6k54");
+  const [publicId, setPublicId] = useState("");
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -48,6 +52,22 @@ const CoachProfile = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
+
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const imgObject = cld.image(publicId);
+  const [uwConfig] = useState({
+    cloudName,
+    uploadPreset,
+    cropping: true, //add a cropping step
+    cropWidth: 200, //crop the image to the given width
+    cropHeight: 200, //crop the image to the given height
+    showAdvancedOptions: true, //add advanced options (public_id and tag)
+    folder: "PhotoAlbum(CoachProfile)-SportZi", //upload files to the specified folder
+  });
   return (
     <>
       <style>
@@ -499,7 +519,6 @@ const CoachProfile = () => {
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -561,16 +580,28 @@ const CoachProfile = () => {
       </Row>
       <div
         style={{
-          width: "95%",
-          display: "flex",
-          justifyContent: "flex-end",
+          width: "10%",
+          position: "absolute",
+          right: "0",
+          top: "10",
           marginBottom: "10px",
+         
         }}
       >
-        {" "}
-        <AddPhotoButton />{" "}
+        {/* {" "}
+        <AddPhotoButton />{" "} */}
+
+        <CloudinaryUploadWidget uwConfig={uwConfig} setPublicId={setPublicId} />
+
+        <AdvancedImage
+          style={{ maxWidth: "100px" }}
+          cldImg={imgObject}
+          plugins={[responsive(), placeholder()]}
+        />
       </div>
-      <PhotoCollage />
+      <div style={{ marginTop: "100px" }}>
+        <PhotoCollage />
+      </div>
 
       <Row
         style={{
@@ -1039,7 +1070,7 @@ const CoachProfile = () => {
             </Col>
           </Row>
         </Col>
-        <AppFooter/>
+        <AppFooter />
       </Row>
     </>
   );
