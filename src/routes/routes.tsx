@@ -14,9 +14,9 @@ import CoachProfile from "../pages/profiles/coachProfile";
 import PlayerProfileUser from "../pages/profiles/PlayerProfileUsers";
 import CoachAssignDetailsForm from "../pages/forms/coachAssignDetails.form";
 
-
 import CoachProfileUser from "../pages/profiles/CoachProfileUser";
 
+import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 
 const AppRoutes = () => {
   return (
@@ -39,7 +39,7 @@ const AppRoutes = () => {
         <Route path="PlayerUSer" element={<PlayerProfileUser />} />
 
         <Route path="CoachUser" element={<CoachProfileUser />} />
-
+        <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
       </Routes>
     </>
   );
