@@ -1,10 +1,16 @@
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
-import { Col, List, Row, Typography, Image } from "antd";
+import { Col, List, Row, Typography, Image, Button } from "antd";
 import { Grid } from "antd";
 
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
+import CoachCard from "../../components/CoachCard";
+import AddPhotoButton from "../../components/addPhotoButton";
+import PhotoCollage from "../../components/photoCollage";
+import ArcadeZoneCard from "../../components/ArcadeZoneCard";
+import AddZone from "../../components/AddZone";
+import ArcadePackages from "../../components/ArcadePackages";
 
 const ArcadeProfileArcade = () => {
   const { useBreakpoint } = Grid;
@@ -77,7 +83,8 @@ const ArcadeProfileArcade = () => {
               style={{
                 position: "absolute",
                 display: "flex",
-                flexDirection: "row",
+
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -97,7 +104,7 @@ const ArcadeProfileArcade = () => {
                   fontWeight: "300",
                   lineHeight: "normal",
                   textAlign: "center",
-
+                  marginTop: "20px",
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
@@ -108,6 +115,18 @@ const ArcadeProfileArcade = () => {
                 rugby league was halfback and I had the honour of representing
                 QLD in the State Of Origin
               </Typography>
+              <Button
+                style={{
+                  backgroundColor: "#5587CC",
+                  fontFamily: "kanit",
+                  color: "#fff",
+                  borderRadius: "3px",
+                  marginTop: "30px",
+                }}
+              >
+                {" "}
+                Apply for coaching
+              </Button>
             </Col>
           </Row>
         </Col>
@@ -511,6 +530,288 @@ const ArcadeProfileArcade = () => {
             />
           </div>
         </Col>
+      </Row>
+
+      <Row
+        style={{
+          marginTop: "40px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "rgba(27, 93, 183, 0.07)",
+          minHeight: "500px",
+        }}
+      >
+        <Row
+          style={{
+            width: "100%",
+            alignItems: "center",
+            textAlign: "center",
+            marginTop: "40px",
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "20px",
+          }}
+        >
+          <Typography
+            style={{
+              color: " #0E458E",
+              fontSize: md ? "30px" : "20px",
+              fontFamily: "Kanit",
+              marginBottom: "30px",
+            }}
+          >
+            Our Best Coaches
+          </Typography>
+        </Row>
+
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <Row
+            style={{
+              marginLeft: "5%",
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "30px",
+            }}
+          >
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <CoachCard />
+            </Col>
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <CoachCard />
+            </Col>
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <CoachCard />
+            </Col>
+            <Col
+              xs={{ span: 24 }}
+              sm={{ span: 12 }}
+              md={{ span: 8 }}
+              lg={{ span: 5 }}
+              xl={{ span: 5 }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <CoachCard />
+            </Col>
+          </Row>
+        </div>
+        <Button
+          style={{
+            color: "#1B5DB7",
+            background: "none",
+            border: "none",
+            fontFamily: "Kanit",
+            fontSize: "18px",
+            marginBottom: "30px",
+          }}
+        >
+          See More
+        </Button>
+      </Row>
+
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <p
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "32px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          Photos
+        </p>
+      </div>
+      <div
+        style={{
+          width: "95%",
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "10px",
+        }}
+      >
+        <AddPhotoButton />
+      </div>
+      <PhotoCollage />
+
+      <Row
+        style={{
+          paddingTop: "100px",
+          marginTop: "100px",
+          width: "100%",
+          background: "rgba(27, 93, 183, 0.07)",
+          minHeight: "600px",
+        }}
+      >
+        <Row
+          style={{
+            width: "100%",
+            alignItems: "center",
+            textAlign: "center",
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              color: " #0E458E",
+              fontSize: md ? "30px" : "20px",
+              fontFamily: "Kanit",
+            }}
+          >
+            Book Our Zones
+          </Typography>
+          <div
+            style={{
+              width: "90%",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "20px",
+            }}
+          >
+            <AddZone />
+          </div>
+        </Row>
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Col
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            {" "}
+            <ArcadeZoneCard />
+          </Col>
+          <Col
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            {" "}
+            <ArcadeZoneCard />
+          </Col>
+          <Col
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            {" "}
+            <ArcadeZoneCard />
+          </Col>
+          <Col
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+            xs={24}
+          >
+            <Button
+              style={{
+                color: "#1B5DB7",
+                background: "none",
+                border: "none",
+                fontFamily: "Kanit",
+                fontSize: "18px",
+                marginBottom: "30px",
+              }}
+            >
+              See More
+            </Button>
+          </Col>
+        </Row>
       </Row>
     </>
   );
