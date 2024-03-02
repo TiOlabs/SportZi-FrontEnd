@@ -50,7 +50,7 @@ const BookingForm = () => {
     const pcountint = parseInt(pcount);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/addbookingvalues`,
+        `http://localhost:8000/api/addarcadebooking`,
         {
           booking_date: date,
           booking_time: time,

@@ -1,20 +1,11 @@
 import { Col, Row, Button } from "antd";
-import React, { useState } from "react";
-import type { RadioChangeEvent } from "antd";
-import { Radio } from "antd";
-const PlayerCanceled = () => {
-  const [value, setValue] = useState(1);
-
-  const onChange = (e: RadioChangeEvent) => {
-    console.log("radio checked", e.target.value);
-    setValue(e.target.value);
-  };
+const AdminCanceled = () => {
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Player</h2>
+          <h2>Cancelled By Coach & Arcade</h2>
         </Col>
       </Row>
       <Row>
@@ -26,20 +17,21 @@ const PlayerCanceled = () => {
           />
         </Col>
       </Row>
-      <Row style={{marginTop:"20px"}}>
-        <Col>
-          {" "}
-          <Radio.Group onChange={onChange} value={value}>
-            <Radio value={1}>Before 24 hours</Radio>
-            <Radio value={2}>After 24 hours</Radio>
-          </Radio.Group>
-        </Col>
-      </Row>
-      <Row
+     <DataRow/>
+    </Col>
+  );
+};
+
+export default AdminCanceled;
+
+function DataRow(props:any) {
+
+    return (
+        <Row
         style={{
           backgroundColor: "white",
           padding: "1%",
-          marginTop: "20px",
+          marginTop: "63px",
         }}
       >
         <Col></Col>
@@ -152,9 +144,6 @@ const PlayerCanceled = () => {
             </Button>
           </div>
         </Col>
-      </Row>
-    </Col>
-  );
-};
-
-export default PlayerCanceled;
+      </Row> 
+    )
+}

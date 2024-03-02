@@ -2,6 +2,7 @@ import { Col, Row } from "antd";
 import { Rate } from "antd";
 import { Button } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import { Link } from "react-router-dom";
 
 const ArcadeRatingCard = () => {
     const { md } = useBreakpoint();
@@ -92,9 +93,9 @@ const ArcadeRatingCard = () => {
             </div>
           </div>
           <div className="BookArcadeButton">
-            <Button type="primary" style={{ backgroundColor: "#5587CC" }}>
+            <Link to="/bookings"><Button type="primary" style={{ backgroundColor: "#5587CC" }}>
               Book Arcade
-            </Button>
+            </Button></Link>
           </div>
         </div>
       </div>
