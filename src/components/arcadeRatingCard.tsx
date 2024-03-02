@@ -1,9 +1,18 @@
-import { Col, Row } from "antd";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { Row } from "antd";
 import { Rate } from "antd";
 import { Button } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import { useState } from "react";
 
-const ArcadeRatingCard = () => {
+const ArcadeRatingCard = (props:any) => {
+    const [cloudName] = useState("dle0txcgt");
+    const cld = new Cloudinary({
+      cloud: {
+        cloudName,
+      },
+    });
     const { md } = useBreakpoint();
   return (
     <Row>
@@ -17,16 +26,28 @@ const ArcadeRatingCard = () => {
           marginLeft: "25px",
         }}
       >
-        <img
-            src="https://apicms.thestar.com.my/uploads/images/2023/06/09/2116926.jpg"
-          alt="Original Image"
+
+        <img 
+        src="https://sportsplanningguide.com/wp-content/uploads/2016/05/Woodside_WisconsinDellsCenter-1.jpg" 
+        style={{
+          width: md ? "242px" : "164px",
+          height: "191px",
+          WebkitClipPath: md? "polygon(0 0, 70% 0%, 100% 100%, 0% 100%)" : "polygon(0 0, 50% 0%, 100% 100%, 0% 100%)",
+          clipPath: "polygon(0 0, 100% 0%, 100% 100%, 0% 98%)",
+        
+        }}  >
+        
+        </img>
+        {
+        /* <AdvancedImage
+            cldImg={cld.image(props.arcadeRating_image)}
           style={{
             width: md ? "242px" : "164px",
             height: "191px",
             WebkitClipPath: md? "polygon(0 0, 70% 0%, 100% 100%, 0% 100%)" : "polygon(0 0, 50% 0%, 100% 100%, 0% 100%)",
             clipPath: "polygon(0 0, 100% 0%, 100% 100%, 0% 98%)",
           }}
-        />
+        /> */}
 
         <div
           className="arcadeRatingCardDetail"
@@ -85,10 +106,10 @@ const ArcadeRatingCard = () => {
                 marginBottom: "5px",
               }}
             >
-              <Rate disabled defaultValue={4} style={{ color: "#5587CC" ,fontSize:"12px" }} />
+              <Rate disabled defaultValue={props.arcadeRating} style={{ color: "#5587CC" ,fontSize:"12px" }} />
             </div>
             <div className="Discription part" style={{ width: "100%", textAlign: "center", height: "auto", lineHeight:"3"}}>
-              <div>Small Discription/discription</div>
+              <div>{props.arcadeRating_description}</div>
             </div>
           </div>
           <div className="BookArcadeButton">

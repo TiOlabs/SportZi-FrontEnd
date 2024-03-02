@@ -1,9 +1,7 @@
-import { Card, Col, Row } from "antd";
-
+import { Card } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { useState } from "react";
-import { Resize } from "@cloudinary/url-gen/actions/resize";
 const DiscountCard = (props: any) => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
