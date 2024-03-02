@@ -15,7 +15,10 @@ export interface ArcadeBookings {
   id: number;
   booking_date: String;
   booking_time: String;
-  participant_count: Number;
+  participant_count: number;
   created_at: String;
   zone: String;
+  cancel_by_arcade: boolean;
+  cancel_by_player: boolean;
+  cancel_by_admin: boolean;
 }

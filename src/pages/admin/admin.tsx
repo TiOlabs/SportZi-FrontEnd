@@ -18,6 +18,7 @@ import PlayerCanceled from "./paymentManagement/playerCancelled";
 import ComplitedBookings from "./paymentManagement/completedBookings";
 import AdminCanceled from "./paymentManagement/adminCancelled";
 import { ArcadeBookings } from "../../types";
+import axios from "axios";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -57,13 +58,27 @@ const items: MenuProps["items"] = [
 const SideBarAdminPage = () => {
   const [stts, setstts] = useState("");
   const [arcadeBookings, setArcadeBookings] = useState<ArcadeBookings[]>([]);
+  const [adminCanceled, setAdminCanceled] = useState<ArcadeBookings[]>([]);
   console.log(arcadeBookings);
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getarcadebookings");
-        const data = await res.json();
-        setArcadeBookings(data);
+        const res = await axios.get(
+          "http://localhost:8000/api/getarcadebookings"
+        );
+        const data = await res.data;
+
+        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
+        const filteredData = data.filter(
+          (arcadeBooking: ArcadeBookings) => !arcadeBooking.cancel_by_admin
+        );
+        const adminCanceled = data.filter(
+          (arcadeBooking: ArcadeBookings) => arcadeBooking.cancel_by_admin
+        );
+        console.log(filteredData);
+        console.log(adminCanceled);
+        setArcadeBookings(filteredData);
+        setAdminCanceled(adminCanceled);
       };
       fetchData();
     } catch (e) {
@@ -126,15 +141,23 @@ const SideBarAdminPage = () => {
           />
         </Row>
       </Col>
-      {stts === "bookedArena" &&
-      <BookedArena setArcadeBookings={setArcadeBookings} arcadeBookings={arcadeBookings} />}
-      {stts === "adminCanceled" && <AdminCanceled />}
+      {stts === "bookedArena" && (
+        <BookedArena
+          setArcadeBookings={setArcadeBookings}
+          arcadeBookings={arcadeBookings}
+        />
+      )}
+      {stts === "adminCanceled" && (
+        <AdminCanceled
+          setAdminCanceled={setAdminCanceled}
+          adminCanceled={adminCanceled}
+        />
+      )}
 
-
-        {/* arcadeBookings?.map((arcadeBooking: ArcadeBookings) => ( */}
-          <>
-            {/* <div> hello</div> */}
-            {/* <BookedArena
+      {/* arcadeBookings?.map((arcadeBooking: ArcadeBookings) => ( */}
+      <>
+        {/* <div> hello</div> */}
+        {/* <BookedArena
               key={arcadeBooking.id}
               booking_id={arcadeBooking.id}
               booking_date={arcadeBooking.booking_date}
@@ -143,8 +166,8 @@ const SideBarAdminPage = () => {
               created_at={arcadeBooking.created_at}
               zone={arcadeBooking.zone}
             /> */}
-          </>
-        {/* ))} */}
+      </>
+      {/* ))} */}
 
       {stts === "bookedcoach" && <BookedCoaches />}
       {stts === "packageEnrolled" && <PackageEnrolled />}

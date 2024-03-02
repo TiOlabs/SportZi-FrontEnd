@@ -56,9 +56,13 @@ const BookingForm = () => {
           booking_time: time,
           zone: zone,
           participant_count: pcountint,
+          cancel_by_admin: false,
+          cancel_by_player: false,
+          cancel_by_arcade: false,
         }
       );
       console.log(res);
+      console.log(res.data.cancel_by_admin);
     } catch (err) {
       console.log("Error");
       console.log(err);

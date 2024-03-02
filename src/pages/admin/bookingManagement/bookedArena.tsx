@@ -2,6 +2,7 @@ import { Col, Row, Button, Modal } from "antd";
 import { useState } from "react";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
+import { ArcadeBookings } from "../../../types";
 const { confirm } = Modal;
 
 const BookedArena = (props: any) => {
@@ -23,19 +24,24 @@ const BookedArena = (props: any) => {
           />
         </Col>
       </Row>
-      {props.arcadeBookings.map((arcadeBooking: any) => (
-        <DataRow
-          arcadeBookings={props.arcadeBookings}
-          setArcadeBookings={props.setArcadeBookings}
-          key={arcadeBooking.id}
-          zone={arcadeBooking.zone}
-          booking_id={arcadeBooking.id}
-          booking_date={arcadeBooking.booking_date}
-          booking_time={arcadeBooking.booking_time}
-          participant_count={arcadeBooking.participant_count}
-          created_at={arcadeBooking.created_at}
-        />
-      ))}
+      <Col style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}>
+        {props.arcadeBookings.map((arcadeBooking: ArcadeBookings) => (
+          <DataRow
+            arcadeBookings={props.arcadeBookings}
+            setArcadeBookings={props.setArcadeBookings}
+            key={arcadeBooking.id}
+            zone={arcadeBooking.zone}
+            booking_id={arcadeBooking.id}
+            booking_date={arcadeBooking.booking_date}
+            booking_time={arcadeBooking.booking_time}
+            participant_count={arcadeBooking.participant_count}
+            created_at={arcadeBooking.created_at}
+            cancel_by_arcade={arcadeBooking.cancel_by_arcade}
+            cancel_by_player={arcadeBooking.cancel_by_player}
+            cancel_by_admin={arcadeBooking.cancel_by_admin}
+          />
+        ))}
+      </Col>
     </Col>
   );
 };
@@ -63,17 +69,33 @@ function DataRow(props: any) {
       okType: "danger",
       cancelText: "No",
       async onOk() {
-        console.log("OK");
-        console.log(props.booking_id);
+        // try{
+        //   const res = await axios.post(
+        //     `http://localhost:8000/api/arcadebookingcancel/${props.booking_id}`,
+        //     {
+        //       id: props.booking_id,
+        //     }
+        //   )
+        // }
+        // catch(error){
+        //   console.log(error);
+        // }
         try {
-          const res = await axios.delete(
-            `http://localhost:8000/api/deletearcadebooking/${props.booking_id}`,
+          const response = await axios.put(
+            `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
             {
-              data: {
-                id: props.id,
-              },
+              id: props.booking_id,
+              cancel_by_admin: true,
             }
           );
+          // const res = await axios.delete(
+          //   `http://localhost:8000/api/deletearcadebooking/${props.booking_id}`,
+          //   {
+          //     data: {
+          //       id: props.id,
+          //     },
+          //   }
+          // );
           console.log(props.arcadeBookings);
 
           // if (props.arcadeBookings.length > 0) {
@@ -81,14 +103,14 @@ function DataRow(props: any) {
           //     (arcadeBooking: any) => arcadeBooking.id !== props.booking_id
           //   );
           //   props.setArcadeBookings(data);
-          
+
           // }
           props.setArcadeBookings((prev: any) => {
             return prev.filter(
-              (arcadeBooking: any) => arcadeBooking.id !== props.booking_id
+              (arcadeBooking: ArcadeBookings) =>
+                arcadeBooking.id !== props.booking_id
             );
           });
-          console.log(res);
         } catch (error) {
           console.log("error");
           console.log(error);
