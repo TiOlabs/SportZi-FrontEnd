@@ -11,6 +11,7 @@ import PhotoCollage from "../../components/photoCollage";
 import ArcadeZoneCard from "../../components/ArcadeZoneCard";
 import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
+import AddPackage from "../../components/AddPackage";
 
 const ArcadeProfileArcade = () => {
   const { useBreakpoint } = Grid;
@@ -787,6 +788,131 @@ const ArcadeProfileArcade = () => {
           >
             {" "}
             <ArcadeZoneCard />
+          </Col>
+          <Col
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+            xs={24}
+          >
+            <Button
+              style={{
+                color: "#1B5DB7",
+                background: "none",
+                border: "none",
+                fontFamily: "Kanit",
+                fontSize: "18px",
+                marginBottom: "30px",
+              }}
+            >
+              See More
+            </Button>
+          </Col>
+        </Row>
+      </Row>
+
+      <Row
+        style={{
+          paddingTop: "100px",
+
+          width: "100%",
+          background: "white",
+          minHeight: "600px",
+        }}
+      >
+        <Row
+          style={{
+            width: "100%",
+            alignItems: "center",
+            textAlign: "center",
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              color: " #0E458E",
+              fontSize: md ? "30px" : "20px",
+              fontFamily: "Kanit",
+            }}
+          >
+            Book Our Zones
+          </Typography>
+          <div
+            style={{
+              width: "90%",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "20px",
+            }}
+          >
+            <AddPackage />
+          </div>
+        </Row>
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Col
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            {" "}
+            <ArcadePackages />
+          </Col>
+          <Col
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            {" "}
+            <ArcadePackages />
+          </Col>
+          <Col
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            {" "}
+            <ArcadePackages />
           </Col>
           <Col
             style={{

@@ -13,6 +13,8 @@ const ArcadePackages = () => {
       </style>
       <Row
         style={{
+          boxShadow: "0.2px 0.2px 2px 0.2px rgba(0, 0, 0, 0.2)",
+
           width: lg ? "360px" : "300px",
           minHeight: lg ? "400px" : "350px",
           backgroundColor: "white",
@@ -64,7 +66,7 @@ const ArcadePackages = () => {
               }}
             >
               {" "}
-              Cricket Practice net
+              Swimming Practice
             </Typography>
             <Typography
               style={{
@@ -74,7 +76,17 @@ const ArcadePackages = () => {
                 width: "80%",
               }}
             >
-              Week Days Day And weekend nights available
+              Conduct By
+            </Typography>
+            <Typography
+              style={{
+                fontSize: lg ? "20px" : "18px",
+                fontWeight: "light",
+                color: "black",
+                width: "80%",
+              }}
+            >
+              Sunil,nimal
             </Typography>
             <Typography
               style={{
@@ -121,7 +133,7 @@ const ArcadePackages = () => {
                     color: "#5587CC",
                   }}
                 >
-                  per hour
+                  per month
                 </Typography>
               </Col>
               <Col
@@ -139,7 +151,7 @@ const ArcadePackages = () => {
                     borderRadius: "3px",
                   }}
                 >
-                  Book{" "}
+                  Join{" "}
                 </Button>
               </Col>
             </Row>
