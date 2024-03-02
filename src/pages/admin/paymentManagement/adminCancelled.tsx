@@ -1,8 +1,41 @@
 import { Col, Row, Button, Modal } from "antd";
 import { useState } from "react";
 import { ArcadeBookings } from "../../../types";
+import axios from "axios";
+
 const AdminCanceled = (props: any) => {
   console.log(props.adminCanceled);
+
+  const [loading, setLoading] = useState(false);
+
+  const handleRefresh = async () => {
+    setLoading(true);
+
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          "http://localhost:8000/api/getarcadebookings"
+        );
+        const data = await res.data;
+
+        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
+
+        const adminCanceled = data.filter(
+          (arcadeBooking: ArcadeBookings) => arcadeBooking.cancel_by_admin
+        );
+
+        console.log(adminCanceled);
+
+        props.setAdminCanceled(adminCanceled);
+      };
+      fetchData();
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -20,7 +53,25 @@ const AdminCanceled = (props: any) => {
           />
         </Col>
       </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}>
+      <Row style={{}}>
+        <Col span={21}></Col>
+        <Col span={2}>
+          <Button
+            type="primary"
+            onClick={handleRefresh}
+            loading={loading}
+            style={{
+              backgroundColor: "#0E458E",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "5px",
+            }}
+          >
+            Refresh
+          </Button>
+        </Col>
+      </Row>
+      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
         {props.adminCanceled.map((adminCanceled: ArcadeBookings) => (
           <DataRow
             adminCanceled={props.adminCanceled}

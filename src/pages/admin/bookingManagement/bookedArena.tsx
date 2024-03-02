@@ -45,7 +45,6 @@ const BookedArena = (props: any) => {
     </Col>
   );
 };
-
 export default BookedArena;
 
 function DataRow(props: any) {
