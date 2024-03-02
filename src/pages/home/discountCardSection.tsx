@@ -2,7 +2,6 @@ import { Col, Row } from "antd";
 import DiscountCard from "../../components/discountCard";
 import { useEffect, useState } from "react";
 import { Discount } from "../../types";
-import axios from "axios";
 
 const DiscoutCardsSection = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);

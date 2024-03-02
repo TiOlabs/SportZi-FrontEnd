@@ -11,3 +11,7 @@ export interface CoachAssignDetails {
   rate: string;
   coach_image: String;
 }
+export interface ArcadeRating {
+  discription: string;
+  rating: Number;
+}
