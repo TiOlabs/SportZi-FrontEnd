@@ -115,7 +115,7 @@ function DataRow(props: any) {
         marginTop: "63px",
       }}
     >
-      <Col span={8} style={{}}>
+      <Col span={7} style={{}}>
         <div
           style={{
             borderRadius: "50%",
@@ -156,7 +156,7 @@ function DataRow(props: any) {
           100$
         </div>
       </Col>
-      <Col span={8}>
+      <Col span={7}>
         <div
           style={{
             borderRadius: "50%",
@@ -204,6 +204,23 @@ function DataRow(props: any) {
               }}
             >
               Details
+            </div>
+          </Button>
+          <Button
+            type="primary"
+            onClick={showModal}
+            style={{ width: "100px", backgroundColor: "#0E458E",marginLeft: "20px" }}
+          >
+            <div
+              style={{
+                fontSize: "16px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              Remove
             </div>
           </Button>
           <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
