@@ -56,7 +56,7 @@ const CoachAssignDetailsForm = () => {
     console.log("publicId", publicId);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/addcoachassignvalues`,
+        `${process.env.REACT_APP_API_URL}api/addcoachassignvalues`,
         {
           rate: rate,
           duration: duration,

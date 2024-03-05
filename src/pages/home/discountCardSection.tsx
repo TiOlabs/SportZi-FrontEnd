@@ -10,7 +10,7 @@ const DiscoutCardsSection = () => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          "http://localhost:3000/api/getdiscountcardvalues"
+          "http://localhost:8000/api/getdiscountcardvalues"
         );
         const data = await res.json();
         setDiscounts(data);
