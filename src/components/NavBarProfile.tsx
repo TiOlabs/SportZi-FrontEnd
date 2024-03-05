@@ -12,7 +12,6 @@ import {
   import logo2 from "../assets/logoBlack.png";
   import { Popover } from "antd";
   import { Button } from "antd/es/radio";
-  
   const NavbarProfile: React.FC = () => {
     const [visible, setVisible] = useState(false);
     const [scrolling, setScrolling] = useState(false);
