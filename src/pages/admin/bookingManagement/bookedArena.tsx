@@ -6,6 +6,10 @@ import { ArcadeBookings } from "../../../types";
 const { confirm } = Modal;
 
 const BookedArena = (props: any) => {
+//   let inputDate = "2024-03-05";
+// let inputTime = "17:00";
+//   let dateTimeString = inputDate + "T" + inputTime + ":00";
+//   console.log(new Date(dateTimeString));
   console.log(props.arcadeBookings);
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>

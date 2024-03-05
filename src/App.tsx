@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "./logo.svg";
 import ArcadeRatingCardSection from "./pages/home/arcadeRatingCardSection";
 import HeroSection from "./pages/home/heroSection";
