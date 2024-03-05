@@ -166,6 +166,7 @@ const Navbar: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
+          <Link to="/profile/:id">
           <img
             src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
             alt="Original Image"
@@ -178,6 +179,7 @@ const Navbar: React.FC = () => {
               border: "1px solid black",
             }}
           />
+          </Link>
         </div>
         <div
           className="NavBarUserProfileNameLaptop"
@@ -190,7 +192,7 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          Sasindu Dhanushka
+          Sasindu Dhanushka 
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -360,6 +362,7 @@ const Navbar: React.FC = () => {
                     className="NavBarUserProfileImg"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
+                    <Link to="/profile/:id">
                     <img
                       src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
                       alt="Original Image"
@@ -372,6 +375,7 @@ const Navbar: React.FC = () => {
                         border: "1px solid black",
                       }}
                     />
+                    </Link>
                   </div>
                   <div
                     className="NavBarUserProfileName"

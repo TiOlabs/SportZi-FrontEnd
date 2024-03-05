@@ -1,9 +1,9 @@
 import { Col, Row } from 'antd';
-import Navbar from '../../components/navbar';
+import NavbarProfile from '../../components/NavBarProfile';
 const ArcadeProfile = () => {
     return ( 
         <Row>
-            <Navbar/>
+            <NavbarProfile/>
             <h1>ArcadeProfile</h1>
         </Row>
      );
