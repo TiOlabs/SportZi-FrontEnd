@@ -14,6 +14,7 @@ import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
+
 const { Option } = Select;
 
 const BookingForm = () => {
