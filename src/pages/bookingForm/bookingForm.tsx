@@ -14,6 +14,7 @@ import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
+import PaymentModal from "../../components/paymentCheckout";
 
 const { Option } = Select;
 
@@ -23,6 +24,36 @@ const BookingForm = () => {
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
+  const [paymentDetails, setPaymentDetails] = useState({
+    payment_id: "",
+    oder_id: "",
+    items: "",
+    amount: "",
+    currency: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    country: "",
+  });
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const resPaymentDetails = await fetch(
+          "http://localhost:8000/api/getpaymentditails"
+        );
+        const paymentDetailsData = await resPaymentDetails.json();
+        console.log(paymentDetailsData);
+        setPaymentDetails(paymentDetailsData);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, []);
 
   // const onZoneChange = (value: string) => {
   //   console.log(value);
@@ -343,20 +374,20 @@ const BookingForm = () => {
               }}
             >
               {contextHolder}
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={openMessage}
-                style={{
-                  width: "90%",
-                  height: "50px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Book
-              </Button>
+
+              <PaymentModal
+                item={paymentDetails?.items}
+                orderId={paymentDetails?.oder_id}
+                amount={paymentDetails?.amount}
+                currency={paymentDetails?.currency}
+                first_name={paymentDetails?.first_name}
+                last_name={paymentDetails?.last_name}
+                email={paymentDetails?.email}
+                phone={paymentDetails?.phone}
+                address={paymentDetails?.address}
+                city={paymentDetails?.city}
+                country={paymentDetails?.country}
+              />
             </div>
           </Col>
         </Row>
