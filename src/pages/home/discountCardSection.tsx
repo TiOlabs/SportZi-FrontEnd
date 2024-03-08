@@ -5,7 +5,9 @@ import { Discount } from "../../types";
 
 const DiscoutCardsSection = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
-
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetailsBase[]>(
+    []
+  );
   useEffect(() => {
     try {
       const fetchData = async () => {
