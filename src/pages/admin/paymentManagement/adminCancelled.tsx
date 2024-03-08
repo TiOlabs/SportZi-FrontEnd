@@ -1,18 +1,47 @@
 import { Col, Row, Button, Modal } from "antd";
 import { useState } from "react";
-import { ExclamationCircleFilled } from "@ant-design/icons";
-import axios from "axios";
 import { ArcadeBookings } from "../../../types";
-const { confirm } = Modal;
+import axios from "axios";
 
-const BookedArena = (props: any) => {
-  console.log(props.arcadeBookings);
+const AdminCanceled = (props: any) => {
+  console.log(props.adminCanceled);
+
+  const [loading, setLoading] = useState(false);
+
+  const handleRefresh = async () => {
+    setLoading(true);
+
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          "http://localhost:8000/api/getarcadebookings"
+        );
+        const data = await res.data;
+
+        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
+
+        const adminCanceled = data.filter(
+          (arcadeBooking: ArcadeBookings) => arcadeBooking.cancel_by_admin
+        );
+
+        console.log(adminCanceled);
+
+        props.setAdminCanceled(adminCanceled);
+      };
+      fetchData();
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
-          <h2>Booked Arena</h2>
+          <h2>Cancelled By Coach & Arcade</h2>
         </Col>
       </Row>
       <Row>
@@ -24,31 +53,49 @@ const BookedArena = (props: any) => {
           />
         </Col>
       </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}>
-        {props.arcadeBookings.map((arcadeBooking: ArcadeBookings) => (
+      <Row style={{}}>
+        <Col span={21}></Col>
+        <Col span={2}>
+          <Button
+            type="primary"
+            onClick={handleRefresh}
+            loading={loading}
+            style={{
+              backgroundColor: "#0E458E",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "5px",
+            }}
+          >
+            Refresh
+          </Button>
+        </Col>
+      </Row>
+      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
+        {props.adminCanceled.map((adminCanceled: ArcadeBookings) => (
           <DataRow
-            arcadeBookings={props.arcadeBookings}
-            setArcadeBookings={props.setArcadeBookings}
-            key={arcadeBooking.id}
-            zone={arcadeBooking.zone}
-            booking_id={arcadeBooking.id}
-            booking_date={arcadeBooking.booking_date}
-            booking_time={arcadeBooking.booking_time}
-            participant_count={arcadeBooking.participant_count}
-            created_at={arcadeBooking.created_at}
-            cancel_by_arcade={arcadeBooking.cancel_by_arcade}
-            cancel_by_player={arcadeBooking.cancel_by_player}
-            cancel_by_admin={arcadeBooking.cancel_by_admin}
+            adminCanceled={props.adminCanceled}
+            setAdminCanceled={props.setAdminCanceled}
+            key={adminCanceled.id}
+            zone={adminCanceled.zone}
+            id={adminCanceled.id}
+            booking_date={adminCanceled.booking_date}
+            booking_time={adminCanceled.booking_time}
+            participant_count={adminCanceled.participant_count}
+            created_at={adminCanceled.created_at}
+            cancel_by_arcade={adminCanceled.cancel_by_arcade}
+            cancel_by_player={adminCanceled.cancel_by_player}
+            cancel_by_admin={adminCanceled.cancel_by_admin}
           />
         ))}
       </Col>
     </Col>
   );
 };
-export default BookedArena;
+
+export default AdminCanceled;
 
 function DataRow(props: any) {
-  console.log(props);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -59,77 +106,16 @@ function DataRow(props: any) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const showDeleteConfirm = () => {
-    confirm({
-      title: "Are you sure cancel this task?",
-      icon: <ExclamationCircleFilled />,
-      content: "This may affect to the user and the arcade.",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      async onOk() {
-        // try{
-        //   const res = await axios.post(
-        //     `http://localhost:8000/api/arcadebookingcancel/${props.booking_id}`,
-        //     {
-        //       id: props.booking_id,
-        //     }
-        //   )
-        // }
-        // catch(error){
-        //   console.log(error);
-        // }
-        try {
-          const response = await axios.put(
-            `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
-            {
-              id: props.booking_id,
-              cancel_by_admin: true,
-            }
-          );
-          // const res = await axios.delete(
-          //   `http://localhost:8000/api/deletearcadebooking/${props.booking_id}`,
-          //   {
-          //     data: {
-          //       id: props.id,
-          //     },
-          //   }
-          // );
-          console.log(props.arcadeBookings);
-
-          // if (props.arcadeBookings.length > 0) {
-          //   const data = props.arcadeBookings.filter(
-          //     (arcadeBooking: any) => arcadeBooking.id !== props.booking_id
-          //   );
-          //   props.setArcadeBookings(data);
-
-          // }
-          props.setArcadeBookings((prev: any) => {
-            return prev.filter(
-              (arcadeBooking: ArcadeBookings) =>
-                arcadeBooking.id !== props.booking_id
-            );
-          });
-        } catch (error) {
-          console.log("error");
-          console.log(error);
-        }
-      },
-      onCancel() {
-        console.log("Cancel");
-      },
-    });
-  };
+  console.log(props);
   return (
     <Row
       style={{
         backgroundColor: "white",
         padding: "1%",
-        marginTop: "50px",
+        marginTop: "63px",
       }}
     >
-      <Col></Col>
-      <Col span={7} style={{}}>
+      <Col span={8} style={{}}>
         <div
           style={{
             borderRadius: "50%",
@@ -155,20 +141,6 @@ function DataRow(props: any) {
           Super Box Complex
         </div>
       </Col>
-      <Col span={4} style={{}}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "left",
-            alignItems: "center",
-            textAlign: "center",
-            height: "80px",
-            fontSize: "16px",
-          }}
-        >
-          {props.zone}
-        </div>
-      </Col>
       <Col span={2} style={{}}>
         <div
           style={{
@@ -184,7 +156,7 @@ function DataRow(props: any) {
           100$
         </div>
       </Col>
-      <Col span={7}>
+      <Col span={8}>
         <div
           style={{
             borderRadius: "50%",
@@ -207,7 +179,7 @@ function DataRow(props: any) {
           Sasindu Daluwatta
         </div>
       </Col>
-      <Col span={4} style={{}}>
+      <Col span={6} style={{}}>
         <div
           style={{
             height: "80px",
@@ -241,7 +213,7 @@ function DataRow(props: any) {
                   Booking Details
                 </div>
                 <Col span={24}>
-                  <b>Booking ID :</b> {props.booking_id}
+                  <b>Booking ID :</b> {props.id}
                 </Col>
                 <Col span={24}>
                   <Row>
@@ -291,8 +263,7 @@ function DataRow(props: any) {
           <Button
             type="primary"
             ghost
-            onClick={showDeleteConfirm}
-            style={{ width: "100px", marginLeft: "20px" }}
+            style={{ width: "130px", marginLeft: "20px" }}
           >
             <div
               style={{
@@ -303,7 +274,7 @@ function DataRow(props: any) {
                 textAlign: "center",
               }}
             >
-              Cancel
+              Return Money
             </div>
           </Button>
         </div>

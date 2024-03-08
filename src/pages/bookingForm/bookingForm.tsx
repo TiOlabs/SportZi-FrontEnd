@@ -82,15 +82,19 @@ const BookingForm = () => {
     const pcountint = parseInt(pcount);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/addbookingvalues`,
+        `http://localhost:8000/api/addarcadebooking`,
         {
           booking_date: date,
           booking_time: time,
           zone: zone,
           participant_count: pcountint,
+          cancel_by_admin: false,
+          cancel_by_player: false,
+          cancel_by_arcade: false,
         }
       );
       console.log(res);
+      console.log(res.data.cancel_by_admin);
     } catch (err) {
       console.log("Error");
       console.log(err);

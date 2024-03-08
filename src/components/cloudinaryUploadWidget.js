@@ -27,7 +27,7 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
     }
   }, [loaded]);
 
-  const initializeCloudinaryWidget = () => {
+  const   initializeCloudinaryWidget = () => {
     if (loaded) {
       var myWidget = window.cloudinary.createUploadWidget(
         uwConfig,

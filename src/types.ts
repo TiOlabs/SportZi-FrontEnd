@@ -11,3 +11,21 @@ export interface CoachAssignDetails {
   rate: string;
   coach_image: String;
 }
+
+export interface ArcadeBookings {
+  id: number;
+  booking_date: String;
+  booking_time: String;
+  participant_count: number;
+  created_at: String;
+  zone: String;
+  cancel_by_arcade: boolean;
+  cancel_by_player: boolean;
+  cancel_by_admin: boolean;
+}
+
+export interface ArcadeRating {
+  discription: string;
+  rating: Number;
+}
+
