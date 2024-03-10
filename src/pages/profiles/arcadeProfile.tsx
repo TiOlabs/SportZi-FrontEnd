@@ -12,10 +12,44 @@ import ArcadeZoneCard from "../../components/ArcadeZoneCard";
 import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
+import { useState } from "react";
+import AvailableBookingsArcade from "../../components/AvailableBookingsArcade";
+import CoachReqestForArcade from "../../components/CoachReqestForArcade";
+import ReviewCard from "../../components/ReviewCard";
+import AppFooter from "../../components/footer";
+import reviewBacground from "../../assents/ReviewBackground.png";
 
 const ArcadeProfileArcade = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
+  const [showMore, setShowMore] = useState(true);
+  const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
+  const AvailableBookings = [
+    <AvailableBookingsArcade />,
+    <AvailableBookingsArcade />,
+    <AvailableBookingsArcade />,
+    <AvailableBookingsArcade />,
+    <AvailableBookingsArcade />,
+    <AvailableBookingsArcade />,
+    <AvailableBookingsArcade />,
+  ];
+
+  const CoachReqestToArchade = [
+    <CoachReqestForArcade />,
+    <CoachReqestForArcade />,
+    <CoachReqestForArcade />,
+    <CoachReqestForArcade />,
+  ];
+
+  const toggleItems = () => {
+    setShowMore(!showMore);
+    if (showMore) {
+      setNumberOfItemsShown(AvailableBookings.length); // Show all items
+    } else {
+      setNumberOfItemsShown(4); // Show only the first 5 items
+    }
+  };
+
   return (
     <>
       <style>
@@ -939,6 +973,395 @@ const ArcadeProfileArcade = () => {
           </Col>
         </Row>
       </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          {" "}
+          Availale bookings for suberb box complex
+        </Typography>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Coach
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Time
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            >
+              Venue
+            </Col>
+          )}
+        </Row>
+
+        {AvailableBookings.slice(0, numberOfItemsShown).map(
+          (request, index) => (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              key={index}
+            >
+              {request}
+            </div>
+          )
+        )}
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          {" "}
+          Coach Request For Join Arcade
+        </Typography>
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+          (request, index) => (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              key={index}
+            >
+              {request}
+            </div>
+          )
+        )}
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </Row>
+
+      <Row
+        style={{
+          minWidth: "100%",
+          minHeight: "650px",
+          height: "max-content",
+          marginTop: "100px",
+          backgroundImage: `url(${reviewBacground})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          marginBottom: "100px",
+        }}
+      >
+        <Col
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+          xs={24}
+          sm={24}
+          md={24}
+          lg={24}
+          xl={24}
+        >
+          <Typography
+            style={{
+              marginTop: "50px",
+              fontFamily: "kanit",
+              fontWeight: md ? "400" : "300",
+              fontSize: md ? "32px" : "24px",
+              color: "#0E458E",
+            }}
+          >
+            Reviews
+          </Typography>
+          <Row
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+          </Row>
+          <Row
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <AppFooter />
     </>
   );
 };
