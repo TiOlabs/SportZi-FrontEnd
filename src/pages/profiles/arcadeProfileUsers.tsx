@@ -2,7 +2,8 @@ import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import { Col, List, Row, Typography, Image, Button } from "antd";
 import { Grid } from "antd";
 
-import backgroundImg from "../../correct/path/to/background2.png";
+import backgroundImg from "../../assents/background2.png";
+
 import profilePic from "../../assents/pro.png";
 import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
@@ -12,11 +13,9 @@ import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
 import { useState } from "react";
-
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
-import reviewBacground from "../../assents/reviewBackground";
-import React from "react";
+import reviewBacground from "../../assents/ReviewBackground.png";
 
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
