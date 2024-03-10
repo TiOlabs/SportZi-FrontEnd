@@ -39,6 +39,7 @@ const BookingForm = () => {
     country: "",
   });
 
+  const [paymentStatus, setPaymentStatus] = useState();
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -46,6 +47,14 @@ const BookingForm = () => {
           "http://localhost:8000/api/getpaymentditails"
         );
         const paymentDetailsData = await resPaymentDetails.json();
+
+        // const respaymentStatus = await fetch(
+        //   "http://localhost:8000/api/postpaymentStatus"
+        // );
+        // const paymentStatusData = await respaymentStatus.json();
+
+        // setPaymentStatus(paymentStatusData);
+
         console.log(paymentDetailsData);
         setPaymentDetails(paymentDetailsData);
       };

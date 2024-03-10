@@ -2,6 +2,7 @@ import React from "react";
 
 import md5 from "crypto-js/md5";
 import { Button, message } from "antd";
+import axios from "axios";
 
 declare global {
   interface Window {
@@ -53,10 +54,45 @@ const PaymentModal = (props: any): JSX.Element | null => {
   };
 
   // Called when user completed the payment. It can be a successful payment or failure
-  window.payhere.onCompleted = function onCompleted(orderId: string) {
+  window.payhere.onCompleted = function onCompleted(
+    orderId: string,
+    paymentId: string
+  ) {
     console.log("Payment completed. OrderID:" + orderId);
+    updatePaymentStatus(paymentId);
+    // fetch(" http://localhost:8000/api/postpaymentStatus", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     // Assuming orderId corresponds to payment_id
+    //     payment_status: "success", // Updating payment status to success
+    //   }),
+    // })
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       console.log("Payment status updated successfully.");
+    //     } else {
+    //       console.error("Failed to update payment status.");
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error updating payment status:", error);
+    //   });
+
     //Note: validate the payment and show success or failure page to the customer
   };
+
+  async function updatePaymentStatus(paymentId: string) {
+    try {
+      // Send HTTP request to update payment status
+      await axios.post("http://localhost:8000/api/postpaymentStatus", {
+        paymentId,
+      });
+      console.log("Payment status updated successfully");
+      // You can perform any other actions after updating the payment status
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+    }
+  }
 
   // Called when user closes the payment without completing
   window.payhere.onDismissed = function onDismissed() {
@@ -71,27 +107,16 @@ const PaymentModal = (props: any): JSX.Element | null => {
   };
 
   function pay() {
+    console.log("before");
     window.payhere.startPayment(payment);
-    messageApi.open({
-      key,
-      type: "loading",
-      content: "Loading...",
-    });
-    setTimeout(() => {
-      messageApi.open({
-        key,
-        type: "success",
-        content: "Booking Successfull!",
-        duration: 2,
-      });
-    }, 1000);
+    console.log("after");
   }
 
   return (
     <>
       <Button
         type="primary"
-        htmlType="submit"
+        // htmlType="submit"
         style={{
           width: "90%",
           height: "50px",
@@ -103,8 +128,6 @@ const PaymentModal = (props: any): JSX.Element | null => {
       >
         Pay with Payhere
       </Button>
-
-      <p>{name}</p>
     </>
   );
 };
