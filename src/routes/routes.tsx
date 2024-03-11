@@ -14,12 +14,9 @@ import CoachProfile from "../pages/profiles/coachProfile";
 import PlayerProfileUser from "../pages/profiles/PlayerProfileUsers";
 import CoachAssignDetailsForm from "../pages/forms/coachAssignDetails.form";
 import CoachProfileUser from "../pages/profiles/CoachProfileUser";
-import BookingManagementBookedArena from "../pages/admin/bookingManagement/bookedArena";
-import BookingManagementBookedCoach from "../pages/admin/bookingManagement/bookedCoaches";
-import AdminDashboard from "../pages/admin/dashboard";
 import Admin from "../pages/admin/admin";
-
 import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
+import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 
 const AppRoutes = () => {
   return (
@@ -44,6 +41,7 @@ const AppRoutes = () => {
         />
         <Route path="CoachUser" element={<CoachProfileUser />} />
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
+        <Route path="arcadeProfile" element={<ArcadeProfileUser/>} />
         <Route path="admin" element={<Admin />} />
       </Routes>
     </>
