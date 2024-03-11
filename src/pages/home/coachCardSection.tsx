@@ -1,9 +1,10 @@
-import { Button, Col, Row, Typography } from "antd";
+import { Button, Col, Row, Skeleton, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import { md } from "node-forge";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState } from "react";
 import { CoachAssignDetails } from "../../types";
+import axios from "axios";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<
@@ -11,18 +12,18 @@ const CoachCardSection = () => {
   >([]);
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
-      const data = await res.json();
-      setCoachAssignDetails(data);
-      console.log(data);
+        try{
+      const fetchData = async () => {
+        const res = await fetch( `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`);
+        const data = await res.json();
+        setCoachAssignDetails(data);
+      }
+      fetchData();
     }
-    fetchData();
-  }, []);
-  const style: React.CSSProperties = {
-    background: "#0092ff",
-    padding: "8px 0",
-  };
+    catch(e){
+      console.log(e);
+    }
+    }, []);
 
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -114,7 +115,7 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-                {coachAssignDetails.map(
+                {coachAssignDetails?.map(
                   (coachAssignDetail: CoachAssignDetails) => (
                     <Col
                       lg={{ span: 5 }}

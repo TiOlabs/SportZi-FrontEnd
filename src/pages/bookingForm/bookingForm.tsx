@@ -1,10 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Row, Col, Form, Button, Select, Input, InputNumber } from "antd";
+import {
+  Row,
+  Col,
+  Form,
+  Button,
+  Select,
+  Input,
+  InputNumber,
+  message,
+} from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
+import PaymentModal from "../../components/paymentCheckout";
+
 const { Option } = Select;
 
 const BookingForm = () => {
@@ -13,6 +24,36 @@ const BookingForm = () => {
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
+  const [paymentDetails, setPaymentDetails] = useState({
+    payment_id: "",
+    oder_id: "",
+    items: "",
+    amount: "",
+    currency: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    country: "",
+  });
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const resPaymentDetails = await fetch(
+          "http://localhost:8000/api/getpaymentditails"
+        );
+        const paymentDetailsData = await resPaymentDetails.json();
+        console.log(paymentDetailsData);
+        setPaymentDetails(paymentDetailsData);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, []);
 
   // const onZoneChange = (value: string) => {
   //   console.log(value);
@@ -41,19 +82,41 @@ const BookingForm = () => {
     const pcountint = parseInt(pcount);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/addarcadebooking",
+        `http://localhost:8000/api/addarcadebooking`,
         {
           booking_date: date,
           booking_time: time,
           zone: zone,
           participant_count: pcountint,
+          cancel_by_admin: false,
+          cancel_by_player: false,
+          cancel_by_arcade: false,
         }
       );
       console.log(res);
+      console.log(res.data.cancel_by_admin);
     } catch (err) {
       console.log("Error");
       console.log(err);
     }
+  };
+  const [messageApi, contextHolder] = message.useMessage();
+  const key = "updatable";
+
+  const openMessage = () => {
+    messageApi.open({
+      key,
+      type: "loading",
+      content: "Loading...",
+    });
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type: "success",
+        content: "Booking Successfull!",
+        duration: 2,
+      });
+    }, 1000);
   };
 
   return (
@@ -125,7 +188,7 @@ const BookingForm = () => {
                   flexDirection: "column",
                   rowGap: "20px",
                   width: "80%",
-                  height: "80%",
+                  height: "600px",
                   justifyContent: "center",
                   alignItems: "center",
                   alignSelf: "center",
@@ -137,42 +200,85 @@ const BookingForm = () => {
                   onClick={() => setTime("9")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  9
+                  9.00-10.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("12")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  12
+                  10.00-11.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("13")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  13
+                  11.00-12.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("14")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  14
+                  12.00-13.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("15")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  15
+                  13.00-14.00
                 </button>
                 <button
                   type="button"
                   onClick={() => setTime("16")}
                   style={{ width: "100%", padding: "5%" }}
                 >
-                  16
+                  14.00-15.00
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTime("17")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  15.00-16.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("18")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  16.00-17.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("19")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  17.00-18.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("20")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  18.00-19.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("21")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  19.00-20.00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTime("22")}
+                  style={{ width: "100%", padding: "5%" }}
+                >
+                  20.00-21.00
                 </button>
               </div>
             </div>
@@ -224,9 +330,9 @@ const BookingForm = () => {
                 <InputNumber
                   style={{
                     height: "50px",
-                    width:"100%",
+                    width: "100%",
                     display: "flex",
-                   alignItems: "center",
+                    alignItems: "center",
                   }}
                   onChange={(value) => setPcount(value?.toString() || "")}
                 />
@@ -271,24 +377,28 @@ const BookingForm = () => {
                 marginTop: "0%",
               }}
             >
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{
-                  width: "90%",
-                  height: "50px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Book
-              </Button>
+              {contextHolder}
+
+              <PaymentModal
+                item={paymentDetails?.items}
+                orderId={paymentDetails?.oder_id}
+                amount={paymentDetails?.amount}
+                currency={paymentDetails?.currency}
+                first_name={paymentDetails?.first_name}
+                last_name={paymentDetails?.last_name}
+                email={paymentDetails?.email}
+                phone={paymentDetails?.phone}
+                address={paymentDetails?.address}
+                city={paymentDetails?.city}
+                country={paymentDetails?.country}
+              />
             </div>
           </Col>
         </Row>
       </Form>
-      <AppFooter/>
+      <div style={{ marginTop: "40px" }}>
+        <AppFooter />
+      </div>
     </div>
   );
 };

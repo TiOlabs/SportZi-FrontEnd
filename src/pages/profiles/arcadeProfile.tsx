@@ -1,3 +1,4 @@
+
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import { Col, List, Row, Typography, Image, Button } from "antd";
 import { Grid } from "antd";
@@ -1367,3 +1368,4 @@ const ArcadeProfileArcade = () => {
 };
 
 export default ArcadeProfileArcade;
+

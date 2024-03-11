@@ -1,4 +1,4 @@
-import { Col, Row, Button, Flex } from "antd";
+import { Col, Row, Button, Flex, Skeleton } from "antd";
 import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
@@ -69,7 +69,7 @@ const CoachCard = (props: any) => {
                   fontWeight: "500",
                 }}
               >
-                {props.rate}
+                Rs.{props.rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
