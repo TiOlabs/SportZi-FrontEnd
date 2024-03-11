@@ -44,15 +44,6 @@ const AppRoutes = () => {
         />
         <Route path="CoachUser" element={<CoachProfileUser />} />
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
-        <Route
-          path="admin/bookingManagement/bookedArena"
-          element={<BookingManagementBookedArena />}
-        />
-        <Route
-          path="admin/bookingManagement/bookedCoaches"
-          element={<BookingManagementBookedCoach />}
-        />
-        <Route path="admin/dashboard" element={<AdminDashboard />} />
         <Route path="admin" element={<Admin />} />
       </Routes>
     </>
