@@ -19,6 +19,7 @@ import BookingManagementBookedCoach from "../pages/admin/bookingManagement/booke
 import AdminDashboard from "../pages/admin/dashboard";
 import Admin from "../pages/admin/admin";
 
+
 const AppRoutes = () => {
   return (
     <>
@@ -41,6 +42,7 @@ const AppRoutes = () => {
           element={<CoachAssignDetailsForm />}
         />
         <Route path="CoachUser" element={<CoachProfileUser />} />
+
         <Route
           path="admin/bookingManagement/bookedArena"
           element={<BookingManagementBookedArena />}
@@ -51,6 +53,7 @@ const AppRoutes = () => {
         />
         <Route path="admin/dashboard" element={<AdminDashboard />} />
         <Route path="admin" element={<Admin />} />
+
       </Routes>
     </>
   );
