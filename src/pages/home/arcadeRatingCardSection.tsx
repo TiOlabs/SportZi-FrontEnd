@@ -47,7 +47,7 @@ const ArcadeRatingCardsSection = () => {
           <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
             <ArcadeRatingCard
               arcadeRating_description={arcadeRating.discription}
-              arcadeRating={arcadeRating.rating}
+              arcadeRating={arcadeRating.rate}
             />
           </Col>
         ))}

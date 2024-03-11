@@ -2,9 +2,11 @@ import { Col, Row } from "antd";
 import DiscountCard from "../../components/discountCard";
 import { useEffect, useState } from "react";
 import { Discount } from "../../types";
+import{Arcade} from "../../types";
 
 const DiscoutCardsSection = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
+  const[arcadeDetails, setArcadeDetails] = useState<Arcade[]>([]);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetailsBase[]>(
     []
   );
@@ -61,6 +63,7 @@ const DiscoutCardsSection = () => {
         {discounts?.map((discount: Discount) => (
           <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
             <DiscountCard
+              zone_name={discount.zone.zone_name}
               discount_percentage={discount.discount_percentage}
               description={discount.description}
               discount_image={discount.discount_image}

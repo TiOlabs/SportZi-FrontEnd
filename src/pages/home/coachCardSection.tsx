@@ -25,22 +25,6 @@ const CoachCardSection = () => {
     }
     }, []);
 
-
-  useEffect(() => {
-    try{
-      const fetchData = async () => {
-        const res = await fetch("http://localhost:3000/api/getcoachassignvalues");
-     
-        const data = await res.json();
-        setCoachAssignDetails(data);
-      }
-      fetchData();
-    }
-    catch(e){
-      console.log(e);
-    }
-  }, []);
-
   const { lg, md, sm, xs } = useBreakpoint();
 
   return (

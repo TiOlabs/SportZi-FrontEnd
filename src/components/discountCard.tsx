@@ -57,7 +57,7 @@ const DiscountCard = (props: any) => {
 
           <div style={{ lineHeight: 0.3, width: "100%" }}>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <h1> SSC </h1>
+              <h1> {props.zone_name} </h1>
             </div>
             <h4 style={{ display: "flex", justifyContent: "center" }}>
               Level one cricket arcade

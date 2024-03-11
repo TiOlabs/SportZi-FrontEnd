@@ -32,7 +32,8 @@ const CompletedBookings = () => {
           <Radio.Group onChange={onChange} value={value}>
             <Radio value={1}>Coach Bookings</Radio>
             <Radio value={2}>Arcade Bookings</Radio>
-            <Radio value={3}>All</Radio>
+            <Radio value={3}>Enrolled Package</Radio>
+            <Radio value={4}>All</Radio>
           </Radio.Group>
         </Col>
       </Row>
