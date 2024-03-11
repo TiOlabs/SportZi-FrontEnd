@@ -17,6 +17,7 @@ const CoachCardSection = () => {
         const res = await fetch( `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`);
         const data = await res.json();
         setCoachAssignDetails(data);
+        console.log(data);
       }
       fetchData();
     }
@@ -124,9 +125,11 @@ const CoachCardSection = () => {
                       xs={{ span: 24 }}
                     >
                       <CoachCard
-                        rate={coachAssignDetail.rate}
+                        coach_first_name={coachAssignDetail.coach.user.firstname}
+                        coach_last_name={coachAssignDetail.coach.user.lastname}
+                        short_description={coachAssignDetail.coach.short_desctiption}
+                        rate={coachAssignDetail.coach.rate}
                         duration={coachAssignDetail.duration}
-                        description={coachAssignDetail.description}
                         coach_image={coachAssignDetail.coach_image}
                       />
                     </Col>

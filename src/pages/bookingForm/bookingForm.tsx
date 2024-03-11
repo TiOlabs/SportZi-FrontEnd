@@ -157,7 +157,7 @@ const BookingForm = () => {
                 </Col>
                 <Col style={{}} xs={24} md={12} lg={24}>
                   <div style={{ display: "Flex", justifyContent: "center" }}>
-                    <Form.Item name="date">
+                    <Form.Item name="date" rules={[{ required: true }]}>
                       <Calender
                         onChange={(date: any) => {
                           setDate(date);
@@ -166,6 +166,49 @@ const BookingForm = () => {
                     </Form.Item>
                   </div>
                 </Col>
+                <Form.Item
+                  name="Participant Count"
+                  label="Participant Count"
+                  rules={[{ required: true, type: "number" }]}
+                  style={{
+                    width: "90%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <InputNumber
+                    style={{
+                      height: "50px",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    onChange={(value) => setPcount(value?.toString() || "")}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="way_of_booking"
+                  label="Way of Booking"
+                  rules={[{ required: true }]}
+                  style={{
+                    width: "90%",
+                    marginTop: "0%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <Select
+                    placeholder="Select a Zone"
+                    onChange={(value) => setZone(value)}
+                    allowClear
+                    style={{
+                      height: "50px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Option value="full">Full Zone</Option>
+                    <Option value="Individual">Individual</Option>
+                  </Select>
+                </Form.Item>
               </Row>
             </div>
           </Col>
@@ -180,107 +223,114 @@ const BookingForm = () => {
                 width: "90%",
                 display: "flex",
                 justifyContent: "center",
+             
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  rowGap: "20px",
-                  width: "80%",
-                  height: "600px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  overflow: "auto",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setTime("9")}
-                  style={{ width: "100%", padding: "5%" }}
+              {/* <Form.Item
+                name="Time Slot"
+                label="time Slot"
+                rules={[{ required: true }]}
+              > */}
+                <Form.Item name="Time Slot" rules={[{ required: true }]}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    rowGap: "20px",
+                    width: "80%",
+                    height: "800px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    alignSelf: "center",
+                    overflow: "auto",
+                  }}
                 >
-                  9.00-10.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("12")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  10.00-11.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("13")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  11.00-12.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("14")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  12.00-13.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("15")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  13.00-14.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("16")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  14.00-15.00
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("9")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    9.00-10.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("12")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    10.00-11.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("13")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    11.00-12.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("14")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    12.00-13.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("15")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    13.00-14.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("16")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    14.00-15.00
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => setTime("17")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  15.00-16.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("18")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  16.00-17.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("19")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  17.00-18.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("20")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  18.00-19.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("21")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  19.00-20.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("22")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  20.00-21.00
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => setTime("17")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    15.00-16.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("18")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    16.00-17.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("19")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    17.00-18.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("20")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    18.00-19.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("21")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    19.00-20.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTime("22")}
+                    style={{ width: "100%", padding: "5%" }}
+                  >
+                    20.00-21.00
+                  </button>
+                </Form.Item>
+              {/* </Form.Item> */}
             </div>
           </Col>
         </Row>
@@ -294,60 +344,7 @@ const BookingForm = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-            >
-              <Form.Item
-                name="zone"
-                label="Zone"
-                rules={[{ required: true }]}
-                style={{
-                  width: "90%",
-                  marginTop: "2%",
-                }}
-              >
-                <Select
-                  placeholder="Select a Zone"
-                  onChange={(value) => setZone(value)}
-                  allowClear
-                  style={{
-                    height: "50px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Option value="male">male</Option>
-                  <Option value="female">female</Option>
-                  <Option value="other">other</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="Participant Count"
-                label="Participant Count"
-                rules={[{ required: true, type: "number" }]}
-                style={{
-                  width: "90%",
-                }}
-              >
-                <InputNumber
-                  style={{
-                    height: "50px",
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                  onChange={(value) => setPcount(value?.toString() || "")}
-                />
-                {/* <Input
-                  onChange={(event) => setPcount(event.target.value)}
-                  placeholder="Participant Count"
-                  allowClear
-                  style={{
-                    height: "50px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                /> */}
-              </Form.Item>
-            </div>
+            ></div>
           </Col>
         </Row>
         <Row>

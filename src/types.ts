@@ -18,6 +18,22 @@ export interface Zone{
   arcade_address: String;
   arcade_image: String;
 }
+export interface Coach {
+  coach_image: String;
+  rate: Number;
+  coach_rating: Number;
+  short_desctiption: String;
+  user: User;
+}
+export interface User {
+  user_id: String;
+  firstname: String;
+  lastname: String;
+  user_email: String;
+  user_address: String;
+  user_image: String;
+  user_rating: Number;
+}
 export interface CoachAssignDetails {
   assign_id: Number;
   description: String;
@@ -25,6 +41,7 @@ export interface CoachAssignDetails {
   state: String;
   rate: string;
   coach_image: String;
+  coach: Coach;
 }
 
 export interface ArcadeBookings {
