@@ -7,29 +7,17 @@ import MapSction from "./mapSection";
 import AppFooter from "../../components/footer";
 
 const Home = () => {
-
-    return (
-
-
-
-        <>
-
-       
-            
-
-       
-
-            <Navbar/>
-            <HeroSection/>
-            <CoachCardSection/>
-            <DiscoutCardsSection/>
-            <MapSction/>
-            <ArcadeRatingCardsSection/>
-            
-        <AppFooter/>
-        </>
-    );
-}
-
+  return (
+    <>
+      <Navbar />
+      <HeroSection />
+      <CoachCardSection />
+      <DiscoutCardsSection />
+      <MapSction />
+      <ArcadeRatingCardsSection />
+      <AppFooter />
+    </>
+  );
+};
 
 export default Home;

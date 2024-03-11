@@ -1,10 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Row, Col, Form, Button, Select, Input, InputNumber,message } from "antd";
+import {
+  Row,
+  Col,
+  Form,
+  Button,
+  Select,
+  Input,
+  InputNumber,
+  message,
+} from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
+import PaymentModal from "../../components/paymentCheckout";
+
 const { Option } = Select;
 
 const BookingForm = () => {
@@ -13,6 +24,36 @@ const BookingForm = () => {
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
+  const [paymentDetails, setPaymentDetails] = useState({
+    payment_id: "",
+    oder_id: "",
+    items: "",
+    amount: "",
+    currency: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    country: "",
+  });
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const resPaymentDetails = await fetch(
+          "http://localhost:8000/api/getpaymentditails"
+        );
+        const paymentDetailsData = await resPaymentDetails.json();
+        console.log(paymentDetailsData);
+        setPaymentDetails(paymentDetailsData);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, []);
 
   // const onZoneChange = (value: string) => {
   //   console.log(value);
@@ -41,34 +82,38 @@ const BookingForm = () => {
     const pcountint = parseInt(pcount);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/addarcadebooking",
+        `http://localhost:8000/api/addarcadebooking`,
         {
           booking_date: date,
           booking_time: time,
           zone: zone,
           participant_count: pcountint,
+          cancel_by_admin: false,
+          cancel_by_player: false,
+          cancel_by_arcade: false,
         }
       );
       console.log(res);
+      console.log(res.data.cancel_by_admin);
     } catch (err) {
       console.log("Error");
       console.log(err);
     }
   };
   const [messageApi, contextHolder] = message.useMessage();
-  const key = 'updatable';
+  const key = "updatable";
 
   const openMessage = () => {
     messageApi.open({
       key,
-      type: 'loading',
-      content: 'Loading...',
+      type: "loading",
+      content: "Loading...",
     });
     setTimeout(() => {
       messageApi.open({
         key,
-        type: 'success',
-        content: 'Booking Successfull!',
+        type: "success",
+        content: "Booking Successfull!",
         duration: 2,
       });
     }, 1000);
@@ -331,21 +376,22 @@ const BookingForm = () => {
                 justifyContent: "center",
                 marginTop: "0%",
               }}
-            >{contextHolder}
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={openMessage}
-                style={{
-                  width: "90%",
-                  height: "50px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Book
-              </Button>
+            >
+              {contextHolder}
+
+              <PaymentModal
+                item={paymentDetails?.items}
+                orderId={paymentDetails?.oder_id}
+                amount={paymentDetails?.amount}
+                currency={paymentDetails?.currency}
+                first_name={paymentDetails?.first_name}
+                last_name={paymentDetails?.last_name}
+                email={paymentDetails?.email}
+                phone={paymentDetails?.phone}
+                address={paymentDetails?.address}
+                city={paymentDetails?.city}
+                country={paymentDetails?.country}
+              />
             </div>
           </Col>
         </Row>

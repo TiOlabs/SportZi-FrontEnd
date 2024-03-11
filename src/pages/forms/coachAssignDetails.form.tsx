@@ -1,4 +1,4 @@
-import { Button, Form, InputNumber,message } from "antd";
+import { Button, Form, InputNumber, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "../../components/cloudinaryUploadWidget";
 import { AdvancedImage, placeholder, responsive } from "@cloudinary/react";
@@ -25,19 +25,19 @@ const CoachAssignDetailsForm = () => {
     resize: "fill",
   });
   const [messageApi, contextHolder] = message.useMessage();
-  const key = 'updatable';
+  const key = "updatable";
 
   const openMessage = () => {
     messageApi.open({
       key,
-      type: 'loading',
-      content: 'Loading...',
+      type: "loading",
+      content: "Loading...",
     });
     setTimeout(() => {
       messageApi.open({
         key,
-        type: 'success',
-        content: 'Loaded!',
+        type: "success",
+        content: "Loaded!",
         duration: 2,
       });
     }, 1000);
@@ -56,7 +56,7 @@ const CoachAssignDetailsForm = () => {
     console.log("publicId", publicId);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/addcoachassignvalues",
+        `${process.env.REACT_APP_API_URL}api/addcoachassignvalues`,
         {
           rate: rate,
           duration: duration,
@@ -151,12 +151,12 @@ const CoachAssignDetailsForm = () => {
         />
       </Form.Item>
       <Form.Item>
-      {contextHolder}
+        {contextHolder}
         <Button type="primary" htmlType="submit" onClick={openMessage}>
           Submit
         </Button>
       </Form.Item>
-      <AppFooter/>
+      <AppFooter />
     </Form>
   );
 };

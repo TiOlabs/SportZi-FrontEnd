@@ -4,17 +4,21 @@ import Coaches from "../pages/coaches/coaches";
 import Arcades from "../pages/arcades/arcades";
 import About from "../pages/about/about";
 import Login from "../pages/login/login";
-import Signup from "../pages/signup/signup";
 import Profiles from "../pages/profiles/profiles";
 import BookingForm from "../pages/bookingForm/bookingForm";
 import DiscountCardForm from "../pages/forms/discountCard.form";
-
+import SignupPlayer from "../pages/signup/signupPlayer";
+import SignupCoach from "../pages/signup/signupCoach";
+import SignupArcadeManager from "../pages/signup/signupArcadeManager";
 import CoachProfile from "../pages/profiles/coachProfile";
-
 import PlayerProfileUser from "../pages/profiles/PlayerProfileUsers";
 import CoachAssignDetailsForm from "../pages/forms/coachAssignDetails.form";
-
 import CoachProfileUser from "../pages/profiles/CoachProfileUser";
+import BookingManagementBookedArena from "../pages/admin/bookingManagement/bookedArena";
+import BookingManagementBookedCoach from "../pages/admin/bookingManagement/bookedCoaches";
+import AdminDashboard from "../pages/admin/dashboard";
+import Admin from "../pages/admin/admin";
+
 
 const AppRoutes = () => {
   return (
@@ -25,18 +29,31 @@ const AppRoutes = () => {
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
         <Route path="bookings" element={<BookingForm />} />
         <Route path="profile/:id" element={<Profiles />} />
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
+        <Route path="signupPlayer" element={<SignupPlayer />} />
+        <Route path="signupCoach" element={<SignupCoach />} />
         <Route path="coacheProfile" element={<CoachProfile />} />
+        <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
+        <Route path="PlayerUSer" element={<PlayerProfileUser />} />
         <Route
           path="forms/coachassigndetailsform"
           element={<CoachAssignDetailsForm />}
         />
-        <Route path="PlayerUSer" element={<PlayerProfileUser />} />
-
         <Route path="CoachUser" element={<CoachProfileUser />} />
+
+        <Route
+          path="admin/bookingManagement/bookedArena"
+          element={<BookingManagementBookedArena />}
+        />
+        <Route
+          path="admin/bookingManagement/bookedCoaches"
+          element={<BookingManagementBookedCoach />}
+        />
+        <Route path="admin/dashboard" element={<AdminDashboard />} />
+        <Route path="admin" element={<Admin />} />
+
       </Routes>
     </>
   );

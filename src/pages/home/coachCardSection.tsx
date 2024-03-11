@@ -4,6 +4,7 @@ import { md } from "node-forge";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState } from "react";
 import { CoachAssignDetails } from "../../types";
+import axios from "axios";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<
@@ -11,9 +12,9 @@ const CoachCardSection = () => {
   >([]);
 
   useEffect(() => {
-    try{
+        try{
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getcoachassignvalues");
+        const res = await fetch( `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`);
         const data = await res.json();
         setCoachAssignDetails(data);
       }
@@ -22,11 +23,7 @@ const CoachCardSection = () => {
     catch(e){
       console.log(e);
     }
-  }, []);
-  const style: React.CSSProperties = {
-    background: "#0092ff",
-    padding: "8px 0",
-  };
+    }, []);
 
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -126,7 +123,7 @@ const CoachCardSection = () => {
                       sm={{ span: 12 }}
                       xs={{ span: 24 }}
                     >
-                      <CoachCard 
+                      <CoachCard
                         rate={coachAssignDetail.rate}
                         duration={coachAssignDetail.duration}
                         description={coachAssignDetail.description}
