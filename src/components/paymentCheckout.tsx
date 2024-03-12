@@ -53,46 +53,24 @@ const PaymentModal = (props: any): JSX.Element | null => {
     hash: hash,
   };
 
+  const sa = () => {};
+
   // Called when user completed the payment. It can be a successful payment or failure
-  window.payhere.onCompleted = function onCompleted(
-    orderId: string,
-    paymentId: string
-  ) {
-    console.log("Payment completed. OrderID:" + orderId);
-    updatePaymentStatus(paymentId);
-    // fetch(" http://localhost:8000/api/postpaymentStatus", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     // Assuming orderId corresponds to payment_id
-    //     payment_status: "success", // Updating payment status to success
-    //   }),
-    // })
-    //   .then((response) => {
-    //     if (response.ok) {
-    //       console.log("Payment status updated successfully.");
-    //     } else {
-    //       console.error("Failed to update payment status.");
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error updating payment status:", error);
-    //   });
-
-    //Note: validate the payment and show success or failure page to the customer
-  };
-
-  async function updatePaymentStatus(paymentId: string) {
-    try {
-      // Send HTTP request to update payment status
-      await axios.post("http://localhost:8000/api/postpaymentStatus", {
-        paymentId,
+  window.payhere.onCompleted = function onCompleted(paymentId: string) {
+    console.log("-----------befoe");
+    axios
+      .post("http://localhost:8000/api/postpaymentStatus", {
+        status: "Success",
+      })
+      .then((res) => {
+        console.log("Payment completed.");
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(`-------error is ${error}`);
       });
-      console.log("Payment status updated successfully");
-      // You can perform any other actions after updating the payment status
-    } catch (error) {
-      console.error("Error updating payment status:", error);
-    }
-  }
+    console.log("-----------After");
+  };
 
   // Called when user closes the payment without completing
   window.payhere.onDismissed = function onDismissed() {
@@ -116,7 +94,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
     <>
       <Button
         type="primary"
-        // htmlType="submit"
+        htmlType="submit"
         style={{
           width: "90%",
           height: "50px",

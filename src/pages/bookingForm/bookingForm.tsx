@@ -39,6 +39,8 @@ const BookingForm = () => {
     country: "",
   });
 
+  let fullAmount = Number(paymentDetails?.amount) * Number(pcount);
+
   const [paymentStatus, setPaymentStatus] = useState();
   useEffect(() => {
     try {
@@ -387,7 +389,7 @@ const BookingForm = () => {
               <PaymentModal
                 item={paymentDetails?.items}
                 orderId={paymentDetails?.oder_id}
-                amount={paymentDetails?.amount}
+                amount={fullAmount}
                 currency={paymentDetails?.currency}
                 first_name={paymentDetails?.first_name}
                 last_name={paymentDetails?.last_name}
