@@ -1,6 +1,4 @@
 import { Col, Row, Skeleton } from "antd";
-import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { useState, useMemo, useCallback, useRef } from "react";
 import {
   GoogleMap,
   Marker,
@@ -8,21 +6,27 @@ import {
   Circle,
   MarkerClusterer,
 } from "@react-google-maps/api";
-// import Places from "./places";
-// import Distance from "./distance";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import {} from "@googlemaps/markerclusterer";
+import {
+  APIProvider,
+  AdvancedMarker,
+  InfoWindow,
+  Map,
+  Pin,
+  useMap,
+} from "@vis.gl/react-google-maps";
+import { useEffect, useRef, useState } from "react";
 
-type LatLngLiteral = google.maps.LatLngLiteral;
-type DirectionsResult = google.maps.DirectionsResult;
-type MapOptions = google.maps.MapOptions;
 const MapSection = () => {
   // const center = { lat: 6.801457, lng: 79.899679 };
   const katubedda = { lat: 6.801457, lng: 79.899679 };
   const piliyandala = { lat: 6.801803, lng: 79.922684 };
   const { lg } = useBreakpoint();
-  const center = useMemo<LatLngLiteral>(
-    () => ({ lat: 43.45, lng: -80.49 }),
-    []
-  );
+  const [open, setOpen] = useState(false);
+  const mapOptions = {
+    gestureHandling: "cooperative", // Enable zooming with Ctrl + scroll
+  };
   return (
     <Row style={{ backgroundColor: "#EFF4FA", marginTop: "2%" }}>
       <Col xs={24} md={10}>
@@ -57,16 +61,7 @@ const MapSection = () => {
       </Col>
       <Col md={1}></Col>
       <Col xs={24} lg={13}>
-        <div style={{ height: "50vh", width: "100%" }}>
-          <GoogleMap
-            zoom={15}
-            center={center}
-            mapContainerStyle={{
-              width: "100%",
-              height: "50vh",
-            }}
-          ></GoogleMap>
-        </div>
+        <div style={{ height: "50vh", width: "100%" }}></div>
       </Col>
     </Row>
   );
@@ -84,53 +79,6 @@ export default MapSection;
 // type Point = google.maps.LatLngLiteral & { key: string };
 // type Props = { points: Point[] };
 
-// const Markers = ({ points }: Props) => {
-//   const map = useMap();
-//   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
-//   const clusterer = useRef<MarkerClusterer | null>(null);
-
-//   useEffect(() => {
-//     if (!map) return;
-//     if (!clusterer.current) {
-//       clusterer.current = new MarkerClusterer({ map });
-//     }
-//   }, [map]);
-
-//   useEffect(() => {
-//     clusterer.current?.clearMarkers();
-//     clusterer.current?.addMarkers(Object.values(markers));
-//   }, [markers]);
-
-//   const setMarkerRef = (marker: Marker | null, key: string) => {
-//     if (marker && markers[key]) return;
-//     if (!marker && !markers[key]) return;
-
-//     setMarkers((prev) => {
-//       if (marker) {
-//         return { ...prev, [key]: marker };
-//       } else {
-//         const newMarkers = { ...prev };
-//         delete newMarkers[key];
-//         return newMarkers;
-//       }
-//     });
-//   };
-
-//   return (
-//     <>
-//       {points.map((point) => (
-//         <AdvancedMarker
-//           position={point}
-//           key={point.key}
-//           ref={(marker) => setMarkerRef(marker, point.key)}
-//         >
-//           <span style={{ fontSize: "2rem" }}>🌳</span>
-//         </AdvancedMarker>
-//       ))}
-//     </>
-//   );
-// };
-
 // type Point = google.maps.LatLngLiteral & { key: string };
 // type Props = { points: Point[] };
 
@@ -181,19 +129,17 @@ export default MapSection;
 //   );
 // };
 
-{
-  /* <GoogleMap
-  center={center}
-  zoom={15}
-  mapContainerStyle={{
-    width: "100%",
-    height: "50vh",
-  }}
->
-  {" "}
-  <Marker position={center} />
-</GoogleMap>; */
-}
+// {/* <GoogleMap
+//   center={center}
+//   zoom={15}
+//   mapContainerStyle={{
+//     width: "100%",
+//     height: "50vh",
+//   }}
+// >
+//   {" "}
+//   <Marker position={center} />
+// </GoogleMap>;
 
 {
   /* <Map
