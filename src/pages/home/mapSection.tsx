@@ -8,11 +8,12 @@ import {
 } from "@vis.gl/react-google-maps";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import type { Marker } from "@googlemaps/markerclusterer";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import trees from "../../data/trees";
 import React from "react";
+const center = { lat: 6.801457, lng: 79.899679 };
 export default function MapSection() {
-  const center = { lat: 6.801457, lng: 79.899679 };
+  const blaaa = useMemo(() => ({ lat: 6.801803, lng: 79.922684 }), []);
   const katubedda = { lat: 6.801457, lng: 79.899679 };
   const piliyandala = { lat: 6.801803, lng: 79.922684 };
   const { lg } = useBreakpoint();
@@ -52,22 +53,20 @@ export default function MapSection() {
       <Col xs={24} lg={13}>
         <div style={{ height: "50vh", width: "100%" }}>
           <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? ""}>
-            <MemoizedMap />
+            <Map
+              center={blaaa}
+              zoom={10}
+              mapId={process.env.REACT_APP_MAP_ID || ""}
+            >
+              <Markers points={trees} />
+            </Map>
           </APIProvider>
         </div>
       </Col>
     </Row>
   );
 }
-const MemoizedMap = React.memo(() => (
-  <Map
-    center={{ lat: 43.64, lng: -79.41 }}
-    zoom={10}
-    mapId={process.env.REACT_APP_MAP_ID || ""}
-  >
-    <Markers points={trees} />
-  </Map>
-));
+
 type Point = google.maps.LatLngLiteral & { key: string };
 type Props = { points: Point[] };
 
