@@ -17,11 +17,11 @@ import CoachProfileUser from "../pages/profiles/CoachProfileUser";
 import Admin from "../pages/admin/admin";
 import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
-
 const AppRoutes = () => {
   return (
     <>
       <Routes>
+        
         <Route index element={<Home />} />
         <Route path="coaches" element={<Coaches />} />
         <Route path="arcades" element={<Arcades />} />
