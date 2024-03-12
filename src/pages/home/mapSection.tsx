@@ -11,7 +11,7 @@ import type { Marker } from "@googlemaps/markerclusterer";
 import { useEffect, useState, useRef, useMemo } from "react";
 import trees from "../../data/trees";
 import React from "react";
-const center = { lat: 6.801457, lng: 79.899679 };
+const center = { lat: 43.64, lng: -79.41 };
 export default function MapSection() {
   const blaaa = useMemo(() => ({ lat: 6.801803, lng: 79.922684 }), []);
   const katubedda = { lat: 6.801457, lng: 79.899679 };
@@ -54,8 +54,8 @@ export default function MapSection() {
         <div style={{ height: "50vh", width: "100%" }}>
           <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? ""}>
             <Map
-              center={blaaa}
-              zoom={10}
+              center={center}
+              zoom={15}
               mapId={process.env.REACT_APP_MAP_ID || ""}
             >
               <Markers points={trees} />
