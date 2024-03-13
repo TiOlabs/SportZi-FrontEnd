@@ -2,6 +2,7 @@ import React from "react";
 
 import md5 from "crypto-js/md5";
 import { Button, message } from "antd";
+import axios from "axios";
 
 declare global {
   interface Window {
@@ -52,10 +53,23 @@ const PaymentModal = (props: any): JSX.Element | null => {
     hash: hash,
   };
 
+  const sa = () => {};
+
   // Called when user completed the payment. It can be a successful payment or failure
-  window.payhere.onCompleted = function onCompleted(orderId: string) {
-    console.log("Payment completed. OrderID:" + orderId);
-    //Note: validate the payment and show success or failure page to the customer
+  window.payhere.onCompleted = function onCompleted(paymentId: string) {
+    console.log("-----------befoe");
+    axios
+      .post("http://localhost:8000/api/postpaymentStatus", {
+        status: "Success",
+      })
+      .then((res) => {
+        console.log("Payment completed.");
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(`-------error is ${error}`);
+      });
+    console.log("-----------After");
   };
 
   // Called when user closes the payment without completing
@@ -71,20 +85,9 @@ const PaymentModal = (props: any): JSX.Element | null => {
   };
 
   function pay() {
+    console.log("before");
     window.payhere.startPayment(payment);
-    messageApi.open({
-      key,
-      type: "loading",
-      content: "Loading...",
-    });
-    setTimeout(() => {
-      messageApi.open({
-        key,
-        type: "success",
-        content: "Booking Successfull!",
-        duration: 2,
-      });
-    }, 1000);
+    console.log("after");
   }
 
   return (
@@ -103,8 +106,6 @@ const PaymentModal = (props: any): JSX.Element | null => {
       >
         Pay with Payhere
       </Button>
-
-      <p>{name}</p>
     </>
   );
 };
