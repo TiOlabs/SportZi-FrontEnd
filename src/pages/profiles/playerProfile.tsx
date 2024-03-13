@@ -3,14 +3,19 @@ import { url } from "inspector";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
-import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
+import {
+  StarOutlined,
+  StarFilled,
+  StarTwoTone,
+  DeleteFilled,
+} from "@ant-design/icons";
 import { List } from "antd";
 import { Image } from "antd";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
 
 import { Grid } from "antd";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
@@ -43,6 +48,37 @@ const PlayerProfile = () => {
   const [show2, setShow2] = useState(false);
   const [show3, setShow3] = useState(false);
 
+  const [Sportdata, setSportData] = useState(["T20", "T20", "T20"]);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [Discrptiontext, setDiscriptionText] = useState("Double click to edit");
+  const inputRef = useRef(null);
+
+  const handleDoubleClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleChange = (event: { target: { value: any } }) => {
+    setDiscriptionText(event.target.value);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    // Save the changes or perform any required actions here
+  };
+
+  const addItem = () => {
+    const newData = [...Sportdata, "New Item"]; // Add your new item here
+    setSportData(newData);
+  };
+
+  // Function to remove an item from the list by index
+  const removeItem = (index: number) => {
+    const newData = [...Sportdata];
+    newData.splice(index, 1);
+    setSportData(newData);
+  };
+
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -60,7 +96,11 @@ const PlayerProfile = () => {
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
-      <Row>
+      <Row
+        style={{
+          width: "100vw",
+        }}
+      >
         <Col
           xs={24}
           sm={24}
@@ -68,7 +108,7 @@ const PlayerProfile = () => {
           lg={10}
           xl={10}
           style={{
-            marginTop:"30px",
+            marginTop: "30px",
             backgroundImage: `url(${profileBackground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -76,6 +116,7 @@ const PlayerProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            width: "100%",
           }}
         >
           {" "}
@@ -95,6 +136,7 @@ const PlayerProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            width: "100%",
           }}
         >
           <div
@@ -216,7 +258,9 @@ const PlayerProfile = () => {
                 </Col>
               </Row>
             </div>
-            <p
+
+            <Typography
+              onDoubleClick={handleDoubleClick}
               style={{
                 color: "#000",
                 fontFamily: "kanit",
@@ -228,13 +272,29 @@ const PlayerProfile = () => {
                 marginTop: "0px",
               }}
             >
-              I am a former elite rugby league player who would love to
+              {isEditing ? (
+                <input
+                  style={{ width: "100%" }}
+                  type="text"
+                  value={Discrptiontext}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  ref={inputRef}
+                  placeholder="Discription"
+                />
+              ) : Discrptiontext === "" ? (
+                <span>Discription</span>
+              ) : (
+                <span>{Discrptiontext}</span>
+              )}
+              {/* fghfh I am a former elite rugby league player who would love to
               encourage and mentor younger athletes to work towards their goals
               and aspirations as well as to share my knowledge and give back to
               the game that’s given me so much. My main position in rugby league
               was halfback and I had the honour of representing QLD in the State
-              Of Origin
-            </p>
+              Of Origin */}
+            </Typography>
+
             <p
               style={{
                 color: "#000",
@@ -258,8 +318,8 @@ const PlayerProfile = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
+              dataSource={Sportdata}
+              renderItem={(item, index) => (
                 <List.Item
                   style={{
                     position: "relative",
@@ -291,10 +351,17 @@ const PlayerProfile = () => {
                       &#8226;
                     </span>
                     {item}
+                    <Button
+                      style={{ background: "none" }}
+                      onClick={() => removeItem(index)}
+                    >
+                      <DeleteFilled />
+                    </Button>
                   </div>
                 </List.Item>
               )}
             />
+            <Button onClick={addItem}>Add Item</Button>
 
             <p
               style={{
