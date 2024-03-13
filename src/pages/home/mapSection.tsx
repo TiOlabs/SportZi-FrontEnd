@@ -8,7 +8,10 @@ const center: google.maps.LatLngLiteral = { lat: 6.7969, lng: 79.9018 };
 
 const MapSection: React.FC = () => {
   const { lg } = useBreakpoint();
+
   const { isLoaded, loadError } = useJsApiLoader({
+
+
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY || "",
   });
 
