@@ -53,7 +53,7 @@ const onLoad = useCallback((map: GoogleMap | undefined)=>{mapRef.current=map},[]
         </p>
       </Col>
       <Col md={1}></Col>
-      <Col xs={24} lg={13}>
+      {/* <Col xs={24} lg={13}>
         <div style={{ height: "50vh", width: "100%" }}>
           <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? ""}>
             <Map
@@ -66,60 +66,60 @@ const onLoad = useCallback((map: GoogleMap | undefined)=>{mapRef.current=map},[]
             </Map>
           </APIProvider>
         </div>
-      </Col>
+      </Col> */}
     </Row>
   );
 }
 
-type Point = google.maps.LatLngLiteral & { key: string };
-type Props = { points: Point[] };
+// type Point = google.maps.LatLngLiteral & { key: string };
+// type Props = { points: Point[] };
 
-const Markers = ({ points }: Props) => {
-  const map = useMap();
-  const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
-  const clusterer = useRef<MarkerClusterer | null>(null);
+// const Markers = ({ points }: Props) => {
+//   const map = useMap();
+//   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
+//   const clusterer = useRef<MarkerClusterer | null>(null);
 
-  useEffect(() => {
-    if (!map) return;
-    if (!clusterer.current) {
-      clusterer.current = new MarkerClusterer({ map });
-    }
-  }, [map]);
+//   useEffect(() => {
+//     if (!map) return;
+//     if (!clusterer.current) {
+//       clusterer.current = new MarkerClusterer({ map });
+//     }
+//   }, [map]);
 
-  useEffect(() => {
-    clusterer.current?.clearMarkers();
-    clusterer.current?.addMarkers(Object.values(markers));
-  }, [markers]);
+//   useEffect(() => {
+//     clusterer.current?.clearMarkers();
+//     clusterer.current?.addMarkers(Object.values(markers));
+//   }, [markers]);
 
-  const setMarkerRef = (marker: Marker | null, key: string) => {
-    if (marker && markers[key]) return;
-    if (!marker && !markers[key]) return;
+//   const setMarkerRef = (marker: Marker | null, key: string) => {
+//     if (marker && markers[key]) return;
+//     if (!marker && !markers[key]) return;
 
-    setMarkers((prev) => {
-      if (marker) {
-        return { ...prev, [key]: marker };
-      } else {
-        const newMarkers = { ...prev };
-        delete newMarkers[key];
-        return newMarkers;
-      }
-    });
-  };
+//     setMarkers((prev) => {
+//       if (marker) {
+//         return { ...prev, [key]: marker };
+//       } else {
+//         const newMarkers = { ...prev };
+//         delete newMarkers[key];
+//         return newMarkers;
+//       }
+//     });
+//   };
 
-  return (
-    <>
-      {points.map((point) => (
-        <AdvancedMarker
-          position={point}
-          key={point.key}
-          ref={(marker) => setMarkerRef(marker, point.key)}
-        >
-          <span style={{ fontSize: "2rem" }}>🌳</span>
-        </AdvancedMarker>
-      ))}
-    </>
-  );
-};
+//   return (
+//     <>
+//       {points.map((point) => (
+//         <AdvancedMarker
+//           position={point}
+//           key={point.key}
+//           ref={(marker) => setMarkerRef(marker, point.key)}
+//         >
+//           <span style={{ fontSize: "2rem" }}>🌳</span>
+//         </AdvancedMarker>
+//       ))}
+//     </>
+//   );
+// };
 // const MemoizedMap = React.memo(() => (
 //   <Map
 //     center={{ lat: 43.64, lng: -79.41 }}
