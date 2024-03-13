@@ -1,26 +1,30 @@
 import { Col, Row, Skeleton } from "antd";
-import { useJsApiLoader, GoogleMap, Marker, MarkerClusterer } from "@react-google-maps/api";
+import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { useState } from "react";
-import React from "react";
+import { useCallback, useState } from "react";
 
 const center: google.maps.LatLngLiteral = { lat: 6.7969, lng: 79.9018 };
 
-const MapSection: React.FC = () => {
+const MapForSignUpForm: React.FC = () => {
+  const [selected, setSelected] = useState<{ lat: number, lng: number } | null>(null);
   const { lg } = useBreakpoint();
-  const { isLoaded, loadError } = useJsApiLoader({
+  const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY || "",
   });
 
-  const locations = [
-    { lat: 6.79219078406429, lng: 79.89792530231765 },
-    { lat: 6.790880397204962, lng: 79.89870850735 },
-    { lat: 6.792116209298174, lng: 79.89963118725112 }
-  ];
-
-  if (loadError) {
-    return <div>Error loading map</div>;
-  }
+  const handleClick = useCallback(
+    (event: google.maps.MapMouseEvent) => {
+      if (event.latLng) {
+        const clickedLocation = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng(),
+        };
+        console.log("Clicked Location:", clickedLocation);
+        setSelected(clickedLocation);
+      }
+    },
+    [setSelected]
+  );
 
   if (!isLoaded) {
     return <Skeleton />;
@@ -63,30 +67,21 @@ const MapSection: React.FC = () => {
         <GoogleMap
           center={center}
           zoom={15}
+          onClick={handleClick}
           mapContainerStyle={{
             width: "100%",
             height: "50vh",
           }}
         >
-          <React.Fragment>
-            <MarkerClusterer>
-              {(clusterer) => (
-                <div> {/* Add a parent element */}
-                  {locations.map((location, index) => (
-                    <Marker
-                      key={index}
-                      position={location}
-                      clusterer={clusterer}
-                    />
-                  ))}
-                </div>
-              )}
-            </MarkerClusterer>
-          </React.Fragment>
+          {selected && (
+            <Marker
+              position={{ lat: selected.lat, lng: selected.lng }}
+            />
+          )}
         </GoogleMap>
       </Col>
     </Row>
   );
 };
 
-export default MapSection;
+export default  MapForSignUpForm;
