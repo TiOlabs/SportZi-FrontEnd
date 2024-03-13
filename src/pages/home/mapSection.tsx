@@ -7,7 +7,7 @@ const center = { lat: 6.7969, lng: 79.9018 };
 const MapSection = () => {
   const { lg } = useBreakpoint();
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_API_KEY || "",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY || "",
   });
 
   if (!isLoaded) {
