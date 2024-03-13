@@ -1,14 +1,29 @@
 import { Col, Row, Skeleton } from "antd";
-import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
+import { useJsApiLoader, GoogleMap, Marker, MarkerClusterer } from "@react-google-maps/api";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import { useState } from "react";
+import React from "react";
 
-const center = { lat: 6.7969, lng: 79.9018 };
+const center: google.maps.LatLngLiteral = { lat: 6.7969, lng: 79.9018 };
 
-const MapSection = () => {
+const MapSection: React.FC = () => {
   const { lg } = useBreakpoint();
-  const { isLoaded } = useJsApiLoader({
+
+  const { isLoaded, loadError } = useJsApiLoader({
+
+
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY || "",
   });
+
+  const locations = [
+    { lat: 6.79219078406429, lng: 79.89792530231765 },
+    { lat: 6.790880397204962, lng: 79.89870850735 },
+    { lat: 6.792116209298174, lng: 79.89963118725112 }
+  ];
+
+  if (loadError) {
+    return <div>Error loading map</div>;
+  }
 
   if (!isLoaded) {
     return <Skeleton />;
@@ -56,8 +71,21 @@ const MapSection = () => {
             height: "50vh",
           }}
         >
-          {" "}
-          <Marker position={center} />
+          <React.Fragment>
+            <MarkerClusterer>
+              {(clusterer) => (
+                <div> {/* Add a parent element */}
+                  {locations.map((location, index) => (
+                    <Marker
+                      key={index}
+                      position={location}
+                      clusterer={clusterer}
+                    />
+                  ))}
+                </div>
+              )}
+            </MarkerClusterer>
+          </React.Fragment>
         </GoogleMap>
       </Col>
     </Row>
