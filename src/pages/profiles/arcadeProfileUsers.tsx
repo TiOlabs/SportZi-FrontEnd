@@ -730,9 +730,7 @@ const ArcadeProfileUser = () => {
               justifyContent: "flex-end",
               marginBottom: "20px",
             }}
-          >
-            <AddZone />
-          </div>
+          ></div>
         </Row>
         <Row
           style={{
@@ -855,9 +853,7 @@ const ArcadeProfileUser = () => {
               justifyContent: "flex-end",
               marginBottom: "20px",
             }}
-          >
-            <AddPackage />
-          </div>
+          ></div>
         </Row>
         <Row
           style={{
