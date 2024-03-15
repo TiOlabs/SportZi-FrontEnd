@@ -10,6 +10,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import moment, { Moment } from "moment";
 
+import axiosInstance from "../../axiosInstance";
+
+
+
 //responsiveness
 const formItemLayout = {
   wrapperCol: {
@@ -67,8 +71,8 @@ const SignupPlayer = () => {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  //   const [dob, setDob] = useState("");
+  const [phone_number, setPhone] = useState("");
+    // const [DOB, setDOB] = useState("");
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
 
@@ -80,31 +84,32 @@ const SignupPlayer = () => {
   };
 
   const onFinish = async () => {
-    console.log(
-      firstname,
-      lastname,
-      email,
-      password,
-      phone,
-      selectedDateString,
-      gender
-    );
+    // console.log(
+    //   firstname,
+    //   lastname,
+    //   email,
+    //   password,
+    //   phone_number,
+    //   selectedDateString,
+    //   gender
+    // );
     try {
-      const res = await axios.post("http://localhost:8000/api/addplayer", {
+      const response = await axiosInstance.post("/api/addplayer", {
         firstname: firstname,
         lastname: lastname,
         email: email,
         password: password,
-        phone: phone,
-        dob: selectedDateString,
+        phone_number: phone_number,
+        DOB: selectedDateString,
         gender: gender,
       });
-      console.log(res);
+      console.log(response);
       alert("Form submitted successfully!");
+      alert(response.status);
     } catch (err) {
       console.log("Error");
       console.log(err);
-      alert("Internal server error");
+      alert(err);
     }
   };
 
@@ -339,7 +344,7 @@ const SignupPlayer = () => {
 
               {/* phone number field*/}
               <Form.Item
-                name="phone"
+                name="phone_number"
                 label="Phone Number"
                 rules={[
                   {

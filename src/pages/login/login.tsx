@@ -4,12 +4,67 @@ import { Form, Input, Row, Col, Button, Checkbox } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { off } from "process";
+import { useState } from "react";
+import axios from "axios";
+// import { useHistory } from "react-router-dom";
+
 
 const commonInputStyle = {
   height: "40px",
 };
 
+
+
+
+
+
+
+
+
+
 const Login = () => {
+
+
+
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // const history = useHistory(); // Get access to history object
+
+
+  const onFinish = async () => {
+    console.log(
+      email,
+      password,
+    );
+    try {
+      const res = await axios.post("http://localhost:8000/api/login", {
+        email: email,
+        password: password,  
+      });
+
+      console.log(res);
+
+      if (res.status === 200) {
+        alert("Login successfully!");
+        
+        // history.push("/playerProfile");
+
+      } else {
+        alert("Login failed");
+      }
+
+
+    } catch (err) {
+
+      console.log(err);
+      alert("Login failed");
+    }
+  };
+
+
+
   return (
     <>
       <Row >
@@ -68,7 +123,7 @@ const Login = () => {
             initialValues={{ remember: true }}
             layout="vertical"
             
-            // onFinish={onFinish}
+            onFinish={onFinish}
           >
             <div
               style={{
@@ -92,6 +147,7 @@ const Login = () => {
                 // prefix={<UserOutlined className="site-form-item-icon" />}
                 style={commonInputStyle}
                 placeholder="Username"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Form.Item>
             <Form.Item
@@ -106,6 +162,7 @@ const Login = () => {
                 style={commonInputStyle}
                 type="password"
                 placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Item>
             <Form.Item style={{textAlign:"right"}}>

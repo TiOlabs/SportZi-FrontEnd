@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
-import moment, { Moment } from "moment";
+// import moment, { Moment } from "moment";
 import { Dayjs } from "dayjs";
 
 //responsiveness
