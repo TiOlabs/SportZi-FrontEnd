@@ -1,4 +1,4 @@
-import "./signup.css";
+import "../../styles/signup.css";
 
 import { Flex } from "antd";
 import { Image } from "antd";
@@ -103,7 +103,9 @@ const SignupPlayer = () => {
         DOB: selectedDateString,
         gender: gender,
       });
+
       console.log(response);
+
       alert("Form submitted successfully!");
       alert(response.status);
     } catch (err) {

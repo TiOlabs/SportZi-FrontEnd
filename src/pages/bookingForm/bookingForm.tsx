@@ -14,6 +14,8 @@ import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
+import PaymentModal from "../../components/paymentCheckout";
+
 const { Option } = Select;
 
 const BookingForm = () => {
@@ -22,6 +24,47 @@ const BookingForm = () => {
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
+  const [paymentDetails, setPaymentDetails] = useState({
+    payment_id: "",
+    oder_id: "",
+    items: "",
+    amount: "",
+    currency: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    country: "",
+  });
+
+  let fullAmount = Number(paymentDetails?.amount) * Number(pcount);
+
+  const [paymentStatus, setPaymentStatus] = useState();
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const resPaymentDetails = await fetch(
+          "http://localhost:8000/api/getpaymentditails"
+        );
+        const paymentDetailsData = await resPaymentDetails.json();
+
+        // const respaymentStatus = await fetch(
+        //   "http://localhost:8000/api/postpaymentStatus"
+        // );
+        // const paymentStatusData = await respaymentStatus.json();
+
+        // setPaymentStatus(paymentStatusData);
+
+        console.log(paymentDetailsData);
+        setPaymentDetails(paymentDetailsData);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, []);
 
   // const onZoneChange = (value: string) => {
   //   console.log(value);
@@ -48,20 +91,32 @@ const BookingForm = () => {
   const handleFinish = async () => {
     console.log(date, time, zone, pcount);
     const pcountint = parseInt(pcount);
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/addbookingvalues`,
-        {
-          booking_date: date,
-          booking_time: time,
-          zone: zone,
-          participant_count: pcountint,
-        }
-      );
-      console.log(res);
-    } catch (err) {
-      console.log("Error");
-      console.log(err);
+    if (parseInt(pcount) <= 0) {
+      message.error("Participant count must be more than 0");
+      return; // Stop further execution
+    } else if (time === "") {
+      message.error("time must be selected");
+      return; // Stop further execution
+    }else{
+      try {
+        const res = await axios.post(
+          `http://localhost:8000/api/addarcadebooking`,
+          {
+            booking_date: date,
+            booking_time: time,
+            zone: zone,
+            participant_count: pcountint,
+            cancel_by_admin: false,
+            cancel_by_player: false,
+            cancel_by_arcade: false,
+          }
+        );
+        console.log(res);
+        console.log(res.data.cancel_by_admin);
+      } catch (err) {
+        console.log("Error");
+        console.log(err);
+      }
     }
   };
   const [messageApi, contextHolder] = message.useMessage();
@@ -121,7 +176,7 @@ const BookingForm = () => {
                 </Col>
                 <Col style={{}} xs={24} md={12} lg={24}>
                   <div style={{ display: "Flex", justifyContent: "center" }}>
-                    <Form.Item name="date">
+                    <Form.Item name="date" rules={[{ required: true }]}>
                       <Calender
                         onChange={(date: any) => {
                           setDate(date);
@@ -130,6 +185,49 @@ const BookingForm = () => {
                     </Form.Item>
                   </div>
                 </Col>
+                <Form.Item
+                  name="Participant Count"
+                  label="Participant Count"
+                  rules={[{ required: true, type: "number" }]}
+                  style={{
+                    width: "90%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <InputNumber
+                    style={{
+                      height: "50px",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    onChange={(value) => setPcount(value?.toString() || "")}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="way_of_booking"
+                  label="Way of Booking"
+                  rules={[{ required: true }]}
+                  style={{
+                    width: "90%",
+                    marginTop: "0%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <Select
+                    placeholder="Select a Zone"
+                    onChange={(value) => setZone(value)}
+                    allowClear
+                    style={{
+                      height: "50px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Option value="full">Full Zone</Option>
+                    <Option value="Individual">Individual</Option>
+                  </Select>
+                </Form.Item>
               </Row>
             </div>
           </Col>
@@ -146,13 +244,21 @@ const BookingForm = () => {
                 justifyContent: "center",
               }}
             >
-              <div
+              {/* <Form.Item
+                name="Time Slot"
+                label="time Slot"
+                rules={[{ required: true }]}
+              > */}
+              <Form.Item
+                name="Time Slot"
+                
+              
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   rowGap: "20px",
                   width: "80%",
-                  height: "600px",
+                  height: "800px",
                   justifyContent: "center",
                   alignItems: "center",
                   alignSelf: "center",
@@ -244,7 +350,8 @@ const BookingForm = () => {
                 >
                   20.00-21.00
                 </button>
-              </div>
+              </Form.Item>
+              {/* </Form.Item> */}
             </div>
           </Col>
         </Row>
@@ -258,60 +365,7 @@ const BookingForm = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-            >
-              <Form.Item
-                name="zone"
-                label="Zone"
-                rules={[{ required: true }]}
-                style={{
-                  width: "90%",
-                  marginTop: "2%",
-                }}
-              >
-                <Select
-                  placeholder="Select a Zone"
-                  onChange={(value) => setZone(value)}
-                  allowClear
-                  style={{
-                    height: "50px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Option value="male">male</Option>
-                  <Option value="female">female</Option>
-                  <Option value="other">other</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="Participant Count"
-                label="Participant Count"
-                rules={[{ required: true, type: "number" }]}
-                style={{
-                  width: "90%",
-                }}
-              >
-                <InputNumber
-                  style={{
-                    height: "50px",
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                  onChange={(value) => setPcount(value?.toString() || "")}
-                />
-                {/* <Input
-                  onChange={(event) => setPcount(event.target.value)}
-                  placeholder="Participant Count"
-                  allowClear
-                  style={{
-                    height: "50px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                /> */}
-              </Form.Item>
-            </div>
+            ></div>
           </Col>
         </Row>
         <Row>
@@ -342,20 +396,20 @@ const BookingForm = () => {
               }}
             >
               {contextHolder}
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={openMessage}
-                style={{
-                  width: "90%",
-                  height: "50px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Book
-              </Button>
+
+              <PaymentModal
+                item={paymentDetails?.items}
+                orderId={paymentDetails?.oder_id}
+                amount={fullAmount}
+                currency={paymentDetails?.currency}
+                first_name={paymentDetails?.first_name}
+                last_name={paymentDetails?.last_name}
+                email={paymentDetails?.email}
+                phone={paymentDetails?.phone}
+                address={paymentDetails?.address}
+                city={paymentDetails?.city}
+                country={paymentDetails?.country}
+              />
             </div>
           </Col>
         </Row>

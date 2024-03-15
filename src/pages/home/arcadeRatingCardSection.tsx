@@ -1,11 +1,24 @@
 import { Col, Row } from "antd";
-import * as styles from "./home.module.css";
-import { ColorFactory } from "antd/es/color-picker/color";
-import ButtonGroup from "antd/es/button/button-group";
 import ArcadeRatingCard from "../../components/arcadeRatingCard";
-import { Route } from "react-router-dom";
-import Column from "antd/es/table/Column";
+import { useEffect, useState } from "react";
+import { ArcadeRating } from "../../types";
 const ArcadeRatingCardsSection = () => {
+    const [arcadeRatings, setArcadeRatings] = useState<ArcadeRating[]>([]);
+    useEffect(() => {   
+        try {
+            const fetchData = async () => {
+                const res = await fetch(
+                    "http://localhost:8000/api/getarcaderatings"
+                );
+                const data = await res.json();
+                setArcadeRatings(data);
+            };
+            fetchData();
+        } catch (e) {
+            console.log(e);
+        }
+    }, []);
+    console.log(arcadeRatings);
   return (
     <Row
       style={{
@@ -30,26 +43,15 @@ const ArcadeRatingCardsSection = () => {
         Arcade ratings
       </h1>
       <Row>
-        <Col xs={1} md={1} lg={0} xl={0}></Col>
-        <Col xs={23} md={23} lg={12} xl={8}>
-          <ArcadeRatingCard />
-        </Col>
-        <Col xs={1} md={8} lg={0} xl={0}></Col>
-        <Col xs={23} md={16} lg={12} xl={8}>
-          <ArcadeRatingCard />
-        </Col>
-        <Col xs={1} md={1} lg={6} xl={0}></Col>
-        <Col xs={23} md={23} lg={18} xl={8}>
-          <ArcadeRatingCard />
-        </Col>
-        <Col xs={0} md={0} lg={0} xl={4}></Col>
-        <Col xs={0} md={0} lg={0} xl={8}>
-          <ArcadeRatingCard />
-        </Col>
-        <Col xs={0} md={0} lg={0} xl={0}></Col>
-        <Col xs={0} md={0} lg={0} xl={8}>
-          <ArcadeRatingCard />
-        </Col>
+        {arcadeRatings?.map((arcadeRating: ArcadeRating) => (
+          <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
+            <ArcadeRatingCard
+              arcadeRating_description={arcadeRating.discription}
+              arcadeRating={arcadeRating.rate}
+            />
+          </Col>
+        ))}
+
       </Row>
     </Row>
   );

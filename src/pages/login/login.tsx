@@ -1,17 +1,16 @@
-import "./login.css";
+import "../../styles/login.css";
 import AppFooter from "../../components/footer";
 import { Form, Input, Row, Col, Button, Checkbox } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { off } from "process";
 import { useState } from "react";
-import axios from "axios";
-// import { useHistory } from "react-router-dom";
-
+import axios, { AxiosResponse } from "axios";
 
 const commonInputStyle = {
   height: "40px",
 };
+
 
 
 
@@ -73,6 +72,8 @@ const Login = () => {
           lg={{ span: 12,offset:0}}
           md={{ span: 20, offset:2}}
           sm={{ span: 22, offset:1 }}
+
+
           style={{
             backgroundColor: "#EFF4FA",
             display: "flex",
@@ -81,7 +82,10 @@ const Login = () => {
           }}
         >
           {/* image */}
+
           <div style={{ textAlign: "center",paddingBottom:"50px"}}>
+
+
             <img
               src={img1}
               alt=""
@@ -101,9 +105,12 @@ const Login = () => {
             </div>
 
             <div
+
             style={{
                 fontSize:"18px"
             }}>
+
+ 
               <a href=""> Privacy And Policy </a>
             </div>
           </div>
@@ -111,10 +118,13 @@ const Login = () => {
 
         {/* form */}
         <Col
+
           xl={{ span: 12, offset:0}}
           lg={{ span: 12 ,offset:0}}
           md={{ span: 20, offset:2}}
           sm={{ span: 22, offset:1}}
+
+
           style={{ padding: "80px" }}
         >
           <Form
@@ -122,15 +132,20 @@ const Login = () => {
             className="login-form"
             initialValues={{ remember: true }}
             layout="vertical"
+
             
             onFinish={onFinish}
+
           >
             <div
               style={{
                 fontSize: "28px",
                 textAlign: "center",
                 paddingBottom: "20px",
+
                 color:"#0E458E"
+
+
               }}
             >
               Unlock Your True Capabilities By Signing In To Access Our
@@ -166,6 +181,7 @@ const Login = () => {
               />
             </Form.Item>
             <Form.Item style={{textAlign:"right"}}>
+
               {/* <Form.Item name="remember" valuePropName="checked" noStyle>
                 <Checkbox>Remember me</Checkbox>
               </Form.Item> */}
@@ -186,6 +202,7 @@ const Login = () => {
                   backgroundColor: "#2E5488",
                   color: "#fff",
                   fontSize:"16px"
+
                 }}
               >
                 Log in

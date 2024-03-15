@@ -15,7 +15,7 @@ const CoachCard = (props: any) => {
       cloudName,
     },
   });
-  console.log("props image hiiiiii", props.coach_image);
+
   console.log("props", props);
   return (
     <>
@@ -24,7 +24,7 @@ const CoachCard = (props: any) => {
         <div className="mainCardsec2">
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
-              <p>Sandun Malage</p>
+              <p>{props.coach_first_name}</p>
               <p className="coachPosition">level one Rugby Coach</p>
             </div>
 
@@ -49,7 +49,7 @@ const CoachCard = (props: any) => {
               />
             </div>
             <div>
-              <p className="coachDiscription"> {props.description} </p>
+              <p className="coachDiscription"> {props.short_description} </p>
             </div>
           </div>
           <div
@@ -69,7 +69,7 @@ const CoachCard = (props: any) => {
                   fontWeight: "500",
                 }}
               >
-                {props.rate}
+                Rs.{props.rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>

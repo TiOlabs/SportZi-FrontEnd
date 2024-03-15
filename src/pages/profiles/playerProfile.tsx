@@ -13,6 +13,7 @@ import { Grid } from "antd";
 import { useMemo, useState } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
+import NavbarProfile from "../../components/NavBarProfile";
 
 const requestList = [
   <CoachRequstRow />,
@@ -67,6 +68,7 @@ const PlayerProfile = () => {
           lg={10}
           xl={10}
           style={{
+            marginTop:"30px",
             backgroundImage: `url(${profileBackground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",

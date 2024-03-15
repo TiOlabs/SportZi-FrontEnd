@@ -13,7 +13,7 @@ const Home = () => {
       <HeroSection />
       <CoachCardSection />
       <DiscoutCardsSection />
-      <MapSction />
+      <MapSction/>
       <ArcadeRatingCardsSection />
       <AppFooter />
     </>

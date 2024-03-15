@@ -14,6 +14,9 @@ import CoachProfile from "../pages/profiles/coachProfile";
 import PlayerProfileUser from "../pages/profiles/PlayerProfileUsers";
 import CoachAssignDetailsForm from "../pages/forms/coachAssignDetails.form";
 import CoachProfileUser from "../pages/profiles/CoachProfileUser";
+import Admin from "../pages/admin/admin";
+import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
+import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 
 const AppRoutes = () => {
   return (
@@ -32,8 +35,14 @@ const AppRoutes = () => {
         <Route path="coacheProfile" element={<CoachProfile />} />
         <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
         <Route path="PlayerUSer" element={<PlayerProfileUser />} />
-        <Route path="forms/coachassigndetailsform" element={<CoachAssignDetailsForm />}/>
+        <Route
+          path="forms/coachassigndetailsform"
+          element={<CoachAssignDetailsForm />}
+        />
         <Route path="CoachUser" element={<CoachProfileUser />} />
+        <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
+        <Route path="arcadeProfile" element={<ArcadeProfileUser/>} />
+        <Route path="admin" element={<Admin />} />
       </Routes>
     </>
   );

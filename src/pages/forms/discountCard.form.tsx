@@ -87,7 +87,11 @@ const DiscountCardForm = () => {
     console.log(publicId);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/adddiscountcardvalues`,
+
+
+
+        `${process.env.REACT_APP_API_URL}api/adddiscountcardvalues`,
+
         {
           discount_percentage: discountint,
           description: description,

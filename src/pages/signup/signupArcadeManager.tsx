@@ -1,4 +1,4 @@
-import "./signup.css";
+import "../../styles/signup.css";
 
 import { Flex } from "antd";
 import { Image } from "antd";
@@ -101,7 +101,8 @@ const SignupArcadeManager = () => {
     console.log(name, email, password, phone, opentime, closetime);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/addarcadeManager",
+        `${process.env.REACT_APP_API_URL}api/addarcadeManager`,
+        
         {
           name: name,
           email: email,
@@ -119,6 +120,9 @@ const SignupArcadeManager = () => {
       alert("Internal server error");
     }
   };
+
+
+  
 
   return (
     <>

@@ -1,4 +1,4 @@
-import "./signup.css";
+import "../../styles/signup.css";
 
 import { Flex } from "antd";
 import { Image } from "antd";
@@ -8,8 +8,12 @@ import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
+
 import  {Moment}  from "moment";
 import axiosInstance from "../../axiosInstance";
+
+
+
 
 //responsiveness
 const formItemLayout = {
@@ -121,7 +125,10 @@ const SignupCoach = () => {
     //   sport
     // );
     try {
+
       const response = await axiosInstance.post("/api/addcoach", {
+
+
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -139,6 +146,8 @@ const SignupCoach = () => {
       alert(err);
     }
   };
+ 
+    
 
   return (
     <>
