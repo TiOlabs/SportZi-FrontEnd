@@ -9,7 +9,10 @@ import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
 
-import moment, { Moment } from "moment";
+import  {Moment}  from "moment";
+import axiosInstance from "../../axiosInstance";
+
+
 
 
 //responsiveness
@@ -111,34 +114,36 @@ const SignupCoach = () => {
   //   };
 
   const onFinish = async () => {
-    console.log(
-      firstname,
-      lastname,
-      email,
-      password,
-      phone,
-      selectedDateString,
-      gender,
-      sport
-    );
+    // console.log(
+    //   firstname,
+    //   lastname,
+    //   email,
+    //   password,
+    //   phone,
+    //   selectedDateString,
+    //   gender,
+    //   sport
+    // );
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/addcoach`, {
+
+      const response = await axiosInstance.post("/api/addcoach", {
+
+
         firstname: firstname,
         lastname: lastname,
         email: email,
         password: password,
-        phone: phone,
-        dob: selectedDateString,
+        phone_number: phone,
+        DOB: selectedDateString,
         gender: gender,
-        sport,
+        sport_name:sport,
       });
-      console.log(res);
+      console.log(response);
       alert("Form submitted successfully!");
     } catch (err) {
       console.log("Error");
       console.log(err);
-      alert("Internal server error");
+      alert(err);
     }
   };
  
@@ -393,7 +398,7 @@ const SignupCoach = () => {
 
               {/* birthday field */}
               <Form.Item
-                name="dob"
+                name="DOB"
                 label="DOB"
                 rules={[
                   {
