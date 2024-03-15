@@ -9,6 +9,28 @@ const DiscountCard = (props: any) => {
       cloudName,
     },
   });
+  const markers = [
+    {
+      id: 1,
+      name: "Chicago, Illinois",
+      position: { lat: 41.881832, lng: -87.623177 }
+    },
+    {
+      id: 2,
+      name: "Denver, Colorado",
+      position: { lat: 39.739235, lng: -104.99025 }
+    },
+    {
+      id: 3,
+      name: "Los Angeles, California",
+      position: { lat: 34.052235, lng: -118.243683 }
+    },
+    {
+      id: 4,
+      name: "New York, New York",
+      position: { lat: 40.712776, lng: -74.005974 }
+    }
+  ];
   return (
     <Card hoverable>
       <div style={{ display: "flex", width: "auto" }}>

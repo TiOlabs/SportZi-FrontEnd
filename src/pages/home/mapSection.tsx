@@ -1,26 +1,28 @@
 import { Col, Row, Skeleton } from "antd";
-import { useJsApiLoader, GoogleMap, Marker, MarkerClusterer } from "@react-google-maps/api";
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  MarkerClusterer,
+} from "@react-google-maps/api";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import React from "react";
 
 const center: google.maps.LatLngLiteral = { lat: 6.7969, lng: 79.9018 };
 
 const MapSection: React.FC = () => {
   const { lg } = useBreakpoint();
-  const { isLoaded, loadError } = useJsApiLoader({
+  const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY || "",
   });
 
   const locations = [
     { lat: 6.79219078406429, lng: 79.89792530231765 },
     { lat: 6.790880397204962, lng: 79.89870850735 },
-    { lat: 6.792116209298174, lng: 79.89963118725112 }
+    { lat: 6.792116209298174, lng: 79.89963118725112 },
   ];
-
-  if (loadError) {
-    return <div>Error loading map</div>;
-  }
+  const location = { lat: 6.790880397204962, lng: 79.89870850735 };
 
   if (!isLoaded) {
     return <Skeleton />;
@@ -68,21 +70,21 @@ const MapSection: React.FC = () => {
             height: "50vh",
           }}
         >
-          <React.Fragment>
-            <MarkerClusterer>
-              {(clusterer) => (
-                <div> {/* Add a parent element */}
-                  {locations.map((location, index) => (
-                    <Marker
-                      key={index}
-                      position={location}
-                      clusterer={clusterer}
-                    />
-                  ))}
-                </div>
-              )}
-            </MarkerClusterer>
-          </React.Fragment>
+          <MarkerClusterer>
+            {(clusterer) => (
+              <>
+                {locations.map((location, index) => (
+                  <Marker
+                    key={index}
+                    position={location}
+                    clusterer={clusterer}
+                  />
+                ))}
+              </>
+            )}
+          </MarkerClusterer>
+
+          
         </GoogleMap>
       </Col>
     </Row>
