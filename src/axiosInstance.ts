@@ -17,6 +17,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Get JWT token from cookie
     const token = Cookies.get('token'); // Assuming your token is stored with the name 'jwtToken'
+    console.log(token);
 
     // If token exists, set Authorization header with Bearer token
     if (token) {
@@ -24,9 +25,22 @@ axiosInstance.interceptors.request.use(
     }
 
     return config;
+
   },
   (error) => {
     return Promise.reject(error);
 });
+
+// axiosInstance.interceptors.response.use((res) => {
+//   return res;
+// },
+// (error) => {
+//   window.location.href='/login';
+
+// }
+// )
+
+
+
 
 export default axiosInstance;
