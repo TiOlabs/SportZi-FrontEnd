@@ -6,6 +6,8 @@ import img1 from "./images/img1.png";
 import { off } from "process";
 import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const commonInputStyle = {
   height: "40px",
@@ -29,36 +31,44 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // const history = useHistory(); // Get access to history object
-
+  const navigate = useNavigate();
 
   const onFinish = async () => {
-    console.log(
-      email,
-      password,
-    );
+    // console.log(
+    //   email,
+    //   password,
+    // ); 
     try {
       const res = await axios.post("http://localhost:8000/api/login", {
         email: email,
         password: password,  
-      });
-
-      console.log(res);
-
-      if (res.status === 200) {
+      })
+      .then(res => {
+        navigate('/');
         alert("Login successfully!");
-        
-        // history.push("/playerProfile");
-
-      } else {
-        alert("Login failed");
+        console.log(res.data.token)
+        Cookies.set('token',res.data.token,{expires:1 , httpOnly:false , secure:true});
       }
 
+      ).catch(err => {
+        alert("Login failed 1...")
+        console.log("response error:",err)
+      });
+
+      // if (res.status === 200) {
+      //   alert("Login successfully!");
+      //   console.log(res.data.token)
+      //   Cookies.set('token',res.data.token,{expires:1 , httpOnly:false , secure:true});
+      
+
+      // } else {
+      //   alert("Login failed");
+      // }
 
     } catch (err) {
-
+ 
       console.log(err);
-      alert("Login failed");
+      alert("Login failed...2");
     }
   };
 
@@ -67,7 +77,7 @@ const Login = () => {
   return (
     <>
       <Row >
-        <Col
+        <Col 
           xl={{ span: 12 ,offset:0}}
           lg={{ span: 12,offset:0}}
           md={{ span: 20, offset:2}}

@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import moment, { Moment } from "moment";
 
-import axiosInstance from "../../axiosInstance";
+// import axiosInstance from "../../axiosInstance";
 
 //responsiveness
 const formItemLayout = {
@@ -92,7 +92,7 @@ const SignupPlayer = () => {
     //   gender
     // );
     try {
-      const response = await axiosInstance.post("/api/addplayer", {
+      const response = await axios.post("/api/addplayer", {
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -105,7 +105,7 @@ const SignupPlayer = () => {
       console.log(response);
 
       alert("Form submitted successfully!");
-      alert(response.status);
+      // alert(response.status);
     } catch (err) {
       console.log("Error");
       console.log(err);
