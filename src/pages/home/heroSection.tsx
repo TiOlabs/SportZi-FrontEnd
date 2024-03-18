@@ -6,14 +6,6 @@ import axiosInstance from "../../axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 
-
-
-
-
-
-
-
-
 const HeroSection = () => {
   const { lg, md, sm, xs, xl } = useBreakpoint();
 

@@ -13,6 +13,7 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import path from "path";
+import Cookies from "js-cookie";
 
 const Navbar: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -149,6 +150,21 @@ const Navbar: React.FC = () => {
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
   };
+  const token = Cookies.get("token");
+  console.log(token);
+  function logOut() {
+    // Remove the token cookie
+    Cookies.remove('token');
+    console.log("Token removed");
+    // Redirect or perform other logout operations if necessary
+}
+  // const logOut = async () => {
+  //   // const res = await fetch (`${process.env.REACT_APP_API_URL}api/logout`)
+  //   // deleteCookie('user_id');
+  //   // deleteCookie('session_token');
+  //   // localStorage.clear();
+
+  // }
 
   const content = (
     <div className="NavBarUserProfileClickDetail">
@@ -167,18 +183,18 @@ const Navbar: React.FC = () => {
           style={{ justifyContent: "center", display: "flex" }}
         >
           <Link to="/profile/:id">
-          <img
-            src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-            alt="Original Image"
-            style={{
-              width: "50px",
-              height: "50px",
-              marginLeft: "10px",
-              marginTop: "10px",
-              borderRadius: "50%",
-              border: "1px solid black",
-            }}
-          />
+            <img
+              src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
+              alt="Original Image"
+              style={{
+                width: "50px",
+                height: "50px",
+                marginLeft: "10px",
+                marginTop: "10px",
+                borderRadius: "50%",
+                border: "1px solid black",
+              }}
+            />
           </Link>
         </div>
         <div
@@ -192,7 +208,7 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          Sasindu Dhanushka 
+          Sasindu Dhanushka
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -209,26 +225,33 @@ const Navbar: React.FC = () => {
       </div>
 
       <div>
+        <Link to="/login">
+          <Button
+            type="primary"
+            style={{
+              width: "100%",
+              marginTop: "10px",
+              backgroundColor: "#1B5DB7",
+              borderColor: "#1B5DB7",
+              color: "white",
+              justifyContent: "center",
+              display: "flex",
+              borderRadius: "5px",
+            }}
+          >
+            <LoginOutlined
+              style={{
+                fontSize: "20px",
+                marginRight: "10px",
+                marginTop: "5px",
+              }}
+            />
+            Log In
+          </Button>
+        </Link>
         <Button
           type="primary"
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            backgroundColor: "#1B5DB7",
-            borderColor: "#1B5DB7",
-            color: "white",
-            justifyContent: "center",
-            display: "flex",
-            borderRadius: "5px",
-          }}
-        >
-          <LoginOutlined
-            style={{ fontSize: "20px", marginRight: "10px", marginTop: "5px" }}
-          />
-          Log In
-        </Button>
-        <Button
-          type="primary"
+          onClick={logOut}
           style={{
             width: "100%",
             marginTop: "10px",
@@ -291,6 +314,7 @@ const Navbar: React.FC = () => {
       return scrolling ? logo : logo2;
     }
   };
+
   return (
     <Row>
       <div
@@ -363,18 +387,18 @@ const Navbar: React.FC = () => {
                     style={{ justifyContent: "center", display: "flex" }}
                   >
                     <Link to="/profile/:id">
-                    <img
-                      src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                      alt="Original Image"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        marginLeft: "10px",
-                        marginTop: "32px",
-                        borderRadius: "50%",
-                        border: "1px solid black",
-                      }}
-                    />
+                      <img
+                        src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
+                        alt="Original Image"
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          marginLeft: "10px",
+                          marginTop: "32px",
+                          borderRadius: "50%",
+                          border: "1px solid black",
+                        }}
+                      />
                     </Link>
                   </div>
                   <div

@@ -82,24 +82,26 @@ const SignupPlayer = () => {
   };
 
   const onFinish = async () => {
-    // console.log(
-    //   firstname,
-    //   lastname,
-    //   email,
-    //   password,
-    //   phone_number,
-    //   selectedDateString,
-    //   gender
-    // );
+    console.log(
+      firstname,
+      lastname,
+      email,
+      password,
+      phone_number,
+      selectedDateString,
+      gender
+    );
     try {
-      const response = await axios.post("/api/addplayer", {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}api/addplayer`, {
         firstname: firstname,
         lastname: lastname,
         email: email,
-        password: password,
-        phone_number: phone_number,
         DOB: selectedDateString,
         gender: gender,
+        role: "PLAYER",
+        password: password,
+        phone_number: phone_number,
+        accountNumber:"123456789789"
       });
 
       console.log(response);
