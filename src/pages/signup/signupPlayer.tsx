@@ -12,8 +12,6 @@ import moment, { Moment } from "moment";
 
 import axiosInstance from "../../axiosInstance";
 
-
-
 //responsiveness
 const formItemLayout = {
   wrapperCol: {
@@ -72,7 +70,7 @@ const SignupPlayer = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone_number, setPhone] = useState("");
-    // const [DOB, setDOB] = useState("");
+  // const [DOB, setDOB] = useState("");
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
 
