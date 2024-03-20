@@ -11,6 +11,7 @@ declare global {
 
 const PaymentModal = (props: any): JSX.Element | null => {
   // Put the payment variables here
+  console.log(props);
   const [messageApi, contextHolder] = message.useMessage();
   const key = "updatable";
   const orderId = props.orderId;
@@ -55,6 +56,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
   // Called when user completed the payment. It can be a successful payment or failure
   window.payhere.onCompleted = function onCompleted(orderId: string) {
     console.log("Payment completed. OrderID:" + orderId);
+    console.log("Payment Successfull222");
     //Note: validate the payment and show success or failure page to the customer
   };
 
@@ -72,19 +74,22 @@ const PaymentModal = (props: any): JSX.Element | null => {
 
   function pay() {
     window.payhere.startPayment(payment);
+    console.log("Payment started");
     messageApi.open({
       key,
       type: "loading",
       content: "Loading...",
     });
-    setTimeout(() => {
-      messageApi.open({
-        key,
-        type: "success",
-        content: "Booking Successfull!",
-        duration: 2,
-      });
-    }, 1000);
+    // setTimeout(() => {
+    //   console.log("Payment Successfull");
+    //   messageApi.open({
+    //     key,
+    //     type: "success",
+    //     content: "Booking Successfull!",
+    //     duration: 2,
+
+    //   });
+    // }, 1000);
   }
 
   return (
@@ -103,8 +108,8 @@ const PaymentModal = (props: any): JSX.Element | null => {
       >
         Pay with Payhere
       </Button>
-
-      <p>{name}</p>
+{/* 
+      <p>{name}</p> */}
     </>
   );
 };

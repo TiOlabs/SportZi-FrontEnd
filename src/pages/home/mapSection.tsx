@@ -82,9 +82,7 @@ const MapSection: React.FC = () => {
                 ))}
               </>
             )}
-          </MarkerClusterer>
-
-          
+          </MarkerClusterer>         
         </GoogleMap>
       </Col>
     </Row>
