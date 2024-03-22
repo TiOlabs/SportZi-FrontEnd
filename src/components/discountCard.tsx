@@ -10,8 +10,15 @@ const DiscountCard = (props: any) => {
       cloudName,
     },
   });
+  console.log(props);
+  const handleCardClick = () => {
+    // You can use the discountId here to identify the clicked card
+    console.log(`Clicked card with ID: ${props.discountId}`);
+    // Perform any other actions based on the clicked card
+  };;
   return (
-    <Link to="/bookings"><Card hoverable >
+    // <Link to="/bookings">
+      <Card onClick={handleCardClick} hoverable>
       <div style={{ display: "flex", width: "auto" }}>
         <div style={{ display: "flex", width: "50%" }}>
           <AdvancedImage
@@ -67,7 +74,8 @@ const DiscountCard = (props: any) => {
           </div>
         </div>
       </div>
-    </Card></Link>
+    </Card>
+    // </Link>
   );
 };
 

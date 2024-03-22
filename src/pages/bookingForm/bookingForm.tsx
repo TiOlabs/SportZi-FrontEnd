@@ -15,7 +15,7 @@ import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
 import PaymentModal from "../../components/paymentCheckout";
-import { ZoneBookingDetails } from "../../types";
+import { Zone } from "../../types";
 
 const { Option } = Select;
 
@@ -25,7 +25,7 @@ const BookingForm = () => {
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
-  const [zoneDetails, setZoneDetails] = useState<ZoneBookingDetails[]>([]);
+  const [zoneDetails, setZoneDetails] = useState<Zone[]>([]);
   const [paymentDetails, setPaymentDetails] = useState({
     payment_id: "",
     oder_id: "",
@@ -44,7 +44,7 @@ const BookingForm = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getarcadebookings");
+        const res = await fetch("http://localhost:8000/api/getZoneDetails");
 
         const data = await res.json();
         console.log(data);
@@ -60,12 +60,12 @@ const BookingForm = () => {
   const Zone_id: String[] = [];
   const User_id: String[] = []; 
   zoneDetails.map((zone) => {
-    ZoneRate.push(zone.zone.rate);
-    Zone_id.push(zone.zone.zone_id);
+    ZoneRate.push(zone.rate);
+    Zone_id.push(zone.zone_id);
   });
-  zoneDetails.map((user) => {
-    User_id.push(user.user.user_id);
-  });
+  // zoneDetails.map((user) => {
+  //   User_id.push(user.user.user_id);
+  // });
 console.log(ZoneRate);
 console.log(Zone_id);
 console.log(User_id);

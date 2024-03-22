@@ -1,4 +1,5 @@
 export interface Discount {
+  discount_id: String;
   discount_percentage: Number;
   description: String;
   discount_image: String;
