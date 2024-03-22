@@ -15,6 +15,7 @@ import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
 import PaymentModal from "../../components/paymentCheckout";
+import { ZoneBookingDetails } from "../../types";
 
 const { Option } = Select;
 
@@ -24,6 +25,7 @@ const BookingForm = () => {
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
+  const [zoneDetails, setZoneDetails] = useState<ZoneBookingDetails[]>([]);
   const [paymentDetails, setPaymentDetails] = useState({
     payment_id: "",
     oder_id: "",
@@ -39,14 +41,41 @@ const BookingForm = () => {
     country: "",
   });
 
-  let fullAmount = Number(paymentDetails?.amount) * Number(pcount);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await fetch("http://localhost:8000/api/getarcadebookings");
 
-  const [paymentStatus, setPaymentStatus] = useState();
+        const data = await res.json();
+        console.log(data);
+        setZoneDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  const ZoneRate: Number[] = [];
+  const Zone_id: String[] = [];
+  const User_id: String[] = []; 
+  zoneDetails.map((zone) => {
+    ZoneRate.push(zone.zone.rate);
+    Zone_id.push(zone.zone.zone_id);
+  });
+  zoneDetails.map((user) => {
+    User_id.push(user.user.user_id);
+  });
+console.log(ZoneRate);
+console.log(Zone_id);
+console.log(User_id);
+
+  let fullAmount = Number(ZoneRate) * Number(pcount);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const resPaymentDetails = await fetch(
-          "http://localhost:8000/api/getpaymentditails"
+          "http://localhost:8000/api/getarcadebookings"
         );
         const paymentDetailsData = await resPaymentDetails.json();
 
@@ -97,18 +126,17 @@ const BookingForm = () => {
     } else if (time === "") {
       message.error("time must be selected");
       return; // Stop further execution
-    }else{
+    } else {
       try {
         const res = await axios.post(
           `http://localhost:8000/api/addarcadebooking`,
           {
-            booking_date: date,
-            booking_time: time,
-            zone: zone,
+            date: date,
+            time: time,
+            // rate: fullAmount,
             participant_count: pcountint,
-            cancel_by_admin: false,
-            cancel_by_player: false,
-            cancel_by_arcade: false,
+            zone_id: Zone_id,
+            user_id: User_id,
           }
         );
         console.log(res);
@@ -251,8 +279,6 @@ const BookingForm = () => {
               > */}
               <Form.Item
                 name="Time Slot"
-                
-              
                 style={{
                   display: "flex",
                   flexDirection: "column",
