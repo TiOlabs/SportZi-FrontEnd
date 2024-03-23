@@ -67,11 +67,10 @@ const DiscoutCardsSection = () => {
             lg={{ span: 8 }}
             md={{ span: 12 }}
             sm={{ span: 24 }}
-            key={discount.discount_id.toString()} // Convert the discount ID to a string and use it as the key
+            // Convert the discount ID to a string and use it as the key
           >
-            <DiscountCard
-              key={discount.discount_id.toString()} // Also use the stringified discount ID as a key for the DiscountCard component
-              discountId={discount.discount_id} // Pass the discount ID as a prop to the DiscountCard component
+            <DiscountCard // Also use the stringified discount ID as a key for the DiscountCard component
+              zoneId={discount.zone.zone_id} // Pass the discount ID as a prop to the DiscountCard component
               zone_name={discount.zone.zone_name}
               discount_percentage={discount.discount_percentage}
               description={discount.description}

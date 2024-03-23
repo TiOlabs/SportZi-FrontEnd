@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {
   Row,
@@ -16,7 +16,9 @@ import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
 import PaymentModal from "../../components/paymentCheckout";
 import { Zone } from "../../types";
-
+import { ZoneBookingsContext } from "../../context/zoneBookings.context";
+import axiosInstance from "../../axiosInstance";
+import Cookies from "js-cookie";
 const { Option } = Select;
 
 const BookingForm = () => {
@@ -25,7 +27,7 @@ const BookingForm = () => {
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
-  const [zoneDetails, setZoneDetails] = useState<Zone[]>([]);
+  const [zoneDetails, setZoneDetails] = useState<Zone>();
   const [paymentDetails, setPaymentDetails] = useState({
     payment_id: "",
     oder_id: "",
@@ -40,11 +42,12 @@ const BookingForm = () => {
     city: "",
     country: "",
   });
-
+  const { zoneId } = useContext(ZoneBookingsContext);
+  console.log("Clicked Zone: ", zoneId);
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getZoneDetails");
+        const res = await fetch(`http://localhost:8000/api/getZoneDetails/${zoneId}`);
 
         const data = await res.json();
         console.log(data);
@@ -55,22 +58,14 @@ const BookingForm = () => {
       console.log(e);
     }
   }, []);
+  console.log(zoneDetails?.rate);
+  const rate = zoneDetails?.rate;
+  let fullAmount = Number(rate) * Number(pcount);
+ 
 
-  const ZoneRate: Number[] = [];
-  const Zone_id: String[] = [];
-  const User_id: String[] = []; 
-  zoneDetails.map((zone) => {
-    ZoneRate.push(zone.rate);
-    Zone_id.push(zone.zone_id);
-  });
-  // zoneDetails.map((user) => {
-  //   User_id.push(user.user.user_id);
-  // });
-console.log(ZoneRate);
-console.log(Zone_id);
-console.log(User_id);
-
-  let fullAmount = Number(ZoneRate) * Number(pcount);
+  const token = Cookies.get("token");
+  
+  console.log(token);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -128,15 +123,14 @@ console.log(User_id);
       return; // Stop further execution
     } else {
       try {
-        const res = await axios.post(
+        const res = await axiosInstance.post(
           `http://localhost:8000/api/addarcadebooking`,
           {
             date: date,
             time: time,
             // rate: fullAmount,
             participant_count: pcountint,
-            zone_id: Zone_id,
-            user_id: User_id,
+            zone_id: zoneId,
           }
         );
         console.log(res);
@@ -426,7 +420,7 @@ console.log(User_id);
               <PaymentModal
                 item={paymentDetails?.items}
                 orderId={paymentDetails?.oder_id}
-                amount={fullAmount}
+                // amount={fullAmount}
                 currency={paymentDetails?.currency}
                 first_name={paymentDetails?.first_name}
                 last_name={paymentDetails?.last_name}
