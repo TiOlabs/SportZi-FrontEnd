@@ -3,6 +3,8 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import DiscountCardpic_01 from "../assets/DiscountCardpic_01.png";
+
 const DiscountCard = (props: any) => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -13,13 +15,9 @@ const DiscountCard = (props: any) => {
   return (
     <Link to="/bookings"><Card hoverable >
       <div style={{ display: "flex", width: "auto" }}>
-        <div style={{ display: "flex", width: "50%" }}>
-          <AdvancedImage
-            cldImg={
-              cld.image(props.discount_image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
+      <div style={{ display: "flex", width: "50%" }}>
+          <img
+            src={DiscountCardpic_01}
             style={{ height: "auto", width: "100%" }}
           />
         </div>
