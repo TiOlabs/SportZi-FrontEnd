@@ -19,10 +19,14 @@ import { Zone } from "../../types";
 import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 import axiosInstance from "../../axiosInstance";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { any } from "prop-types";
 const { Option } = Select;
+
 
 const BookingForm = () => {
   const [form] = Form.useForm();
+  const [decodedValues, setDecodedValues] = useState<any>();
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
@@ -45,9 +49,18 @@ const BookingForm = () => {
   const { zoneId } = useContext(ZoneBookingsContext);
   console.log("Clicked Zone: ", zoneId);
   useEffect(() => {
+    const token = Cookies.get("token");
+    const decoded = token ? jwtDecode(token) : undefined;
+    setDecodedValues(decoded);
+  }, []);
+  console.log(decodedValues?.userId);
+  const userId = decodedValues?.userId;
+  useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch(`http://localhost:8000/api/getZoneDetails/${zoneId}`);
+        const res = await fetch(
+          `http://localhost:8000/api/getZoneDetails/${zoneId}`
+        );
 
         const data = await res.json();
         console.log(data);
@@ -58,14 +71,10 @@ const BookingForm = () => {
       console.log(e);
     }
   }, []);
+
   console.log(zoneDetails?.rate);
   const rate = zoneDetails?.rate;
   let fullAmount = Number(rate) * Number(pcount);
- 
-
-  const token = Cookies.get("token");
-  
-  console.log(token);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -130,6 +139,7 @@ const BookingForm = () => {
             time: time,
             // rate: fullAmount,
             participant_count: pcountint,
+            user_id: userId,
             zone_id: zoneId,
           }
         );
