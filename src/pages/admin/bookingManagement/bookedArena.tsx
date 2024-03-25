@@ -1,11 +1,24 @@
 import { Col, Row, Button, Modal } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
-import { ArcadeBookings } from "../../../types";
+import { ZoneBookingDetails } from "../../../types";
 const { confirm } = Modal;
 
 const BookedArena = (props: any) => {
+  const [zoneBookingDetails, setZoneBookingDetails] = useState([]);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await fetch(`http://localhost:8000/api/getarcadebookings`);
+        const data = await res.json();
+        setZoneBookingDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
   console.log(props.arcadeBookings);
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
@@ -25,22 +38,38 @@ const BookedArena = (props: any) => {
         </Col>
       </Row>
       <Col style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}>
-        {props.arcadeBookings.map((arcadeBooking: ArcadeBookings) => (
-          <DataRow
-            arcadeBookings={props.arcadeBookings}
-            setArcadeBookings={props.setArcadeBookings}
-            key={arcadeBooking.id}
-            zone={arcadeBooking.zone}
-            booking_id={arcadeBooking.id}
-            booking_date={arcadeBooking.booking_date}
-            booking_time={arcadeBooking.booking_time}
-            participant_count={arcadeBooking.participant_count}
-            created_at={arcadeBooking.created_at}
-            cancel_by_arcade={arcadeBooking.cancel_by_arcade}
-            cancel_by_player={arcadeBooking.cancel_by_player}
-            cancel_by_admin={arcadeBooking.cancel_by_admin}
-          />
-        ))}
+        {zoneBookingDetails.map(
+          (ZoneBookingDetails: ZoneBookingDetails) => (
+            <DataRow
+            booking_id={ZoneBookingDetails.zone_booking_id}
+            booked_Arena={ZoneBookingDetails.zone.zone_name}
+            booked_by={ZoneBookingDetails.user.firstname}
+            rate={Number(ZoneBookingDetails.zone.rate) * Number(ZoneBookingDetails.participant_count)}
+            user_id={ZoneBookingDetails.user.user_id}
+            zone_id={ZoneBookingDetails.zone.zone_id}
+            zone={ZoneBookingDetails.zone.zone_name}
+            booking_date={ZoneBookingDetails.date}
+            booking_time={ZoneBookingDetails.time}
+            participant_count={ZoneBookingDetails.participant_count}
+            created_at={ZoneBookingDetails.created_at}
+
+
+
+            // arcadeBookings={props.arcadeBookings}
+            // setArcadeBookings={props.setArcadeBookings}
+            // key={arcadeBooking.id}
+            // zone={arcadeBooking.zone}
+            // booking_id={arcadeBooking.id}
+            // booking_date={arcadeBooking.booking_date}
+            // booking_time={arcadeBooking.booking_time}
+            // participant_count={arcadeBooking.participant_count}
+            // created_at={arcadeBooking.created_at}
+            // cancel_by_arcade={arcadeBooking.cancel_by_arcade}
+            // cancel_by_player={arcadeBooking.cancel_by_player}
+            // cancel_by_admin={arcadeBooking.cancel_by_admin}
+            />
+          )
+        )}
       </Col>
     </Col>
   );
@@ -83,8 +112,8 @@ function DataRow(props: any) {
           const response = await axios.put(
             `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
             {
-              id: props.booking_id,
-              cancel_by_admin: true,
+              zone_booking_id: props.booking_id,
+              status: "canceled_By_Admin",
             }
           );
           // const res = await axios.delete(
@@ -104,10 +133,10 @@ function DataRow(props: any) {
           //   props.setArcadeBookings(data);
 
           // }
-          props.setArcadeBookings((prev: any) => {
+          props.setZoneBookingDetails((prev: any) => {
             return prev.filter(
-              (arcadeBooking: ArcadeBookings) =>
-                arcadeBooking.id !== props.booking_id
+              (zoneBookingDetails: ZoneBookingDetails) =>
+                zoneBookingDetails.zone_booking_id !== props.booking_id
             );
           });
         } catch (error) {
@@ -152,7 +181,7 @@ function DataRow(props: any) {
             fontSize: "16px",
           }}
         >
-          Super Box Complex
+          {props.booked_Arena}
         </div>
       </Col>
       <Col span={4} style={{}}>
@@ -181,7 +210,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          100$
+          Rs.{props.rate}
         </div>
       </Col>
       <Col span={7}>
@@ -204,7 +233,7 @@ function DataRow(props: any) {
             fontSize: "16px",
           }}
         >
-          Sasindu Daluwatta
+         {props.booked_by}
         </div>
       </Col>
       <Col span={4} style={{}}>
@@ -246,10 +275,10 @@ function DataRow(props: any) {
                 <Col span={24}>
                   <Row>
                     <Col span={16}>
-                      <b>Booked By : </b> Sasindu Daluwatta
+                      <b>Booked By : </b> {props.booked_by}
                     </Col>
                     <Col span={8}>
-                      <b>User_ID : </b> A005124
+                      <b>User_ID : </b> {props.user_id}
                     </Col>
                   </Row>
                 </Col>
@@ -265,11 +294,11 @@ function DataRow(props: any) {
                 </Col>
                 <Col span={24}>
                   <Row>
-                    <Col span={16}>
+                    <Col span={24}>
                       <b>Zone :</b> {props.zone}
                     </Col>
-                    <Col span={8}>
-                      <b>Zone_ID :</b> Z072149
+                    <Col span={24}>
+                      <b>Zone_ID :</b> {props.zone_id}
                     </Col>
                   </Row>
                 </Col>
