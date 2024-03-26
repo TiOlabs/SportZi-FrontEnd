@@ -42,12 +42,22 @@ export interface Coach {
 }
 export interface User {
   user_id: String;
+  role: String;
   firstname: String;
   lastname: String;
-  user_email: String;
-  user_address: String;
+  email: String;
+  DOB: String;
+  gender: String;
+  accountNumber: String;
+  address: String;
+  city: String;
+  country: String;
   user_image: String;
-  user_rating: Number;
+  Phone: UserPhone;
+}
+export interface UserPhone {
+  user_id: String;
+  phone_number: String;
 }
 export interface CoachAssignDetails {
   assign_id: Number;

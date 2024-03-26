@@ -27,7 +27,6 @@ const AdminCanceled = (props: any) => {
         const adminCanceled = data.filter(
           (arcadeBooking: ZoneBookingDetails) => arcadeBooking.status==="canceled_By_Admin"
         );
-
         console.log(adminCanceled);
 
         setAdminCanceled(adminCanceled);

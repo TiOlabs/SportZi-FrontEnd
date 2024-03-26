@@ -15,16 +15,17 @@ import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
 import PaymentModal from "../../components/paymentCheckout";
-import { Zone } from "../../types";
+import { User, Zone, ZoneBookingDetails } from "../../types";
 import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 import axiosInstance from "../../axiosInstance";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { any } from "prop-types";
+import { UserContext } from "../../context/user.context";
 const { Option } = Select;
 
-
 const BookingForm = () => {
+  const { setUserId } = useContext(UserContext);
   const [form] = Form.useForm();
   const [decodedValues, setDecodedValues] = useState<any>();
   const [time, setTime] = useState("");
@@ -32,29 +33,68 @@ const BookingForm = () => {
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
   const [zoneDetails, setZoneDetails] = useState<Zone>();
-  const [paymentDetails, setPaymentDetails] = useState({
-    payment_id: "",
-    oder_id: "",
-    items: "",
-    amount: "",
-    currency: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    country: "",
-  });
+  const [bookingCount, setbookingCount] = useState<Number>();
+  const [bookingDate, setBookingDate] = useState<ZoneBookingDetails[]>([]);
+  const [paymentDetails, setPaymentDetails] = useState<User>();
+  // payment_id: "",
+  // oder_id: "",
+  // items: "",
+  // amount: "",
+  // currency: "",
+  // first_name: "",
+  // last_name: "",
+  // email: "",
+  // phone: "",
+  // address: "",
+  // city: "",
+  // country: "",
   const { zoneId } = useContext(ZoneBookingsContext);
   console.log("Clicked Zone: ", zoneId);
   useEffect(() => {
     const token = Cookies.get("token");
     const decoded = token ? jwtDecode(token) : undefined;
     setDecodedValues(decoded);
+    setUserId(token);
   }, []);
   console.log(decodedValues?.userId);
   const userId = decodedValues?.userId;
+  setUserId();
+  console.log(userId);
+  
+  console.log(userId);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const resPaymentDetails = await fetch(
+          `http://localhost:8000/api/getuser/${userId}`
+        );
+        const paymentDetailsData = await resPaymentDetails.json();
+        console.log(paymentDetailsData);
+        setPaymentDetails(paymentDetailsData);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, []);
+  console.log(date)
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `http://localhost:8000/api/getarcadebookingbydate/${date}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setBookingDate(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -72,32 +112,38 @@ const BookingForm = () => {
     }
   }, []);
 
+  console.log(paymentDetails);
+
   console.log(zoneDetails?.rate);
   const rate = zoneDetails?.rate;
+  console.log(pcount);
   let fullAmount = Number(rate) * Number(pcount);
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const resPaymentDetails = await fetch(
-          "http://localhost:8000/api/getarcadebookings"
-        );
-        const paymentDetailsData = await resPaymentDetails.json();
+  console.log(fullAmount);
 
-        // const respaymentStatus = await fetch(
-        //   "http://localhost:8000/api/postpaymentStatus"
-        // );
-        // const paymentStatusData = await respaymentStatus.json();
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const resPaymentDetails = await fetch(
+  //         "http://localhost:8000/api/getarcadebookings"
+  //       );
+  //       const paymentDetailsData = await resPaymentDetails.json();
 
-        // setPaymentStatus(paymentStatusData);
+  //       // const respaymentStatus = await fetch(
+  //       //   "http://localhost:8000/api/postpaymentStatus"
+  //       // );
+  //       // const paymentStatusData = await respaymentStatus.json();
 
-        console.log(paymentDetailsData);
-        setPaymentDetails(paymentDetailsData);
-      };
-      fetchData();
-    } catch (e) {
-      console.log("errrr", e);
-    }
-  }, []);
+  //       // setPaymentStatus(paymentStatusData);
+  //       //...........
+
+  //       console.log(paymentDetailsData);
+  //       setPaymentDetails(paymentDetailsData);
+  //     };
+  //     fetchData();
+  //   } catch (e) {
+  //     console.log("errrr", e);
+  //   }
+  // }, []);
 
   // const onZoneChange = (value: string) => {
   //   console.log(value);
@@ -295,6 +341,23 @@ const BookingForm = () => {
                   overflow: "auto",
                 }}
               >
+                {bookingDate.map((booking) => {
+                  console.log(booking.time);
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => setTime(booking.time.toString())}
+                      style={{
+                        width: "100%",
+                        padding: "5%",
+                        backgroundColor: "#2E5488",
+                        color: "#fff",
+                      }}
+                    >
+                    </button>
+                  );
+                }
+                )}
                 <button
                   type="button"
                   onClick={() => setTime("9")}
@@ -428,14 +491,14 @@ const BookingForm = () => {
               {contextHolder}
 
               <PaymentModal
-                item={paymentDetails?.items}
-                orderId={paymentDetails?.oder_id}
-                // amount={fullAmount}
-                currency={paymentDetails?.currency}
-                first_name={paymentDetails?.first_name}
-                last_name={paymentDetails?.last_name}
+                item={"Zone Booking"}
+                orderId={5}
+                amount={fullAmount}
+                currency={"LKR"}
+                first_name={paymentDetails?.firstname}
+                last_name={paymentDetails?.lastname}
                 email={paymentDetails?.email}
-                phone={paymentDetails?.phone}
+                phone={paymentDetails?.Phone}
                 address={paymentDetails?.address}
                 city={paymentDetails?.city}
                 country={paymentDetails?.country}
