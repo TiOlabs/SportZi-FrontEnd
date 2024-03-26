@@ -19,11 +19,12 @@ export interface Zone {
   arcade_image: String;
 }
 export interface Coach {
-  coach_image: String;
   rate: Number;
   coach_rating: Number;
   short_desctiption: String;
   user: User;
+  sport: Sport;
+  coachFeedbacks: CoachFeedbacks;
 }
 export interface User {
   user_id: String;
@@ -78,4 +79,15 @@ export interface Arcade {
 export interface ArcadeFeedbacks {
   rate: Number;
   arcade_id:String;
+}
+
+export interface Sport {
+  sport_id: String;
+  sport_name: String;
+}
+
+export interface CoachFeedbacks{
+  coach_feedback_id: String;
+  rate: Number;
+
 }
