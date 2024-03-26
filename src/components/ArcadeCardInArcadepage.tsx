@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import ArcadeImage from "../assets/ArcadeImage.png";
+import { Rate } from 'antd';
 
 <style>
   @import
@@ -19,6 +20,9 @@ const ArcadeCard = (props: any) => {
       cloudName,
     },
   });
+
+  const App: React.FC = () => <Rate disabled defaultValue={2} />;
+
   console.log("props image hiiiiii", props.ArcadeImage);
   console.log("props", props);
   return (
@@ -99,7 +103,7 @@ const ArcadeCard = (props: any) => {
               <p style={{ fontSize: "14px", fontWeight: 300 }}>Sport Complex</p>
             </div>
 
-            <div className="ratings">
+            <div>
               <StarFilled style={{ color: "#FFD700", marginLeft: "10px" }} />
               <StarFilled style={{ color: "#FFD700", marginLeft: "10px" }} />
               <StarFilled style={{ color: "#FFD700", marginLeft: "10px" }} />
