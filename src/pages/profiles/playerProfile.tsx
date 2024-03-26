@@ -44,6 +44,7 @@ interface PlayerData {
   firstname?: string;
   lastname?: string;
   email?: string;
+  phoneNumbers?: { phone_number: string }[];
 
   // add other properties as needed
 }
@@ -153,6 +154,8 @@ const PlayerProfile = () => {
                 }}
               >
                 {userDetails?.name}
+
+                {userDetails?.phoneNumbers}
               </h1>
               <p
                 style={{

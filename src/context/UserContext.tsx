@@ -10,6 +10,7 @@ const UserProvider = ({ children }: any) => {
     id: "",
     name: "",
     image: "",
+    coachname: "",
   });
   const navigate = useNavigate();
   const fetchUser = async () => {
@@ -22,18 +23,11 @@ const UserProvider = ({ children }: any) => {
             id: res.data.user_id,
             name: res.data.firstname + " " + res.data.lastname,
             image: res.data.user_image,
+            phoneNumbers: res.data.phone[0].phone_number,
           });
         })
         .catch((err) => {
           console.log(err);
-          alert("Only Can access for players");
-          if (window.confirm("Do you want login as a plyer?")) {
-            // If user clicks OK, do something
-            navigate("/login");
-          } else {
-            // If user clicks Cancel, do something else or nothing
-            console.log("User clicked Cancel");
-          }
         });
     } catch (error) {
       console.error("Error:", error);
