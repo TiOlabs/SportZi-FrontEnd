@@ -6,7 +6,7 @@ export interface Discount {
   arcade_name: String;
   zone: Zone;
 }
-export interface Zone{
+export interface Zone {
   zone_name: String;
   arcade_id: String;
   arcade_name: String;
@@ -66,9 +66,16 @@ export interface Arcade {
   arcade_name: String;
   arcade_email: String;
   arcade_location: String;
+  description: String;
   manager_id: String;
   opening_time: String;
   closing_time: String;
   arcade_address: String;
   arcade_image: String;
+  arcadefeedbacks: ArcadeFeedbacks;
+}
+
+export interface ArcadeFeedbacks {
+  rate: Number;
+  arcade_id:String;
 }
