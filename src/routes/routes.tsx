@@ -36,13 +36,13 @@ const AppRoutes = () => {
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
         <Route path="bookings" element={<BookingForm />} />
-        <Route path="profile/:id" element={<Profiles />} />
+        <Route path="profile" element={<Profiles />} />
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
         <Route path="signupPlayer" element={<SignupPlayer />} />
         <Route path="signupCoach" element={<SignupCoach />} />
         <Route path="coacheProfile" element={<CoachProfile />} />
         <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
-        <Route path="PlayerUSer" element={<PlayerProfileUser />} />
+        <Route path="PlayerUser" element={<PlayerProfileUser />} />
         <Route
           path="forms/coachassigndetailsform"
           element={<CoachAssignDetailsForm />}

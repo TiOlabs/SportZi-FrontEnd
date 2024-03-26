@@ -8,11 +8,42 @@ import AppFooter from "../../components/footer";
 
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
-const PlayerProfileUser = () => {
+
+import axios from "axios";
+import { Effect } from "@cloudinary/url-gen/actions";
+import { useEffect, useState } from "react";
+import { error } from "console";
+import { useParams } from "react-router-dom";
+
+interface PlayerData {
+  role?: string;
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+
+  // add other properties as needed
+}
+const PlayerProfileUser = (props: any) => {
+  const { playerID } = useParams();
+  console.log(playerID);
+  const [playerData, setPlayerData] = useState<PlayerData | null>(null);
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/api/getplayerdetails")
+      .then((res) => {
+        console.log(res.data);
+        setPlayerData(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
+
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   return (
-    <><NavbarProfile/>
+    <>
+      <NavbarProfile />
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
@@ -25,7 +56,7 @@ const PlayerProfileUser = () => {
           lg={10}
           xl={10}
           style={{
-            marginTop:"50px",
+            marginTop: "50px",
             backgroundImage: `url(${profileBackground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -77,8 +108,9 @@ const PlayerProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                Sandun Malage
+                {playerData?.firstname} {playerData?.lastname}
               </h1>
+
               <p
                 style={{
                   margin: "0px",

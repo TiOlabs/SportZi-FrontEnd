@@ -10,10 +10,14 @@ import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
 
 import { Grid } from "antd";
-import { useMemo, useState } from "react";
+import { useState, useContext } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
+import axios from "axios";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
 
 const requestList = [
   <CoachRequstRow />,
@@ -35,7 +39,18 @@ const AvailableMeetingList = [
   <AvailableMetingstoPlayer />,
   <AvailableMetingstoPlayer />,
 ];
+interface PlayerData {
+  role?: string;
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+
+  // add other properties as needed
+}
 const PlayerProfile = () => {
+  const { userDetails } = useContext(UserContext);
+  const { playerID } = useParams();
+  console.log(playerID);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
 
@@ -54,6 +69,19 @@ const PlayerProfile = () => {
 
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
+
+  const [playerData, setPlayerData] = useState<PlayerData | null>(null);
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/api/getplayerdetails")
+      .then((res) => {
+        console.log(res.data);
+        setPlayerData(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
   return (
     <>
       <style>
@@ -68,7 +96,7 @@ const PlayerProfile = () => {
           lg={10}
           xl={10}
           style={{
-            marginTop:"30px",
+            marginTop: "30px",
             backgroundImage: `url(${profileBackground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -79,7 +107,11 @@ const PlayerProfile = () => {
           }}
         >
           {" "}
-          <Image width={300} src={profilePic} preview={{ src: profilePic }} />
+          <Image
+            width={300}
+            src={userDetails?.image}
+            preview={{ src: userDetails?.image }}
+          />
         </Col>
         <Col
           xs={24}
@@ -120,7 +152,7 @@ const PlayerProfile = () => {
                   marginBottom: "0px",
                 }}
               >
-                Sandun Malage
+                {userDetails?.name}
               </h1>
               <p
                 style={{

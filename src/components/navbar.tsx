@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import logo2 from "../assets/logoBlack.png";
@@ -15,7 +15,11 @@ import { Button } from "antd/es/radio";
 import path from "path";
 import Cookies from "js-cookie";
 
+import { UserContext } from "../context/UserContext";
+
 const Navbar: React.FC = () => {
+  const { userDetails } = useContext(UserContext);
+
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -154,10 +158,10 @@ const Navbar: React.FC = () => {
   console.log(token);
   function logOut() {
     // Remove the token cookie
-    Cookies.remove('token');
+    Cookies.remove("token");
     console.log("Token removed");
     // Redirect or perform other logout operations if necessary
-}
+  }
   // const logOut = async () => {
   //   // const res = await fetch (`${process.env.REACT_APP_API_URL}api/logout`)
   //   // deleteCookie('user_id');
@@ -182,9 +186,9 @@ const Navbar: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          <Link to="/profile/:id">
+          <Link to={`/profile/`}>
             <img
-              src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
+              src={userDetails?.image}
               alt="Original Image"
               style={{
                 width: "50px",
@@ -208,7 +212,7 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          Sasindu Dhanushka
+          {userDetails.name}
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -386,9 +390,9 @@ const Navbar: React.FC = () => {
                     className="NavBarUserProfileImg"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
-                    <Link to="/profile/:id">
+                    <Link to="/profile/">
                       <img
-                        src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
+                        src={userDetails?.image}
                         alt="Original Image"
                         style={{
                           width: "50px",
@@ -755,7 +759,7 @@ const Navbar: React.FC = () => {
                 <a className="NavBarUserProfileImgThumsup">
                   <img
                     className="NavBarUserProfileImg"
-                    src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
+                    src={userDetails?.image}
                     alt="Original Image"
                     style={{
                       width: "45px",
