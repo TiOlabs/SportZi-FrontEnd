@@ -5,8 +5,14 @@ import HeroSection from "./pages/home/heroSection";
 import { Routes } from "react-router-dom";
 import AppRoutes from "./routes/routes";
 
+import UserProvider from "./context/UserContext";
+
 function App() {
-  return <AppRoutes />;
+  return (
+    <UserProvider>
+      <AppRoutes />
+    </UserProvider>
+  );
 }
 
 export default App;
