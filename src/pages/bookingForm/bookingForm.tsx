@@ -54,13 +54,12 @@ const BookingForm = () => {
     const token = Cookies.get("token");
     const decoded = token ? jwtDecode(token) : undefined;
     setDecodedValues(decoded);
-    setUserId(token);
   }, []);
   console.log(decodedValues?.userId);
   const userId = decodedValues?.userId;
   setUserId();
   console.log(userId);
-  
+
   console.log(userId);
   useEffect(() => {
     try {
@@ -76,13 +75,14 @@ const BookingForm = () => {
     } catch (e) {
       console.log("errrr", e);
     }
-  }, []);
-  console.log(date)
+  }, [userId]);
+  console.log(date);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbydate/${date}`
+          `http://localhost:8000/api/getarcadebookingbydate/${date}/${zoneId}`
+           
         );
 
         const data = await res.json();
@@ -93,7 +93,7 @@ const BookingForm = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [date]);
 
   useEffect(() => {
     try {
@@ -215,6 +215,22 @@ const BookingForm = () => {
       });
     }, 1000);
   };
+  const buttonData = [
+    { id: "1", time: "9.00-10.00" },
+    { id: "2", time: "10.00-11.00" },
+    { id: "3", time: "11.00-12.00", disabled: true},
+    { id: "4", time: "12.00-13.00" },
+    { id: "5", time: "13.00-14.00" },
+    { id: "6", time: "14.00-15.00" },
+    { id: "7", time: "15.00-16.00" },
+    { id: "8", time: "16.00-17.00" },
+    { id: "9", time: "17.00-18.00" },
+    { id: "10", time: "18.00-19.00" },
+    { id: "11", time: "19.00-20.00" },
+    { id: "12", time: "20.00-21.00" },
+  ];
+
+ 
 
   return (
     <div style={{ margin: "2%" }}>
@@ -345,104 +361,32 @@ const BookingForm = () => {
                   console.log(booking.time);
                   return (
                     <button
-                      type="button"
-                      onClick={() => setTime(booking.time.toString())}
-                      style={{
-                        width: "100%",
-                        padding: "5%",
-                        backgroundColor: "#2E5488",
-                        color: "#fff",
-                      }}
-                    >
-                    </button>
+                      id={booking.time.toString()}
+                      style={{ backgroundColor: "red" }}
+                    ></button>
                   );
-                }
-                )}
-                <button
-                  type="button"
-                  onClick={() => setTime("9")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  9.00-10.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("12")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  10.00-11.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("13")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  11.00-12.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("14")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  12.00-13.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("15")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  13.00-14.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("16")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  14.00-15.00
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setTime("17")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  15.00-16.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("18")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  16.00-17.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("19")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  17.00-18.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("20")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  18.00-19.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("21")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  19.00-20.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("22")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  20.00-21.00
-                </button>
+                })}
+                {buttonData.map((button) => ( 
+                  <button
+                  disabled={bookingDate.find( (booking) => booking.time === button.id)? true : false}
+                    key={button.id}
+                    id={button.id}
+                    type="button"
+                    onClick={() => setTime(button.id)}
+                    style={{
+                      width: "100%",
+                      padding: "5%",
+                      backgroundColor: bookingDate.find(
+                        (booking) => booking.time === button.id
+                      )
+                        ? "red"
+                        : "white",
+                    }}
+                  >
+                  {bookingDate.find((booking) => booking.time === button.id) ? "Booked"  : button.time}
+                    
+                  </button>
+                ))}
               </Form.Item>
               {/* </Form.Item> */}
             </div>
