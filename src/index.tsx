@@ -4,7 +4,10 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { UserProvider } from "./context/user.context";
+
+import { ZoneBookingsProvider } from "./context/zoneBookings.context";
+import {  UserProvider } from "./context/user.context";
+
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -13,7 +16,9 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <UserProvider>
-        <App />
+        <ZoneBookingsProvider>
+          <App />
+        </ZoneBookingsProvider>
       </UserProvider>
     </BrowserRouter>
   </React.StrictMode>

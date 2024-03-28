@@ -158,6 +158,7 @@ const Navbar: React.FC = () => {
   function logOut() {
     // Remove the token cookie
     Cookies.remove('token');
+    
     console.log("Token removed");
     // Redirect or perform other logout operations if necessary
 }
