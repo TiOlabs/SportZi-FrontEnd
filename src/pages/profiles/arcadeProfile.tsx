@@ -1,4 +1,3 @@
-
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import { Col, List, Row, Typography, Image, Button } from "antd";
 import { Grid } from "antd";
@@ -151,18 +150,6 @@ const ArcadeProfileArcade = () => {
                 rugby league was halfback and I had the honour of representing
                 QLD in the State Of Origin
               </Typography>
-              <Button
-                style={{
-                  backgroundColor: "#5587CC",
-                  fontFamily: "kanit",
-                  color: "#fff",
-                  borderRadius: "3px",
-                  marginTop: "30px",
-                }}
-              >
-                {" "}
-                Apply for coaching
-              </Button>
             </Col>
           </Row>
         </Col>
@@ -1368,4 +1355,3 @@ const ArcadeProfileArcade = () => {
 };
 
 export default ArcadeProfileArcade;
-

@@ -15,7 +15,6 @@ const HeroSection = () => {
       const response = await axiosInstance
         .get("/api/coaches", {})
         .then((res) => {
-          console.log(res);
           // window.location.href = '/coaches';
           navigate("/coaches");
         })

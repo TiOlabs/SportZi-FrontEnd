@@ -2,6 +2,7 @@
 
 import axios, { AxiosInstance } from 'axios';
 import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 
 // Define custom Axios instance with type AxiosInstance
 const axiosInstance: AxiosInstance = axios.create({
