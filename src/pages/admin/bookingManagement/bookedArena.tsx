@@ -3,74 +3,90 @@ import { useEffect, useState } from "react";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
 import { ZoneBookingDetails } from "../../../types";
+import { Spin } from "antd";
 const { confirm } = Modal;
 
 const BookedArena = (props: any) => {
   const [zoneBookingDetails, setZoneBookingDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filteredDataa, setFilteredData] = useState<ZoneBookingDetails[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await fetch(`http://localhost:8000/api/getarcadebookings`);
         const data = await res.json();
         setZoneBookingDetails(data);
+        const filteredData = zoneBookingDetails.filter(
+          (zoneBookingDetails: ZoneBookingDetails) =>
+            zoneBookingDetails.status === "success"
+        );
+        setFilteredData(filteredData);
+        setLoading(false);
       };
       fetchData();
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [zoneBookingDetails]);
+
   console.log(props.arcadeBookings);
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Booked Arena</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}>
-        {zoneBookingDetails.map(
-          (ZoneBookingDetails: ZoneBookingDetails) => (
-            <DataRow
-            booking_id={ZoneBookingDetails.zone_booking_id}
-            booked_Arena={ZoneBookingDetails.zone.zone_name}
-            booked_by={ZoneBookingDetails.user.firstname}
-            rate={Number(ZoneBookingDetails.zone.rate) * Number(ZoneBookingDetails.participant_count)}
-            user_id={ZoneBookingDetails.user.user_id}
-            zone_id={ZoneBookingDetails.zone.zone_id}
-            zone={ZoneBookingDetails.zone.zone_name}
-            booking_date={ZoneBookingDetails.date}
-            booking_time={ZoneBookingDetails.time}
-            participant_count={ZoneBookingDetails.participant_count}
-            created_at={ZoneBookingDetails.created_at}
-
-
-
-            // arcadeBookings={props.arcadeBookings}
-            // setArcadeBookings={props.setArcadeBookings}
-            // key={arcadeBooking.id}
-            // zone={arcadeBooking.zone}
-            // booking_id={arcadeBooking.id}
-            // booking_date={arcadeBooking.booking_date}
-            // booking_time={arcadeBooking.booking_time}
-            // participant_count={arcadeBooking.participant_count}
-            // created_at={arcadeBooking.created_at}
-            // cancel_by_arcade={arcadeBooking.cancel_by_arcade}
-            // cancel_by_player={arcadeBooking.cancel_by_player}
-            // cancel_by_admin={arcadeBooking.cancel_by_admin}
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Booked Arena</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
             />
-          )
-        )}
-      </Col>
+          </Col>
+        </Row>
+        <Col
+          style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}
+        >
+          
+
+          {filteredDataa.map((ZoneBookingDetails: ZoneBookingDetails) => (
+            <DataRow
+              booking_id={ZoneBookingDetails.zone_booking_id}
+              booked_Arena={ZoneBookingDetails.zone.zone_name}
+              booked_by={ZoneBookingDetails.user.firstname}
+              rate={
+                Number(ZoneBookingDetails.zone.rate) *
+                Number(ZoneBookingDetails.participant_count)
+              }
+              user_id={ZoneBookingDetails.user.user_id}
+              zone_id={ZoneBookingDetails.zone.zone_id}
+              zone={ZoneBookingDetails.zone.zone_name}
+              booking_date={ZoneBookingDetails.date}
+              booking_time={ZoneBookingDetails.time}
+              participant_count={ZoneBookingDetails.participant_count}
+              created_at={ZoneBookingDetails.created_at}
+
+              // arcadeBookings={props.arcadeBookings}
+              // setArcadeBookings={props.setArcadeBookings}
+              // key={arcadeBooking.id}
+              // zone={arcadeBooking.zone}
+              // booking_id={arcadeBooking.id}
+              // booking_date={arcadeBooking.booking_date}
+              // booking_time={arcadeBooking.booking_time}
+              // participant_count={arcadeBooking.participant_count}
+              // created_at={arcadeBooking.created_at}
+              // cancel_by_arcade={arcadeBooking.cancel_by_arcade}
+              // cancel_by_player={arcadeBooking.cancel_by_player}
+              // cancel_by_admin={arcadeBooking.cancel_by_admin}
+            />
+          ))}
+        </Col>
+      </Spin>
     </Col>
   );
 };
@@ -233,7 +249,7 @@ function DataRow(props: any) {
             fontSize: "16px",
           }}
         >
-         {props.booked_by}
+          {props.booked_by}
         </div>
       </Col>
       <Col span={4} style={{}}>

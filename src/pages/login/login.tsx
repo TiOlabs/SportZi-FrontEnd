@@ -12,22 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 const commonInputStyle = {
   height: "40px",
 };
-
-
-
-
-
-
-
-
-
-
-
 const Login = () => {
-
-
-
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
