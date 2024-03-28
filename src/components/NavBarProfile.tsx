@@ -13,9 +13,9 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 
-import { UserContext } from "../context/UserContext";
+import { PlayerContext } from "../context/PlayerContext";
 const NavbarProfile: React.FC = () => {
-  const { userDetails } = useContext(UserContext);
+  const { userDetails } = useContext(PlayerContext);
 
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
