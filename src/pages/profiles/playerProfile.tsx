@@ -16,7 +16,7 @@ import NavbarProfile from "../../components/NavBarProfile";
 import axios from "axios";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { UserContext } from "../../context/UserContext";
+import { PlayerContext } from "../../context/PlayerContext";
 
 const requestList = [
   <CoachRequstRow />,
@@ -48,7 +48,7 @@ interface PlayerData {
   // add other properties as needed
 }
 const PlayerProfile = () => {
-  const { userDetails } = useContext(UserContext);
+  const { userDetails } = useContext(PlayerContext);
   const { playerID } = useParams();
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);

@@ -5,13 +5,13 @@ import HeroSection from "./pages/home/heroSection";
 import { Routes } from "react-router-dom";
 import AppRoutes from "./routes/routes";
 
-import UserProvider from "./context/UserContext";
+import PlayerProvider from "./context/PlayerContext";
 
 function App() {
   return (
-    <UserProvider>
+    <PlayerProvider>
       <AppRoutes />
-    </UserProvider>
+    </PlayerProvider>
   );
 }
 

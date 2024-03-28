@@ -13,14 +13,11 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
-import { UserContext } from "../context/user.context";
-
-
-import { UserContext } from "../context/UserContext";
+import { PlayerContext } from "../context/PlayerContext";
 
 const Navbar: React.FC = () => {
-  const { userDetails } = useContext(UserContext);
-  const { userId } = useContext(UserContext);
+  const { userDetails } = useContext(PlayerContext);
+
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -756,7 +753,7 @@ const Navbar: React.FC = () => {
                 trigger="click"
                 open={open}
                 onOpenChange={handleOpenChange}
-                >
+              >
                 <a className="NavBarUserProfileImgThumsup">
                   <img
                     className="NavBarUserProfileImg"

@@ -3,9 +3,9 @@ import axios from "axios";
 import axiosInstance from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-export const UserContext = createContext<any>(null);
+export const PlayerContext = createContext<any>(null);
 
-const UserProvider = ({ children }: any) => {
+const PlayerProvider = ({ children }: any) => {
   const [userDetails, setUserDetails] = useState<any>({
     id: "",
     name: "",
@@ -41,10 +41,10 @@ const UserProvider = ({ children }: any) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userDetails }}>
+    <PlayerContext.Provider value={{ userDetails }}>
       {children}
-    </UserContext.Provider>
+    </PlayerContext.Provider>
   );
 };
 
-export default UserProvider;
+export default PlayerProvider;
