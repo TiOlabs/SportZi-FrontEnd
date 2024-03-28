@@ -13,11 +13,10 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
-import { UserContext } from "../context/user.context";
-
+import { UserIdContext } from "../context/userId.context";
 
 const Navbar: React.FC = () => {
-  const { userId } = useContext(UserContext);
+  const { userId } = useContext(UserIdContext);
   console.log(userId);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
@@ -157,11 +156,11 @@ const Navbar: React.FC = () => {
   console.log(token);
   function logOut() {
     // Remove the token cookie
-    Cookies.remove('token');
-    
+    Cookies.remove("token");
+
     console.log("Token removed");
     // Redirect or perform other logout operations if necessary
-}
+  }
   // const logOut = async () => {
   //   // const res = await fetch (`${process.env.REACT_APP_API_URL}api/logout`)
   //   // deleteCookie('user_id');
@@ -755,7 +754,7 @@ const Navbar: React.FC = () => {
                 trigger="click"
                 open={open}
                 onOpenChange={handleOpenChange}
-                >
+              >
                 <a className="NavBarUserProfileImgThumsup">
                   <img
                     className="NavBarUserProfileImg"
