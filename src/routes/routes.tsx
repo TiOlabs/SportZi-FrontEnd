@@ -35,8 +35,14 @@ const AppRoutes = () => {
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
-        <Route path="bookings" element={<BookingForm />} />
-        <Route path="profile" element={<Profiles />} />
+        <Route
+          path="bookings"
+          element={
+            <Auth>
+              <BookingForm />
+            </Auth>
+          }
+        />
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
         <Route path="signupPlayer" element={<SignupPlayer />} />
         <Route path="signupCoach" element={<SignupCoach />} />
