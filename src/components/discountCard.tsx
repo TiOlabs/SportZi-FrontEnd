@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { ZoneBookingsContext } from "../context/zoneBookings.context";
+import DiscountCardpic_01 from "../assets/DiscountCardpic_01.png";
 const DiscountCard = (props: any) => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -23,6 +24,7 @@ const DiscountCard = (props: any) => {
     // Perform any other actions based on the clicked card
   };
   return (
+
     <Link to="/bookings">
       <Card onClick={handleCardClick} hoverable>
         <div style={{ display: "flex", width: "auto" }}>
@@ -36,6 +38,7 @@ const DiscountCard = (props: any) => {
               style={{ height: "auto", width: "100%" }}
             />
           </div>
+
 
           <div
             style={{

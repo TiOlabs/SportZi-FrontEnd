@@ -7,7 +7,7 @@ export interface Discount {
   arcade_name: String;
   zone: Zone;
 }
-export interface Zone{
+export interface Zone {
   zone_name: String;
   zone_id: String;
   arcade_name: String;
@@ -34,11 +34,12 @@ export interface ZoneBookingDetails {
 }
 
 export interface Coach {
-  coach_image: String;
   rate: Number;
   coach_rating: Number;
   short_desctiption: String;
   user: User;
+  sport: Sport;
+  coachFeedbacks: CoachFeedbacks;
 }
 export interface User {
   user_id: String;
@@ -91,9 +92,27 @@ export interface Arcade {
   arcade_name: String;
   arcade_email: String;
   arcade_location: String;
+  description: String;
   manager_id: String;
   opening_time: String;
   closing_time: String;
   arcade_address: String;
   arcade_image: String;
+  arcadefeedbacks: ArcadeFeedbacks;
+}
+
+export interface ArcadeFeedbacks {
+  rate: Number;
+  arcade_id:String;
+}
+
+export interface Sport {
+  sport_id: String;
+  sport_name: String;
+}
+
+export interface CoachFeedbacks{
+  coach_feedback_id: String;
+  rate: Number;
+
 }

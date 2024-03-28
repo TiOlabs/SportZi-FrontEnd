@@ -6,16 +6,19 @@ import {
 } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
-import path from "path";
 import Cookies from "js-cookie";
+import { UserContext } from "../context/user.context";
+
 
 const Navbar: React.FC = () => {
+  const { userId } = useContext(UserContext);
+  console.log(userId);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -668,7 +671,7 @@ const Navbar: React.FC = () => {
               <Link
                 to="/coaches"
                 style={{
-                  color: pathname === "/coaches" ? "black" : fontColor(),
+                  color: pathname === "/coaches" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -685,7 +688,7 @@ const Navbar: React.FC = () => {
                     bottom: "0",
                     left: coachesUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/coaches" ? "black" : fontColor(),
+                      pathname === "/coaches" ? "#01abf8" : fontColor(),
                     transition: coachesUnderlineStyle.transition,
                   }}
                 ></span>
@@ -696,7 +699,7 @@ const Navbar: React.FC = () => {
               <Link
                 to="/arcades"
                 style={{
-                  color: pathname === "/arcades" ? "black" : fontColor(),
+                  color: pathname === "/arcades" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -713,7 +716,7 @@ const Navbar: React.FC = () => {
                     bottom: "0",
                     left: arcadeUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/arcades" ? "black" : fontColor(),
+                      pathname === "/arcades" ? "#01abf8" : fontColor(),
                     transition: arcadeUnderlineStyle.transition,
                   }}
                 ></span>
@@ -723,7 +726,7 @@ const Navbar: React.FC = () => {
               <Link
                 to="/about"
                 style={{
-                  color: pathname === "/about" ? "black" : fontColor(),
+                  color: pathname === "/about" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -740,7 +743,7 @@ const Navbar: React.FC = () => {
                     bottom: "0",
                     left: aboutUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/about" ? "black" : fontColor(),
+                      pathname === "/about" ? "#01abf8" : fontColor(),
                     transition: aboutUnderlineStyle.transition,
                   }}
                 ></span>
@@ -752,7 +755,7 @@ const Navbar: React.FC = () => {
                 trigger="click"
                 open={open}
                 onOpenChange={handleOpenChange}
-              >
+                >
                 <a className="NavBarUserProfileImgThumsup">
                   <img
                     className="NavBarUserProfileImg"
