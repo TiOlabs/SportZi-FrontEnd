@@ -21,11 +21,11 @@ import axiosInstance from "../../axiosInstance";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { any } from "prop-types";
-import { UserContext } from "../../context/user.context";
+import { UserIdContext } from "../../context/userId.context";
 const { Option } = Select;
 
 const BookingForm = () => {
-  const { setUserId } = useContext(UserContext);
+  const { setUserId } = useContext(UserIdContext);
   const [form] = Form.useForm();
   const [decodedValues, setDecodedValues] = useState<any>();
   const [time, setTime] = useState("");
@@ -82,7 +82,6 @@ const BookingForm = () => {
       const fetchData = async () => {
         const res = await fetch(
           `http://localhost:8000/api/getarcadebookingbydate/${date}/${zoneId}`
-           
         );
 
         const data = await res.json();
@@ -218,7 +217,7 @@ const BookingForm = () => {
   const buttonData = [
     { id: "1", time: "9.00-10.00" },
     { id: "2", time: "10.00-11.00" },
-    { id: "3", time: "11.00-12.00", disabled: true},
+    { id: "3", time: "11.00-12.00", disabled: true },
     { id: "4", time: "12.00-13.00" },
     { id: "5", time: "13.00-14.00" },
     { id: "6", time: "14.00-15.00" },
@@ -229,8 +228,6 @@ const BookingForm = () => {
     { id: "11", time: "19.00-20.00" },
     { id: "12", time: "20.00-21.00" },
   ];
-
- 
 
   return (
     <div style={{ margin: "2%" }}>
@@ -366,9 +363,13 @@ const BookingForm = () => {
                     ></button>
                   );
                 })}
-                {buttonData.map((button) => ( 
+                {buttonData.map((button) => (
                   <button
-                  disabled={bookingDate.find( (booking) => booking.time === button.id)? true : false}
+                    disabled={
+                      bookingDate.find((booking) => booking.time === button.id)
+                        ? true
+                        : false
+                    }
                     key={button.id}
                     id={button.id}
                     type="button"
@@ -383,8 +384,9 @@ const BookingForm = () => {
                         : "white",
                     }}
                   >
-                  {bookingDate.find((booking) => booking.time === button.id) ? "Booked"  : button.time}
-                    
+                    {bookingDate.find((booking) => booking.time === button.id)
+                      ? "Booked"
+                      : button.time}
                   </button>
                 ))}
               </Form.Item>
