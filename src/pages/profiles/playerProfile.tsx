@@ -50,7 +50,6 @@ interface PlayerData {
 const PlayerProfile = () => {
   const { userDetails } = useContext(UserContext);
   const { playerID } = useParams();
-  console.log(playerID);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
 
