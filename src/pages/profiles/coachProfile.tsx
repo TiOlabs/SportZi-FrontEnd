@@ -4,7 +4,6 @@ import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
 import { Image } from "antd";
-
 import PhotoCollage from "../../components/photoCollage";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachAccepteLst from "../../components/CoachAcceptedList";

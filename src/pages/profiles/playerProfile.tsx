@@ -2,13 +2,12 @@ import { Button, Col, Modal, Row, Typography } from "antd";
 import { url } from "inspector";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
-import profilePic from "../../assents/pro.png";
+
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { List } from "antd";
 import { Image } from "antd";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
-
 import { Grid } from "antd";
 import { useState, useContext } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
