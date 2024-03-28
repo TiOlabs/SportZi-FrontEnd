@@ -5,10 +5,8 @@ import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
 import { Image } from "antd";
 import AppFooter from "../../components/footer";
-
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
-
 import axios from "axios";
 import { Effect } from "@cloudinary/url-gen/actions";
 import { useEffect, useState } from "react";
