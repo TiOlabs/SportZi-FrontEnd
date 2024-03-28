@@ -13,10 +13,8 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
-import { UserContext } from "../context/user.context";
-
-
 import { UserContext } from "../context/UserContext";
+import { UserIdContext } from "../context/userId.context";
 
 const Navbar: React.FC = () => {
   const { userDetails } = useContext(UserContext);
