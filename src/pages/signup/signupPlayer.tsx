@@ -100,8 +100,8 @@ const SignupPlayer = () => {
         gender: gender,
         role: "PLAYER",
         password: password,
-        phone_number: phone_number,
-        accountNumber:"123456789789"
+        accountNumber:"123456789789",
+        phone_number: phone_number
       });
 
       console.log(response);

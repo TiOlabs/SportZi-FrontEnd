@@ -125,20 +125,38 @@ const SignupCoach = () => {
     //   sport
     // );
     try {
+      // const response = await axios.post("/api/addcoach", {
+        // firstname: firstname,
+        // lastname: lastname,
+        // email: email,
+        // password: password,
+        // phone_number: phone,
+        // DOB: selectedDateString,
+        // gender: gender,
+        // role:"COACH",
+        // sport_name:sport,
+        // accountNumber:"1234123478967896"
+      // });
+      const res = await fetch(`${process.env.REACT_APP_API_URL}api/addcoach`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          password: password,
+          phone_number: phone,
+          DOB: selectedDateString,
+          gender: gender,
+          role:"COACH",
+          sport_name:sport,
+          accountNumber:"1234123478967896"
 
-      const response = await axiosInstance.post("/api/addcoach", {
-
-
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        password: password,
-        phone_number: phone,
-        DOB: selectedDateString,
-        gender: gender,
-        sport_name:sport,
+        }),
       });
-      console.log(response);
+      console.log(res);
       alert("Form submitted successfully!");
     } catch (err) {
       console.log("Error");
