@@ -3,8 +3,11 @@ import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
+import axios from "axios";
+import { ZoneBookingDetails } from "../types";
 
-const AvailableMetingstoPlayer = () => {
+const AvailableMetingstoPlayer = (props: any) => {
+  console.log(props);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -21,7 +24,26 @@ const AvailableMetingstoPlayer = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
+  const showDeleteConfirm = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+        {
+          zone_booking_id: props.booking_id,
+          status: "canceled_By_Player",
+        }
+      );
+      props.setZoneBookingDetails((prev: any) => {
+        return prev.filter(
+          (zoneBookingDetails: ZoneBookingDetails) =>
+            zoneBookingDetails.zone_booking_id !== props.booking_id
+        );
+      });
+    } catch (error) {
+      console.log("error");
+      console.log(error);
+    }
+  };
   return (
     <>
       <Row
@@ -68,7 +90,7 @@ const AvailableMetingstoPlayer = () => {
               lg={12}
               xl={12}
             >
-              kanishka jj
+              {props.zone_name}
             </Col>
           </Row>
         </Col>
@@ -88,7 +110,7 @@ const AvailableMetingstoPlayer = () => {
           lg={6}
           xl={6}
         >
-          Date
+          {props.booking_date}
         </Col>
         <Col
           style={{
@@ -106,7 +128,7 @@ const AvailableMetingstoPlayer = () => {
           lg={6}
           xl={6}
         >
-          Time
+          {props.booking_time}
         </Col>
         {lg && (
           <Col
@@ -125,7 +147,7 @@ const AvailableMetingstoPlayer = () => {
             lg={6}
             xl={6}
           >
-            Venue
+            {props.venue}
           </Col>
         )}
       </Row>
@@ -160,9 +182,9 @@ const AvailableMetingstoPlayer = () => {
               fontWeight: "400",
               fontSize: "18px",
             }}
+            onClick={showDeleteConfirm}
             key="submit"
             type="primary"
-            onClick={handleOk}
           >
             Cancel Meeting
           </Button>,
@@ -212,7 +234,7 @@ const AvailableMetingstoPlayer = () => {
                 lg={12}
                 xl={12}
               >
-                kanishka jj
+                {props.zone_name}
               </Col>
             </Row>
           </Col>
@@ -229,10 +251,10 @@ const AvailableMetingstoPlayer = () => {
             xs={24}
             sm={12}
             md={12}
-            lg={8}
-            xl={8}
+            lg={6}
+            xl={6}
           >
-            Date
+            {props.booking_date}
           </Col>
           <Col
             style={{
@@ -247,10 +269,10 @@ const AvailableMetingstoPlayer = () => {
             xs={24}
             sm={12}
             md={12}
-            lg={8}
-            xl={8}
+            lg={4}
+            xl={4}
           >
-            Time
+            {props.booking_time}
           </Col>
 
           <Col
@@ -266,10 +288,10 @@ const AvailableMetingstoPlayer = () => {
             xs={24}
             sm={12}
             md={12}
-            lg={8}
-            xl={8}
+            lg={6}
+            xl={6}
           >
-            Venue
+            {props.venue}
           </Col>
         </Row>
       </Modal>

@@ -14,7 +14,7 @@ import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
 
-import { PlayerContext } from "../context/PlayerContext";
+import { PlayerContext } from "../context/player.context";
 import { UserIdContext } from "../context/userId.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
@@ -769,14 +769,14 @@ const Navbar: React.FC = () => {
               >
                 <a className="NavBarUserProfileImgThumsup">
                   <AdvancedImage
-                       style={{
-                        width: "45px",
-                        height: "45px",
-                        marginLeft: "10px",
-                        marginTop: "5px",
-                        borderRadius: "50%",
-                        border: "1px solid black",
-                      }}
+                    style={{
+                      width: "45px",
+                      height: "45px",
+                      marginLeft: "10px",
+                      marginTop: "5px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                    }}
                     cldImg={
                       cld.image(userDetails?.image)
                       // .resize(Resize.crop().width(200).height(200).gravity('auto'))

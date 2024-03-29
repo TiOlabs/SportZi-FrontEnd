@@ -16,9 +16,10 @@ import NavbarProfile from "../../components/NavBarProfile";
 import axios from "axios";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { PlayerContext } from "../../context/PlayerContext";
+import { PlayerContext } from "../../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
+import { ZoneBookingDetails } from "../../types";
 
 const requestList = [
   <CoachRequstRow />,
@@ -31,40 +32,54 @@ const requestList = [
   <CoachRequstRow />,
 ];
 
-const AvailableMeetingList = [
-  <AvailableMetingstoPlayer />,
-  <AvailableMetingstoPlayer />,
-  <AvailableMetingstoPlayer />,
-  <AvailableMetingstoPlayer />,
-  <AvailableMetingstoPlayer />,
-  <AvailableMetingstoPlayer />,
-  <AvailableMetingstoPlayer />,
-];
-interface PlayerData {
-  role?: string;
-  firstname?: string;
-  lastname?: string;
-  email?: string;
-  phoneNumbers?: { phone_number: string }[];
+// interface PlayerData {
+//   role?: string;
+//   firstname?: string;
+//   lastname?: string;
+//   email?: string;
+//   phoneNumbers?: { phone_number: string }[];
 
-  // add other properties as needed
-}
+//   // add other properties as needed
+// }
 const PlayerProfile = () => {
+  const { userDetails } = useContext(PlayerContext);
+  const { playerID } = useParams();
+  const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
+  const [showMore, setShowMore] = useState(true);
+  const [playerBookingsData, setPlayerBookingsData] = useState<
+    ZoneBookingDetails[]
+  >([]);
+  console.log(playerBookingsData);
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [show3, setShow3] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get(
+        process.env.REACT_APP_API_URL +
+          `api/getarcadebooking/${userDetails?.id}`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setPlayerBookingsData(res.data);
+       setPlayerBookingsData((prev: any) => {
+          return prev.filter(
+            (playerBookingDetails: ZoneBookingDetails) =>
+               playerBookingDetails.status === "success"
+          );
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
-  const { userDetails } = useContext(PlayerContext);
-  const { playerID } = useParams();
-  const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
-  const [showMore, setShowMore] = useState(true);
-
-  const [show1, setShow1] = useState(false);
-  const [show2, setShow2] = useState(false);
-  const [show3, setShow3] = useState(false);
-
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -76,19 +91,7 @@ const PlayerProfile = () => {
 
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-
-  const [playerData, setPlayerData] = useState<PlayerData | null>(null);
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/getplayerdetails")
-      .then((res) => {
-        console.log(res.data);
-        setPlayerData(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  });
+  console.log(userDetails?.id);
   return (
     <>
       <style>
@@ -113,14 +116,14 @@ const PlayerProfile = () => {
             alignItems: "center",
           }}
         >
-       <AdvancedImage style={{ height: "auto", width: "300px" }}
-              cldImg={
-                cld.image(userDetails?.image)
-                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                // .resize(Resize.scale().width(200).height(200))
-              }
-              
-            />
+          <AdvancedImage
+            style={{ height: "auto", width: "300px" }}
+            cldImg={
+              cld.image(userDetails?.image)
+              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+              // .resize(Resize.scale().width(200).height(200))
+            }
+          />
         </Col>
         <Col
           xs={24}
@@ -634,7 +637,7 @@ const PlayerProfile = () => {
             lg={6}
             xl={6}
           >
-            Coach
+            Zone
           </Col>
           <Col
             style={{
@@ -694,7 +697,7 @@ const PlayerProfile = () => {
           )}
         </Row>
 
-        {AvailableMeetingList.slice(0, numberOfItemsShown).map(
+        {/* {AvailableMeetingList.slice(0, numberOfItemsShown).map(
           (request, index) => (
             <div
               style={{
@@ -707,7 +710,26 @@ const PlayerProfile = () => {
               {request}
             </div>
           )
-        )}
+        )} */}
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {playerBookingsData?.map((booking: ZoneBookingDetails) => (
+            <AvailableMetingstoPlayer 
+            booking_id={booking.zone_booking_id}
+            zone_image={booking.zone.zone_image}
+            zone_name={booking.zone.zone_name}
+            booking_date={booking.date} 
+            booking_time={booking.time}
+            venue={booking.zone.arcade.arcade_name}/>
+          ))}
+        </div>
 
         {showMore ? (
           <Button

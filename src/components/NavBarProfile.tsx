@@ -13,7 +13,7 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 
-import { PlayerContext } from "../context/PlayerContext";
+import { PlayerContext } from "../context/player.context";
 const NavbarProfile: React.FC = () => {
   const { userDetails } = useContext(PlayerContext);
 
