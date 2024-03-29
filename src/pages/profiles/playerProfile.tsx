@@ -17,6 +17,10 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PlayerContext } from "../../context/PlayerContext";
+import { EditFilled } from "@ant-design/icons";
+import { Drawer, Form, Input, Select, Space } from "antd";
+import { center } from "@cloudinary/url-gen/qualifiers/textAlignment";
+import TextArea from "antd/es/input/TextArea";
 
 const requestList = [
   <CoachRequstRow />,
@@ -49,13 +53,27 @@ interface PlayerData {
 }
 const PlayerProfile = () => {
   const { userDetails } = useContext(PlayerContext);
-  const { playerID } = useParams();
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [firstname, setFirstname] = useState(userDetails?.firstName);
+  const [lastname, setLastname] = useState(userDetails?.lastName);
+  const [email, setEmail] = useState(userDetails?.email);
+  const [discription, setDiscription] = useState("");
+  const [achivements, setAchivements] = useState("");
 
-  const [show1, setShow1] = useState(false);
-  const [show2, setShow2] = useState(false);
-  const [show3, setShow3] = useState(false);
+  const AchivementsGetToArry = (achivements: string) => {
+    return achivements.split(",");
+  };
+
+  //console.log(AchivementsGetToArry(achivements));
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
 
   const toggleItems = () => {
     setShowMore(!showMore);
@@ -65,11 +83,19 @@ const PlayerProfile = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
-
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
+  const formItemLayout = {
+    wrapperCol: {
+      xl: { span: 24 },
+      lg: { span: 24 },
+      md: { span: 24 },
+      sm: { span: 16 },
+    },
+  };
+  const onFinish = (values: any) => {};
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/getplayerdetails")
@@ -81,8 +107,10 @@ const PlayerProfile = () => {
         console.log(error);
       });
   });
+  const [form] = Form.useForm();
   return (
     <>
+      <NavbarProfile />
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
@@ -132,43 +160,234 @@ const PlayerProfile = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
-            <div>
-              <h1
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
                 style={{
-                  color: "#000",
-
-                  fontSize: "32px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "80%",
                 }}
               >
-                {userDetails?.name}
+                <h1
+                  style={{
+                    color: "#000",
+                    fontSize: "32px",
+                    fontStyle: "normal",
+                    fontWeight: "500",
+                    fontFamily: "kanit",
+                    lineHeight: "normal",
+                    marginBottom: "0px",
+                  }}
+                >
+                  {firstname} {lastname}
+                </h1>
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
 
-                {userDetails?.phoneNumbers}
-              </h1>
-              <p
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  {firstname}
+                </p>
+              </div>
+              <div
                 style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
-
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "20%",
                 }}
               >
-                First class rugby coach
-              </p>
+                <Button
+                  style={{
+                    color: "#0E458E",
+                    fontFamily: "kanit",
+                    fontWeight: md ? "400" : "300",
+                    fontSize: md ? "14px" : "12px",
+                    borderRadius: "3px",
+
+                    height: "30px",
+                  }}
+                  onClick={showDrawer}
+                  icon={<EditFilled />}
+                >
+                  Edit
+                </Button>
+                <Drawer
+                  title={
+                    <>
+                      <Typography
+                        style={{
+                          color: "#000",
+                          fontFamily: "kanit",
+                          fontSize: "20px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                        }}
+                      >
+                        Edit Your Profile
+                      </Typography>
+                    </>
+                  }
+                  width={500}
+                  onClose={onClose}
+                  open={open}
+                  styles={{
+                    body: {
+                      paddingBottom: 80,
+                    },
+                  }}
+                  extra={
+                    <Space>
+                      <Button
+                        style={{
+                          color: "#fff",
+                          backgroundColor: "#0E458E",
+                          fontFamily: "kanit",
+                          fontWeight: md ? "400" : "300",
+                          fontSize: md ? "14px" : "12px",
+                          borderRadius: "3px",
+                          height: "30px",
+                        }}
+                        onClick={onClose}
+                      >
+                        Submit
+                      </Button>
+                    </Space>
+                  }
+                >
+                  <Form
+                    {...formItemLayout}
+                    method="POST"
+                    layout="vertical"
+                    form={form}
+                    name="register"
+                    onFinish={onFinish}
+                    initialValues={{
+                      prefix: "94",
+                    }}
+                    style={{ maxWidth: "100%" }}
+                    scrollToFirstError
+                    colon={false}
+                    labelCol={{
+                      className: "custom-label",
+                    }}
+                  >
+                    {/* first name */}
+                    <Form.Item
+                      name="firstname"
+                      label="First Name"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please input your firstname",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <Input
+                        placeholder="Enter your first name"
+                        onChange={(e) => setFirstname(e.target.value)}
+                      />
+                    </Form.Item>
+                    {/* last name */}
+                    <Form.Item
+                      name="lastname"
+                      label="Last Name"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please input your lastname",
+                          whitespace: true,
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="Enter your last name"
+                        onChange={(e) => setLastname(e.target.value)}
+                      />
+                    </Form.Item>
+                    {/* email */}
+                    <Form.Item
+                      name="email"
+                      label="E-mail"
+                      rules={[
+                        {
+                          type: "email",
+                          message: "The input is not valid E-mail!",
+                        },
+                        {
+                          required: false,
+                          message: "Please input your E-mail!",
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="Enter your email"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Form.Item>
+                    {/* Discrption */}
+                    <Form.Item
+                      name="Discription"
+                      label="Discription"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please input your Discription",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <TextArea
+                        value={discription}
+                        onChange={(e) => setDiscription(e.target.value)}
+                        placeholder="Controlled autosize"
+                        autoSize={{ minRows: 3, maxRows: 4 }}
+                      />
+                    </Form.Item>
+                    {/* Achivements */}
+                    <Form.Item
+                      name="Achivements"
+                      label="Achivements"
+                      rules={[
+                        {
+                          required: false,
+                          message:
+                            "Input your Achivements Using Comma Seprated",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <Input
+                        placeholder="Input your Achivements Using Comma Seprated"
+                        onChange={(e) => setAchivements(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Drawer>
+              </div>
             </div>
             <div
               style={{
@@ -266,13 +485,12 @@ const PlayerProfile = () => {
               and aspirations as well as to share my knowledge and give back to
               the game that’s given me so much. My main position in rugby league
               was halfback and I had the honour of representing QLD in the State
-              Of Origin
+              Of Origin{discription}
             </p>
             <p
               style={{
                 color: "#000",
                 fontFamily: "kanit",
-
                 fontSize: "24px",
                 fontStyle: "normal",
                 fontWeight: "400",
@@ -352,12 +570,11 @@ const PlayerProfile = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={AchivementsGetToArry(achivements)}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -390,6 +607,42 @@ const PlayerProfile = () => {
               )}
             />
           </div>
+          {/* <div>
+            <Button
+              style={{
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: md ? "400" : "300",
+                fontSize: md ? "14px" : "12px",
+                borderRadius: "3px",
+
+                height: "30px",
+              }}
+              onClick={showDrawer}
+              icon={<EditFilled />}
+            >
+              Edit
+            </Button>
+            <Drawer
+              title="Create a new account"
+              width={500}
+              onClose={onClose}
+              open={open}
+              styles={{
+                body: {
+                  paddingBottom: 80,
+                },
+              }}
+              extra={
+                <Space>
+                  <Button onClick={onClose}>Cancel</Button>
+                  <Button onClick={onClose} type="primary">
+                    Submit
+                  </Button>
+                </Space>
+              }
+            ></Drawer>
+          </div> */}
         </Col>
       </Row>
       <div
