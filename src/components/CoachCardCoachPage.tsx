@@ -1,11 +1,20 @@
-import { Col, Row, Button, Flex } from "antd";
+import { Col, Row, Button, Flex, Rate } from "antd";
 import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
 
-const CoachCardCoachPage = () => {
+
+const CoachCardCoachPage = ( props:any) => {
+  console.log("props", props);
   setTwoToneColor("blue");
   getTwoToneColor();
+
+console.log(props.coach_image)
+console.log(props.coach_name)
+console.log(props.coach_sport)
+console.log(props.coach_rating)
+
+
   return (
     <>
       <div className="mainCard">
@@ -13,32 +22,16 @@ const CoachCardCoachPage = () => {
         <div className="mainCardsec2">
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
-              <p>Sandun Malage</p>
-              <p className="coachPosition">level one Rugby Coach</p>
+              <p> {props.coach_name} </p>
+              <p className="coachPosition">{props.coach_sport}</p>
             </div>
 
             <div className="ratings">
-              <StarFilled style={{ color: "#1B5DB7" }} />
-
-              <StarTwoTone
-                twoToneColor="#1B5DB7"
-                style={{ marginLeft: "10px" }}
-              />
-              <StarTwoTone
-                twoToneColor="#1B5DB7"
-                style={{ marginLeft: "10px" }}
-              />
-              <StarTwoTone
-                twoToneColor="#1B5DB7"
-                style={{ marginLeft: "10px" }}
-              />
-              <StarTwoTone
-                twoToneColor="#1B5DB7"
-                style={{ marginLeft: "10px" }}
-              />
+             <Rate disabled defaultValue={props.coach_rating} />
             </div>
+
             <div>
-              <p className="coachDiscription"> discription about coacoach </p>
+              <p className="coachDiscription"> {props.coach_short_description} </p>
             </div>
           </div>
           <div
@@ -58,7 +51,7 @@ const CoachCardCoachPage = () => {
                   fontWeight: "500",
                 }}
               >
-                100$
+              Rs.{props.coach_rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>

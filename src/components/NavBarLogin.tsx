@@ -1,28 +1,19 @@
-import {
-  EditOutlined,
-  LoginOutlined,
-  LogoutOutlined,
-  MenuOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import logo2 from "../assets/logoBlack.png";
-import { Popover } from "antd";
 import { Button } from "antd/es/radio";
+import Cookies from "js-cookie";
+import { UserIdContext } from "../context/userId.context";
 
-import { PlayerContext } from "../context/PlayerContext";
-const NavbarProfile: React.FC = () => {
-  const { userDetails } = useContext(PlayerContext);
-
+const NavbarLogin: React.FC = () => {
+  const { setUserId } = useContext(UserIdContext);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -151,110 +142,72 @@ const NavbarProfile: React.FC = () => {
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
   };
+  const token = Cookies.get("token");
+  console.log(token);
+  setUserId(token);
 
-  const content = (
-    <div className="NavBarUserProfileClickDetail">
-      <div
-        className="NavBarUserProfileLaptop"
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          height: "150px",
-        }}
-      >
-        <div
-          className="NavBarUserProfileImgLaptop"
-          style={{ justifyContent: "center", display: "flex" }}
-        >
-          <img
-            src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-            alt=""
-            style={{
-              width: "50px",
-              height: "50px",
-              marginLeft: "10px",
-              marginTop: "10px",
-              borderRadius: "50%",
-              border: "1px solid black",
-            }}
-          />
-        </div>
-        <div
-          className="NavBarUserProfileNameLaptop"
-          style={{
-            color: "#1B5DB7",
-            justifyContent: "center",
-            display: "flex",
-            fontSize: "20px",
-            fontFamily: "kanit",
-            marginTop: "10px",
-          }}
-        >
-          Sasindu Dhanushka
-        </div>
-        <div
-          className="NavBarUserProfileStatusLaptop"
-          style={{
-            color: "black",
-            justifyContent: "center",
-            display: "flex",
-            fontSize: "15px",
-          }}
-        >
-          student
-        </div>
-        <Divider style={{}} />
-      </div>
+  function logOut() {
+    // Remove the token cookie
+    Cookies.remove("token");
+    console.log("Token removed");
+    // Redirect or perform other logout operations if necessary
+  }
+  // const logOut = async () => {
+  //   // const res = await fetch (`${process.env.REACT_APP_API_URL}api/logout`)
+  //   // deleteCookie('user_id');
+  //   // deleteCookie('session_token');
+  //   // localStorage.clear();
 
-      <div>
-        <Button
-          type="primary"
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            backgroundColor: "#1B5DB7",
-            borderColor: "#1B5DB7",
-            color: "white",
-            justifyContent: "center",
-            display: "flex",
-            borderRadius: "5px",
-          }}
-        >
-          <LoginOutlined
-            style={{ fontSize: "20px", marginRight: "10px", marginTop: "5px" }}
-          />
-          Log In
-        </Button>
-        <Button
-          type="primary"
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            backgroundColor: "#1B5DB7",
-            borderColor: "#1B5DB7",
-            color: "white",
-            justifyContent: "center",
-            display: "flex",
-            borderRadius: "5px",
-          }}
-        >
-          <LogoutOutlined
-            style={{ fontSize: "20px", marginRight: "10px", marginTop: "5px" }}
-          />
-          Log Out
-        </Button>
-      </div>
-    </div>
-  );
+  // }
+  const bgStyle = () => {
+    if (pathname === "/") {
+      return scrolling ? "rgba(11, 42, 100, 0.9)" : "transparent";
+    }
+    if (pathname === "/coaches") {
+      return scrolling ? "rgba(11, 42, 100, 0.9)" : "transparent";
+    }
+    if (pathname === "/arcades") {
+      return scrolling ? "rgba(11, 42, 84, 0.9)" : "transparent";
+    }
+    if (pathname === "/about") {
+      return scrolling ? "rgba(11, 42, 84, 0.9)" : "transparent";
+    }
+  };
+  const fontColor = () => {
+    if (pathname === "/") {
+      return scrolling ? "white" : "white";
+    }
+    if (pathname === "/coaches") {
+      return scrolling ? "white" : "#1B5DB7";
+    }
+    if (pathname === "/arcades") {
+      return scrolling ? "white" : "#1B5DB7";
+    }
+    if (pathname === "/about") {
+      return scrolling ? "white" : "#1B5DB7";
+    }
+  };
+  const logoChange = () => {
+    if (pathname === "/") {
+      return logo;
+    }
+    if (pathname === "/coaches") {
+      return scrolling ? logo : logo2;
+    }
+    if (pathname === "/arcades") {
+      return scrolling ? logo : logo2;
+    }
+    if (pathname === "/about") {
+      return scrolling ? logo : logo2;
+    }
+  };
 
   return (
     <Row>
       <div
         className="NavigationBar"
         style={{
-          backgroundColor: scrolling ? "rgba(11, 42, 100, 0.9)" : "transparent",
+          backgroundColor: bgStyle(),
           transition: "background-color 0.5s",
           width: "100%",
           height: "65px",
@@ -268,7 +221,7 @@ const NavbarProfile: React.FC = () => {
           <div className="navBarLogo">
             <Link to="/">
               <img
-                src={scrolling ? logo : logo2}
+                src={logoChange()}
                 alt="Original Image"
                 style={{ width: "50px", height: "50px", marginTop: "10px" }}
               />
@@ -281,7 +234,7 @@ const NavbarProfile: React.FC = () => {
               onClick={handleToggle}
               style={{
                 backgroundColor: "none",
-                color: scrolling ? "white" : "#0E458E",
+                color: fontColor(),
                 fontSize: "25px",
                 fontWeight: "bold",
                 fontStyle: "normal",
@@ -320,18 +273,20 @@ const NavbarProfile: React.FC = () => {
                     className="NavBarUserProfileImg"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
-                    <img
-                      src={userDetails?.image}
-                      alt="Original Image"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        marginLeft: "10px",
-                        marginTop: "32px",
-                        borderRadius: "50%",
-                        border: "1px solid black",
-                      }}
-                    />
+                    <Link to="/profile/:id">
+                      <img
+                        src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
+                        alt="Original Image"
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          marginLeft: "10px",
+                          marginTop: "32px",
+                          borderRadius: "50%",
+                          border: "1px solid black",
+                        }}
+                      />
+                    </Link>
                   </div>
                   <div
                     className="NavBarUserProfileName"
@@ -343,7 +298,7 @@ const NavbarProfile: React.FC = () => {
                       fontFamily: "kanit",
                     }}
                   >
-                    {userDetails?.name}
+                    Sasindu Dhanushka
                   </div>
                   <div
                     className="NavBarUserProfileStatus"
@@ -368,8 +323,22 @@ const NavbarProfile: React.FC = () => {
                   borderRadius: "0px",
                   justifyContent: "center",
                   display: "flex",
-                  backgroundColor: homeHovered ? "#1B5DB7" : "white",
-                  color: homeHovered ? "white" : "#1B5DB7",
+                  backgroundColor:
+                    pathname === "/"
+                      ? homeHovered
+                        ? "#1B5DB7"
+                        : "#1B5DB7"
+                      : homeHovered
+                      ? "#1B5DB7"
+                      : "white",
+                  color:
+                    pathname === "/"
+                      ? homeHovered
+                        ? "white"
+                        : "white"
+                      : homeHovered
+                      ? "white"
+                      : "#1B5DB7",
                 }}
                 onMouseEnter={() => setHomeHovered(true)}
                 onMouseLeave={() => setHomeHovered(false)}
@@ -385,8 +354,22 @@ const NavbarProfile: React.FC = () => {
                   borderRadius: "0px",
                   justifyContent: "center",
                   display: "flex",
-                  backgroundColor: coachesHovered ? "#1B5DB7" : "white",
-                  color: coachesHovered ? "white" : "#1B5DB7",
+                  backgroundColor:
+                    pathname === "/coaches"
+                      ? coachesHovered
+                        ? "#1B5DB7"
+                        : "#1B5DB7"
+                      : coachesHovered
+                      ? "#1B5DB7"
+                      : "white",
+                  color:
+                    pathname === "/coaches"
+                      ? coachesHovered
+                        ? "white"
+                        : "white"
+                      : coachesHovered
+                      ? "white"
+                      : "#1B5DB7",
                 }}
                 onMouseEnter={() => setCoachesHovered(true)}
                 onMouseLeave={() => setCoachesHovered(false)}
@@ -402,13 +385,27 @@ const NavbarProfile: React.FC = () => {
                   borderRadius: "0px",
                   justifyContent: "center",
                   display: "flex",
-                  backgroundColor: arcadeHovered ? "#1B5DB7" : "white",
-                  color: arcadeHovered ? "white" : "#1B5DB7",
+                  backgroundColor:
+                    pathname === "/arcades"
+                      ? arcadeHovered
+                        ? "#1B5DB7"
+                        : "#1B5DB7"
+                      : arcadeHovered
+                      ? "#1B5DB7"
+                      : "white",
+                  color:
+                    pathname === "/arcades"
+                      ? arcadeHovered
+                        ? "white"
+                        : "white"
+                      : arcadeHovered
+                      ? "white"
+                      : "#1B5DB7",
                 }}
                 onMouseEnter={() => setArcadeHovered(true)}
                 onMouseLeave={() => setArcadeHovered(false)}
               >
-                <Link to="/arcades">Arcades</Link>
+                <Link to="/arcades">Arcade</Link>
               </Menu.Item>
               <Menu.Item
                 key="aboutUs"
@@ -419,8 +416,22 @@ const NavbarProfile: React.FC = () => {
                   borderRadius: "0px",
                   justifyContent: "center",
                   display: "flex",
-                  backgroundColor: aboutHovered ? "#1B5DB7" : "white",
-                  color: aboutHovered ? "white" : "#1B5DB7",
+                  backgroundColor:
+                    pathname === "/about"
+                      ? aboutHovered
+                        ? "#1B5DB7"
+                        : "#1B5DB7"
+                      : aboutHovered
+                      ? "#1B5DB7"
+                      : "white",
+                  color:
+                    pathname === "/about"
+                      ? aboutHovered
+                        ? "white"
+                        : "white"
+                      : aboutHovered
+                      ? "white"
+                      : "#1B5DB7",
                 }}
                 onMouseEnter={() => setAboutHovered(true)}
                 onMouseLeave={() => setAboutHovered(false)}
@@ -436,8 +447,22 @@ const NavbarProfile: React.FC = () => {
                   borderRadius: "0px",
                   justifyContent: "center",
                   display: "flex",
-                  backgroundColor: contactHovered ? "#1B5DB7" : "white",
-                  color: contactHovered ? "white" : "#1B5DB7",
+                  backgroundColor:
+                    pathname === "/contact"
+                      ? contactHovered
+                        ? "#1B5DB7"
+                        : "#1B5DB7"
+                      : contactHovered
+                      ? "#1B5DB7"
+                      : "white",
+                  color:
+                    pathname === "/contact"
+                      ? contactHovered
+                        ? "white"
+                        : "white"
+                      : contactHovered
+                      ? "white"
+                      : "#1B5DB7",
                 }}
                 onMouseEnter={() => setContactHovered(true)}
                 onMouseLeave={() => setContactHovered(false)}
@@ -503,11 +528,10 @@ const NavbarProfile: React.FC = () => {
               <Link
                 to="/"
                 style={{
-                  color: scrolling ? "white" : "#0E458E",
+                  color: pathname === "/" ? "#68abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
-                  marginLeft: "120px",
                 }}
                 onMouseEnter={homeHandleMouseEnter}
                 onMouseLeave={homeHandleMouseLeave}
@@ -520,7 +544,7 @@ const NavbarProfile: React.FC = () => {
                     height: "3px",
                     bottom: "0",
                     left: homeUnderlineStyle.left,
-                    backgroundColor: scrolling ? "white" : "#0E458E",
+                    backgroundColor: pathname === "/" ? "#68abf8" : fontColor(),
                     transition: homeUnderlineStyle.transition,
                   }}
                 ></span>
@@ -530,7 +554,7 @@ const NavbarProfile: React.FC = () => {
               <Link
                 to="/coaches"
                 style={{
-                  color: scrolling ? "white" : "#0E458E",
+                  color: pathname === "/coaches" ? "black" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -546,7 +570,8 @@ const NavbarProfile: React.FC = () => {
                     height: "3px",
                     bottom: "0",
                     left: coachesUnderlineStyle.left,
-                    backgroundColor: scrolling ? "white" : "#0E458E",
+                    backgroundColor:
+                      pathname === "/coaches" ? "black" : fontColor(),
                     transition: coachesUnderlineStyle.transition,
                   }}
                 ></span>
@@ -557,7 +582,7 @@ const NavbarProfile: React.FC = () => {
               <Link
                 to="/arcades"
                 style={{
-                  color: scrolling ? "white" : "#0E458E",
+                  color: pathname === "/arcades" ? "black" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -573,7 +598,8 @@ const NavbarProfile: React.FC = () => {
                     height: "3px",
                     bottom: "0",
                     left: arcadeUnderlineStyle.left,
-                    backgroundColor: scrolling ? "white" : "#0E458E",
+                    backgroundColor:
+                      pathname === "/arcades" ? "black" : fontColor(),
                     transition: arcadeUnderlineStyle.transition,
                   }}
                 ></span>
@@ -583,7 +609,7 @@ const NavbarProfile: React.FC = () => {
               <Link
                 to="/about"
                 style={{
-                  color: scrolling ? "white" : "#0E458E",
+                  color: pathname === "/about" ? "black" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -599,35 +625,57 @@ const NavbarProfile: React.FC = () => {
                     height: "3px",
                     bottom: "0",
                     left: aboutUnderlineStyle.left,
-                    backgroundColor: scrolling ? "white" : "#0E458E",
+                    backgroundColor:
+                      pathname === "/about" ? "black" : fontColor(),
                     transition: aboutUnderlineStyle.transition,
                   }}
                 ></span>
               </Link>
             </div>
-            <div className="navBarUserProfile" style={{ marginTop: "5px" }}>
-              <Popover
-                content={content}
-                trigger="click"
-                open={open}
-                onOpenChange={handleOpenChange}
-              >
-                <a className="NavBarUserProfileImgThumsup">
-                  <img
-                    className="NavBarUserProfileImg"
-                    src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                    alt="Original Image"
-                    style={{
-                      width: "45px",
-                      height: "45px",
-                      marginLeft: "10px",
-                      marginTop: "5px",
-                      borderRadius: "50%",
-                      border: "1px solid black",
-                    }}
-                  />
-                </a>
-              </Popover>
+            <div
+              className="navBarUserButtons"
+              style={{ marginTop: "5px", display: "flex" }}
+            >
+              <Link to="/login">
+                <Button
+                  type="primary"
+                  style={{
+                    color: "#1B5DB7",
+                    fontSize: "20px",
+                    width: "100px",
+                    height: "40px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "3px",
+                    backgroundColor: "white",
+                    marginRight: "10px",
+                    border: "none",
+                  }}
+                >
+                  Log In
+                </Button>
+              </Link>
+
+              <Link to="/signupPlayer">
+                <Button
+                  type="primary"
+                  style={{
+                    color: "white",
+                    fontSize: "20px",
+                    width: "100px",
+                    height: "40px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "3px",
+                    backgroundColor: "#1B5DB7",
+                    border: "none",
+                  }}
+                >
+                  Sign In
+                </Button>
+              </Link>
             </div>
           </div>
         </Col>
@@ -636,4 +684,4 @@ const NavbarProfile: React.FC = () => {
   );
 };
 
-export default NavbarProfile;
+export default NavbarLogin;

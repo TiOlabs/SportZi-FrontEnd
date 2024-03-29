@@ -7,27 +7,12 @@ import { off } from "process";
 import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const commonInputStyle = {
   height: "40px",
 };
-
-
-
-
-
-
-
-
-
-
-
 const Login = () => {
-
-
-
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -212,7 +197,7 @@ const Login = () => {
             <Form.Item>
               <hr />
               <Form.Item style={{ display: "flex", justifyContent: "center" }}>
-                Don't have an account <a href="">sign up here!</a>
+                Don't have an account <Link to={"/signupPlayer"}><a href="">sign up here!</a></Link>
               </Form.Item>
             </Form.Item>
           </Form>

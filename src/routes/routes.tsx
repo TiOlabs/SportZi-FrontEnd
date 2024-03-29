@@ -17,8 +17,8 @@ import CoachProfileUser from "../pages/profiles/CoachProfileUser";
 import Admin from "../pages/admin/admin";
 import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
-// import Auth from "../middlewares/auth";
-
+import Auth from "../middlewares/auth";
+import PlayerProfile from "../pages/profiles/playerProfile";
 const AppRoutes = () => {
   return (
     <>
@@ -36,14 +36,20 @@ const AppRoutes = () => {
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
-        <Route path="bookings" element={<BookingForm />} />
-        <Route path="profile/:id" element={<Profiles />} />
+        <Route
+          path="bookings"
+          element={
+            <Auth>
+              <BookingForm />
+            </Auth>
+          }
+        />
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
         <Route path="signupPlayer" element={<SignupPlayer />} />
         <Route path="signupCoach" element={<SignupCoach />} />
         <Route path="coacheProfile" element={<CoachProfile />} />
         <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
-        <Route path="PlayerUSer" element={<PlayerProfileUser />} />
+        <Route path="PlayerUser" element={<PlayerProfileUser />} />
         <Route
           path="forms/coachassigndetailsform"
           element={<CoachAssignDetailsForm />}
@@ -52,9 +58,10 @@ const AppRoutes = () => {
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="profile" element={<PlayerProfile />} />
       </Routes>
     </>
-  );
+  ); /*  */
 };
 
 export default AppRoutes;

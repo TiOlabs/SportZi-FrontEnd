@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {
   Row,
@@ -15,48 +15,59 @@ import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
 import PaymentModal from "../../components/paymentCheckout";
-
+import { User, Zone, ZoneBookingDetails } from "../../types";
+import { ZoneBookingsContext } from "../../context/zoneBookings.context";
+import axiosInstance from "../../axiosInstance";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { any } from "prop-types";
+import { UserIdContext } from "../../context/userId.context";
 const { Option } = Select;
 
 const BookingForm = () => {
+  const { setUserId } = useContext(UserIdContext);
   const [form] = Form.useForm();
+  const [decodedValues, setDecodedValues] = useState<any>();
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
-  const [paymentDetails, setPaymentDetails] = useState({
-    payment_id: "",
-    oder_id: "",
-    items: "",
-    amount: "",
-    currency: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    country: "",
-  });
+  const [zoneDetails, setZoneDetails] = useState<Zone>();
+  const [bookingCount, setbookingCount] = useState<Number>();
+  const [bookingDate, setBookingDate] = useState<ZoneBookingDetails[]>([]);
+  const [paymentDetails, setPaymentDetails] = useState<User>();
+  // payment_id: "",
+  // oder_id: "",
+  // items: "",
+  // amount: "",
+  // currency: "",
+  // first_name: "",
+  // last_name: "",
+  // email: "",
+  // phone: "",
+  // address: "",
+  // city: "",
+  // country: "",
+  const { zoneId } = useContext(ZoneBookingsContext);
+  console.log("Clicked Zone: ", zoneId);
+  useEffect(() => {
+    const token = Cookies.get("token");
+    const decoded = token ? jwtDecode(token) : undefined;
+    setDecodedValues(decoded);
+  }, []);
+  console.log(decodedValues?.userId);
+  const userId = decodedValues?.userId;
+  setUserId();
+  console.log(userId);
 
-  let fullAmount = Number(paymentDetails?.amount) * Number(pcount);
-
-  const [paymentStatus, setPaymentStatus] = useState();
+  console.log(userId);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const resPaymentDetails = await fetch(
-          "http://localhost:8000/api/getpaymentditails"
+          `http://localhost:8000/api/getuser/${userId}`
         );
         const paymentDetailsData = await resPaymentDetails.json();
-
-        // const respaymentStatus = await fetch(
-        //   "http://localhost:8000/api/postpaymentStatus"
-        // );
-        // const paymentStatusData = await respaymentStatus.json();
-
-        // setPaymentStatus(paymentStatusData);
-
         console.log(paymentDetailsData);
         setPaymentDetails(paymentDetailsData);
       };
@@ -64,7 +75,74 @@ const BookingForm = () => {
     } catch (e) {
       console.log("errrr", e);
     }
+  }, [userId]);
+  console.log(date);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `http://localhost:8000/api/getarcadebookingbydate/${date}/${zoneId}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setBookingDate(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [date]);
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `http://localhost:8000/api/getZoneDetails/${zoneId}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setZoneDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
   }, []);
+
+  console.log(paymentDetails);
+
+  console.log(zoneDetails?.rate);
+  const rate = zoneDetails?.rate;
+  console.log(pcount);
+  let fullAmount = Number(rate) * Number(pcount);
+  console.log(fullAmount);
+
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const resPaymentDetails = await fetch(
+  //         "http://localhost:8000/api/getarcadebookings"
+  //       );
+  //       const paymentDetailsData = await resPaymentDetails.json();
+
+  //       // const respaymentStatus = await fetch(
+  //       //   "http://localhost:8000/api/postpaymentStatus"
+  //       // );
+  //       // const paymentStatusData = await respaymentStatus.json();
+
+  //       // setPaymentStatus(paymentStatusData);
+  //       //...........
+
+  //       console.log(paymentDetailsData);
+  //       setPaymentDetails(paymentDetailsData);
+  //     };
+  //     fetchData();
+  //   } catch (e) {
+  //     console.log("errrr", e);
+  //   }
+  // }, []);
 
   // const onZoneChange = (value: string) => {
   //   console.log(value);
@@ -97,18 +175,17 @@ const BookingForm = () => {
     } else if (time === "") {
       message.error("time must be selected");
       return; // Stop further execution
-    }else{
+    } else {
       try {
-        const res = await axios.post(
+        const res = await axiosInstance.post(
           `http://localhost:8000/api/addarcadebooking`,
           {
-            booking_date: date,
-            booking_time: time,
-            zone: zone,
+            date: date,
+            time: time,
+            // rate: fullAmount,
             participant_count: pcountint,
-            cancel_by_admin: false,
-            cancel_by_player: false,
-            cancel_by_arcade: false,
+            user_id: userId,
+            zone_id: zoneId,
           }
         );
         console.log(res);
@@ -137,6 +214,20 @@ const BookingForm = () => {
       });
     }, 1000);
   };
+  const buttonData = [
+    { id: "1", time: "9.00-10.00" },
+    { id: "2", time: "10.00-11.00" },
+    { id: "3", time: "11.00-12.00", disabled: true },
+    { id: "4", time: "12.00-13.00" },
+    { id: "5", time: "13.00-14.00" },
+    { id: "6", time: "14.00-15.00" },
+    { id: "7", time: "15.00-16.00" },
+    { id: "8", time: "16.00-17.00" },
+    { id: "9", time: "17.00-18.00" },
+    { id: "10", time: "18.00-19.00" },
+    { id: "11", time: "19.00-20.00" },
+    { id: "12", time: "20.00-21.00" },
+  ];
 
   return (
     <div style={{ margin: "2%" }}>
@@ -251,8 +342,6 @@ const BookingForm = () => {
               > */}
               <Form.Item
                 name="Time Slot"
-                
-              
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -265,91 +354,41 @@ const BookingForm = () => {
                   overflow: "auto",
                 }}
               >
-                <button
-                  type="button"
-                  onClick={() => setTime("9")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  9.00-10.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("12")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  10.00-11.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("13")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  11.00-12.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("14")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  12.00-13.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("15")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  13.00-14.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("16")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  14.00-15.00
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setTime("17")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  15.00-16.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("18")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  16.00-17.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("19")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  17.00-18.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("20")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  18.00-19.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("21")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  19.00-20.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("22")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  20.00-21.00
-                </button>
+                {bookingDate.map((booking) => {
+                  console.log(booking.time);
+                  return (
+                    <button
+                      id={booking.time.toString()}
+                      style={{ backgroundColor: "red" }}
+                    ></button>
+                  );
+                })}
+                {buttonData.map((button) => (
+                  <button
+                    disabled={
+                      bookingDate.find((booking) => booking.time === button.id)
+                        ? true
+                        : false
+                    }
+                    key={button.id}
+                    id={button.id}
+                    type="button"
+                    onClick={() => setTime(button.id)}
+                    style={{
+                      width: "100%",
+                      padding: "5%",
+                      backgroundColor: bookingDate.find(
+                        (booking) => booking.time === button.id
+                      )
+                        ? "red"
+                        : "white",
+                    }}
+                  >
+                    {bookingDate.find((booking) => booking.time === button.id)
+                      ? "Booked"
+                      : button.time}
+                  </button>
+                ))}
               </Form.Item>
               {/* </Form.Item> */}
             </div>
@@ -398,14 +437,14 @@ const BookingForm = () => {
               {contextHolder}
 
               <PaymentModal
-                item={paymentDetails?.items}
-                orderId={paymentDetails?.oder_id}
+                item={"Zone Booking"}
+                orderId={5}
                 amount={fullAmount}
-                currency={paymentDetails?.currency}
-                first_name={paymentDetails?.first_name}
-                last_name={paymentDetails?.last_name}
+                currency={"LKR"}
+                first_name={paymentDetails?.firstname}
+                last_name={paymentDetails?.lastname}
                 email={paymentDetails?.email}
-                phone={paymentDetails?.phone}
+                phone={paymentDetails?.Phone}
                 address={paymentDetails?.address}
                 city={paymentDetails?.city}
                 country={paymentDetails?.country}

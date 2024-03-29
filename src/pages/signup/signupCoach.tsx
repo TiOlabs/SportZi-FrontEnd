@@ -86,10 +86,7 @@ const SignupCoach = () => {
 
   const onFinish = async () => {
     try {
-
       const response = await axiosInstance.post("/api/addcoach", {
-
-
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -106,6 +103,7 @@ const SignupCoach = () => {
         console.log(err);
         alert(err.response.data.message);
       });
+
 
     } catch (err) {
       console.log(err);

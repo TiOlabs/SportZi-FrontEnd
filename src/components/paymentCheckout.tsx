@@ -53,7 +53,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
     hash: hash,
   };
 
-  const sa = () => {};
+ 
 
   // Called when user completed the payment. It can be a successful payment or failure
   window.payhere.onCompleted = function onCompleted(paymentId: string) {

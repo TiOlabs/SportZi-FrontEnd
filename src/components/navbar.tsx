@@ -6,16 +6,28 @@ import {
 } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
-import path from "path";
 import Cookies from "js-cookie";
 
+import { PlayerContext } from "../context/PlayerContext";
+import { UserIdContext } from "../context/userId.context";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage } from "@cloudinary/react";
+
 const Navbar: React.FC = () => {
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const { userDetails } = useContext(PlayerContext);
+
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -154,10 +166,10 @@ const Navbar: React.FC = () => {
   console.log(token);
   function logOut() {
     // Remove the token cookie
-    Cookies.remove('token');
+    Cookies.remove("token");
     console.log("Token removed");
     // Redirect or perform other logout operations if necessary
-}
+  }
   // const logOut = async () => {
   //   // const res = await fetch (`${process.env.REACT_APP_API_URL}api/logout`)
   //   // deleteCookie('user_id');
@@ -182,10 +194,8 @@ const Navbar: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          <Link to="/profile/:id">
-            <img
-              src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-              alt="Original Image"
+          <Link to={`/profile/`}>
+            <AdvancedImage
               style={{
                 width: "50px",
                 height: "50px",
@@ -194,6 +204,11 @@ const Navbar: React.FC = () => {
                 borderRadius: "50%",
                 border: "1px solid black",
               }}
+              cldImg={
+                cld.image(userDetails?.image)
+                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                // .resize(Resize.scale().width(200).height(200))
+              }
             />
           </Link>
         </div>
@@ -208,7 +223,7 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          Sasindu Dhanushka
+          {userDetails.name}
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -386,10 +401,10 @@ const Navbar: React.FC = () => {
                     className="NavBarUserProfileImg"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
-                    <Link to="/profile/:id">
+                    <Link to="/profile/">
                       <img
-                        src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                        alt="Original Image"
+                        src={userDetails?.image}
+                        alt=""
                         style={{
                           width: "50px",
                           height: "50px",
@@ -667,7 +682,7 @@ const Navbar: React.FC = () => {
               <Link
                 to="/coaches"
                 style={{
-                  color: pathname === "/coaches" ? "black" : fontColor(),
+                  color: pathname === "/coaches" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -684,7 +699,7 @@ const Navbar: React.FC = () => {
                     bottom: "0",
                     left: coachesUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/coaches" ? "black" : fontColor(),
+                      pathname === "/coaches" ? "#01abf8" : fontColor(),
                     transition: coachesUnderlineStyle.transition,
                   }}
                 ></span>
@@ -695,7 +710,7 @@ const Navbar: React.FC = () => {
               <Link
                 to="/arcades"
                 style={{
-                  color: pathname === "/arcades" ? "black" : fontColor(),
+                  color: pathname === "/arcades" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -712,7 +727,7 @@ const Navbar: React.FC = () => {
                     bottom: "0",
                     left: arcadeUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/arcades" ? "black" : fontColor(),
+                      pathname === "/arcades" ? "#01abf8" : fontColor(),
                     transition: arcadeUnderlineStyle.transition,
                   }}
                 ></span>
@@ -722,7 +737,7 @@ const Navbar: React.FC = () => {
               <Link
                 to="/about"
                 style={{
-                  color: pathname === "/about" ? "black" : fontColor(),
+                  color: pathname === "/about" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -739,7 +754,7 @@ const Navbar: React.FC = () => {
                     bottom: "0",
                     left: aboutUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/about" ? "black" : fontColor(),
+                      pathname === "/about" ? "#01abf8" : fontColor(),
                     transition: aboutUnderlineStyle.transition,
                   }}
                 ></span>
@@ -753,18 +768,20 @@ const Navbar: React.FC = () => {
                 onOpenChange={handleOpenChange}
               >
                 <a className="NavBarUserProfileImgThumsup">
-                  <img
-                    className="NavBarUserProfileImg"
-                    src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                    alt="Original Image"
-                    style={{
-                      width: "45px",
-                      height: "45px",
-                      marginLeft: "10px",
-                      marginTop: "5px",
-                      borderRadius: "50%",
-                      border: "1px solid black",
-                    }}
+                  <AdvancedImage
+                       style={{
+                        width: "45px",
+                        height: "45px",
+                        marginLeft: "10px",
+                        marginTop: "5px",
+                        borderRadius: "50%",
+                        border: "1px solid black",
+                      }}
+                    cldImg={
+                      cld.image(userDetails?.image)
+                      // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                      // .resize(Resize.scale().width(200).height(200))
+                    }
                   />
                 </a>
               </Popover>

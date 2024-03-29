@@ -1,17 +1,17 @@
 
 
+
 import axios, { AxiosInstance } from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
 
-
 // Define custom Axios instance with type AxiosInstance
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8000', // Set your API base URL
+  baseURL: "http://localhost:8000", // Set your API base URL
   timeout: 5000, // Set timeout if needed
   headers: {
-    'Content-Type': 'application/json'
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 // Add interceptor to include JWT token in request headers
@@ -19,8 +19,10 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // const navigate =useNavigate();
     // Get JWT token from cookie
+
     const token = Cookies.get('token'); // Assuming your token is stored with the name 'jwtToken'
     console.log("from axioInstance:",token);
+
 
     // If token exists, set Authorization header with Bearer token
     if (token) {
@@ -34,7 +36,8 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-});
+  }
+);
 
 // axiosInstance.interceptors.response.use(
 //   (response) => {
@@ -60,9 +63,6 @@ axiosInstance.interceptors.request.use(
  
 //   }
 // );
-
-
-
 
 
 export default axiosInstance;
