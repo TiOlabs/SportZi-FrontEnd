@@ -15,30 +15,30 @@ const DiscountCard = (props: any) => {
   });
   const { setZoneId } = useContext(ZoneBookingsContext);
   console.log(props);
+  console.log(props.discount_image);
   const handleCardClick = async () => {
     // You can use the discountId here to identify the clicked card
     console.log(`Clicked card with ID: ${props.zoneId}`);
     console.log(props.zoneId);
+
     setZoneId(props.zoneId);
 
     // Perform any other actions based on the clicked card
   };
   return (
-
     <Link to="/bookings">
       <Card onClick={handleCardClick} hoverable>
         <div style={{ display: "flex", width: "auto" }}>
           <div style={{ display: "flex", width: "50%" }}>
-            <AdvancedImage
+            <AdvancedImage style={{ height: "auto", width: "100%" }}
               cldImg={
                 cld.image(props.discount_image)
                 // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                 // .resize(Resize.scale().width(200).height(200))
               }
-              style={{ height: "auto", width: "100%" }}
+              
             />
           </div>
-
 
           <div
             style={{

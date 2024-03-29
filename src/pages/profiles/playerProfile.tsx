@@ -17,6 +17,8 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PlayerContext } from "../../context/PlayerContext";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage } from "@cloudinary/react";
 
 const requestList = [
   <CoachRequstRow />,
@@ -48,6 +50,12 @@ interface PlayerData {
   // add other properties as needed
 }
 const PlayerProfile = () => {
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   const { userDetails } = useContext(PlayerContext);
   const { playerID } = useParams();
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
@@ -105,12 +113,14 @@ const PlayerProfile = () => {
             alignItems: "center",
           }}
         >
-          {" "}
-          <Image
-            width={300}
-            src={userDetails?.image}
-            preview={{ src: userDetails?.image }}
-          />
+       <AdvancedImage style={{ height: "auto", width: "300px" }}
+              cldImg={
+                cld.image(userDetails?.image)
+                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                // .resize(Resize.scale().width(200).height(200))
+              }
+              
+            />
         </Col>
         <Col
           xs={24}
@@ -152,8 +162,6 @@ const PlayerProfile = () => {
                 }}
               >
                 {userDetails?.name}
-
-                {userDetails?.phoneNumbers}
               </h1>
               <p
                 style={{
