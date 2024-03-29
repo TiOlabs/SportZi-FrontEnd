@@ -24,14 +24,15 @@ const AppRoutes = () => {
     <>
       <Routes>
         <Route index element={<Home />} />
-        <Route
+        {/* <Route
           path="coaches"
           element={
             <Auth>
               <Coaches />
             </Auth>
           }
-        />
+        /> */}
+        <Route path="coaches" element={<Coaches />}/> 
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
