@@ -55,15 +55,6 @@ const Login = () => {
         console.log("response error:",err)
       });
 
-      // if (res.status === 200) {
-      //   alert("Login successfully!");
-      //   console.log(res.data.token)
-      //   Cookies.set('token',res.data.token,{expires:1 , httpOnly:false , secure:true});
-      
-
-      // } else {
-      //   alert("Login failed");
-      // }
 
     } catch (err) {
  

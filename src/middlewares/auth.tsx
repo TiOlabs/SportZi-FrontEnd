@@ -2,14 +2,14 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
 const Auth = ({ children }: any) => {
-  const [isUser, setIsUser] = useState(false);
+  // const [isUser, setIsUser] = useState(false);
   
-  const token = Cookies.get("token");
-  useEffect(() => {
-    if (token) {
-      setIsUser(true);
-    }
-  }, [token]);
+  // const token = Cookies.get("token");
+  // useEffect(() => {
+  //   if (token) {
+  //     setIsUser(true);
+  //   }
+  // }, [token]);
 
  
 //   useEffect(() => {
@@ -39,7 +39,9 @@ const Auth = ({ children }: any) => {
 //     }
 //   }, []);
 
-  return <>{isUser ? <>{children}</> : <h1>Not Authenticated</h1>}</>;
+  return <>
+  {/* {isUser ? <>{children}</> : <h1>Not Authenticated</h1>} */}
+  </>;
 };
 
 export default Auth;

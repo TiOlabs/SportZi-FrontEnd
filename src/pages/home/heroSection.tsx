@@ -22,8 +22,9 @@ const HeroSection = () => {
       }
 
       ).catch(err => {
-        console.log(err);
-        alert("Only Can access for players");
+        console.log(err.response.data.message);
+        alert(err.response.data.message);
+        // alert("Only Can access for players");
         if (window.confirm('Do you want login as a plyer?')) {
           // If user clicks OK, do something
           navigate('/login');
