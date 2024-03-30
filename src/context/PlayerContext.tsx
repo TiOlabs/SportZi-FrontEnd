@@ -1,18 +1,21 @@
-import React, { useState, createContext, useEffect } from "react";
-import axios from "axios";
+import React, { useState, createContext, useEffect, useContext } from "react";
+// import axios from "axios";
 import axiosInstance from "../axiosInstance";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export const PlayerContext = createContext<any>(null);
 
 const PlayerProvider = ({ children }: any) => {
+
   const [userDetails, setUserDetails] = useState<any>({
     id: "",
     name: "",
     image: "",
     coachname: "",
   });
-  const navigate = useNavigate();
+
+  // const navigate = useNavigate();
+
   const fetchUser = async () => {
     try {
       await axiosInstance
@@ -25,6 +28,7 @@ const PlayerProvider = ({ children }: any) => {
             image: res.data.user_image,
             phoneNumbers: res.data.phone[0].phone_number,
           });
+          // console.log("userDetails", userDetails);
         })
         .catch((err) => {
           console.log(err);
@@ -40,6 +44,8 @@ const PlayerProvider = ({ children }: any) => {
     fetchUser();
   }, []);
 
+
+  // console.log("t", t);
   return (
     <PlayerContext.Provider value={{ userDetails }}>
       {children}
@@ -47,4 +53,12 @@ const PlayerProvider = ({ children }: any) => {
   );
 };
 
-export default PlayerProvider;
+function usePlayer() {
+  const context = useContext(PlayerContext);
+  if (context === undefined) {
+    throw new Error("usePlayer must be used within a PlayerProvider");
+  }
+  return context;
+}
+
+export { PlayerProvider, usePlayer };

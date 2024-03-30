@@ -20,7 +20,6 @@ import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 import axiosInstance from "../../axiosInstance";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import { any } from "prop-types";
 import { UserIdContext } from "../../context/userId.context";
 const { Option } = Select;
 

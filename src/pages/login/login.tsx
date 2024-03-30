@@ -8,6 +8,7 @@ import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
+import Home from "../home/home";
 
 const commonInputStyle = {
   height: "40px",
@@ -29,13 +30,13 @@ const Login = () => {
         password: password,  
       })
       .then(res => {
-        navigate('/');
         alert("Login successfully!");
         console.log(res.data.token)
         Cookies.set('token',res.data.token,{expires:1 , httpOnly:false , secure:true});
-      }
+        navigate('/')
+      })
 
-      ).catch(err => {
+      .catch(err => {
         alert("Login failed 1...")
         console.log("response error:",err)
       });
