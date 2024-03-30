@@ -1,10 +1,8 @@
-import { Button, Col, Modal, Row, Typography } from "antd";
-import { url } from "inspector";
+import { Button, Col, Modal, Row, Typography, Upload } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
-
-import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
-import { List } from "antd";
+import { PlusOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
+import { List, Alert } from "antd";
 import { Image } from "antd";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
@@ -21,7 +19,17 @@ import { EditFilled } from "@ant-design/icons";
 import { Drawer, Form, Input, Select, Space } from "antd";
 import { center } from "@cloudinary/url-gen/qualifiers/textAlignment";
 import TextArea from "antd/es/input/TextArea";
+import axiosInstance from "../../axiosInstance";
+import type { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 
+//photo upload button
+const getBase64 = (file: RcFile): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 const requestList = [
   <CoachRequstRow />,
   <CoachRequstRow />,
@@ -32,7 +40,6 @@ const requestList = [
   <CoachRequstRow />,
   <CoachRequstRow />,
 ];
-
 const AvailableMeetingList = [
   <AvailableMetingstoPlayer />,
   <AvailableMetingstoPlayer />,
@@ -48,7 +55,6 @@ interface PlayerData {
   lastname?: string;
   email?: string;
   phoneNumbers?: { phone_number: string }[];
-
   // add other properties as needed
 }
 const PlayerProfile = () => {
@@ -61,20 +67,18 @@ const PlayerProfile = () => {
   const [email, setEmail] = useState(userDetails?.email);
   const [discription, setDiscription] = useState("");
   const [achivements, setAchivements] = useState("");
-
+  // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     return achivements.split(",");
   };
-
-  //console.log(AchivementsGetToArry(achivements));
+  // drwer open close functions
   const showDrawer = () => {
     setOpen(true);
   };
-
   const onClose = () => {
     setOpen(false);
   };
-
+  // see more buttons
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -94,8 +98,33 @@ const PlayerProfile = () => {
       sm: { span: 16 },
     },
   };
-  const onFinish = (values: any) => {};
-
+  // function to the edit profiles
+  const onFinish = () => {
+    try {
+      axiosInstance
+        .post("api/auth/updateplayerdetails", {
+          firstname: firstname,
+        })
+        .then((res) => {
+          //  console.log("inside then", res.data);
+          {
+            <Alert message="Update Succesfully" type="success" />;
+          }
+          setPlayerData(res.data);
+        })
+        .catch(() => {
+          {
+            <Alert message="Not Updated Try Again" type="error" />;
+          }
+        });
+    } catch (error) {
+      onClose();
+      {
+        <Alert message="Not Updated Try Again" type="error" />;
+      }
+    }
+  };
+  // getting player details from backend
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/getplayerdetails")
@@ -108,6 +137,44 @@ const PlayerProfile = () => {
       });
   });
   const [form] = Form.useForm();
+
+  //photo upload button properties
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancell = () => {
+    setIsModalOpen(false);
+  };
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const handleCancel = () => setPreviewOpen(false);
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as RcFile);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
+  };
+
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
+    setFileList(newFileList);
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
   return (
     <>
       <NavbarProfile />
@@ -209,6 +276,7 @@ const PlayerProfile = () => {
                   {firstname}
                 </p>
               </div>
+              {/* edit button */}
               <div
                 style={{
                   display: "flex",
@@ -267,7 +335,7 @@ const PlayerProfile = () => {
                           borderRadius: "3px",
                           height: "30px",
                         }}
-                        onClick={onClose}
+                        onClick={onFinish}
                       >
                         Submit
                       </Button>
@@ -306,6 +374,7 @@ const PlayerProfile = () => {
                     >
                       <Input
                         placeholder="Enter your first name"
+                        value={firstname}
                         onChange={(e) => setFirstname(e.target.value)}
                       />
                     </Form.Item>
@@ -323,6 +392,7 @@ const PlayerProfile = () => {
                     >
                       <Input
                         placeholder="Enter your last name"
+                        value={lastname}
                         onChange={(e) => setLastname(e.target.value)}
                       />
                     </Form.Item>
@@ -343,6 +413,7 @@ const PlayerProfile = () => {
                     >
                       <Input
                         placeholder="Enter your email"
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </Form.Item>
@@ -381,9 +452,44 @@ const PlayerProfile = () => {
                       style={{}}
                     >
                       <Input
+                        value={achivements}
                         placeholder="Input your Achivements Using Comma Seprated"
                         onChange={(e) => setAchivements(e.target.value)}
                       />
+                    </Form.Item>
+                    {/* photo upload */}
+                    <Form.Item
+                      name="Upload profile picture"
+                      label="Upload profile picture"
+                      rules={[
+                        {
+                          required: false,
+                          message: "upload profile picture",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <Upload
+                        listType="picture-card"
+                        fileList={fileList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                      >
+                        {fileList.length >= 1 ? null : uploadButton}
+                      </Upload>
+                      <Modal
+                        open={previewOpen}
+                        title={previewTitle}
+                        footer={null}
+                        onCancel={handleCancel}
+                      >
+                        <img
+                          alt="example"
+                          style={{ width: "100%" }}
+                          src={previewImage}
+                        />
+                      </Modal>
                     </Form.Item>
                   </Form>
                 </Drawer>
