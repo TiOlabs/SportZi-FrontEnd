@@ -27,7 +27,7 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
     }
   }, [loaded]);
 
-  const   initializeCloudinaryWidget = () => {
+  const initializeCloudinaryWidget = () => {
     if (loaded) {
       var myWidget = window.cloudinary.createUploadWidget(
         uwConfig,
@@ -52,14 +52,15 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
   return (
     <CloudinaryScriptContext.Provider value={{ loaded }}>
       <Button
+        type="primary"
+        ghost
         style={{
           display: "flex",
           alignItems: "center",
-          width: "100%",
+          width: "10%",
           justifyContent: "center",
-          height: "60px",
+          height: "50px",
         }}
-        type="button"
         id="upload_widget"
         className="cloudinary-button"
         onClick={initializeCloudinaryWidget}

@@ -5,21 +5,20 @@ import profileBackground from "../../assents/profileBackground.png";
 
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { List } from "antd";
-import { Image } from "antd";
-import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
 import { Grid } from "antd";
 import { useState, useContext } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
-import NavbarProfile from "../../components/NavBarProfile";
 import axios from "axios";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PlayerContext } from "../../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { AdvancedImage } from "@cloudinary/react";
+import { AdvancedImage,responsive, placeholder } from "@cloudinary/react";
 import { ZoneBookingDetails } from "../../types";
+import CloudinaryUploadWidget from "../../components/cloudinaryUploadWidget";
+import { fill } from "@cloudinary/url-gen/actions/resize";
 
 const requestList = [
   <CoachRequstRow />,
@@ -53,7 +52,9 @@ const PlayerProfile = () => {
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
   const [show3, setShow3] = useState(false);
-
+  const [publicId, setPublicId] = useState("");
+  const [cloudName] = useState("dle0txcgt");
+  const [uploadPreset] = useState("n6ykxpof");
   useEffect(() => {
     axios
       .get(
@@ -63,10 +64,10 @@ const PlayerProfile = () => {
       .then((res) => {
         console.log(res.data);
         setPlayerBookingsData(res.data);
-       setPlayerBookingsData((prev: any) => {
+        setPlayerBookingsData((prev: any) => {
           return prev.filter(
             (playerBookingDetails: ZoneBookingDetails) =>
-               playerBookingDetails.status === "success"
+              playerBookingDetails.status === "success"
           );
         });
       })
@@ -74,7 +75,6 @@ const PlayerProfile = () => {
         console.log(error);
       });
   });
-  const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
       cloudName,
@@ -92,6 +92,48 @@ const PlayerProfile = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   console.log(userDetails?.id);
+
+  const [uwConfig] = useState({
+    cloudName,
+    uploadPreset,
+    cropping: true, //add a cropping step
+    cropWidth: 200, //crop the image to the given width
+    cropHeight: 200, //crop the image to the given height
+    showAdvancedOptions: true, //add advanced options (public_id and tag)
+    // sources: [ "local", "url"], // restrict the upload sources to URL and local files
+    // multiple: false,  //restrict upload to a single file
+    folder: "sportzi", //upload files to the specified folder
+    // tags: ["users", "profile"], //add the given tags to the uploaded files
+    // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
+    // clientAllowedFormats: ["images"], //restrict uploading to image files only
+    // maxImageFileSize: 2000000,  //restrict file size to less than 2MB
+    // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
+    // theme: "purple", //change to a purple theme
+    // maxImageHeight:100, //Scales the image down to a height of 2000 pixels before uploading
+    // minImageHeight:100, //Scales the image up to a height of 100 pixels before uploading
+    // cropImage: true, //crop the image to the given width and height
+    // widthOfCrop: "200px", //crop the image to the given width
+    // heightOfCrop: "200px", //crop the image to the given height
+    resize: fill(200, 200), //resize the image to the given width and height
+    w_200: fill(200), //resize the image to the given width
+    h_100: fill(100), //resize the image to the given height
+    c_fit: "fit", //applies the fit crop mode
+    cropingAspectRatio: 1, //crop the image to the given aspect ratio
+    croppingCoordinatesMode: "custom", //crop the image to the given aspect ratio
+    croppingShowDimensions: true, //crop the image to the given aspect ratio
+    croppingDefaultSelectionRatio: 1, //crop the image to the given aspect ratio
+    croppingValidateDimensions: true, //crop the image to the given aspect ratio
+  });
+
+  const clud = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+
+  const imgObject = cld.image(publicId);
+  console.log(imgObject);
+
   return (
     <>
       <style>
@@ -434,7 +476,15 @@ const PlayerProfile = () => {
           marginBottom: "10px",
         }}
       >
-        <AddPhotoButton />
+        {/* <AddPhotoButton /> */}
+
+        <CloudinaryUploadWidget uwConfig={uwConfig} setPublicId={setPublicId} />
+
+        <AdvancedImage
+          style={{ maxWidth: "100px" }}
+          cldImg={imgObject}
+          plugins={[responsive(), placeholder()]}
+        />
       </div>
       <PhotoCollage />
 
@@ -721,13 +771,14 @@ const PlayerProfile = () => {
           }}
         >
           {playerBookingsData?.map((booking: ZoneBookingDetails) => (
-            <AvailableMetingstoPlayer 
-            booking_id={booking.zone_booking_id}
-            zone_image={booking.zone.zone_image}
-            zone_name={booking.zone.zone_name}
-            booking_date={booking.date} 
-            booking_time={booking.time}
-            venue={booking.zone.arcade.arcade_name}/>
+            <AvailableMetingstoPlayer
+              booking_id={booking.zone_booking_id}
+              zone_image={booking.zone.zone_image}
+              zone_name={booking.zone.zone_name}
+              booking_date={booking.date}
+              booking_time={booking.time}
+              venue={booking.zone.arcade.arcade_name}
+            />
           ))}
         </div>
 
