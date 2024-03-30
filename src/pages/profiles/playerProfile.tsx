@@ -65,8 +65,19 @@ const PlayerProfile = () => {
   const [firstname, setFirstname] = useState(userDetails?.firstName);
   const [lastname, setLastname] = useState(userDetails?.lastName);
   const [email, setEmail] = useState(userDetails?.email);
-  const [discription, setDiscription] = useState("");
-  const [achivements, setAchivements] = useState("");
+  const [discription, setDiscription] = useState(userDetails?.discription);
+  const [achivements, setAchivements] = useState(userDetails?.achivements);
+  const [user_image, setUser_image] = useState(userDetails?.image);
+  //the changing the user details then use effect is running
+  useEffect(() => {
+    setFirstname(userDetails?.firstName);
+    setLastname(userDetails?.lastName);
+    setEmail(userDetails?.email);
+    setDiscription(userDetails?.discription);
+    // setAchivements(userDetails?.achivements);
+    setUser_image(userDetails?.image);
+  }, [userDetails]);
+
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     return achivements.split(",");
@@ -104,24 +115,19 @@ const PlayerProfile = () => {
       axiosInstance
         .post("api/auth/updateplayerdetails", {
           firstname: firstname,
+          lastname: lastname,
+          discription: discription,
+          achivements: achivements,
+          image: user_image,
         })
         .then((res) => {
-          //  console.log("inside then", res.data);
-          {
-            <Alert message="Update Succesfully" type="success" />;
-          }
+          console.log("inside then", res.data);
+
           setPlayerData(res.data);
         })
-        .catch(() => {
-          {
-            <Alert message="Not Updated Try Again" type="error" />;
-          }
-        });
+        .catch(() => {});
     } catch (error) {
       onClose();
-      {
-        <Alert message="Not Updated Try Again" type="error" />;
-      }
     }
   };
   // getting player details from backend
@@ -166,8 +172,9 @@ const PlayerProfile = () => {
     );
   };
 
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
+  };
 
   const uploadButton = (
     <div>
@@ -201,11 +208,7 @@ const PlayerProfile = () => {
           }}
         >
           {" "}
-          <Image
-            width={300}
-            src={userDetails?.image}
-            preview={{ src: userDetails?.image }}
-          />
+          <Image width={300} src={user_image} preview={{ src: user_image }} />
         </Col>
         <Col
           xs={24}
@@ -365,7 +368,7 @@ const PlayerProfile = () => {
                       label="First Name"
                       rules={[
                         {
-                          required: false,
+                          required: true,
                           message: "Please input your firstname",
                           whitespace: true,
                         },
@@ -374,7 +377,7 @@ const PlayerProfile = () => {
                     >
                       <Input
                         placeholder="Enter your first name"
-                        value={firstname}
+                        value={userDetails?.firstName}
                         onChange={(e) => setFirstname(e.target.value)}
                       />
                     </Form.Item>
@@ -384,7 +387,7 @@ const PlayerProfile = () => {
                       label="Last Name"
                       rules={[
                         {
-                          required: false,
+                          required: true,
                           message: "Please input your lastname",
                           whitespace: true,
                         },
@@ -392,7 +395,7 @@ const PlayerProfile = () => {
                     >
                       <Input
                         placeholder="Enter your last name"
-                        value={lastname}
+                        value={userDetails?.lastName}
                         onChange={(e) => setLastname(e.target.value)}
                       />
                     </Form.Item>
@@ -406,14 +409,14 @@ const PlayerProfile = () => {
                           message: "The input is not valid E-mail!",
                         },
                         {
-                          required: false,
+                          required: true,
                           message: "Please input your E-mail!",
                         },
                       ]}
                     >
                       <Input
                         placeholder="Enter your email"
-                        value={email}
+                        value={userDetails?.email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </Form.Item>
@@ -423,7 +426,7 @@ const PlayerProfile = () => {
                       label="Discription"
                       rules={[
                         {
-                          required: false,
+                          required: true,
                           message: "Please input your Discription",
                           whitespace: true,
                         },
@@ -431,7 +434,7 @@ const PlayerProfile = () => {
                       style={{}}
                     >
                       <TextArea
-                        value={discription}
+                        value={userDetails?.discription}
                         onChange={(e) => setDiscription(e.target.value)}
                         placeholder="Controlled autosize"
                         autoSize={{ minRows: 3, maxRows: 4 }}
@@ -443,7 +446,7 @@ const PlayerProfile = () => {
                       label="Achivements"
                       rules={[
                         {
-                          required: false,
+                          required: true,
                           message:
                             "Input your Achivements Using Comma Seprated",
                           whitespace: true,
@@ -452,7 +455,7 @@ const PlayerProfile = () => {
                       style={{}}
                     >
                       <Input
-                        value={achivements}
+                        // value={}
                         placeholder="Input your Achivements Using Comma Seprated"
                         onChange={(e) => setAchivements(e.target.value)}
                       />
@@ -463,7 +466,7 @@ const PlayerProfile = () => {
                       label="Upload profile picture"
                       rules={[
                         {
-                          required: false,
+                          required: true,
                           message: "upload profile picture",
                           whitespace: true,
                         },
@@ -586,12 +589,7 @@ const PlayerProfile = () => {
                 marginTop: "0px",
               }}
             >
-              I am a former elite rugby league player who would love to
-              encourage and mentor younger athletes to work towards their goals
-              and aspirations as well as to share my knowledge and give back to
-              the game that’s given me so much. My main position in rugby league
-              was halfback and I had the honour of representing QLD in the State
-              Of Origin{discription}
+              {discription}
             </p>
             <p
               style={{

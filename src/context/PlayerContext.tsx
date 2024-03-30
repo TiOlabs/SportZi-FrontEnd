@@ -12,6 +12,8 @@ const PlayerProvider = ({ children }: any) => {
     lastName: "",
     image: "",
     coachname: "",
+    discription: "",
+    achivements: "",
   });
   const navigate = useNavigate();
   const fetchUser = async () => {
@@ -26,6 +28,7 @@ const PlayerProvider = ({ children }: any) => {
             lastName: res.data.lastname,
             image: res.data.user_image,
             phoneNumbers: res.data.phone[0].phone_number,
+            discription: res.data.Discription,
           });
         })
         .catch((err) => {
