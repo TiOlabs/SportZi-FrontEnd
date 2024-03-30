@@ -3,8 +3,6 @@ export interface Discount {
   discount_percentage: Number;
   description: String;
   discount_image: String;
-  zone_name: String;
-  arcade_name: String;
   zone: Zone;
 }
 export interface Zone {
@@ -104,7 +102,6 @@ export interface ArcadeFeedbacks {
   rate: Number;
   arcade_id:String;
 }
-
 export interface Sport {
   sport_id: String;
   sport_name: String;
