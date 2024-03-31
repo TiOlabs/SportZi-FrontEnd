@@ -30,7 +30,6 @@ const PlayerProfile = () => {
   const { userDetails } = useContext(PlayerContext);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
-  const [open, setOpen] = useState(false);
   const [firstname, setFirstname] = useState(userDetails?.firstName);
   const [lastname, setLastname] = useState(userDetails?.lastName);
   const [email, setEmail] = useState(userDetails?.email);
@@ -313,66 +312,6 @@ const PlayerProfile = () => {
             >
               {discription}
             </p>
-            <p
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontSize: "24px",
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-              }}
-            >
-              Sports
-            </p>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.5",
-              }}
-              itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
-                    }}
-                  >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
-
             <p
               style={{
                 color: "#000",
