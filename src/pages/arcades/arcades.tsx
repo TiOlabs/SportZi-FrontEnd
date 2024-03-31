@@ -6,6 +6,7 @@ import NavbarLogin from "../../components/NavBarLogin";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
+
 const Arcades = () => {
     const [token, setToken] = useState<string | undefined>(undefined);
 
@@ -18,6 +19,7 @@ const Arcades = () => {
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3",marginTop:"30px" }}>
           
               <HeroSection />
+             
               <ArcadeCardSection />
               <AppFooter/>
          </div>
