@@ -1,8 +1,12 @@
-import { Button, Col, Modal, Row, Typography, Upload } from "antd";
+import { Button, Col, Modal, Row, Tag, Typography, Upload, List } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
-import { PlusOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
-import { List, Alert } from "antd";
+import {
+  CloseCircleOutlined,
+  PlusOutlined,
+  StarFilled,
+  StarTwoTone,
+} from "@ant-design/icons";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
 import { Grid } from "antd";
@@ -22,6 +26,7 @@ import { PlayerContext } from "../../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import { User, ZoneBookingDetails } from "../../types";
+import PlayerEdit from "../../components/playerEdit";
 
 //photo upload button
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -62,15 +67,16 @@ const PlayerProfile = () => {
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
   const [user_image, setUser_image] = useState(userDetails?.image);
+
   //the changing the user details then use effect is running
-  useEffect(() => {
-    setFirstname(userDetails?.firstName);
-    setLastname(userDetails?.lastName);
-    setEmail(userDetails?.email);
-    setDiscription(userDetails?.discription);
-    // setAchivements(userDetails?.achivements);
-    setUser_image(userDetails?.image);
-  }, [userDetails]);
+  // useEffect(() => {
+  //   setFirstname(userDetails?.firstName);
+  //   setLastname(userDetails?.lastName);
+  //   setEmail(userDetails?.email);
+  //   setDiscription(userDetails?.discription);
+  //   // setAchivements(userDetails?.achivements);
+  //   setUser_image(userDetails?.image);
+  // }, []);
 
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
@@ -95,26 +101,26 @@ const PlayerProfile = () => {
   const [show2, setShow2] = useState(false);
   const [show3, setShow3] = useState(false);
 
-  useEffect(() => {
-    axios
-      .get(
-        process.env.REACT_APP_API_URL +
-          `api/getarcadebooking/${userDetails?.id}`
-      )
-      .then((res) => {
-        console.log(res.data);
-        setPlayerBookingsData(res.data);
-       setPlayerBookingsData((prev: any) => {
-          return prev.filter(
-            (playerBookingDetails: ZoneBookingDetails) =>
-               playerBookingDetails.status === "success"
-          );
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  });
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       process.env.REACT_APP_API_URL +
+  //         `api/getarcadebooking/${userDetails?.id}`
+  //     )
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       setPlayerBookingsData(res.data);
+  //       setPlayerBookingsData((prev: any) => {
+  //         return prev.filter(
+  //           (playerBookingDetails: ZoneBookingDetails) =>
+  //             playerBookingDetails.status === "success"
+  //         );
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // });
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -148,7 +154,7 @@ const PlayerProfile = () => {
           firstname: firstname,
           lastname: lastname,
           discription: discription,
-          achivements: achivements,
+          achivements: achivements.split(","),
           image: user_image,
         })
         .then((res) => {
@@ -163,16 +169,27 @@ const PlayerProfile = () => {
   };
   // getting player details from backend
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/getplayerdetails")
+    axiosInstance
+      .get("/api/auth/getplayerdetails/", {})
       .then((res) => {
-        console.log(res.data);
-        setPlayerData(res.data);
+        console.log("dataaaaaaaaaa222222", res.data);
+        setFirstname(res.data.firstname);
+        setLastname(res.data.lastname);
+        setEmail(res.data.email);
+        setDiscription(res.data.Discription);
+        setUser_image(res.data.user_image);
+        const achiv = res.data.achivement;
+        let achiveArr: string[] = [];
+        achiv.map((item: any) => {
+          achiveArr.push(item.achivement_details as string);
+        });
+        setAchivements(achiveArr.join(","));
+        // console.log("userDetails", userDetails);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
-  });
+  }, []);
   const [form] = Form.useForm();
 
   //photo upload button properties
@@ -241,7 +258,7 @@ const PlayerProfile = () => {
           <AdvancedImage
             style={{ height: "auto", width: "300px" }}
             cldImg={
-              cld.image(userDetails?.image)
+              cld.image(user_image)
               // .resize(Resize.crop().width(200).height(200).gravity('auto'))
               // .resize(Resize.scale().width(200).height(200))
             }
@@ -324,215 +341,18 @@ const PlayerProfile = () => {
                   width: "20%",
                 }}
               >
-                <Button
-                  style={{
-                    color: "#0E458E",
-                    fontFamily: "kanit",
-                    fontWeight: md ? "400" : "300",
-                    fontSize: md ? "14px" : "12px",
-                    borderRadius: "3px",
-
-                    height: "30px",
-                  }}
-                  onClick={showDrawer}
-                  icon={<EditFilled />}
-                >
-                  Edit
-                </Button>
-                <Drawer
-                  title={
-                    <>
-                      <Typography
-                        style={{
-                          color: "#000",
-                          fontFamily: "kanit",
-                          fontSize: "20px",
-                          fontStyle: "normal",
-                          fontWeight: "500",
-                        }}
-                      >
-                        Edit Your Profile
-                      </Typography>
-                    </>
-                  }
-                  width={500}
-                  onClose={onClose}
-                  open={open}
-                  styles={{
-                    body: {
-                      paddingBottom: 80,
-                    },
-                  }}
-                  extra={
-                    <Space>
-                      <Button
-                        style={{
-                          color: "#fff",
-                          backgroundColor: "#0E458E",
-                          fontFamily: "kanit",
-                          fontWeight: md ? "400" : "300",
-                          fontSize: md ? "14px" : "12px",
-                          borderRadius: "3px",
-                          height: "30px",
-                        }}
-                        onClick={onFinish}
-                      >
-                        Submit
-                      </Button>
-                    </Space>
-                  }
-                >
-                  <Form
-                    {...formItemLayout}
-                    method="POST"
-                    layout="vertical"
-                    form={form}
-                    name="register"
-                    onFinish={onFinish}
-                    initialValues={{
-                      prefix: "94",
-                    }}
-                    style={{ maxWidth: "100%" }}
-                    scrollToFirstError
-                    colon={false}
-                    labelCol={{
-                      className: "custom-label",
-                    }}
-                  >
-                    {/* first name */}
-                    <Form.Item
-                      name="firstname"
-                      label="First Name"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your firstname",
-                          whitespace: true,
-                        },
-                      ]}
-                      style={{}}
-                    >
-                      <Input
-                        placeholder="Enter your first name"
-                        value={userDetails?.firstName}
-                        onChange={(e) => setFirstname(e.target.value)}
-                      />
-                    </Form.Item>
-                    {/* last name */}
-                    <Form.Item
-                      name="lastname"
-                      label="Last Name"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your lastname",
-                          whitespace: true,
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Enter your last name"
-                        value={userDetails?.lastName}
-                        onChange={(e) => setLastname(e.target.value)}
-                      />
-                    </Form.Item>
-                    {/* email */}
-                    <Form.Item
-                      name="email"
-                      label="E-mail"
-                      rules={[
-                        {
-                          type: "email",
-                          message: "The input is not valid E-mail!",
-                        },
-                        {
-                          required: true,
-                          message: "Please input your E-mail!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Enter your email"
-                        value={userDetails?.email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </Form.Item>
-                    {/* Discrption */}
-                    <Form.Item
-                      name="Discription"
-                      label="Discription"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your Discription",
-                          whitespace: true,
-                        },
-                      ]}
-                      style={{}}
-                    >
-                      <TextArea
-                        value={userDetails?.discription}
-                        onChange={(e) => setDiscription(e.target.value)}
-                        placeholder="Controlled autosize"
-                        autoSize={{ minRows: 3, maxRows: 4 }}
-                      />
-                    </Form.Item>
-                    {/* Achivements */}
-                    <Form.Item
-                      name="Achivements"
-                      label="Achivements"
-                      rules={[
-                        {
-                          required: true,
-                          message:
-                            "Input your Achivements Using Comma Seprated",
-                          whitespace: true,
-                        },
-                      ]}
-                      style={{}}
-                    >
-                      <Input
-                        // value={}
-                        placeholder="Input your Achivements Using Comma Seprated"
-                        onChange={(e) => setAchivements(e.target.value)}
-                      />
-                    </Form.Item>
-                    {/* photo upload */}
-                    <Form.Item
-                      name="Upload profile picture"
-                      label="Upload profile picture"
-                      rules={[
-                        {
-                          required: true,
-                          message: "upload profile picture",
-                          whitespace: true,
-                        },
-                      ]}
-                      style={{}}
-                    >
-                      <Upload
-                        listType="picture-card"
-                        fileList={fileList}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
-                      >
-                        {fileList.length >= 1 ? null : uploadButton}
-                      </Upload>
-                      <Modal
-                        open={previewOpen}
-                        title={previewTitle}
-                        footer={null}
-                        onCancel={handleCancel}
-                      >
-                        <img
-                          alt="example"
-                          style={{ width: "100%" }}
-                          src={previewImage}
-                        />
-                      </Modal>
-                    </Form.Item>
-                  </Form>
-                </Drawer>
+                <PlayerEdit
+                  firstname={firstname}
+                  setFirstname={setFirstname}
+                  lastname={lastname}
+                  setLastname={setLastname}
+                  discription={discription}
+                  setDiscription={setDiscription}
+                  achivements={achivements}
+                  setAchivements={setAchivements}
+                  user_image={user_image}
+                  setUser_image={setUser_image}
+                />
               </div>
             </div>
             <div
@@ -1104,13 +924,14 @@ const PlayerProfile = () => {
           }}
         >
           {playerBookingsData?.map((booking: ZoneBookingDetails) => (
-            <AvailableMetingstoPlayer 
-            booking_id={booking.zone_booking_id}
-            zone_image={booking.zone.zone_image}
-            zone_name={booking.zone.zone_name}
-            booking_date={booking.date} 
-            booking_time={booking.time}
-            venue={booking.zone.arcade.arcade_name}/>
+            <AvailableMetingstoPlayer
+              booking_id={booking.zone_booking_id}
+              zone_image={booking.zone.zone_image}
+              zone_name={booking.zone.zone_name}
+              booking_date={booking.date}
+              booking_time={booking.time}
+              venue={booking.zone.arcade.arcade_name}
+            />
           ))}
         </div>
 
