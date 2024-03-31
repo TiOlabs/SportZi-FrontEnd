@@ -3,7 +3,6 @@ import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import { PlusOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { List, Alert } from "antd";
-import { Image } from "antd";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
 import { Grid } from "antd";
@@ -13,8 +12,6 @@ import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
 import axios from "axios";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-
 import { EditFilled } from "@ant-design/icons";
 import { Drawer, Form, Input, Select, Space } from "antd";
 import { center } from "@cloudinary/url-gen/qualifiers/textAlignment";
@@ -77,7 +74,10 @@ const PlayerProfile = () => {
 
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
-    return achivements.split(",");
+    if (achivements) {
+      return achivements.split(",");
+    }
+    return [];
   };
   // drwer open close functions
   const showDrawer = () => {
