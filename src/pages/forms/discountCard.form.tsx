@@ -79,6 +79,7 @@ const DiscountCardForm = () => {
   });
 
   const imgObject = cld.image(publicId);
+  console.log(imgObject);
 
   const handleFinish = async () => {
     const discountint = parseInt(discount);

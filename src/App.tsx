@@ -5,7 +5,7 @@ import HeroSection from "./pages/home/heroSection";
 import { Routes } from "react-router-dom";
 import AppRoutes from "./routes/routes";
 
-import PlayerProvider from "./context/PlayerContext";
+import PlayerProvider from "./context/player.context";
 
 function App() {
   return (

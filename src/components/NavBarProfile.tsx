@@ -13,7 +13,7 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 
-import { PlayerContext } from "../context/PlayerContext";
+import { PlayerContext } from "../context/player.context";
 const NavbarProfile: React.FC = () => {
   const { userDetails } = useContext(PlayerContext);
 
@@ -170,7 +170,7 @@ const NavbarProfile: React.FC = () => {
         >
           <img
             src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-            alt="Original Image"
+            alt=""
             style={{
               width: "50px",
               height: "50px",

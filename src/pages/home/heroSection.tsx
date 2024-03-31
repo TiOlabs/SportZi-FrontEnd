@@ -12,23 +12,27 @@ const HeroSection = () => {
 
   const handleDiscoverCoaches = async () => {
     try {
-      const response = await axiosInstance
-        .get("/api/coaches", {})
-        .then((res) => {
-          // window.location.href = '/coaches';
-          navigate("/coaches");
-        })
-        .catch((err) => {
-          console.log(err);
-          alert("Only Can access for players");
-          if (window.confirm("Do you want login as a plyer?")) {
-            // If user clicks OK, do something
-            navigate("/login");
-          } else {
-            // If user clicks Cancel, do something else or nothing
-            console.log("User clicked Cancel");
-          }
-        });
+      const response = await axiosInstance.get("/api/coaches", {})
+      .then(res => {
+        // window.location.href = '/coaches';
+        navigate('/coaches');
+        
+        
+      }
+
+      ).catch(err => {
+        console.log(err.response.data.message);
+        alert(err.response.data.message);
+        // alert("Only Can access for players");
+        if (window.confirm('Do you want login as a plyer?')) {
+          // If user clicks OK, do something
+          navigate('/login');
+        } else {
+          // If user clicks Cancel, do something else or nothing
+          console.log('User clicked Cancel');
+        }
+      })
+
     } catch (error) {
       console.error("Error:", error);
       // Handle error responses here if needed

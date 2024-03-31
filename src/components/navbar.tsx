@@ -13,12 +13,18 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
-
-import { PlayerContext } from "../context/PlayerContext";
-
+import { PlayerContext } from "../context/player.context";
 import { UserIdContext } from "../context/userId.context";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage } from "@cloudinary/react";
 
 const Navbar: React.FC = () => {
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   const { userDetails } = useContext(PlayerContext);
 
   const [visible, setVisible] = useState(false);
@@ -188,9 +194,7 @@ const Navbar: React.FC = () => {
           style={{ justifyContent: "center", display: "flex" }}
         >
           <Link to={`/profile/`}>
-            <img
-              src={userDetails?.image}
-              alt="Original Image"
+            <AdvancedImage
               style={{
                 width: "50px",
                 height: "50px",
@@ -199,6 +203,11 @@ const Navbar: React.FC = () => {
                 borderRadius: "50%",
                 border: "1px solid black",
               }}
+              cldImg={
+                cld.image(userDetails?.image)
+                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                // .resize(Resize.scale().width(200).height(200))
+              }
             />
           </Link>
         </div>
@@ -394,7 +403,7 @@ const Navbar: React.FC = () => {
                     <Link to="/profile/">
                       <img
                         src={userDetails?.image}
-                        alt="Original Image"
+                        alt=""
                         style={{
                           width: "50px",
                           height: "50px",
@@ -758,10 +767,7 @@ const Navbar: React.FC = () => {
                 onOpenChange={handleOpenChange}
               >
                 <a className="NavBarUserProfileImgThumsup">
-                  <img
-                    className="NavBarUserProfileImg"
-                    src={userDetails?.image}
-                    alt="Original Image"
+                  <AdvancedImage
                     style={{
                       width: "45px",
                       height: "45px",
@@ -770,6 +776,11 @@ const Navbar: React.FC = () => {
                       borderRadius: "50%",
                       border: "1px solid black",
                     }}
+                    cldImg={
+                      cld.image(userDetails?.image)
+                      // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                      // .resize(Resize.scale().width(200).height(200))
+                    }
                   />
                 </a>
               </Popover>
