@@ -5,18 +5,20 @@ import AppFooter from "../../components/footer";
 import AboutImage from "../../assents/AboutImage.png";
 import { Image } from "antd";
 import { Grid } from "antd";
-
-<style>
-  @import
-  url('https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap')
-</style>;
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import NavbarLogin from "../../components/NavBarLogin";
 
 const About = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
+  const [token, setToken] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    setToken(Cookies.get("token"));
+  }, []);
   return (
     <div style={{}}>
-      <Navbar2 />
+      {token ? <Navbar /> : <NavbarLogin />}
       {/* ............................................................ */}
       <Row
         style={{

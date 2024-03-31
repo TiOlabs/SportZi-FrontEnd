@@ -25,13 +25,11 @@ const PhotoCollage = () => {
         width: "100%",
         alignItems: "center",
         height: "max-content",
-
         marginBottom: "20px",
       }}
     >
       <Row style={{ width: "90%" }}>
         <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-          {" "}
           <ResponsiveMasonry
             columnsCountBreakPoints={{ 300: 2, 500: 3, 700: 3, 900: 4 }}
           >
