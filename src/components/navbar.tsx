@@ -197,7 +197,7 @@ const Navbar: React.FC = () => {
             <AdvancedImage
               style={{
                 width: "50px",
-                height: "500px",
+                height: "50px",
                 marginLeft: "10px",
                 marginTop: "10px",
                 borderRadius: "50%",
