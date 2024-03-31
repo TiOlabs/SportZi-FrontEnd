@@ -6,7 +6,6 @@ import axiosInstance from "../axiosInstance";
 export const PlayerContext = createContext<any>(null);
 
 const PlayerProvider = ({ children }: any) => {
-
   const [userDetails, setUserDetails] = useState<any>({
     id: "",
     firstName: "",
@@ -33,6 +32,7 @@ const PlayerProvider = ({ children }: any) => {
             image: res.data.user_image,
             phoneNumbers: res.data.phone[0].phone_number,
             discription: res.data.Discription,
+            achivements: res.data.achivements,
           });
           // console.log("userDetails", userDetails);
         })
@@ -49,7 +49,6 @@ const PlayerProvider = ({ children }: any) => {
     console.log("fetching user");
     fetchUser();
   }, []);
-
 
   // console.log("t", t);
   return (
