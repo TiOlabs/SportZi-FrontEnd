@@ -4,7 +4,8 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { UserProvider } from "./context/user.context";
+import { ZoneBookingsProvider } from "./context/zoneBookings.context";
+import { UserIdProvider } from "./context/userId.context";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -12,9 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <UserProvider>
-        <App />
-      </UserProvider>
+      <UserIdProvider>
+        <ZoneBookingsProvider>
+          <App />
+        </ZoneBookingsProvider>
+      </UserIdProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

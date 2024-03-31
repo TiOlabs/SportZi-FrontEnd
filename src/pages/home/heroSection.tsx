@@ -5,7 +5,6 @@ import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import axiosInstance from "../../axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-
 const HeroSection = () => {
   const { lg, md, sm, xs, xl } = useBreakpoint();
 
@@ -22,8 +21,9 @@ const HeroSection = () => {
       }
 
       ).catch(err => {
-        console.log(err);
-        alert("Only Can access for players");
+        console.log(err.response.data.message);
+        alert(err.response.data.message);
+        // alert("Only Can access for players");
         if (window.confirm('Do you want login as a plyer?')) {
           // If user clicks OK, do something
           navigate('/login');
@@ -34,12 +34,10 @@ const HeroSection = () => {
       })
 
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       // Handle error responses here if needed
     }
-  }
-
-
+  };
 
   return (
     <Row
@@ -51,7 +49,7 @@ const HeroSection = () => {
         backgroundPosition: "center center",
       }}
     >
-      <img 
+      <img
         src={Man}
         style={{
           width: md ? (xl ? "500px" : "415px") : "280px",
@@ -101,7 +99,6 @@ const HeroSection = () => {
       <Col span={14} xl={13}></Col>
       <Col span={1} xl={2}></Col>
       <Col span={2}>
-        
         <Button
           type="primary"
           htmlType="submit"

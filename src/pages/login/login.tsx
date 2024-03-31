@@ -7,27 +7,13 @@ import { off } from "process";
 import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Home from "../home/home";
 
 const commonInputStyle = {
   height: "40px",
 };
-
-
-
-
-
-
-
-
-
-
-
 const Login = () => {
-
-
-
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -44,26 +30,17 @@ const Login = () => {
         password: password,  
       })
       .then(res => {
-        navigate('/');
         alert("Login successfully!");
         console.log(res.data.token)
         Cookies.set('token',res.data.token,{expires:1 , httpOnly:false , secure:true});
-      }
+        navigate('/')
+      })
 
-      ).catch(err => {
+      .catch(err => {
         alert("Login failed 1...")
         console.log("response error:",err)
       });
 
-      // if (res.status === 200) {
-      //   alert("Login successfully!");
-      //   console.log(res.data.token)
-      //   Cookies.set('token',res.data.token,{expires:1 , httpOnly:false , secure:true});
-      
-
-      // } else {
-      //   alert("Login failed");
-      // }
 
     } catch (err) {
  
@@ -221,7 +198,7 @@ const Login = () => {
             <Form.Item>
               <hr />
               <Form.Item style={{ display: "flex", justifyContent: "center" }}>
-                Don't have an account <a href="">sign up here!</a>
+                Don't have an account <Link to={"/signupPlayer"}><a href="">sign up here!</a></Link>
               </Form.Item>
             </Form.Item>
           </Form>

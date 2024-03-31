@@ -1,24 +1,31 @@
 import {
   EditOutlined,
-  LoginOutlined,
   LogoutOutlined,
   MenuOutlined,
 } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
-import { UserContext } from "../context/user.context";
-
+import { usePlayer } from "../context/player.context";
+import { UserIdContext } from "../context/userId.context";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage } from "@cloudinary/react";
 
 const Navbar: React.FC = () => {
-  const { userId } = useContext(UserContext);
-  console.log(userId);
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const { userDetails } = usePlayer();
+  console.log(userDetails);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -157,10 +164,10 @@ const Navbar: React.FC = () => {
   console.log(token);
   function logOut() {
     // Remove the token cookie
-    Cookies.remove('token');
+    Cookies.remove("token");
     console.log("Token removed");
     // Redirect or perform other logout operations if necessary
-}
+  }
   // const logOut = async () => {
   //   // const res = await fetch (`${process.env.REACT_APP_API_URL}api/logout`)
   //   // deleteCookie('user_id');
@@ -168,6 +175,7 @@ const Navbar: React.FC = () => {
   //   // localStorage.clear();
 
   // }
+
 
   const content = (
     <div className="NavBarUserProfileClickDetail">
@@ -185,10 +193,8 @@ const Navbar: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          <Link to="/profile/:id">
-            <img
-              src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-              alt="Original Image"
+          <Link to={`/profile/`}>
+            <AdvancedImage
               style={{
                 width: "50px",
                 height: "50px",
@@ -197,6 +203,11 @@ const Navbar: React.FC = () => {
                 borderRadius: "50%",
                 border: "1px solid black",
               }}
+              cldImg={
+                cld.image(userDetails?.image)
+                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                // .resize(Resize.scale().width(200).height(200))
+              }
             />
           </Link>
         </div>
@@ -211,7 +222,7 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          Sasindu Dhanushka
+          {userDetails.firstName} {userDetails.lastName}
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -222,39 +233,19 @@ const Navbar: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          student
+          {userDetails?.role}
         </div>
         <Divider style={{}} />
       </div>
 
       <div>
-        <Link to="/login">
-          <Button
-            type="primary"
-            style={{
-              width: "100%",
-              marginTop: "10px",
-              backgroundColor: "#1B5DB7",
-              borderColor: "#1B5DB7",
-              color: "white",
-              justifyContent: "center",
-              display: "flex",
-              borderRadius: "5px",
-            }}
-          >
-            <LoginOutlined
-              style={{
-                fontSize: "20px",
-                marginRight: "10px",
-                marginTop: "5px",
-              }}
-            />
-            Log In
-          </Button>
-        </Link>
         <Button
           type="primary"
-          onClick={logOut}
+          onClick={() => {
+            logOut();
+            window.location.reload();
+            
+          }}
           style={{
             width: "100%",
             marginTop: "10px",
@@ -274,6 +265,7 @@ const Navbar: React.FC = () => {
       </div>
     </div>
   );
+
 
   const bgStyle = () => {
     if (pathname === "/") {
@@ -389,10 +381,10 @@ const Navbar: React.FC = () => {
                     className="NavBarUserProfileImg"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
-                    <Link to="/profile/:id">
+                    <Link to="/profile/">
                       <img
-                        src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                        alt="Original Image"
+                        src={userDetails?.image}
+                        alt=""
                         style={{
                           width: "50px",
                           height: "50px",
@@ -754,12 +746,9 @@ const Navbar: React.FC = () => {
                 trigger="click"
                 open={open}
                 onOpenChange={handleOpenChange}
-                >
+              >
                 <a className="NavBarUserProfileImgThumsup">
-                  <img
-                    className="NavBarUserProfileImg"
-                    src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                    alt="Original Image"
+                  <AdvancedImage
                     style={{
                       width: "45px",
                       height: "45px",
@@ -768,6 +757,11 @@ const Navbar: React.FC = () => {
                       borderRadius: "50%",
                       border: "1px solid black",
                     }}
+                    cldImg={
+                      cld.image(userDetails?.image)
+                      // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                      // .resize(Resize.scale().width(200).height(200))
+                    }
                   />
                 </a>
               </Popover>

@@ -84,51 +84,9 @@ const SignupCoach = () => {
     return Promise.resolve();
   };
 
-  // const onFinish = (values: any) => {
-  //   console.log("Received values of form: ", values);
-  //   alert("Form is submitted");
-  // };
-
-  //   const onFinish = async (values: any) => {
-  //     try {
-  //       const response = await fetch("http://localhost:5000/signupCoach", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(values),
-  //       });
-
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         console.log("Signup success:", data);
-  //         alert("Form submitted successfully!");
-  //       } else {
-  //         const errorData = await response.json();
-  //         alert(`Error: ${errorData.error}`);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error:", error);
-  //       alert("Internal server error");
-  //     }
-  //   };
-
   const onFinish = async () => {
-    // console.log(
-    //   firstname,
-    //   lastname,
-    //   email,
-    //   password,
-    //   phone,
-    //   selectedDateString,
-    //   gender,
-    //   sport
-    // );
     try {
-
       const response = await axiosInstance.post("/api/addcoach", {
-
-
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -137,11 +95,17 @@ const SignupCoach = () => {
         DOB: selectedDateString,
         gender: gender,
         sport_name:sport,
+      })
+      .then(res =>{
+        console.log(res);
+        alert("Form submitted successfully!");
+      }).catch(err =>{
+        console.log(err);
+        alert(err.response.data.message);
       });
-      console.log(response);
-      alert("Form submitted successfully!");
+
+
     } catch (err) {
-      console.log("Error");
       console.log(err);
       alert(err);
     }
