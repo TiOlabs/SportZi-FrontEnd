@@ -1,5 +1,48 @@
 import { Col, Row, Button } from "antd";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+interface Coach {
+  coach_id: string;
+  status: string;
+  sport_id: string;
+  rate: number | null;
+  short_description: string;
+  user: {
+    user_id: string;
+    role: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    password: string;
+    DOB: string;
+    gender: string;
+    accountNumber: string | null;
+    is_active: string;
+    user_image: string | null;
+  };
+  sport: {
+    sport_id: string;
+    sport_name: string;
+  };
+}
+
 const CoachesManagement = () => {
+  const [coaches, setCoaches] = useState<Coach[]>([]);
+
+  useEffect(() => {
+    const fetchCoaches = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/getcoach");
+        setCoaches(response.data);
+      } catch (error) {
+        console.error("Error fetching coaches:", error);
+      }
+    };
+
+    fetchCoaches();
+  }, []);
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -17,102 +60,112 @@ const CoachesManagement = () => {
           />
         </Col>
       </Row>
-      <Row
-        style={{
-          backgroundColor: "white",
-          padding: "1%",
-          marginTop: "50px",
-        }}
-      >
-        <Col></Col>
-        <Col span={8} style={{}}>
-          <div
-            style={{
-              borderRadius: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              position: "absolute",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "#000",
-            }}
-          ></div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-              height: "80px",
-              fontSize: "16px",
-            }}
-          >
-            Mr.Ruwan Palihawadana
-          </div>
-        </Col>
 
-        <Col span={8}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-              height: "80px",
-              fontSize: "16px",
-            }}
-          >
-            {" "}
-            Cricket
-          </div>
-        </Col>
-        <Col span={8} style={{}}>
-          <div
-            style={{
-              height: "80px",
-              fontSize: "16px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              type="primary"
-              style={{ width: "100px", backgroundColor: "#0E458E" }}
+
+
+
+      {coaches.map((coach) => (
+        <Row
+          key={coach.coach_id}
+          style={{
+            backgroundColor: "white",
+            padding: "1%",
+            marginTop: "20px",
+          }}
+        >
+          <Col></Col>
+          <Col span={8} style={{}}>
+            <div
+              style={{
+                borderRadius: "50%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "absolute",
+                width: "80px",
+                height: "80px",
+                backgroundColor: "#000",
+              }}
+            ></div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "left",
+                marginLeft: "100px",
+                alignItems: "center",
+                textAlign: "center",
+                height: "80px",
+                fontSize: "16px",
+              }}
             >
-              <div
-                style={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
-                Details
-              </div>
-            </Button>
-            <Button
-              type="primary"
-              ghost
-              style={{ width: "100px", marginLeft: "20px" }}
+              {coach.user.firstname} {coach.user.lastname}
+              {/* Mr.Ruwan Palihawadana */}
+            </div>
+          </Col>
+
+          <Col span={8}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+                height: "80px",
+                fontSize: "16px",
+              }}
             >
-              <div
-                style={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
+              {" "}
+              {coach.sport.sport_name}
+              {/* Cricket */}
+            </div>
+          </Col>
+          <Col span={8} style={{}}>
+            <div
+              style={{
+                height: "80px",
+                fontSize: "16px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                type="primary"
+                style={{ width: "100px", backgroundColor: "#0E458E" }}
               >
-                Delete
-              </div>
-            </Button>
-          </div>
-        </Col>
-      </Row>
+                <div
+                  style={{
+                    fontSize: "16px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  Details
+                </div>
+              </Button>
+              <Button
+                type="primary"
+                ghost
+                style={{ width: "100px", marginLeft: "20px" }}
+              >
+                <div
+                  style={{
+                    fontSize: "16px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  Delete
+                </div>
+              </Button>
+            </div>
+          </Col>
+        </Row>
+      ))}
     </Col>
   );
 };

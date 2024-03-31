@@ -62,10 +62,15 @@ const validatePhoneNumber = (_: any, value: string) => {
 
 // function starting
 const SignupArcadeManager = () => {
-  const [name, setName] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [location, setLocation] = useState("");
+  const [arcadename, setArcadeName] = useState("");
+  const [arcadeemail, setArcadeEmail] = useState("");
   const [opentime, setOpentime] = useState<string>("");
   const [closetime, setClosetime] = useState<string>("");
 
@@ -96,33 +101,38 @@ const SignupArcadeManager = () => {
     return Promise.resolve();
   };
 
-
   const onFinish = async () => {
-    console.log(name, email, password, phone, opentime, closetime);
+
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}api/addarcadeManager`,
-        
+
         {
-          name: name,
+          firstname: firstname,
+          lastname: lastname,
           email: email,
           password: password,
           phone: phone,
-          opentime: opentime,
-          closetime: closetime,
+          gender:gender,
+          arcade_name: arcadename,
+          arcade_email: arcadeemail,
+          location: location,
+          open_time: opentime,
+          close_time: closetime,
         }
-      );
-      console.log(res);
-      alert("Form submitted successfully!");
+      ).then(res =>{
+        console.log(res);
+        alert("Form submitted successfully!");
+      }).catch(err =>{
+        console.log(err);
+        alert(err.response.data.message);
+      });
+
     } catch (err) {
-      console.log("Error");
       console.log(err);
-      alert("Internal server error");
+      alert(err);
     }
   };
-
-
-  
 
   return (
     <>
@@ -242,23 +252,42 @@ const SignupArcadeManager = () => {
                 </div>
               </Col>
 
-              {/* name */}
+              {/*first name field*/}
               <Form.Item
-                name="name"
-                label="Name"
+                name="firstname"
+                label="First Name"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your name",
+                    message: "Please input your firstname",
                     whitespace: true,
                   },
                 ]}
                 style={{ ...commonLabelStyle }}
               >
                 <Input
-                  placeholder="Enter your name"
+                  placeholder="Enter your first name"
                   style={commonInputStyle}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setFirstname(e.target.value)}
+                />
+              </Form.Item>
+
+              {/* last name field */}
+              <Form.Item
+                name="lastname"
+                label="Last Name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your lastname",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter your last name"
+                  style={commonInputStyle}
+                  onChange={(e) => setLastname(e.target.value)}
                 />
               </Form.Item>
 
@@ -353,6 +382,98 @@ const SignupArcadeManager = () => {
                   placeholder="Enter your contact number"
                   style={commonInputStyle}
                   onChange={(e) => setPhone(e.target.value)}
+                />
+              </Form.Item>
+
+              {/* gender field */}
+              <Form.Item
+                name="gender"
+                label="Gender"
+                rules={[{ required: true, message: "Please select gender!" }]}
+              >
+                <Select
+                  placeholder="select your gender"
+                  onChange={(value) => setGender(value)}
+                  style={{
+                    ...commonInputStyle,
+                    border: "1px solid #ccc",
+                    padding: "4px",
+                  }}
+                >
+                  <Option
+                    value="male"
+                    style={{ ...commonInputStyle, border: "1px solid #ccc" }}
+                  >
+                    Male
+                  </Option>
+                  <Option
+                    value="female"
+                    style={{ ...commonInputStyle, border: "1px solid #ccc" }}
+                  >
+                    Female
+                  </Option>
+                </Select>
+              </Form.Item>
+
+              {/* arcade name */}
+              <Form.Item
+                name="arcadename"
+                label="Arcade Name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your arcade name",
+                    whitespace: true,
+                  },
+                ]}
+                style={{ ...commonLabelStyle }}
+              >
+                <Input
+                  placeholder="Enter your arcade name"
+                  style={commonInputStyle}
+                  onChange={(e) => setArcadeName(e.target.value)}
+                />
+              </Form.Item>
+
+              {/* arcade email */}
+              <Form.Item
+                name="arcade email"
+                label="Arcade E-mail"
+                rules={[
+                  {
+                    type: "email",
+                    message: "The input is not valid E-mail!",
+                  },
+                  {
+                    required: true,
+                    message: "Please input your Arcade E-mail!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter your arcade email"
+                  style={commonInputStyle}
+                  onChange={(e) => setArcadeEmail(e.target.value)}
+                />
+              </Form.Item>
+
+              {/* location */}
+              <Form.Item
+                name="location"
+                label="Location"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the arcade location",
+                    whitespace: true,
+                  },
+                ]}
+                style={{ ...commonLabelStyle }}
+              >
+                <Input
+                  placeholder="Enter the arcade location"
+                  style={commonInputStyle}
+                  onChange={(e) => setLocation(e.target.value)}
                 />
               </Form.Item>
 

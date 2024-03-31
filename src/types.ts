@@ -10,15 +10,14 @@ export interface Discount {
 export interface Zone {
   zone_name: String;
   zone_id: String;
-  arcade_name: String;
-  arcade_email: String;
   rate: Number;
   arcade_location: String;
   manager_id: String;
   opening_time: String;
   closing_time: String;
   arcade_address: String;
-  arcade_image: String;
+  zone_image: String;
+  arcade: Arcade;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;

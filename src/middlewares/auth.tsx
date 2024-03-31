@@ -4,6 +4,7 @@ import HeroSection from "../pages/home/heroSection";
 import Login from "../pages/login/login";
 
 const Auth = ({ children }: any) => {
+
   const [isUser, setIsUser] = useState(false);
 
   const token = Cookies.get("token");
@@ -12,6 +13,7 @@ const Auth = ({ children }: any) => {
       setIsUser(true);
     }
   }, [token]);
+
 
   //   useEffect(() => {
   //     try {
@@ -39,7 +41,6 @@ const Auth = ({ children }: any) => {
   //       console.log(e);
   //     }
   //   }, []);
-
   return <>{isUser ? <>{children}</> : <Login />}</>;
 };
 

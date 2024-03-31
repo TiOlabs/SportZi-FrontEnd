@@ -82,15 +82,6 @@ const SignupPlayer = () => {
   };
 
   const onFinish = async () => {
-    console.log(
-      firstname,
-      lastname,
-      email,
-      password,
-      phone_number,
-      selectedDateString,
-      gender
-    );
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}api/addplayer`, {
         firstname: firstname,
@@ -100,16 +91,20 @@ const SignupPlayer = () => {
         gender: gender,
         role: "PLAYER",
         password: password,
-        accountNumber:"123456789789",
-        phone_number: phone_number
+        phone_number: phone_number,
+        accountNumber:"123456789789"
+      }).then(res =>{
+        console.log(res);
+        alert("Form submitted successfully!");
+      }).catch(err =>{
+        console.log(err);
+        alert(err.response.data.message);
       });
 
-      console.log(response);
+      // console.log(response);
 
-      alert("Form submitted successfully!");
-      // alert(response.status);
+    
     } catch (err) {
-      console.log("Error");
       console.log(err);
       alert(err);
     }
