@@ -21,6 +21,7 @@ const DiscountCard = (props: any) => {
     console.log(`Clicked card with ID: ${props.zoneId}`);
     console.log(props.zoneId);
     localStorage.setItem("zoneId", props.zoneId);
+    setZoneId(props.zoneId);
   
 
     // Perform any other actions based on the clicked card

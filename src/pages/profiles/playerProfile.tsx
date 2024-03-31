@@ -104,17 +104,17 @@ const PlayerProfile = () => {
       .then((res) => {
         console.log(res.data);
         setPlayerBookingsData(res.data);
-       setPlayerBookingsData((prev: any) => {
+        setPlayerBookingsData((prev: any) => {
           return prev.filter(
             (playerBookingDetails: ZoneBookingDetails) =>
-               playerBookingDetails.status === "success"
+              playerBookingDetails.status === "success"
           );
         });
       })
       .catch((error) => {
         console.log(error);
       });
-  });
+  }, []);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -1104,13 +1104,14 @@ const PlayerProfile = () => {
           }}
         >
           {playerBookingsData?.map((booking: ZoneBookingDetails) => (
-            <AvailableMetingstoPlayer 
-            booking_id={booking.zone_booking_id}
-            zone_image={booking.zone.zone_image}
-            zone_name={booking.zone.zone_name}
-            booking_date={booking.date} 
-            booking_time={booking.time}
-            venue={booking.zone.arcade.arcade_name}/>
+            <AvailableMetingstoPlayer
+              booking_id={booking.zone_booking_id}
+              zone_image={booking.zone.zone_image}
+              zone_name={booking.zone.zone_name}
+              booking_date={booking.date}
+              booking_time={booking.time}
+              venue={booking.zone.arcade.arcade_name}
+            />
           ))}
         </div>
 
