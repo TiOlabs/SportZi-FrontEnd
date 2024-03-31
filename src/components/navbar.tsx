@@ -1,6 +1,5 @@
 import {
   EditOutlined,
-  LoginOutlined,
   LogoutOutlined,
   MenuOutlined,
 } from "@ant-design/icons";
@@ -177,6 +176,7 @@ const Navbar: React.FC = () => {
 
   // }
 
+
   const content = (
     <div className="NavBarUserProfileClickDetail">
       <div
@@ -197,7 +197,7 @@ const Navbar: React.FC = () => {
             <AdvancedImage
               style={{
                 width: "50px",
-                height: "50px",
+                height: "500px",
                 marginLeft: "10px",
                 marginTop: "10px",
                 borderRadius: "50%",
@@ -233,39 +233,19 @@ const Navbar: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          student
+          player
         </div>
         <Divider style={{}} />
       </div>
 
       <div>
-        <Link to="/login">
-          <Button
-            type="primary"
-            style={{
-              width: "100%",
-              marginTop: "10px",
-              backgroundColor: "#1B5DB7",
-              borderColor: "#1B5DB7",
-              color: "white",
-              justifyContent: "center",
-              display: "flex",
-              borderRadius: "5px",
-            }}
-          >
-            <LoginOutlined
-              style={{
-                fontSize: "20px",
-                marginRight: "10px",
-                marginTop: "5px",
-              }}
-            />
-            Log In
-          </Button>
-        </Link>
         <Button
           type="primary"
-          onClick={logOut}
+          onClick={() => {
+            logOut();
+            window.location.reload();
+            
+          }}
           style={{
             width: "100%",
             marginTop: "10px",
@@ -285,6 +265,7 @@ const Navbar: React.FC = () => {
       </div>
     </div>
   );
+
 
   const bgStyle = () => {
     if (pathname === "/") {

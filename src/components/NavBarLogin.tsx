@@ -554,7 +554,7 @@ const NavbarLogin: React.FC = () => {
               <Link
                 to="/coaches"
                 style={{
-                  color: pathname === "/coaches" ? "black" : fontColor(),
+                  color: pathname === "/coaches" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -571,7 +571,7 @@ const NavbarLogin: React.FC = () => {
                     bottom: "0",
                     left: coachesUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/coaches" ? "black" : fontColor(),
+                      pathname === "/coaches" ? "#01abf8" : fontColor(),
                     transition: coachesUnderlineStyle.transition,
                   }}
                 ></span>
@@ -582,7 +582,7 @@ const NavbarLogin: React.FC = () => {
               <Link
                 to="/arcades"
                 style={{
-                  color: pathname === "/arcades" ? "black" : fontColor(),
+                  color: pathname === "/arcades" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -599,7 +599,7 @@ const NavbarLogin: React.FC = () => {
                     bottom: "0",
                     left: arcadeUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/arcades" ? "black" : fontColor(),
+                      pathname === "/arcades" ? "#01abf8" : fontColor(),
                     transition: arcadeUnderlineStyle.transition,
                   }}
                 ></span>
@@ -609,7 +609,7 @@ const NavbarLogin: React.FC = () => {
               <Link
                 to="/about"
                 style={{
-                  color: pathname === "/about" ? "black" : fontColor(),
+                  color: pathname === "/about" ? "#01abf8" : fontColor(),
                   textDecoration: "none",
                   position: "relative",
                   display: "inline-block",
@@ -626,7 +626,7 @@ const NavbarLogin: React.FC = () => {
                     bottom: "0",
                     left: aboutUnderlineStyle.left,
                     backgroundColor:
-                      pathname === "/about" ? "black" : fontColor(),
+                      pathname === "/about" ? "#01abf8" : fontColor(),
                     transition: aboutUnderlineStyle.transition,
                   }}
                 ></span>
@@ -650,7 +650,7 @@ const NavbarLogin: React.FC = () => {
                     borderRadius: "3px",
                     backgroundColor: "white",
                     marginRight: "10px",
-                    border: "none",
+                    border: "1px solid #1B5DB7",
                   }}
                 >
                   Log In
