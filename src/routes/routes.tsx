@@ -18,6 +18,7 @@ import Admin from "../pages/admin/admin";
 import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 import Auth from "../middlewares/auth";
+import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 
 const AppRoutes = () => {
   return (
@@ -51,6 +52,7 @@ const AppRoutes = () => {
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="coachbooking" element={<CoachBookingForm />} />
       </Routes>
     </>
   );

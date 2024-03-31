@@ -1,94 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
-import {
-  Row,
-  Col,
-  Form,
-  Button,
-  Select,
-  Input,
-  InputNumber,
-  message,
-} from "antd";
+import React, {useState } from "react";
+import { Row, Col, Form, Button, Select, InputNumber, message } from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
-import AppFooter from "../../components/footer";
-import PaymentModal from "../../components/paymentCheckout";
-import { justify } from "@cloudinary/url-gen/qualifiers/textAlignment";
 
 const { Option } = Select;
 
 const CoachBookingForm = () => {
-  const [form] = Form.useForm();
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
-  const [paymentDetails, setPaymentDetails] = useState({
-    payment_id: "",
-    oder_id: "",
-    items: "",
-    amount: "",
-    currency: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    country: "",
-  });
-
-  let fullAmount = Number(paymentDetails?.amount) * Number(pcount);
-
-  const [paymentStatus, setPaymentStatus] = useState();
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        // const resPaymentDetails = await fetch(
-        //   "http://localhost:8000/api/getpaymentditails"
-        // );
-        // const paymentDetailsData = await resPaymentDetails.json();
-        // // const respaymentStatus = await fetch(
-        // //   "http://localhost:8000/api/postpaymentStatus"
-        // // );
-        // // const paymentStatusData = await respaymentStatus.json();
-        // // setPaymentStatus(paymentStatusData);
-        // console.log(paymentDetailsData);
-        // setPaymentDetails(paymentDetailsData);
-      };
-      fetchData();
-    } catch (e) {
-      console.log("errrr", e);
-    }
-  }, []);
-
-  // const onZoneChange = (value: string) => {
-  //   console.log(value);
-  //   setZone(value);
-
-  // switch (value) {
-  //   case "male":
-  //     form.setFieldsValue({ note: "Hi, man!" });
-  //     break;
-  //   case "female":
-  //     form.setFieldsValue({ note: "Hi, lady!" });
-  //     break;
-  //   case "other":
-  //     form.setFieldsValue({ note: "Hi there!" });
-  //     break;
-  //   default:
-  // }
-  // };
-  // const onPcountChange = (value: string) => {
-  //   console.log(value);
-  //   setPcount(value);
-  // };
 
   const handleFinish = async () => {
     console.log(date, time, zone, pcount);
-    const pcountint = parseInt(pcount);
     if (parseInt(pcount) <= 0) {
       message.error("Participant count must be more than 0");
       return; // Stop further execution
@@ -97,57 +22,32 @@ const CoachBookingForm = () => {
       return; // Stop further execution
     } else {
       try {
-        // const res = await axios.post(
-        //   `http://localhost:8000/api/addarcadebooking`,
-        //   {
-        //     booking_date: date,
-        //     booking_time: time,
-        //     zone: zone,
-        //     participant_count: pcountint,
-        //     cancel_by_admin: false,
-        //     cancel_by_player: false,
-        //     cancel_by_arcade: false,
-        //   }
-        // );
-        // console.log(res);
-        // console.log(res.data.cancel_by_admin);
       } catch (err) {
         console.log("Error");
         console.log(err);
       }
     }
   };
-  const [messageApi, contextHolder] = message.useMessage();
-  const key = "updatable";
-
-  const openMessage = () => {
-    messageApi.open({
-      key,
-      type: "loading",
-      content: "Loading...",
-    });
-    setTimeout(() => {
-      messageApi.open({
-        key,
-        type: "success",
-        content: "Booking Successfull!",
-        duration: 2,
-      });
-    }, 1000);
-  };
-
+  
   return (
     <div style={{ margin: "2%" }}>
       {" "}
-      <h1
-        style={{
-          display: "Flex",
-          justifyContent: "right",
-          textAlign: "center",
-        }}
-      >
-        Join Us and Unleash Your Potential with Our Expert Coaches
-      </h1>
+      <Row>
+        <Col lg={13} xs={24}></Col>
+        <Col lg={8} xs={24}>
+          {" "}
+          <h1
+            style={{
+              display: "Flex",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "2.5",
+            }}
+          >
+            Join Us and Unleash Your Potential with Our Expert Coaches
+          </h1>
+        </Col>
+      </Row>
       <Form onFinish={handleFinish} layout="vertical">
         <Row>
           <Col xs={24} lg={10}>
@@ -243,11 +143,6 @@ const CoachBookingForm = () => {
                 justifyContent: "center",
               }}
             >
-              {/* <Form.Item
-                name="Time Slot"
-                label="time Slot"
-                rules={[{ required: true }]}
-              > */}
               <Form.Item
                 name="Time Slot"
                 style={{
