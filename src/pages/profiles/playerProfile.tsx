@@ -1,41 +1,20 @@
-import { Button, Col, Modal, Row, Tag, Typography, Upload, List } from "antd";
+import { Button, Col, Form, Row, List, Grid } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
-import {
-  CloseCircleOutlined,
-  PlusOutlined,
-  StarFilled,
-  StarTwoTone,
-} from "@ant-design/icons";
+import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
-import { Grid } from "antd";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
-import axios from "axios";
-import { useEffect } from "react";
-import { EditFilled } from "@ant-design/icons";
-import { Drawer, Form, Input, Select, Space } from "antd";
-import { center } from "@cloudinary/url-gen/qualifiers/textAlignment";
-import TextArea from "antd/es/input/TextArea";
 import axiosInstance from "../../axiosInstance";
-import type { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 import { PlayerContext } from "../../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
-import { User, ZoneBookingDetails } from "../../types";
+import { ZoneBookingDetails } from "../../types";
 import PlayerEdit from "../../components/playerEdit";
 
-//photo upload button
-const getBase64 = (file: RcFile): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
 const requestList = [
   <CoachRequstRow />,
   <CoachRequstRow />,
@@ -47,15 +26,6 @@ const requestList = [
   <CoachRequstRow />,
 ];
 
-// interface PlayerData {
-//   role?: string;
-//   firstname?: string;
-//   lastname?: string;
-//   email?: string;
-//   phoneNumbers?: { phone_number: string }[];
-
-//   // add other properties as needed
-// }
 const PlayerProfile = () => {
   const { userDetails } = useContext(PlayerContext);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
@@ -67,17 +37,6 @@ const PlayerProfile = () => {
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
   const [user_image, setUser_image] = useState(userDetails?.image);
-
-  //the changing the user details then use effect is running
-  // useEffect(() => {
-  //   setFirstname(userDetails?.firstName);
-  //   setLastname(userDetails?.lastName);
-  //   setEmail(userDetails?.email);
-  //   setDiscription(userDetails?.discription);
-  //   // setAchivements(userDetails?.achivements);
-  //   setUser_image(userDetails?.image);
-  // }, []);
-
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     if (achivements) {
@@ -85,42 +44,12 @@ const PlayerProfile = () => {
     }
     return [];
   };
-  // drwer open close functions
-  const showDrawer = () => {
-    setOpen(true);
-  };
-  const onClose = () => {
-    setOpen(false);
-  };
+
   // see more buttons
   const [playerBookingsData, setPlayerBookingsData] = useState<
     ZoneBookingDetails[]
   >([]);
   console.log(playerBookingsData);
-  const [show1, setShow1] = useState(false);
-  const [show2, setShow2] = useState(false);
-  const [show3, setShow3] = useState(false);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       process.env.REACT_APP_API_URL +
-  //         `api/getarcadebooking/${userDetails?.id}`
-  //     )
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setPlayerBookingsData(res.data);
-  //       setPlayerBookingsData((prev: any) => {
-  //         return prev.filter(
-  //           (playerBookingDetails: ZoneBookingDetails) =>
-  //             playerBookingDetails.status === "success"
-  //         );
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // });
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -137,36 +66,9 @@ const PlayerProfile = () => {
   };
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-  const [playerData, setPlayerData] = useState<User | null>(null);
-  const formItemLayout = {
-    wrapperCol: {
-      xl: { span: 24 },
-      lg: { span: 24 },
-      md: { span: 24 },
-      sm: { span: 16 },
-    },
-  };
-  // function to the edit profiles
-  const onFinish = () => {
-    try {
-      axiosInstance
-        .post("api/auth/updateplayerdetails", {
-          firstname: firstname,
-          lastname: lastname,
-          discription: discription,
-          achivements: achivements.split(","),
-          image: user_image,
-        })
-        .then((res) => {
-          console.log("inside then", res.data);
 
-          setPlayerData(res.data);
-        })
-        .catch(() => {});
-    } catch (error) {
-      onClose();
-    }
-  };
+  // function to the edit profiles
+
   // getting player details from backend
   useEffect(() => {
     axiosInstance
@@ -192,47 +94,10 @@ const PlayerProfile = () => {
   }, []);
   const [form] = Form.useForm();
 
-  //photo upload button properties
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancell = () => {
-    setIsModalOpen(false);
-  };
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewTitle, setPreviewTitle] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const handleCancel = () => setPreviewOpen(false);
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
-    );
-  };
-
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
   return (
     <>
       <NavbarProfile />
+
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')

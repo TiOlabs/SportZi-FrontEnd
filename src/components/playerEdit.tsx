@@ -16,6 +16,7 @@ import { useContext, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { PlayerContext } from "../context/player.context";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
+
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
