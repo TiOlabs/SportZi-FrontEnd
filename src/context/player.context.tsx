@@ -8,9 +8,12 @@ export const PlayerContext = createContext<any>(null);
 const PlayerProvider = ({ children }: any) => {
   const [userDetails, setUserDetails] = useState<any>({
     id: "",
-    name: "",
+    firstName: "",
+    lastName: "",
     image: "",
     coachname: "",
+    discription: "",
+    achivements: "",
   });
   const navigate = useNavigate();
   const fetchUser = async () => {
@@ -21,9 +24,11 @@ const PlayerProvider = ({ children }: any) => {
           console.log("dataaaaaaaaaa", res.data);
           setUserDetails({
             id: res.data.user_id,
-            name: res.data.firstname + " " + res.data.lastname,
+            firstName: res.data.firstname,
+            lastName: res.data.lastname,
             image: res.data.user_image,
             phoneNumbers: res.data.phone[0].phone_number,
+            discription: res.data.Discription,
           });
         })
         .catch((err) => {

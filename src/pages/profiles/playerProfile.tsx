@@ -1,10 +1,8 @@
-import { Button, Col, Modal, Row, Typography } from "antd";
-import { url } from "inspector";
+import { Button, Col, Modal, Row, Typography, Upload } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
-
-import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
-import { List } from "antd";
+import { PlusOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
+import { List, Alert } from "antd";
 import { Image } from "antd";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
@@ -16,11 +14,26 @@ import NavbarProfile from "../../components/NavBarProfile";
 import axios from "axios";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+
+import { EditFilled } from "@ant-design/icons";
+import { Drawer, Form, Input, Select, Space } from "antd";
+import { center } from "@cloudinary/url-gen/qualifiers/textAlignment";
+import TextArea from "antd/es/input/TextArea";
+import axiosInstance from "../../axiosInstance";
+import type { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 import { PlayerContext } from "../../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
-import { ZoneBookingDetails } from "../../types";
+import { User, ZoneBookingDetails } from "../../types";
 
+//photo upload button
+const getBase64 = (file: RcFile): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 const requestList = [
   <CoachRequstRow />,
   <CoachRequstRow />,
@@ -43,9 +56,37 @@ const requestList = [
 // }
 const PlayerProfile = () => {
   const { userDetails } = useContext(PlayerContext);
-  const { playerID } = useParams();
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [firstname, setFirstname] = useState(userDetails?.firstName);
+  const [lastname, setLastname] = useState(userDetails?.lastName);
+  const [email, setEmail] = useState(userDetails?.email);
+  const [discription, setDiscription] = useState(userDetails?.discription);
+  const [achivements, setAchivements] = useState(userDetails?.achivements);
+  const [user_image, setUser_image] = useState(userDetails?.image);
+  //the changing the user details then use effect is running
+  useEffect(() => {
+    setFirstname(userDetails?.firstName);
+    setLastname(userDetails?.lastName);
+    setEmail(userDetails?.email);
+    setDiscription(userDetails?.discription);
+    // setAchivements(userDetails?.achivements);
+    setUser_image(userDetails?.image);
+  }, [userDetails]);
+
+  // achivements gets to string and spilt them
+  const AchivementsGetToArry = (achivements: string) => {
+    return achivements.split(",");
+  };
+  // drwer open close functions
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+  // see more buttons
   const [playerBookingsData, setPlayerBookingsData] = useState<
     ZoneBookingDetails[]
   >([]);
@@ -88,12 +129,93 @@ const PlayerProfile = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
-
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-  console.log(userDetails?.id);
+  const [playerData, setPlayerData] = useState<User | null>(null);
+  const formItemLayout = {
+    wrapperCol: {
+      xl: { span: 24 },
+      lg: { span: 24 },
+      md: { span: 24 },
+      sm: { span: 16 },
+    },
+  };
+  // function to the edit profiles
+  const onFinish = () => {
+    try {
+      axiosInstance
+        .post("api/auth/updateplayerdetails", {
+          firstname: firstname,
+          lastname: lastname,
+          discription: discription,
+          achivements: achivements,
+          image: user_image,
+        })
+        .then((res) => {
+          console.log("inside then", res.data);
+
+          setPlayerData(res.data);
+        })
+        .catch(() => {});
+    } catch (error) {
+      onClose();
+    }
+  };
+  // getting player details from backend
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/api/getplayerdetails")
+      .then((res) => {
+        console.log(res.data);
+        setPlayerData(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
+  const [form] = Form.useForm();
+
+  //photo upload button properties
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancell = () => {
+    setIsModalOpen(false);
+  };
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const handleCancel = () => setPreviewOpen(false);
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as RcFile);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
+  };
+
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
   return (
     <>
+      <NavbarProfile />
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
@@ -145,41 +267,273 @@ const PlayerProfile = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
-            <div>
-              <h1
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
                 style={{
-                  color: "#000",
-
-                  fontSize: "32px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "80%",
                 }}
               >
-                {userDetails?.name}
-              </h1>
-              <p
-                style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
+                <h1
+                  style={{
+                    color: "#000",
+                    fontSize: "32px",
+                    fontStyle: "normal",
+                    fontWeight: "500",
+                    fontFamily: "kanit",
+                    lineHeight: "normal",
+                    marginBottom: "0px",
+                  }}
+                >
+                  {firstname} {lastname}
+                </h1>
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
 
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  {firstname}
+                </p>
+              </div>
+              {/* edit button */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "20%",
                 }}
               >
-                First class rugby coach
-              </p>
+                <Button
+                  style={{
+                    color: "#0E458E",
+                    fontFamily: "kanit",
+                    fontWeight: md ? "400" : "300",
+                    fontSize: md ? "14px" : "12px",
+                    borderRadius: "3px",
+
+                    height: "30px",
+                  }}
+                  onClick={showDrawer}
+                  icon={<EditFilled />}
+                >
+                  Edit
+                </Button>
+                <Drawer
+                  title={
+                    <>
+                      <Typography
+                        style={{
+                          color: "#000",
+                          fontFamily: "kanit",
+                          fontSize: "20px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                        }}
+                      >
+                        Edit Your Profile
+                      </Typography>
+                    </>
+                  }
+                  width={500}
+                  onClose={onClose}
+                  open={open}
+                  styles={{
+                    body: {
+                      paddingBottom: 80,
+                    },
+                  }}
+                  extra={
+                    <Space>
+                      <Button
+                        style={{
+                          color: "#fff",
+                          backgroundColor: "#0E458E",
+                          fontFamily: "kanit",
+                          fontWeight: md ? "400" : "300",
+                          fontSize: md ? "14px" : "12px",
+                          borderRadius: "3px",
+                          height: "30px",
+                        }}
+                        onClick={onFinish}
+                      >
+                        Submit
+                      </Button>
+                    </Space>
+                  }
+                >
+                  <Form
+                    {...formItemLayout}
+                    method="POST"
+                    layout="vertical"
+                    form={form}
+                    name="register"
+                    onFinish={onFinish}
+                    initialValues={{
+                      prefix: "94",
+                    }}
+                    style={{ maxWidth: "100%" }}
+                    scrollToFirstError
+                    colon={false}
+                    labelCol={{
+                      className: "custom-label",
+                    }}
+                  >
+                    {/* first name */}
+                    <Form.Item
+                      name="firstname"
+                      label="First Name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input your firstname",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <Input
+                        placeholder="Enter your first name"
+                        value={userDetails?.firstName}
+                        onChange={(e) => setFirstname(e.target.value)}
+                      />
+                    </Form.Item>
+                    {/* last name */}
+                    <Form.Item
+                      name="lastname"
+                      label="Last Name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input your lastname",
+                          whitespace: true,
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="Enter your last name"
+                        value={userDetails?.lastName}
+                        onChange={(e) => setLastname(e.target.value)}
+                      />
+                    </Form.Item>
+                    {/* email */}
+                    <Form.Item
+                      name="email"
+                      label="E-mail"
+                      rules={[
+                        {
+                          type: "email",
+                          message: "The input is not valid E-mail!",
+                        },
+                        {
+                          required: true,
+                          message: "Please input your E-mail!",
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="Enter your email"
+                        value={userDetails?.email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Form.Item>
+                    {/* Discrption */}
+                    <Form.Item
+                      name="Discription"
+                      label="Discription"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input your Discription",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <TextArea
+                        value={userDetails?.discription}
+                        onChange={(e) => setDiscription(e.target.value)}
+                        placeholder="Controlled autosize"
+                        autoSize={{ minRows: 3, maxRows: 4 }}
+                      />
+                    </Form.Item>
+                    {/* Achivements */}
+                    <Form.Item
+                      name="Achivements"
+                      label="Achivements"
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            "Input your Achivements Using Comma Seprated",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <Input
+                        // value={}
+                        placeholder="Input your Achivements Using Comma Seprated"
+                        onChange={(e) => setAchivements(e.target.value)}
+                      />
+                    </Form.Item>
+                    {/* photo upload */}
+                    <Form.Item
+                      name="Upload profile picture"
+                      label="Upload profile picture"
+                      rules={[
+                        {
+                          required: true,
+                          message: "upload profile picture",
+                          whitespace: true,
+                        },
+                      ]}
+                      style={{}}
+                    >
+                      <Upload
+                        listType="picture-card"
+                        fileList={fileList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                      >
+                        {fileList.length >= 1 ? null : uploadButton}
+                      </Upload>
+                      <Modal
+                        open={previewOpen}
+                        title={previewTitle}
+                        footer={null}
+                        onCancel={handleCancel}
+                      >
+                        <img
+                          alt="example"
+                          style={{ width: "100%" }}
+                          src={previewImage}
+                        />
+                      </Modal>
+                    </Form.Item>
+                  </Form>
+                </Drawer>
+              </div>
             </div>
             <div
               style={{
@@ -272,18 +626,12 @@ const PlayerProfile = () => {
                 marginTop: "0px",
               }}
             >
-              I am a former elite rugby league player who would love to
-              encourage and mentor younger athletes to work towards their goals
-              and aspirations as well as to share my knowledge and give back to
-              the game that’s given me so much. My main position in rugby league
-              was halfback and I had the honour of representing QLD in the State
-              Of Origin
+              {discription}
             </p>
             <p
               style={{
                 color: "#000",
                 fontFamily: "kanit",
-
                 fontSize: "24px",
                 fontStyle: "normal",
                 fontWeight: "400",
@@ -363,12 +711,11 @@ const PlayerProfile = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={AchivementsGetToArry(achivements)}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -401,6 +748,42 @@ const PlayerProfile = () => {
               )}
             />
           </div>
+          {/* <div>
+            <Button
+              style={{
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: md ? "400" : "300",
+                fontSize: md ? "14px" : "12px",
+                borderRadius: "3px",
+
+                height: "30px",
+              }}
+              onClick={showDrawer}
+              icon={<EditFilled />}
+            >
+              Edit
+            </Button>
+            <Drawer
+              title="Create a new account"
+              width={500}
+              onClose={onClose}
+              open={open}
+              styles={{
+                body: {
+                  paddingBottom: 80,
+                },
+              }}
+              extra={
+                <Space>
+                  <Button onClick={onClose}>Cancel</Button>
+                  <Button onClick={onClose} type="primary">
+                    Submit
+                  </Button>
+                </Space>
+              }
+            ></Drawer>
+          </div> */}
         </Col>
       </Row>
       <div
