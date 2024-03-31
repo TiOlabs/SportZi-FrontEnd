@@ -9,11 +9,8 @@ import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
 
-import  {Moment}  from "moment";
+import { Moment } from "moment";
 import axiosInstance from "../../axiosInstance";
-
-
-
 
 //responsiveness
 const formItemLayout = {
@@ -86,32 +83,30 @@ const SignupCoach = () => {
 
   const onFinish = async () => {
     try {
-      const response = await axiosInstance.post("/api/addcoach", {
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        password: password,
-        phone_number: phone,
-        DOB: selectedDateString,
-        gender: gender,
-        sport_name:sport,
-      })
-      .then(res =>{
-        console.log(res);
-        alert("Form submitted successfully!");
-      }).catch(err =>{
-        console.log(err);
-        alert(err.response.data.message);
-      });
-
-
+      const response = await axiosInstance
+        .post("/api/addcoach", {
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          password: password,
+          phone_number: phone,
+          DOB: selectedDateString,
+          gender: gender,
+          sport_name: sport,
+        })
+        .then((res) => {
+          console.log(res);
+          alert("Form submitted successfully!");
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err.response.data.message);
+        });
     } catch (err) {
       console.log(err);
       alert(err);
     }
   };
- 
-    
 
   return (
     <>
@@ -469,7 +464,10 @@ const SignupCoach = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <a href="">Sign in here</a>
+                  Already have an account?{" "}
+                  <Link to={"/login"}>
+                    <a href="">log in here</a>
+                  </Link>
                 </div>
               </Form.Item>
             </Form>

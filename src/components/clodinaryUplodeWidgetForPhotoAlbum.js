@@ -7,7 +7,7 @@ import { PlayerContext, usePlayer } from "../context/player.context";
 // Create a context to manage the script loading state
 const CloudinaryScriptContext = createContext();
 
-function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
+function CloudinaryUploadWidget2({ uwConfig, setPublicId }) {
   const { userDetails } = useContext(PlayerContext);
   const [loaded, setLoaded] = useState(false);
 
@@ -30,7 +30,7 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
     }
   }, [loaded]);
 
-  const initializeCloudinaryWidget = () => {
+  const initializeCloudinaryWidget2 = () => {
     if (loaded) {
       var myWidget = window.cloudinary.createUploadWidget(
         uwConfig,
@@ -40,7 +40,7 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
             try {
               console.log(userDetails?.id);
               console.log(result.info.public_id);
-              axiosInstance.post(`api/auth/PlayerPhotos`, {
+              axiosInstance.post(`api/auth/addplayerPhotos`, {
                 user_id: userDetails?.id,
                 image_url: result.info.public_id,
               });
@@ -69,7 +69,7 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
         }}
         id="upload_widget"
         className="cloudinary-button"
-        onClick={initializeCloudinaryWidget}
+        onClick={initializeCloudinaryWidget2}
         icon={<UploadOutlined />}
       >
         Upload
@@ -78,5 +78,5 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
   );
 }
 
-export default CloudinaryUploadWidget;
+export default CloudinaryUploadWidget2;
 export { CloudinaryScriptContext };

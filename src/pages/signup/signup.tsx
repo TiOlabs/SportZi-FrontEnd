@@ -1,8 +1,10 @@
 import AppFooter from "../../components/footer";
 const Signup = () => {
-    return ( 
-        <><AppFooter/></>
-     );
-}
- 
+  return (
+    <>
+      <AppFooter />
+    </>
+  );
+};
+
 export default Signup;

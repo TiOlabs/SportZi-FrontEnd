@@ -1,9 +1,44 @@
 import { Col, Row } from "antd";
-import React from "react";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import { PlayerContext } from "../context/player.context";
 
 const PhotoCollage = () => {
-  const items = Array.from({ length: 7 }).map((_, index) => (
+  const [playerPhotos, setPlayerPhotos] = useState([]);
+  const { userDetails } = useContext(PlayerContext);
+  console.log("userDetails", userDetails);
+  console.log(userDetails?.id);
+  useEffect(() => {
+    try {
+      axios
+        .get(
+        `http://localhost:8000/api/auth/getplayerPhotos/${userDetails.id}`
+        )
+        .then((res) => {
+          console.log(res.data);
+          setPlayerPhotos(res.data);
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, []);
+  // useEffect(() => {
+  //   try{
+  //   axios
+  //     .get(
+  //       process.env.REACT_APP_API_URL +
+  //         `api/auth/getplayerPhotos/${userDetails.id}`
+  //     )
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       setPlayerPhotos(res.data);
+  //     });
+  //   }catch(error){
+  //     console.error("Error:", error);
+  //   }
+  // },[]);
+  const items = Array.from({ length: 8 }).map((_, index) => (
     <img
       key={index}
       src={`https://picsum.photos/200/${Math.floor(

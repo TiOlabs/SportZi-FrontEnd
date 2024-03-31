@@ -83,27 +83,28 @@ const SignupPlayer = () => {
 
   const onFinish = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}api/addplayer`, {
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        DOB: selectedDateString,
-        gender: gender,
-        role: "PLAYER",
-        password: password,
-        phone_number: phone_number,
-        accountNumber:"123456789789"
-      }).then(res =>{
-        console.log(res);
-        alert("Form submitted successfully!");
-      }).catch(err =>{
-        console.log(err);
-        alert(err.response.data.message);
-      });
+      const response = await axios
+        .post(`${process.env.REACT_APP_API_URL}api/addplayer`, {
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          DOB: selectedDateString,
+          gender: gender,
+          role: "PLAYER",
+          password: password,
+          phone_number: phone_number,
+          accountNumber: "123456789789",
+        })
+        .then((res) => {
+          console.log(res);
+          alert("Form submitted successfully!");
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err.response.data.message);
+        });
 
       // console.log(response);
-
-    
     } catch (err) {
       console.log(err);
       alert(err);
@@ -448,7 +449,10 @@ const SignupPlayer = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <a href="">Sign in here</a>
+                  Already have an account?{" "}
+                  <Link to={"/login"}>
+                    <a href="">log in here</a>
+                  </Link>
                 </div>
               </Form.Item>
             </Form>

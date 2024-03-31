@@ -102,32 +102,33 @@ const SignupArcadeManager = () => {
   };
 
   const onFinish = async () => {
-
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/addarcadeManager`,
+      const res = await axios
+        .post(
+          `${process.env.REACT_APP_API_URL}api/addarcadeManager`,
 
-        {
-          firstname: firstname,
-          lastname: lastname,
-          email: email,
-          password: password,
-          phone: phone,
-          gender:gender,
-          arcade_name: arcadename,
-          arcade_email: arcadeemail,
-          location: location,
-          open_time: opentime,
-          close_time: closetime,
-        }
-      ).then(res =>{
-        console.log(res);
-        alert("Form submitted successfully!");
-      }).catch(err =>{
-        console.log(err);
-        alert(err.response.data.message);
-      });
-
+          {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: password,
+            phone: phone,
+            gender: gender,
+            arcade_name: arcadename,
+            arcade_email: arcadeemail,
+            location: location,
+            open_time: opentime,
+            close_time: closetime,
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          alert("Form submitted successfully!");
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err.response.data.message);
+        });
     } catch (err) {
       console.log(err);
       alert(err);
@@ -548,7 +549,10 @@ const SignupArcadeManager = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <a href="">Sign in here</a>
+                  Already have an account?{" "}
+                  <Link to={"/login"}>
+                    <a href="">log in here</a>
+                  </Link>
                 </div>
               </Form.Item>
             </Form>
