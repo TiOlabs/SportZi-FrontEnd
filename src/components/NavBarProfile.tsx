@@ -12,9 +12,16 @@ import logo from "../assets/logo.png";
 import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
-
 import { PlayerContext } from "../context/player.context";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 const NavbarProfile: React.FC = () => {
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   const { userDetails } = useContext(PlayerContext);
 
   const [visible, setVisible] = useState(false);
@@ -168,9 +175,7 @@ const NavbarProfile: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          <img
-            src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-            alt=""
+          <AdvancedImage
             style={{
               width: "50px",
               height: "50px",
@@ -179,6 +184,11 @@ const NavbarProfile: React.FC = () => {
               borderRadius: "50%",
               border: "1px solid black",
             }}
+            cldImg={
+              cld.image(userDetails?.image)
+              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+              // .resize(Resize.scale().width(200).height(200))
+            }
           />
         </div>
         <div
@@ -192,7 +202,7 @@ const NavbarProfile: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          Sasindu Dhanushka
+          {userDetails.firstName} {userDetails.lastName}
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -203,30 +213,12 @@ const NavbarProfile: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          student
+         {userDetails?.role}
         </div>
         <Divider style={{}} />
       </div>
 
       <div>
-        <Button
-          type="primary"
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            backgroundColor: "#1B5DB7",
-            borderColor: "#1B5DB7",
-            color: "white",
-            justifyContent: "center",
-            display: "flex",
-            borderRadius: "5px",
-          }}
-        >
-          <LoginOutlined
-            style={{ fontSize: "20px", marginRight: "10px", marginTop: "5px" }}
-          />
-          Log In
-        </Button>
         <Button
           type="primary"
           style={{
@@ -613,10 +605,7 @@ const NavbarProfile: React.FC = () => {
                 onOpenChange={handleOpenChange}
               >
                 <a className="NavBarUserProfileImgThumsup">
-                  <img
-                    className="NavBarUserProfileImg"
-                    src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                    alt="Original Image"
+                <AdvancedImage
                     style={{
                       width: "45px",
                       height: "45px",
@@ -625,6 +614,11 @@ const NavbarProfile: React.FC = () => {
                       borderRadius: "50%",
                       border: "1px solid black",
                     }}
+                    cldImg={
+                      cld.image(userDetails?.image)
+                      // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                      // .resize(Resize.scale().width(200).height(200))
+                    }
                   />
                 </a>
               </Popover>

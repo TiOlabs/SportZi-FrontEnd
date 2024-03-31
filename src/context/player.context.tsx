@@ -29,6 +29,7 @@ const PlayerProvider = ({ children }: any) => {
             id: res.data.user_id,
             firstName: res.data.firstname,
             lastName: res.data.lastname,
+            role: res.data.role,
             image: res.data.user_image,
             phoneNumbers: res.data.phone[0].phone_number,
             discription: res.data.Discription,
