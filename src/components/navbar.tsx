@@ -12,7 +12,7 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
-import { PlayerContext } from "../context/player.context";
+import { usePlayer } from "../context/player.context";
 import { UserIdContext } from "../context/userId.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
@@ -24,8 +24,8 @@ const Navbar: React.FC = () => {
       cloudName,
     },
   });
-  const { userDetails } = useContext(PlayerContext);
-
+  const { userDetails } = usePlayer();
+  console.log(userDetails);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -222,7 +222,7 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          {userDetails.name}
+          {userDetails.firstName} {userDetails.lastName}
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -233,7 +233,7 @@ const Navbar: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          player
+          {userDetails?.role}
         </div>
         <Divider style={{}} />
       </div>
