@@ -1,6 +1,5 @@
 import {
   EditOutlined,
-  LoginOutlined,
   LogoutOutlined,
   MenuOutlined,
 } from "@ant-design/icons";
@@ -13,8 +12,7 @@ import logo2 from "../assets/logoBlack.png";
 import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
-
-import { PlayerContext } from "../context/player.context";
+import { usePlayer } from "../context/player.context";
 import { UserIdContext } from "../context/userId.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
@@ -26,8 +24,8 @@ const Navbar: React.FC = () => {
       cloudName,
     },
   });
-  const { userDetails } = useContext(PlayerContext);
-
+  const { userDetails } = usePlayer();
+  console.log(userDetails);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -178,6 +176,7 @@ const Navbar: React.FC = () => {
 
   // }
 
+
   const content = (
     <div className="NavBarUserProfileClickDetail">
       <div
@@ -223,7 +222,7 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          {userDetails.name}
+          {userDetails.firstName} {userDetails.lastName}
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -234,39 +233,19 @@ const Navbar: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          student
+          {userDetails?.role}
         </div>
         <Divider style={{}} />
       </div>
 
       <div>
-        <Link to="/login">
-          <Button
-            type="primary"
-            style={{
-              width: "100%",
-              marginTop: "10px",
-              backgroundColor: "#1B5DB7",
-              borderColor: "#1B5DB7",
-              color: "white",
-              justifyContent: "center",
-              display: "flex",
-              borderRadius: "5px",
-            }}
-          >
-            <LoginOutlined
-              style={{
-                fontSize: "20px",
-                marginRight: "10px",
-                marginTop: "5px",
-              }}
-            />
-            Log In
-          </Button>
-        </Link>
         <Button
           type="primary"
-          onClick={logOut}
+          onClick={() => {
+            logOut();
+            window.location.reload();
+            
+          }}
           style={{
             width: "100%",
             marginTop: "10px",
@@ -286,6 +265,7 @@ const Navbar: React.FC = () => {
       </div>
     </div>
   );
+
 
   const bgStyle = () => {
     if (pathname === "/") {

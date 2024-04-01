@@ -1,63 +1,61 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
-import { Form, Input, Row, Col, Button, Checkbox } from "antd";
+import { Form, Input, Row, Col, Button} from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
+import Home from "../home/home";
 
 const commonInputStyle = {
   height: "40px",
 };
+
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const navigate = useNavigate();
 
   const onFinish = async () => {
-    // console.log(
-    //   email,
-    //   password,
-    // ); 
     try {
-      const res = await axios.post("http://localhost:8000/api/login", {
-        email: email,
-        password: password,  
-      })
-      .then(res => {
-        navigate('/');
-        alert("Login successfully!");
-        console.log(res.data.token)
-        Cookies.set('token',res.data.token,{expires:1 , httpOnly:false , secure:true});
-      }
+      const res = await axios
+        .post("http://localhost:8000/api/login", {
+          email: email,
+          password: password,
+        })
+        .then((res) => {
+          navigate("/");
+          
 
-      ).catch(err => {
-        alert("Login failed 1...")
-        console.log("response error:",err)
-      });
-
+          console.log(res.data.token);
+          Cookies.set("token", res.data.token, {
+            expires: 1,
+            httpOnly: false,
+            secure: true,
+          });
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
+          console.log("response error:", err);
+        });
 
     } catch (err) {
- 
       console.log(err);
       alert("Login failed...2");
     }
   };
 
-
-
   return (
     <>
-      <Row >
-        <Col 
-          xl={{ span: 12 ,offset:0}}
-          lg={{ span: 12,offset:0}}
-          md={{ span: 20, offset:2}}
-          sm={{ span: 22, offset:1 }}
-
-
+      <Row>
+        <Col
+          xl={{ span: 12, offset: 0 }}
+          lg={{ span: 12, offset: 0 }}
+          md={{ span: 20, offset: 2 }}
+          sm={{ span: 22, offset: 1 }}
           style={{
             backgroundColor: "#EFF4FA",
             display: "flex",
@@ -67,9 +65,7 @@ const Login = () => {
         >
           {/* image */}
 
-          <div style={{ textAlign: "center",paddingBottom:"50px"}}>
-
-
+          <div style={{ textAlign: "center", paddingBottom: "50px" }}>
             <img
               src={img1}
               alt=""
@@ -89,12 +85,10 @@ const Login = () => {
             </div>
 
             <div
-
-            style={{
-                fontSize:"18px"
-            }}>
-
- 
+              style={{
+                fontSize: "18px",
+              }}
+            >
               <a href=""> Privacy And Policy </a>
             </div>
           </div>
@@ -102,13 +96,10 @@ const Login = () => {
 
         {/* form */}
         <Col
-
-          xl={{ span: 12, offset:0}}
-          lg={{ span: 12 ,offset:0}}
-          md={{ span: 20, offset:2}}
-          sm={{ span: 22, offset:1}}
-
-
+          xl={{ span: 12, offset: 0 }}
+          lg={{ span: 12, offset: 0 }}
+          md={{ span: 20, offset: 2 }}
+          sm={{ span: 22, offset: 1 }}
           style={{ padding: "80px" }}
         >
           <Form
@@ -116,20 +107,16 @@ const Login = () => {
             className="login-form"
             initialValues={{ remember: true }}
             layout="vertical"
-
-            
             onFinish={onFinish}
-
           >
+
             <div
               style={{
                 fontSize: "28px",
                 textAlign: "center",
                 paddingBottom: "20px",
 
-                color:"#0E458E"
-
-
+                color: "#0E458E",
               }}
             >
               Unlock Your True Capabilities By Signing In To Access Our
@@ -164,8 +151,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Item>
-            <Form.Item style={{textAlign:"right"}}>
-
+            <Form.Item style={{ textAlign: "right" }}>
               {/* <Form.Item name="remember" valuePropName="checked" noStyle>
                 <Checkbox>Remember me</Checkbox>
               </Form.Item> */}
@@ -182,20 +168,22 @@ const Login = () => {
                 style={{
                   height: "40px",
                   width: "100%",
-                  borderRadius:"0",
+                  borderRadius: "0",
                   backgroundColor: "#2E5488",
                   color: "#fff",
-                  fontSize:"16px"
-
+                  fontSize: "16px",
                 }}
-              >
+              > 
                 Log in
               </Button>
             </Form.Item>
             <Form.Item>
               <hr />
               <Form.Item style={{ display: "flex", justifyContent: "center" }}>
-                Don't have an account <Link to={"/signupPlayer"}><a href="">sign up here!</a></Link>
+                Don't have an account{" "}
+                <Link to={"/signupPlayer"}>
+                  <a href="">sign up here!</a>
+                </Link>
               </Form.Item>
             </Form.Item>
           </Form>

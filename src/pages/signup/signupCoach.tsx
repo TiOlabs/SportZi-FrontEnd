@@ -99,6 +99,7 @@ const SignupCoach = () => {
       .then(res =>{
         console.log(res);
         alert("Form submitted successfully!");
+        form.resetFields();
       }).catch(err =>{
         console.log(err);
         alert(err.response.data.message);
@@ -115,7 +116,7 @@ const SignupCoach = () => {
 
   return (
     <>
-      <Row>
+      <Row className="signupContainer">
         {/* left column */}
         <Col
           sm={24}
@@ -469,7 +470,7 @@ const SignupCoach = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <a href="">Sign in here</a>
+                  Already have an account <Link to={"/login"}><a href="">Sign in here</a> </Link> 
                 </div>
               </Form.Item>
             </Form>

@@ -9,9 +9,7 @@ const ArcadeCardSection = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch(
-          "http://localhost:8000/api/getarcadeCardvalues"
-        );
+        const res = await fetch("http://localhost:8000/api/getarcadeDetails");
 
         const data = await res.json();
         console.log(data);
@@ -50,7 +48,7 @@ const ArcadeCardSection = () => {
         >
           <ArcadeCard
             arcade_name={arcade.arcade_name}
-            arcade_rate={arcade.arcadefeedbacks.arcade_id}
+            arcade_rate={arcade.arcadefeedbacks.rate}
             arcade_image={arcade.arcade_image}
             arcade_description={arcade.description}
           />

@@ -9,6 +9,7 @@ import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
 import moment, { Moment } from "moment";
+import axiosInstance from "../../axiosInstance";
 
 // import axiosInstance from "../../axiosInstance";
 
@@ -70,7 +71,6 @@ const SignupPlayer = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone_number, setPhone] = useState("");
-  // const [DOB, setDOB] = useState("");
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
 
@@ -83,7 +83,7 @@ const SignupPlayer = () => {
 
   const onFinish = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}api/addplayer`, {
+      const response = await axiosInstance.post("api/addplayer", {
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -93,16 +93,15 @@ const SignupPlayer = () => {
         password: password,
         phone_number: phone_number,
         accountNumber:"123456789789"
-      }).then(res =>{
+      })
+      .then(res =>{
         console.log(res);
         alert("Form submitted successfully!");
+        form.resetFields();
       }).catch(err =>{
         console.log(err);
         alert(err.response.data.message);
       });
-
-      // console.log(response);
-
     
     } catch (err) {
       console.log(err);
@@ -112,7 +111,7 @@ const SignupPlayer = () => {
 
   return (
     <>
-      <Row>
+      <Row className="signupContainer" >
         {/* left column */}
         <Col
           sm={24}
@@ -191,7 +190,7 @@ const SignupPlayer = () => {
         </Col>
 
         {/* right column */}
-        <Col sm={24} md={24} lg={12} xl={12} style={{ padding: 50 }}>
+        <Col sm={24} md={24} lg={12} xl={12} style={{ padding: 50}}>
           {/* form */}
           <div
             style={{
@@ -448,7 +447,7 @@ const SignupPlayer = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <a href="">Sign in here</a>
+                  Already have an account <Link to={"/login"}><a href="">Sign in here</a> </Link> 
                 </div>
               </Form.Item>
             </Form>
