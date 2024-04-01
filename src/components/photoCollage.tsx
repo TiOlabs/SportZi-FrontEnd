@@ -30,16 +30,11 @@ const PhotoCollage = () => {
     },
   });
   const items = Array.from({ length: 8 }).map((_, index) => (
-    <AdvancedImage
+    <img
       key={index}
-      cldImg={
-        cld.image(playerPhotos?.)
-        // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-        // .resize(Resize.scale().width(200).height(200))
-      }
-      // src={`https://picsum.photos/200/${Math.floor(
-      //   Math.random() * (300 - 200 + 1) + 200
-      // )}`}
+      src={`https://picsum.photos/200/${Math.floor(
+        Math.random() * (300 - 200 + 1) + 200
+      )}`}
       style={{
         width: "100%",
         height: "100%",
