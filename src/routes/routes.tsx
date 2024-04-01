@@ -17,17 +17,16 @@ import CoachProfileUser from "../pages/profiles/CoachProfileUser";
 import Admin from "../pages/admin/admin";
 import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
-import Auth from "../middlewares/auth";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
-import {Auth,ProtectedRoute,PlayerRoute,CoachRoute,ManagerRoute,AdminRoute} from "../middlewares/auth";
+import {Auth,ProtectedRoute} from "../middlewares/auth";
 
 const AppRoutes = () => {
   return (
     <>
       <Routes>
         <Route index element={<Home />} />
-        <Route path="coaches" element={<CoachRoute> <Coaches/> </CoachRoute>} /> 
+        <Route path="coaches" element={<Coaches/> } /> 
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
