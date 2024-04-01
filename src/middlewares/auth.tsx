@@ -1,8 +1,6 @@
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
-import HeroSection from "../pages/home/heroSection";
 import Login from "../pages/login/login";
 
 const Auth = ({ children }: any) => {
