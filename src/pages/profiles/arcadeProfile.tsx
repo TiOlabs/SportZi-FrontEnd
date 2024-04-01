@@ -1,9 +1,7 @@
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import { Col, List, Row, Typography, Image, Button } from "antd";
 import { Grid } from "antd";
-
 import backgroundImg from "../../assents/background2.png";
-import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
 import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
@@ -12,18 +10,20 @@ import ArcadeZoneCard from "../../components/ArcadeZoneCard";
 import AddZone from "../../components/AddZone"
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AvailableBookingsArcade from "../../components/AvailableBookingsArcade";
 import CoachReqestForArcade from "../../components/CoachReqestForArcade";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
+import axiosInstance from "../../axiosInstance";
 
 const ArcadeProfileArcade = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
+  const [name, setname] = useState();
   const AvailableBookings = [
     <AvailableBookingsArcade />,
     <AvailableBookingsArcade />,
@@ -50,6 +50,16 @@ const ArcadeProfileArcade = () => {
     }
   };
 
+  useEffect(() => {
+    axiosInstance
+      .get("/api/auth/getarchadedetails")
+      .then((res) => {
+        setname(res.data.firstname);
+      })
+      .catch((err) => {
+        console.log("error msg", err);
+      });
+  }, []);
   return (
     <>
       <style>
@@ -94,7 +104,6 @@ const ArcadeProfileArcade = () => {
               lg={24}
               xl={24}
             >
-              {" "}
               <Image
                 width={300}
                 src={profilePic}
@@ -192,7 +201,8 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                Super box complex
+                {/* {name} */}
+                Colombo Cricket Club
               </h1>
               <p
                 style={{
@@ -1081,20 +1091,21 @@ const ArcadeProfileArcade = () => {
           )}
         </Row>
 
-        {AvailableBookings.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
+        {Array.isArray(AvailableBookings) &&
+          AvailableBookings.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
 
         {showMore ? (
           <Button
@@ -1160,20 +1171,21 @@ const ArcadeProfileArcade = () => {
           alignItems: "center",
         }}
       >
-        {CoachReqestToArchade.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
+        {Array.isArray(CoachReqestToArchade) &&
+          CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
 
         {showMore ? (
           <Button
