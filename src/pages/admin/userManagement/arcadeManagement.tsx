@@ -1,5 +1,5 @@
-import { Col, Row, Button } from "antd";
-import React, { useState, useEffect,Key } from "react";
+import { Col, Row, Button,Modal } from "antd";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 interface Arcade {
@@ -25,6 +25,9 @@ interface Arcade {
       accountNumber: string | null;
       is_active: string;
       user_image: string | null;
+      address: String | null;
+      city: String | null;
+      country: String | null;
     };
     
   }
@@ -66,9 +69,46 @@ const ArcadeManagement = () => {
         </Col>
       </Row>
 
-      {arcades.map((arcade) => (
-        <Row
-          key={arcade.arcade_id as Key}
+      {arcades.map((arcadedetails) => (
+        <DataRow
+          arcadedetails = {arcadedetails}
+        />
+      ))}
+    </Col>
+  );
+};
+
+export default ArcadeManagement;
+
+
+
+
+
+
+function DataRow(props:any){
+
+  const { arcadedetails } = props;
+  // console.log(arcadedetails);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+
+
+
+  return(
+    <Row
+          key={arcadedetails.arcade_id}
 
           style={{
             backgroundColor: "white",
@@ -101,7 +141,7 @@ const ArcadeManagement = () => {
                 fontSize: "16px",
               }}
             >
-              {arcade.arcade_name}
+              {arcadedetails.arcade_name}
               {/* Blue Feather */}
             </div>
           </Col>
@@ -118,7 +158,7 @@ const ArcadeManagement = () => {
               }}
             >
               {" "}
-              {arcade.arcade_email}
+              {arcadedetails.arcade_email}
               {/* bluefeather@gmail.com */}
             </div>
           </Col>
@@ -135,6 +175,7 @@ const ArcadeManagement = () => {
               <Button
                 type="primary"
                 style={{ width: "100px", backgroundColor: "#0E458E" }}
+                onClick={showModal}
               >
                 <div
                   style={{
@@ -148,6 +189,105 @@ const ArcadeManagement = () => {
                   Details
                 </div>
               </Button>
+
+
+              <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800}>
+            <div style={{ lineHeight: 3.0, fontSize: "160px" }}>
+              {/* <Row>
+                <div style={{ fontSize: "28px", color: "#0E458E" }}>
+                  Arcade Details
+                </div>
+                <Col span={24}>
+                  <b>Player ID :</b> {playerdetails.player_id}
+                </Col>
+                <Col span={24}>
+                      <b>First Name: </b> {playerdetails.user.firstname}
+                </Col>
+                <Col span={24}>
+                      <b>Last Name: </b> {playerdetails.user.lastname}
+                </Col>
+                <Col span={24}>
+                      <b>Email :</b> {playerdetails.user.email}
+                </Col>
+                <Col span={24}>
+                      <b>Account Number :</b>  {playerdetails.user.accountNumber || "N/A"}
+                </Col>           
+
+                <Col span={24}>
+                  <b>DOB :</b> {playerdetails.user.DOB}
+                </Col>
+                <Col span={24}>
+                  <b>Gender :</b> {playerdetails.user.gender}
+                </Col>
+                <Col span={24}>
+                  <b>City :</b> ratnapura
+                </Col>
+                <Col span={24}>
+                  <b>Country :</b> Sri lanka
+                </Col>
+              </Row> */}
+              <Row>
+              <div style={{ fontSize: "28px", color: "#0E458E" }}>
+                  Arcade Details
+                </div>
+                </Row>
+              <Row>
+                <Col span={12}>
+                  <Col>
+                  <b>Manager ID : </b> { arcadedetails.manager_id}
+                  </Col>
+                  <Col>
+                  <b>First Name :  </b> { arcadedetails.manager.user.firstname}
+                  </Col>
+                  <Col>
+                  <b>Last Name : </b> {arcadedetails.manager.user.lastname}
+                  </Col>
+                  <Col>
+                  <b>Email :</b> {arcadedetails.manager.user.email}
+                  </Col>
+                  <Col>
+                  <b>Account Number :</b> {arcadedetails.manager.user.accountNumber || "N/A"}
+                  </Col>
+                  <Col>
+                  <b>Gender :</b> {arcadedetails.manager.user.gender}
+                  </Col>
+                  <Col>
+                  <b>City :</b> {arcadedetails.manager.user.city || "N/A"}
+                  </Col>
+                  <Col>
+                  <b>Country :</b> {arcadedetails.manager.user.country || "N/A"}
+                  </Col>
+                </Col>
+                <Col span={12}>
+                  <Col>
+                  <b>Arcade ID : </b> { arcadedetails.arcade_id}
+                  </Col>
+                  <Col>
+                  <b>Arcade Name :  </b> { arcadedetails.arcade_name}
+                  </Col>
+                  <Col>
+                  <b>Arcade Email : </b> {arcadedetails.arcade_email}
+                  </Col>
+                  <Col>
+                  <b>Address :</b> {arcadedetails.manager.user.address || "N/A"}
+                  </Col>
+                  <Col>
+                  <b>Location :</b> {arcadedetails.location}
+                  </Col>
+                  <Col>
+                  <b>Open TIme :</b> {arcadedetails.open_time}
+                  </Col>
+                  <Col>
+                  <b>Close Time :</b> {arcadedetails.close_time}
+                  </Col>
+                  
+                </Col>
+              </Row>
+            </div>
+          </Modal>
+
+
+
               <Button
                 type="primary"
                 ghost
@@ -168,9 +308,5 @@ const ArcadeManagement = () => {
             </div>
           </Col>
         </Row>
-      ))}
-    </Col>
   );
-};
-
-export default ArcadeManagement;
+}
