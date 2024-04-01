@@ -3,7 +3,7 @@ import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "../../components/cloudinaryUploadWidget";
 import { AdvancedImage, placeholder, responsive } from "@cloudinary/react";
 import { useState } from "react";
-import { Cloudinary, CloudinaryImage } from "@cloudinary/url-gen";
+import { Cloudinary } from "@cloudinary/url-gen";
 import axios from "axios";
 import AppFooter from "../../components/footer";
 

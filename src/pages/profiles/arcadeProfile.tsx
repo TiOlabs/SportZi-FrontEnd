@@ -9,7 +9,7 @@ import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
 import PhotoCollage from "../../components/photoCollage";
 import ArcadeZoneCard from "../../components/ArcadeZoneCard";
-import AddZone from "../../components/AddZone";
+import AddZone from "../../components/AddZone"
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
 import { useState } from "react";

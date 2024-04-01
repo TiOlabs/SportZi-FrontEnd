@@ -1,9 +1,7 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
 import { Form, Input, Row, Col, Button, Checkbox } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
-import { off } from "process";
 import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
