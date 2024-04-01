@@ -1,11 +1,11 @@
+
 import { Col, Row, Button, Flex, Skeleton } from "antd";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor } from "@ant-design/icons";
 import { useState } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
-import ArcadeImage from "../assets/ArcadeImage.png";
-import { Rate } from 'antd';
+import { Rate } from "antd";
 
 <style>
   @import
@@ -22,8 +22,7 @@ const ArcadeCard = (props: any) => {
   });
   console.log("props image hiiiiii", props.arcade_image);
   console.log("props", props);
-
- 
+  console.log("props", props.arcade_rate);
 
   return (
     <>
@@ -98,20 +97,25 @@ const ArcadeCard = (props: any) => {
               <p
                 style={{ color: "#1B5DB7", fontSize: 22, fontFamily: "kanit" }}
               >
-               {props.arcade_name}  
+                {props.arcade_name}
               </p>
               <p style={{ fontSize: "14px", fontWeight: 300 }}>Sport Complex</p>
             </div>
 
-            <div style={{
+            <div
+              style={{
                 fill: "#FFD700",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 marginBottom: "5px",
-              }}>
-            <Rate disabled defaultValue={props.arcade_rate} style={{ color: "#FFD700" ,fontSize:"12px" }} />
-      
+              }}
+            >
+              <Rate
+                disabled
+                defaultValue={props.arcade_rate}
+                style={{ color: "#FFD700", fontSize: "12px" }}
+              />
             </div>
             <div>
               <p

@@ -3,22 +3,19 @@ export interface Discount {
   discount_percentage: Number;
   description: String;
   discount_image: String;
-  zone_name: String;
-  arcade_name: String;
   zone: Zone;
 }
 export interface Zone {
   zone_name: String;
   zone_id: String;
-  arcade_name: String;
-  arcade_email: String;
   rate: Number;
   arcade_location: String;
   manager_id: String;
   opening_time: String;
   closing_time: String;
   arcade_address: String;
-  arcade_image: String;
+  zone_image: String;
+  arcade: Arcade;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
@@ -105,7 +102,6 @@ export interface ArcadeFeedbacks {
   rate: Number;
   arcade_id:String;
 }
-
 export interface Sport {
   sport_id: String;
   sport_name: String;

@@ -8,6 +8,7 @@ import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
+import Home from "../home/home";
 
 const commonInputStyle = {
   height: "40px",
@@ -41,6 +42,7 @@ const Login = () => {
           alert(err.response.data.message);
           console.log("response error:", err);
         });
+
     } catch (err) {
       console.log(err);
       alert("Login failed...2");

@@ -2,7 +2,8 @@ import { Button, Col, Grid, Row, Typography } from "antd";
 import Image from "antd/lib/image";
 import zoneCardpic from "../assents/pro.png";
 
-const ArcadeZoneCard = () => {
+const ArcadeZoneCard = (props:any) => {
+  console.log(props)
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   return (
@@ -150,3 +151,12 @@ const ArcadeZoneCard = () => {
   );
 };
 export default ArcadeZoneCard;
+
+
+
+
+
+
+
+
+
