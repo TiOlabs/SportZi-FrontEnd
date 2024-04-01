@@ -3,6 +3,8 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { PlayerContext } from "../context/player.context";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const PhotoCollage = () => {
   const [playerPhotos, setPlayerPhotos] = useState([]);
@@ -12,9 +14,7 @@ const PhotoCollage = () => {
   useEffect(() => {
     try {
       axios
-        .get(
-        `http://localhost:8000/api/auth/getplayerPhotos/${userDetails.id}`
-        )
+        .get(`http://localhost:8000/api/auth/getplayerPhotos/${userDetails.id}`)
         .then((res) => {
           console.log(res.data);
           setPlayerPhotos(res.data);
@@ -23,27 +23,23 @@ const PhotoCollage = () => {
       console.error("Error:", error);
     }
   }, []);
-  // useEffect(() => {
-  //   try{
-  //   axios
-  //     .get(
-  //       process.env.REACT_APP_API_URL +
-  //         `api/auth/getplayerPhotos/${userDetails.id}`
-  //     )
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setPlayerPhotos(res.data);
-  //     });
-  //   }catch(error){
-  //     console.error("Error:", error);
-  //   }
-  // },[]);
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   const items = Array.from({ length: 8 }).map((_, index) => (
-    <img
+    <AdvancedImage
       key={index}
-      src={`https://picsum.photos/200/${Math.floor(
-        Math.random() * (300 - 200 + 1) + 200
-      )}`}
+      cldImg={
+        cld.image(playerPhotos?.)
+        // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+        // .resize(Resize.scale().width(200).height(200))
+      }
+      // src={`https://picsum.photos/200/${Math.floor(
+      //   Math.random() * (300 - 200 + 1) + 200
+      // )}`}
       style={{
         width: "100%",
         height: "100%",
