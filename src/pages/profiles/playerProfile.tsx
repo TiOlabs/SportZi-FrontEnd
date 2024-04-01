@@ -32,7 +32,6 @@ const PlayerProfile = () => {
   const [showMore, setShowMore] = useState(true);
   const [firstname, setFirstname] = useState(userDetails?.firstName);
   const [lastname, setLastname] = useState(userDetails?.lastName);
-  const [email, setEmail] = useState(userDetails?.email);
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
   const [user_image, setUser_image] = useState(userDetails?.image);
@@ -43,7 +42,6 @@ const PlayerProfile = () => {
     }
     return [];
   };
-
   // see more buttons
   const [playerBookingsData, setPlayerBookingsData] = useState<
     ZoneBookingDetails[]
@@ -65,9 +63,6 @@ const PlayerProfile = () => {
   };
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-
-  // function to the edit profiles
-
   // getting player details from backend
   useEffect(() => {
     axiosInstance
@@ -76,7 +71,6 @@ const PlayerProfile = () => {
         console.log("dataaaaaaaaaa222222", res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
-        setEmail(res.data.email);
         setDiscription(res.data.Discription);
         setUser_image(res.data.user_image);
         const achiv = res.data.achivement;
@@ -91,7 +85,6 @@ const PlayerProfile = () => {
         console.log(err);
       });
   }, []);
-  const [form] = Form.useForm();
 
   return (
     <>
