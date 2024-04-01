@@ -47,6 +47,31 @@ const PlayerProfile = () => {
     ZoneBookingDetails[]
   >([]);
   console.log(playerBookingsData);
+
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [show3, setShow3] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get(
+        process.env.REACT_APP_API_URL +
+          `api/getarcadebooking/${userDetails?.id}`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setPlayerBookingsData(res.data);
+        setPlayerBookingsData((prev: any) => {
+          return prev.filter(
+            (playerBookingDetails: ZoneBookingDetails) =>
+              playerBookingDetails.status === "success"
+          );
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
