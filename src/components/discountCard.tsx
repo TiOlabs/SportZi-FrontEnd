@@ -3,9 +3,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { ZoneBookingsContext } from "../context/zoneBookings.context";
-import DiscountCardpic_01 from "../assets/DiscountCardpic_01.png";
 const DiscountCard = (props: any) => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({

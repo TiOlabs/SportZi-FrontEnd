@@ -7,9 +7,8 @@ import { Button, Checkbox, Form, Input, TimePicker, Select } from "antd";
 import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
-import axios from "axios";
-// import moment, { Moment } from "moment";
 import { Dayjs } from "dayjs";
+import axiosInstance from "../../axiosInstance";
 
 //responsiveness
 const formItemLayout = {
@@ -102,11 +101,8 @@ const SignupArcadeManager = () => {
   };
 
   const onFinish = async () => {
-
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/addarcadeManager`,
-
+      const res = await axiosInstance.post("api/addarcadeManager",
         {
           firstname: firstname,
           lastname: lastname,
@@ -123,11 +119,11 @@ const SignupArcadeManager = () => {
       ).then(res =>{
         console.log(res);
         alert("Form submitted successfully!");
+        form.resetFields();
       }).catch(err =>{
         console.log(err);
         alert(err.response.data.message);
       });
-
     } catch (err) {
       console.log(err);
       alert(err);
@@ -136,7 +132,7 @@ const SignupArcadeManager = () => {
 
   return (
     <>
-      <Row>
+      <Row className="signupContainer">
         {/* left column */}
         <Col
           sm={24}
@@ -271,7 +267,7 @@ const SignupArcadeManager = () => {
                   onChange={(e) => setFirstname(e.target.value)}
                 />
               </Form.Item>
-
+            
               {/* last name field */}
               <Form.Item
                 name="lastname"
@@ -548,7 +544,7 @@ const SignupArcadeManager = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <a href="">Sign in here</a>
+                  Already have an account <Link to={"/login"}><a href="">Sign in here</a> </Link> 
                 </div>
               </Form.Item>
             </Form>

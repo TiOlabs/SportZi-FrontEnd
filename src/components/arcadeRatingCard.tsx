@@ -1,4 +1,3 @@
-import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { Row } from "antd";
 import { Rate } from "antd";
@@ -10,11 +9,11 @@ import { useState } from "react";
 
 const ArcadeRatingCard = (props:any) => {
     const [cloudName] = useState("dle0txcgt");
-    const cld = new Cloudinary({
-      cloud: {
-        cloudName,
-      },
-    });
+    // const cld = new Cloudinary({
+    //   cloud: {
+    //     cloudName,
+    //   },
+    // });
     const { md } = useBreakpoint();
   return (
     <Row>
