@@ -18,6 +18,7 @@ import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import { Zone } from "../../types";
 import axios from "axios";
+import axiosInstance from "../../axiosInstance";
 
 const ArcadeProfileArcade = () => {
   const [zone, setZone] = useState<Zone[]>([]);
@@ -37,6 +38,7 @@ const ArcadeProfileArcade = () => {
   const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
+  const [name, setname] = useState();
   const AvailableBookings = [
     <AvailableBookingsArcade />,
     <AvailableBookingsArcade />,
@@ -63,6 +65,16 @@ const ArcadeProfileArcade = () => {
     }
   };
 
+  useEffect(() => {
+    axiosInstance
+      .get("/api/auth/getarchadedetails")
+      .then((res) => {
+        setname(res.data.firstname);
+      })
+      .catch((err) => {
+        console.log("error msg", err);
+      });
+  }, []);
   return (
     <>
       <style>
@@ -107,7 +119,6 @@ const ArcadeProfileArcade = () => {
               lg={24}
               xl={24}
             >
-              {" "}
               <Image
                 width={300}
                 src={profilePic}
@@ -205,7 +216,8 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                Super box complex
+                {/* {name} */}
+                Colombo Cricket Club
               </h1>
               <p
                 style={{
@@ -1068,20 +1080,21 @@ const ArcadeProfileArcade = () => {
           )}
         </Row>
 
-        {AvailableBookings.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
+        {Array.isArray(AvailableBookings) &&
+          AvailableBookings.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
 
         {showMore ? (
           <Button
@@ -1147,20 +1160,21 @@ const ArcadeProfileArcade = () => {
           alignItems: "center",
         }}
       >
-        {CoachReqestToArchade.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
+        {Array.isArray(CoachReqestToArchade) &&
+          CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
 
         {showMore ? (
           <Button

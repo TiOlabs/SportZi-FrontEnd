@@ -1,7 +1,5 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
-// import axios from "axios";
 import axiosInstance from "../axiosInstance";
-// import { useNavigate } from "react-router-dom";
 
 export const PlayerContext = createContext<any>(null);
 
