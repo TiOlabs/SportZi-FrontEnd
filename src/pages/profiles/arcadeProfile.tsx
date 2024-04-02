@@ -16,11 +16,26 @@ import CoachReqestForArcade from "../../components/CoachReqestForArcade";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
+import { Zone } from "../../types";
+import axios from "axios";
 import axiosInstance from "../../axiosInstance";
 
 const ArcadeProfileArcade = () => {
+  const [zone, setZone] = useState<Zone[]>([]);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/getZoneDetails`);
+        const data = await res.data;
+        setZone(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
   const { useBreakpoint } = Grid;
-  const { lg, md, sm, xs } = useBreakpoint();
+  const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [name, setname] = useState();
@@ -770,6 +785,7 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
+            {zone.map((zone: Zone) => (
           <Col
             xs={24}
             sm={12}
@@ -785,42 +801,15 @@ const ArcadeProfileArcade = () => {
             }}
           >
             {" "}
-            <ArcadeZoneCard />
+            <ArcadeZoneCard
+              zoneName={zone.zone_name}
+              rate={zone.rate}
+              zoneImage={zone.zone_image} 
+              description={zone.description}
+            />
           </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard />
-          </Col>
+          ))  
+          }
           <Col
             style={{
               width: "100%",
