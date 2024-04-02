@@ -16,13 +16,15 @@ export interface Zone {
   arcade_address: String;
   zone_image: String;
   arcade: Arcade;
+  capacity: Number;
+  description: String;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
   status: String;
   created_at: String;
   canceled_at: String;
-  rate:Number;
+  rate: Number;
   date: String;
   time: String;
   participant_count: Number;
@@ -79,11 +81,6 @@ export interface ArcadeBookings {
   cancel_by_admin: boolean;
 }
 
-export interface ArcadeRating {
-  discription: string;
-  rate: Number;
-}
-
 export interface Arcade {
   arcade_id: String;
   arcade_name: String;
@@ -100,15 +97,15 @@ export interface Arcade {
 
 export interface ArcadeFeedbacks {
   rate: Number;
-  arcade_id:String;
+  arcade_id: String;
+  arcade: Arcade;
 }
 export interface Sport {
   sport_id: String;
   sport_name: String;
 }
 
-export interface CoachFeedbacks{
+export interface CoachFeedbacks {
   coach_feedback_id: String;
   rate: Number;
-
 }
