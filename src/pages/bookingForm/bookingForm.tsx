@@ -21,18 +21,21 @@ import axiosInstance from "../../axiosInstance";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { UserIdContext } from "../../context/userId.context";
+import { useLocation } from "react-router-dom";
 const { Option } = Select;
 
 const BookingForm = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
   const { setUserId } = useContext(UserIdContext);
-  const [form] = Form.useForm();
   const [decodedValues, setDecodedValues] = useState<any>();
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
   const [zoneDetails, setZoneDetails] = useState<Zone>();
-  const [bookingCount, setbookingCount] = useState<Number>();
   const [bookingDate, setBookingDate] = useState<ZoneBookingDetails[]>([]);
   const [paymentDetails, setPaymentDetails] = useState<User>();
   // payment_id: "",
@@ -117,53 +120,6 @@ const BookingForm = () => {
   console.log(pcount);
   let fullAmount = Number(rate) * Number(pcount);
   console.log(fullAmount);
-
-  // useEffect(() => {
-  //   try {
-  //     const fetchData = async () => {
-  //       const resPaymentDetails = await fetch(
-  //         "http://localhost:8000/api/getarcadebookings"
-  //       );
-  //       const paymentDetailsData = await resPaymentDetails.json();
-
-  //       // const respaymentStatus = await fetch(
-  //       //   "http://localhost:8000/api/postpaymentStatus"
-  //       // );
-  //       // const paymentStatusData = await respaymentStatus.json();
-
-  //       // setPaymentStatus(paymentStatusData);
-  //       //...........
-
-  //       console.log(paymentDetailsData);
-  //       setPaymentDetails(paymentDetailsData);
-  //     };
-  //     fetchData();
-  //   } catch (e) {
-  //     console.log("errrr", e);
-  //   }
-  // }, []);
-
-  // const onZoneChange = (value: string) => {
-  //   console.log(value);
-  //   setZone(value);
-
-  // switch (value) {
-  //   case "male":
-  //     form.setFieldsValue({ note: "Hi, man!" });
-  //     break;
-  //   case "female":
-  //     form.setFieldsValue({ note: "Hi, lady!" });
-  //     break;
-  //   case "other":
-  //     form.setFieldsValue({ note: "Hi there!" });
-  //     break;
-  //   default:
-  // }
-  // };
-  // const onPcountChange = (value: string) => {
-  //   console.log(value);
-  //   setPcount(value);
-  // };
 
   const handleFinish = async () => {
     console.log(date, time, zone, pcount);
@@ -372,7 +328,7 @@ const BookingForm = () => {
                     key={button.id}
                     id={button.id}
                     type="button"
-                    onClick={() => setTime(button.id)}
+                    onClick={() => setTime(button.id) }
                     style={{
                       width: "100%",
                       padding: "5%",

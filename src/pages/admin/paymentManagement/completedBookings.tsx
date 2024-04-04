@@ -121,7 +121,7 @@ const CompletedBookings = () => {
           >
             <Button
               type="primary"
-              style={{ width: "100px", backgroundColor: "#0E458E" }}
+              style={{ width: "100px", backgroundColor: "#0E4" }}
             >
               <div
                 style={{

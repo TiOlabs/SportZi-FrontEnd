@@ -4,6 +4,7 @@ import axiosInstance from "../axiosInstance";
 export const PlayerContext = createContext<any>(null);
 
 const PlayerProvider = ({ children }: any) => {
+
   const [userDetails, setUserDetails] = useState<any>({
     id: "",
     firstName: "",

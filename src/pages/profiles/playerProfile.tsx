@@ -28,6 +28,7 @@ const requestList = [
 
 const PlayerProfile = () => {
   const { userDetails } = useContext(PlayerContext);
+  console.log("userDetails", userDetails);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
   const [firstname, setFirstname] = useState(userDetails?.firstName);
@@ -91,7 +92,7 @@ const PlayerProfile = () => {
   // getting player details from backend
   useEffect(() => {
     axiosInstance
-      .get("/api/auth/getplayerdetails/", {})
+      .get(`api/auth/getplayerdetails/${userDetails?.id}`)
       .then((res) => {
         console.log("dataaaaaaaaaa222222", res.data);
         setFirstname(res.data.firstname);

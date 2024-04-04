@@ -52,8 +52,6 @@ const BookedArena = (props: any) => {
         <Col
           style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}
         >
-          
-
           {filteredDataa.map((ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
               booking_id={ZoneBookingDetails.zone_booking_id}
@@ -132,6 +130,15 @@ function DataRow(props: any) {
               status: "canceled_By_Admin",
             }
           );
+          if (response.status === 200) {
+            console.log("success");
+            props.setZoneBookingDetails((prev: any) => {
+              return prev.filter(
+                (zoneBookingDetails: ZoneBookingDetails) =>
+                  zoneBookingDetails.zone_booking_id !== props.booking_id
+              );
+            });
+          }
           // const res = await axios.delete(
           //   `http://localhost:8000/api/deletearcadebooking/${props.booking_id}`,
           //   {
@@ -140,7 +147,6 @@ function DataRow(props: any) {
           //     },
           //   }
           // );
-          console.log(props.arcadeBookings);
 
           // if (props.arcadeBookings.length > 0) {
           //   const data = props.arcadeBookings.filter(
@@ -149,12 +155,6 @@ function DataRow(props: any) {
           //   props.setArcadeBookings(data);
 
           // }
-          props.setZoneBookingDetails((prev: any) => {
-            return prev.filter(
-              (zoneBookingDetails: ZoneBookingDetails) =>
-                zoneBookingDetails.zone_booking_id !== props.booking_id
-            );
-          });
         } catch (error) {
           console.log("error");
           console.log(error);

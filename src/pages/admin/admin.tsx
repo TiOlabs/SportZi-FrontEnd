@@ -54,6 +54,12 @@ const items: MenuProps["items"] = [
     getItem("Booked Coaches ", "17"),
     getItem("Package Enrolled", "18"),
   ]),
+  getItem("Booking Management", "sub7", <AuditOutlined />, [
+    getItem("Booked Arena", "19"),
+    getItem("Booked Coaches ", "20"),
+    getItem("Package Enrolled", "21"),
+  ]),
+
 ];
 const SideBarAdminPage = () => {
   const [stts, setstts] = useState("");
