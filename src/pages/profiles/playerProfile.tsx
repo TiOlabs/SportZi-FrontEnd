@@ -146,7 +146,7 @@ const PlayerProfile = () => {
           }}
         >
           <AdvancedImage
-            style={{ height: "auto", width: "300px" }}
+            style={{ height: "300px", width: "300px" }}
             cldImg={
               cld.image(user_image)
               // .resize(Resize.crop().width(200).height(200).gravity('auto'))
