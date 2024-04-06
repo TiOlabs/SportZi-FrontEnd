@@ -99,7 +99,6 @@ const PlayerProfile = () => {
     axiosInstance
       .get("/api/auth/getplayerdetails/", {})
       .then((res) => {
-        console.log("dataaaaaaaaaa222222", res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
         setEmail(res.data.email);
@@ -111,7 +110,6 @@ const PlayerProfile = () => {
           achiveArr.push(item.achivement_details as string);
         });
         setAchivements(achiveArr.join(","));
-        // console.log("userDetails", userDetails);
       })
       .catch((err) => {
         console.log(err);
