@@ -34,7 +34,7 @@ const PlayerProfile = () => {
   const [lastname, setLastname] = useState(userDetails?.lastName);
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
-  const [user_image, setUser_image] = useState(userDetails?.image);
+  const [user_image, setUser_image] = useState(userDetails?.user_image);
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     if (achivements) {
@@ -51,6 +51,7 @@ const PlayerProfile = () => {
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
   const [show3, setShow3] = useState(false);
+  console.log("userDetails", userDetails);
 
   useEffect(() => {
     axios
@@ -71,7 +72,7 @@ const PlayerProfile = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [userDetails]);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -91,9 +92,9 @@ const PlayerProfile = () => {
   // getting player details from backend
   useEffect(() => {
     axiosInstance
-      .get("/api/auth/getplayerdetails/", {})
+      .get(`/api/auth/getplayerdetails/${userDetails?.id}`, {})
       .then((res) => {
-        console.log("dataaaaaaaaaa222222", res.data);
+        console.log("dataaaaaaaaaa222222 ", res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
         setDiscription(res.data.Discription);
@@ -109,7 +110,7 @@ const PlayerProfile = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [userDetails]);
 
   return (
     <>

@@ -1,52 +1,64 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
 import axiosInstance from "../axiosInstance";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 export const PlayerContext = createContext<any>(null);
 
 const PlayerProvider = ({ children }: any) => {
+  const [decodedValues, setDecodedValues] = useState<any>();
   const [userDetails, setUserDetails] = useState<any>({
     id: "",
     firstName: "",
     lastName: "",
-    image: "",
+    user_image: "",
     coachname: "",
     discription: "",
     achivements: "",
   });
 
   // const navigate = useNavigate();
+  useEffect(() => {
+    const token = Cookies.get("token");
+    const decoded = token ? jwtDecode(token) : undefined;
+    setDecodedValues(decoded);
+  }, []);
+  console.log("decodedValues", decodedValues);
 
-  const fetchUser = async () => {
+  console.log("decodedValues", decodedValues?.userId);
+  const t = decodedValues?.userId;
+
+  useEffect(() => {
     try {
-      await axiosInstance
-        .get("/api/auth/getplayerdetails/", {})
-        .then((res) => {
-          console.log("dataaaaaaaaaa", res.data);
-          setUserDetails({
-            id: res.data.user_id,
-            firstName: res.data.firstname,
-            lastName: res.data.lastname,
-            role: res.data.role,
-            image: res.data.user_image,
-            phoneNumbers: res.data.phone[0].phone_number,
-            discription: res.data.Discription,
-            achivements: res.data.achivements,
-          });
-          // console.log("userDetails", userDetails);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      const fetchData = async () => {
+        if (t) {
+          // Check if t is not null
+          axiosInstance
+            .get(`http://localhost:8000/api/auth/getplayerdetails/${t}`)
+            .then((res) => {
+              console.log("dataaaaaaaaaa", res.data);
+              setUserDetails({
+                id: res.data.user_id,
+                firstName: res.data.firstname,
+                lastName: res.data.lastname,
+                role: res.data.role,
+                image: res.data.user_image,
+                phoneNumbers: res.data.phone[0].phone_number,
+                discription: res.data.Discription,
+                achivements: res.data.achivements,
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      };
+      fetchData();
     } catch (error) {
       console.error("Error:", error);
       // Handle error responses here if needed
     }
-  };
-
-  useEffect(() => {
-    console.log("fetching user");
-    fetchUser();
-  }, []);
+  }, [t]);
 
   // console.log("t", t);
   return (
