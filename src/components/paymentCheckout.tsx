@@ -1,8 +1,8 @@
-import React from "react";
-
+import React, { useContext, useEffect, useState } from "react";
 import md5 from "crypto-js/md5";
 import { Button, message } from "antd";
 import axios from "axios";
+import { ZoneBookingsContext } from "../context/zoneBookings.context";
 
 declare global {
   interface Window {
@@ -11,15 +11,19 @@ declare global {
 }
 
 const PaymentModal = (props: any): JSX.Element | null => {
+  const zoneBookings = useContext(ZoneBookingsContext);
+  console.log(zoneBookings);
+  console.log(zoneBookings.zoneBookings.date);
+  console.log(props.first);
+
   // Put the payment variables here
   const [messageApi, contextHolder] = message.useMessage();
   const key = "updatable";
   const orderId = props.orderId;
   const name = props.item;
   const amount = props.amount;
-  const merchantId = "1226118";
-  const merchantSecret =
-    "Mjk3NjYwMjU4MzIzNjcxODIzMTIyNTY5ODAzMTg1MjEzNjE5NDQzNw==";
+  const merchantId = "1226243";
+  const merchantSecret = "MTAwNjUyOTg1MTY5MDY1NjIyNjE3MzMzOTk1MzEzOTAzNjI3NTAw";
 
   const hashedSecret = md5(merchantSecret).toString().toUpperCase();
   let amountFormated = parseFloat(amount)
@@ -35,7 +39,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
 
   var payment = {
     sandbox: true, // if the account is sandbox or real
-    merchant_id: "1226118", // Replace your Merchant ID
+    merchant_id: "1226243", // Replace your Merchant ID
     return_url: "http://localhost:3000/bookings",
     cancel_url: "http://sample.com/cancel",
     notify_url: "http://sample.com/notify",
@@ -53,14 +57,19 @@ const PaymentModal = (props: any): JSX.Element | null => {
     hash: hash,
   };
 
- 
-
   // Called when user completed the payment. It can be a successful payment or failure
   window.payhere.onCompleted = function onCompleted(paymentId: string) {
     console.log("-----------befoe");
+    console.log(zoneBookings);
+    console.log(zoneBookings.zoneBookings.date);
     axios
-      .post("http://localhost:8000/api/postpaymentStatus", {
-        status: "Success",
+      .post("http://localhost:8000/api/addarcadebooking", {
+        status: "success",
+        date: zoneBookings.zoneBookings.date,
+        time: zoneBookings.zoneBookings.time,
+        participant_count: zoneBookings.zoneBookings.participant_count,
+        user_id: zoneBookings.zoneBookings.user_id,
+        zone_id: zoneBookings.zoneBookings.zone_id,
       })
       .then((res) => {
         console.log("Payment completed.");
@@ -102,6 +111,14 @@ const PaymentModal = (props: any): JSX.Element | null => {
           justifyContent: "center",
           alignItems: "center",
         }}
+        disabled={
+          
+        props.date === "" ||
+          props.time === "" ||
+          props.pcount === ""||
+          props.userId === "" ||
+          props.zoneId === ""
+        }
         onClick={pay}
       >
         Pay with Payhere

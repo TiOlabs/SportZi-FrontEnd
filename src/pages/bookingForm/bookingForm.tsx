@@ -24,6 +24,7 @@ import { UserIdContext } from "../../context/userId.context";
 const { Option } = Select;
 
 const BookingForm = () => {
+  const { setZoneBookings } = useContext(ZoneBookingsContext);
   const { setUserId } = useContext(UserIdContext);
   const [form] = Form.useForm();
   const [decodedValues, setDecodedValues] = useState<any>();
@@ -176,20 +177,42 @@ const BookingForm = () => {
       return; // Stop further execution
     } else {
       try {
-        const res = await axiosInstance.post(
-          `http://localhost:8000/api/addarcadebooking`,
-          {
-            date: date,
-            time: time,
-            // rate: fullAmount,
-            participant_count: pcountint,
-            user_id: userId,
-            zone_id: zoneId,
-          }
-        );
-        console.log(res);
-        console.log(res.data.cancel_by_admin);
+        setZoneBookings({
+          date: date,
+          time: time,
+          participant_count: pcountint,
+          user_id: userId,
+          zone_id: zoneId,
+        });
+
+        // setZoneBookings(
+        //   {
+        //     date: date,
+        //     time: time,
+        //     participant_count: pcountint,
+        //     user_id: userId,
+        //     zone_id: zoneId,
+        //   },
+        //   () => {
+        //     console.log("Zone Bookings added");
+        //   }
+        // );
+
+        // const res = await axiosInstance.post(
+        //   `http://localhost:8000/api/addarcadebooking`,
+        //   {
+        //     date: date,
+        //     time: time,
+        //     // rate: fullAmount,
+        //     participant_count: pcountint,
+        //     user_id: userId,
+        //     zone_id: zoneId,
+        //   }
+        // );
+        // console.log(res);
+        // console.log(res.data.cancel_by_admin);
       } catch (err) {
+        console.log("Errorrr");
         console.log("Error");
         console.log(err);
       }
@@ -213,20 +236,28 @@ const BookingForm = () => {
       });
     }, 1000);
   };
-  const buttonData = [
-    { id: "1", time: "9.00-10.00" },
-    { id: "2", time: "10.00-11.00" },
-    { id: "3", time: "11.00-12.00", disabled: true },
-    { id: "4", time: "12.00-13.00" },
-    { id: "5", time: "13.00-14.00" },
-    { id: "6", time: "14.00-15.00" },
-    { id: "7", time: "15.00-16.00" },
-    { id: "8", time: "16.00-17.00" },
-    { id: "9", time: "17.00-18.00" },
-    { id: "10", time: "18.00-19.00" },
-    { id: "11", time: "19.00-20.00" },
-    { id: "12", time: "20.00-21.00" },
-  ];
+  const openTime = 9.0;
+  const closeTime = 21.0;
+  const timeStep = 1;
+  let buttonData = [];
+  for (let i = openTime; i < closeTime; i += timeStep) {
+    buttonData.push({ id: i, time: `${i}.00-${i + timeStep}.00` });
+  }
+
+  // const buttonData = [
+  //   { id: "1", time: "9.00-10.00" },
+  //   { id: "2", time: "10.00-11.00" },
+  //   { id: "3", time: "11.00-12.00" },
+  //   { id: "4", time: "12.00-13.00" },
+  //   { id: "5", time: "13.00-14.00" },
+  //   { id: "6", time: "14.00-15.00" },
+  //   { id: "7", time: "15.00-16.00" },
+  //   { id: "8", time: "16.00-17.00" },
+  //   { id: "9", time: "17.00-18.00" },
+  //   { id: "10", time: "18.00-19.00" },
+  //   { id: "11", time: "19.00-20.00" },
+  //   { id: "12", time: "20.00-21.00" },
+  // ];
 
   return (
     <div style={{ margin: "2%" }}>
@@ -365,25 +396,31 @@ const BookingForm = () => {
                 {buttonData.map((button) => (
                   <button
                     disabled={
-                      bookingDate.find((booking) => booking.time === button.id)
+                      bookingDate.find(
+                        (booking) => booking.time === button.id.toString()
+                      )
                         ? true
                         : false
                     }
                     key={button.id}
-                    id={button.id}
+                    id={button.id.toString()}
                     type="button"
-                    onClick={() => setTime(button.id)}
+                    onClick={() => setTime(button.id.toString())}
                     style={{
                       width: "100%",
                       padding: "5%",
                       backgroundColor: bookingDate.find(
-                        (booking) => booking.time === button.id
+                        (booking) => booking.time === button.id.toString()
                       )
                         ? "red"
+                        : button.id.toString() === time
+                        ? "#1677FF"
                         : "white",
                     }}
                   >
-                    {bookingDate.find((booking) => booking.time === button.id)
+                    {bookingDate.find(
+                      (booking) => booking.time === button.id.toString()
+                    )
                       ? "Booked"
                       : button.time}
                   </button>
@@ -410,7 +447,6 @@ const BookingForm = () => {
           <Col xs={8} lg={6}>
             <Button
               type="primary"
-              htmlType="submit"
               style={{
                 width: "90%",
                 height: "50px",
@@ -436,6 +472,7 @@ const BookingForm = () => {
               {contextHolder}
 
               <PaymentModal
+                htmlType="submit"
                 item={"Zone Booking"}
                 orderId={5}
                 amount={fullAmount}
@@ -447,6 +484,11 @@ const BookingForm = () => {
                 address={paymentDetails?.address}
                 city={paymentDetails?.city}
                 country={paymentDetails?.country}
+                date={date}
+                time={time}
+                pcount={pcount}
+                userId={userId}
+                zoneId={zoneId}
               />
             </div>
           </Col>
