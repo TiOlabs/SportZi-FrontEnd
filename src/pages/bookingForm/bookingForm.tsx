@@ -236,20 +236,28 @@ const BookingForm = () => {
       });
     }, 1000);
   };
-  const buttonData = [
-    { id: "1", time: "9.00-10.00" },
-    { id: "2", time: "10.00-11.00" },
-    { id: "3", time: "11.00-12.00", disabled: true },
-    { id: "4", time: "12.00-13.00" },
-    { id: "5", time: "13.00-14.00" },
-    { id: "6", time: "14.00-15.00" },
-    { id: "7", time: "15.00-16.00" },
-    { id: "8", time: "16.00-17.00" },
-    { id: "9", time: "17.00-18.00" },
-    { id: "10", time: "18.00-19.00" },
-    { id: "11", time: "19.00-20.00" },
-    { id: "12", time: "20.00-21.00" },
-  ];
+  const openTime = 9.00;
+  const closeTime = 21.00;
+  const timeStep = 1;
+  let buttonData = [];  
+  for (let i = openTime; i <= closeTime; i += timeStep) {
+    buttonData.push({ id: i, time: `${i}.00-${i + timeStep}.00` });
+  }
+
+  // const buttonData = [
+  //   { id: "1", time: "9.00-10.00" },
+  //   { id: "2", time: "10.00-11.00" },
+  //   { id: "3", time: "11.00-12.00" },
+  //   { id: "4", time: "12.00-13.00" },
+  //   { id: "5", time: "13.00-14.00" },
+  //   { id: "6", time: "14.00-15.00" },
+  //   { id: "7", time: "15.00-16.00" },
+  //   { id: "8", time: "16.00-17.00" },
+  //   { id: "9", time: "17.00-18.00" },
+  //   { id: "10", time: "18.00-19.00" },
+  //   { id: "11", time: "19.00-20.00" },
+  //   { id: "12", time: "20.00-21.00" },
+  // ];
 
   return (
     <div style={{ margin: "2%" }}>
@@ -388,25 +396,25 @@ const BookingForm = () => {
                 {buttonData.map((button) => (
                   <button
                     disabled={
-                      bookingDate.find((booking) => booking.time === button.id)
+                      bookingDate.find((booking) => booking.time === button.id.toString())
                         ? true
                         : false
                     }
                     key={button.id}
-                    id={button.id}
+                    id={button.id.toString()}
                     type="button"
-                    onClick={() => setTime(button.id)}
+                    onClick={() => setTime(button.id.toString())}
                     style={{
                       width: "100%",
                       padding: "5%",
                       backgroundColor: bookingDate.find(
-                        (booking) => booking.time === button.id
+                        (booking) => booking.time === button.id.toString()
                       )
                         ? "red"
                         : "white",
                     }}
                   >
-                    {bookingDate.find((booking) => booking.time === button.id)
+                    {bookingDate.find((booking) => booking.time === button.id.toString())
                       ? "Booked"
                       : button.time}
                   </button>
