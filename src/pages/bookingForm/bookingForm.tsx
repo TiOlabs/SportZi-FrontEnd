@@ -24,6 +24,7 @@ import { UserIdContext } from "../../context/userId.context";
 const { Option } = Select;
 
 const BookingForm = () => {
+  const { setZoneBookings } = useContext(ZoneBookingsContext);
   const { setUserId } = useContext(UserIdContext);
   const [form] = Form.useForm();
   const [decodedValues, setDecodedValues] = useState<any>();
@@ -176,20 +177,42 @@ const BookingForm = () => {
       return; // Stop further execution
     } else {
       try {
-        const res = await axiosInstance.post(
-          `http://localhost:8000/api/addarcadebooking`,
-          {
-            date: date,
-            time: time,
-            // rate: fullAmount,
-            participant_count: pcountint,
-            user_id: userId,
-            zone_id: zoneId,
-          }
-        );
-        console.log(res);
-        console.log(res.data.cancel_by_admin);
+        setZoneBookings({
+          date: date,
+          time: time,
+          participant_count: pcountint,
+          user_id: userId,
+          zone_id: zoneId,
+        });
+
+        // setZoneBookings(
+        //   {
+        //     date: date,
+        //     time: time,
+        //     participant_count: pcountint,
+        //     user_id: userId,
+        //     zone_id: zoneId,
+        //   },
+        //   () => {
+        //     console.log("Zone Bookings added");
+        //   }
+        // );
+
+        // const res = await axiosInstance.post(
+        //   `http://localhost:8000/api/addarcadebooking`,
+        //   {
+        //     date: date,
+        //     time: time,
+        //     // rate: fullAmount,
+        //     participant_count: pcountint,
+        //     user_id: userId,
+        //     zone_id: zoneId,
+        //   }
+        // );
+        // console.log(res);
+        // console.log(res.data.cancel_by_admin);
       } catch (err) {
+        console.log("Errorrr");
         console.log("Error");
         console.log(err);
       }
@@ -410,7 +433,6 @@ const BookingForm = () => {
           <Col xs={8} lg={6}>
             <Button
               type="primary"
-              htmlType="submit"
               style={{
                 width: "90%",
                 height: "50px",
@@ -436,6 +458,7 @@ const BookingForm = () => {
               {contextHolder}
 
               <PaymentModal
+                htmlType="submit"
                 item={"Zone Booking"}
                 orderId={5}
                 amount={fullAmount}

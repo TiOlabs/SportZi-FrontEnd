@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import md5 from "crypto-js/md5";
 import { Button, message } from "antd";
 import axios from "axios";
+import {ZoneBookingsContext} from "../context/zoneBookings.context";
 
 declare global {
   interface Window {
@@ -11,6 +12,12 @@ declare global {
 }
 
 const PaymentModal = (props: any): JSX.Element | null => {
+  const zoneBookings = useContext(ZoneBookingsContext);
+  console.log(zoneBookings);
+  console.log(zoneBookings.zoneBookings.date);
+   console.log(props.first)
+ 
+
   // Put the payment variables here
   const [messageApi, contextHolder] = message.useMessage();
   const key = "updatable";
@@ -58,9 +65,16 @@ const PaymentModal = (props: any): JSX.Element | null => {
   // Called when user completed the payment. It can be a successful payment or failure
   window.payhere.onCompleted = function onCompleted(paymentId: string) {
     console.log("-----------befoe");
+    console.log(zoneBookings);
+    console.log(zoneBookings.zoneBookings.date);
     axios
-      .post("http://localhost:8000/api/postpaymentStatus", {
-        status: "Success",
+      .post( "http://localhost:8000/api/addarcadebooking", {
+        status: "success",
+        date:zoneBookings.zoneBookings.date,
+        time: zoneBookings.zoneBookings.time,
+        participant_count: zoneBookings.zoneBookings.participant_count,
+        user_id: zoneBookings.zoneBookings.user_id,
+        zone_id: zoneBookings.zoneBookings.zone_id,
       })
       .then((res) => {
         console.log("Payment completed.");
