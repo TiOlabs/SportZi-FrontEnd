@@ -470,6 +470,11 @@ const BookingForm = () => {
                 address={paymentDetails?.address}
                 city={paymentDetails?.city}
                 country={paymentDetails?.country}
+                date={date}
+                time={time}
+                pcount={pcount}
+                userId={userId}
+                zoneId={zoneId}
               />
             </div>
           </Col>
