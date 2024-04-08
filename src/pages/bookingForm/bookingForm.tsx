@@ -236,10 +236,10 @@ const BookingForm = () => {
       });
     }, 1000);
   };
-  const openTime = 9.00;
-  const closeTime = 21.00;
+  const openTime = 9.0;
+  const closeTime = 21.0;
   const timeStep = 1;
-  let buttonData = [];  
+  let buttonData = [];
   for (let i = openTime; i <= closeTime; i += timeStep) {
     buttonData.push({ id: i, time: `${i}.00-${i + timeStep}.00` });
   }
@@ -396,7 +396,9 @@ const BookingForm = () => {
                 {buttonData.map((button) => (
                   <button
                     disabled={
-                      bookingDate.find((booking) => booking.time === button.id.toString())
+                      bookingDate.find(
+                        (booking) => booking.time === button.id.toString()
+                      )
                         ? true
                         : false
                     }
@@ -411,10 +413,14 @@ const BookingForm = () => {
                         (booking) => booking.time === button.id.toString()
                       )
                         ? "red"
+                        : button.id.toString() === time
+                        ? "#1677FF"
                         : "white",
                     }}
                   >
-                    {bookingDate.find((booking) => booking.time === button.id.toString())
+                    {bookingDate.find(
+                      (booking) => booking.time === button.id.toString()
+                    )
                       ? "Booked"
                       : button.time}
                   </button>
