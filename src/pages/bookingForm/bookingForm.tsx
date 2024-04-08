@@ -240,7 +240,7 @@ const BookingForm = () => {
   const closeTime = 21.0;
   const timeStep = 1;
   let buttonData = [];
-  for (let i = openTime; i <= closeTime; i += timeStep) {
+  for (let i = openTime; i < closeTime; i += timeStep) {
     buttonData.push({ id: i, time: `${i}.00-${i + timeStep}.00` });
   }
 
