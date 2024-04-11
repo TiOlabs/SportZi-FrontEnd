@@ -40,24 +40,13 @@ const buttonFormItemLayout = {
 
 //css
 const commonInputStyle = {
-  // backgroundColor: "#d2f0ef",
+  backgroundColor: "#d2f0ef",
   height: "40px",
-};
-
-const commonLabelStyle = {
-  color: "blue",
-  fontSize: "16px",
 };
 
 const { Option } = Select;
 
-const validatePhoneNumber = (_: any, value: string) => {
-  const phoneRegex = /^[0-9]{10}$/;
-  if (phoneRegex.test(value)) {
-    return Promise.resolve();
-  }
-  return Promise.reject("Invalid phone number");
-};
+
 
 // function starting
 const SignupArcadeManager = () => {
@@ -93,12 +82,6 @@ const SignupArcadeManager = () => {
 
   const [form] = Form.useForm();
 
-  const validatePassword = async (_: any, value: string) => {
-    if (value && value.length < 8) {
-      return Promise.reject("Password must be at least 8 characters");
-    }
-    return Promise.resolve();
-  };
 
   const onFinish = async () => {
     try {
@@ -128,6 +111,29 @@ const SignupArcadeManager = () => {
       console.log(err);
       alert(err);
     }
+  };
+
+  const validateName =  (_: any, value: string) => {
+    const phoneRegex = /^[a-zA-Z]+$/;
+    if (!value || phoneRegex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Invalid name");
+  };
+
+  const validatePassword = async (_: any, value: string) => {
+    if (value && value.length < 8) {
+      return Promise.reject("Password must be at least 8 characters");
+    }
+    return Promise.resolve();
+  };
+
+  const validatePhoneNumber = (_: any, value: string) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!value || phoneRegex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Invalid phone number");
   };
 
   return (
@@ -258,8 +264,11 @@ const SignupArcadeManager = () => {
                     message: "Please input your firstname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
-                style={{ ...commonLabelStyle }}
+                // style={{ ...commonLabelStyle }}
               >
                 <Input
                   placeholder="Enter your first name"
@@ -278,6 +287,9 @@ const SignupArcadeManager = () => {
                     message: "Please input your lastname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
               >
                 <Input
@@ -365,11 +377,10 @@ const SignupArcadeManager = () => {
                 label="Phone Number"
                 rules={[
                   {
-                    // required: true,
-                    // message: "Please input your phone number!",
+                    required: true,
+                    message: "Please input your phone number!",
                   },
                   {
-                    required: true,
                     validator: validatePhoneNumber,
                   },
                 ]}
@@ -422,7 +433,6 @@ const SignupArcadeManager = () => {
                     whitespace: true,
                   },
                 ]}
-                style={{ ...commonLabelStyle }}
               >
                 <Input
                   placeholder="Enter your arcade name"
@@ -464,7 +474,6 @@ const SignupArcadeManager = () => {
                     whitespace: true,
                   },
                 ]}
-                style={{ ...commonLabelStyle }}
               >
                 <Input
                   placeholder="Enter the arcade location"
@@ -478,7 +487,6 @@ const SignupArcadeManager = () => {
                 label="Open Time"
                 rules={[
                   {
-                    // type: "object" as const,
                     required: true,
                     message: "Please select Open Time!",
                   },
@@ -486,7 +494,14 @@ const SignupArcadeManager = () => {
               >
                 <TimePicker
                   style={commonInputStyle}
-                  onChange={handleOpenTime}
+                  onChange={(time) => {
+                    if (time) {
+                      const formattedTime = time.format("HH:mm:ss");
+                      setOpentime(formattedTime);
+                    } else {
+                      setOpentime("");
+                    }
+                  }}
                 />
               </Form.Item>
 
@@ -495,7 +510,6 @@ const SignupArcadeManager = () => {
                 label="Closed Time"
                 rules={[
                   {
-                    // type: "object" as const,
                     required: true,
                     message: "Please select Open Time!",
                   },
@@ -503,7 +517,14 @@ const SignupArcadeManager = () => {
               >
                 <TimePicker
                   style={commonInputStyle}
-                  onChange={handleCloseTime}
+                  onChange={(time) => {
+                    if (time) {
+                      const formattedTime = time.format("HH:mm:ss");
+                      setClosetime(formattedTime);
+                    } else {
+                      setClosetime("");
+                    }
+                  }}
                 />
               </Form.Item>
 

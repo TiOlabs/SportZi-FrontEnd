@@ -26,6 +26,7 @@ const AppRoutes = () => {
     <>
       <Routes>
         <Route index element={<Home />} />
+<!--         <Route path="coaches" element={<ProtectedRoute> <Coaches/> </ProtectedRoute>} />  -->
         <Route path="coaches" element={<Coaches/> } /> 
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
@@ -41,7 +42,7 @@ const AppRoutes = () => {
         <Route path="CoachUser" element={<CoachProfileUser />} />
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
-        <Route path="admin" element={<ProtectedRoute> <Admin/> </ProtectedRoute>} />
+        <Route path="admin" element={ <Admin/> } />
         <Route path="coachbooking" element={<CoachBookingForm />} />
         <Route path="profile" element={<PlayerProfile />} />
       </Routes>

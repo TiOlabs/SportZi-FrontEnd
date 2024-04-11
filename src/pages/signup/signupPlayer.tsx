@@ -7,11 +7,9 @@ import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
 import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
-import axios from "axios";
-import moment, { Moment } from "moment";
 import axiosInstance from "../../axiosInstance";
+import { Moment } from "moment";
 
-// import axiosInstance from "../../axiosInstance";
 
 //responsiveness
 const formItemLayout = {
@@ -43,24 +41,13 @@ const buttonFormItemLayout = {
 
 //css
 const commonInputStyle = {
-  // backgroundColor: "#d2f0ef",
+  backgroundColor: "#d2f0ef",
   height: "40px",
 };
-
-const commonLabelStyle = {
-  color: "blue",
-  fontSize: "16px",
-};
-
 const { Option } = Select;
 
-const validatePhoneNumber = (_: any, value: string) => {
-  const phoneRegex = /^[0-9]{10}$/;
-  if (phoneRegex.test(value)) {
-    return Promise.resolve();
-  }
-  return Promise.reject("Invalid phone number");
-};
+
+
 
 // function starting
 const SignupPlayer = () => {
@@ -74,12 +61,7 @@ const SignupPlayer = () => {
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
 
-  const validatePassword = async (_: any, value: string) => {
-    if (value && value.length < 8) {
-      return Promise.reject("Password must be at least 8 characters");
-    }
-    return Promise.resolve();
-  };
+  
 
   const onFinish = async () => {
     try {
@@ -109,6 +91,31 @@ const SignupPlayer = () => {
     }
   };
 
+
+
+  const validateName =  (_: any, value: string) => {
+    const phoneRegex = /^[a-zA-Z]+$/;
+    if (!value || phoneRegex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Invalid name");
+  };
+
+  const validatePhoneNumber = (_: any, value: string) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    if (phoneRegex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Invalid phone number");
+  };
+  
+  const validatePassword = async (_: any, value: string) => {
+    if (value && value.length < 8) {
+      return Promise.reject("Password must be at least 8 characters");
+    }
+    return Promise.resolve();
+  };
+
   return (
     <>
       <Row className="signupContainer" >
@@ -122,7 +129,6 @@ const SignupPlayer = () => {
         >
           <div style={{ textAlign: "center" }}>
             <Flex vertical gap="large" style={{ width: "100%" }}>
-              {/* <Link to="/signupPlayer"> */}
               <Button
                 type="default"
                 block
@@ -134,7 +140,6 @@ const SignupPlayer = () => {
               >
                 I'm an Athlete
               </Button>
-              {/* </Link> */}
 
               <Link to="/signupCoach">
                 <Button
@@ -237,8 +242,11 @@ const SignupPlayer = () => {
                     message: "Please input your firstname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
-                style={{ ...commonLabelStyle }}
+                // style={{ ...commonLabelStyle }}
               >
                 <Input
                   placeholder="Enter your first name"
@@ -257,6 +265,9 @@ const SignupPlayer = () => {
                     message: "Please input your lastname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
               >
                 <Input
@@ -323,11 +334,7 @@ const SignupPlayer = () => {
                       if (!value || getFieldValue("password") === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(
-                        new Error(
-                          "The new password that you entered do not match!"
-                        )
-                      );
+                      return Promise.reject("The new password that you entered do not match!");
                     },
                   }),
                 ]}
@@ -362,20 +369,23 @@ const SignupPlayer = () => {
                 label="DOB"
                 rules={[
                   {
-                    type: "object" as const,
+                    // type: "object" as const,
                     required: true,
                     message: "Please select the birth date!",
                   },
                 ]}
               >
                 <DatePicker
-                  onChange={(
-                    date: Moment | null,
-                    dateString: string | string[]
-                  ) => {
-                    setSelectedDateString(
-                      Array.isArray(dateString) ? dateString[0] : dateString
-                    );
+                  style={{
+                    ...commonInputStyle,
+                  }}
+                  onChange={(date: Moment | null) => {
+                    if (date) {
+                      const formattedDate = date.format("YYYY-MM-DD");
+                      setSelectedDateString(formattedDate);
+                    } else {
+                      setSelectedDateString(""); 
+                    }
                   }}
                 />
               </Form.Item>

@@ -112,25 +112,30 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-                {currentItems.map((coachAssignDetail: CoachAssignDetails) => (
-                  <Col
-                    lg={{ span: 5 }}
-                    md={{ span: 8 }}
-                    sm={{ span: 12 }}
-                    xs={{ span: 24 }}
-                  >
-                    <CoachCard
-                      coach_first_name={coachAssignDetail.coach.user.firstname}
-                      coach_last_name={coachAssignDetail.coach.user.lastname}
-                      short_description={
-                        coachAssignDetail.coach.short_desctiption
-                      }
-                      rate={coachAssignDetail.coach.rate}
-                      duration={coachAssignDetail.duration}
-                      coach_image={coachAssignDetail.coach_image}
-                    />
-                  </Col>
-                ))}
+                {coachAssignDetails?.map(
+                  (coachAssignDetail: CoachAssignDetails) => (
+                    <Col
+                      lg={{ span: 5 }}
+                      md={{ span: 8 }}
+                      sm={{ span: 12 }}
+                      xs={{ span: 24 }}
+                    >
+                      <CoachCard
+                        coach_first_name={
+                          coachAssignDetail.coach.user.firstname
+                        }
+                        coach_last_name={coachAssignDetail.coach.user.lastname}
+                        short_description={
+                          coachAssignDetail.coach.short_desctiption
+                        }
+                        rate={coachAssignDetail.coach.rate}
+                        duration={coachAssignDetail.duration}
+                        coach_image={coachAssignDetail.coach.user.user_image}
+                      />
+                    </Col>
+                  )
+                )}
+
               </Row>
               <Pagination
                 style={{ marginTop: "-30px" }}
