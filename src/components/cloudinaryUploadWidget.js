@@ -47,8 +47,14 @@ function CloudinaryUploadWidget({ uwConfig, setPublicId }) {
     <CloudinaryScriptContext.Provider value={{ loaded }}>
       <Button
         style={{
+          backgroundColor: "#fff",
+          color: "#0E458E",
+          border: "1px solid #0E458E",
           display: "flex",
           alignItems: "center",
+          fontFamily: "kanit",
+          fontWeight: "400",
+          fontSize: "18px",
           width: "100%",
           justifyContent: "center",
           height: "60px",

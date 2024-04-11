@@ -54,6 +54,7 @@ export interface User {
   country: String;
   user_image: String;
   Phone: UserPhone;
+  userPhotos: UserPhoto;
 }
 export interface UserPhone {
   user_id: String;
@@ -108,4 +109,8 @@ export interface Sport {
 export interface CoachFeedbacks {
   coach_feedback_id: String;
   rate: Number;
+}
+export interface UserPhoto{
+  user_id: String;
+  image: String;
 }
