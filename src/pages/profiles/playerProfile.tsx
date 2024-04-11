@@ -33,10 +33,9 @@ const PlayerProfile = () => {
   const [showMore, setShowMore] = useState(true);
   const [firstname, setFirstname] = useState(userDetails?.firstName);
   const [lastname, setLastname] = useState(userDetails?.lastName);
-  const [email, setEmail] = useState(userDetails?.email);
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
-  const [user_image, setUser_image] = useState(userDetails?.image);
+  const [user_image, setUser_image] = useState(userDetails?.user_image);
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     if (achivements) {
@@ -44,7 +43,6 @@ const PlayerProfile = () => {
     }
     return [];
   };
-
   // see more buttons
   const [playerBookingsData, setPlayerBookingsData] = useState<
     ZoneBookingDetails[]
@@ -54,6 +52,7 @@ const PlayerProfile = () => {
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
   const [show3, setShow3] = useState(false);
+  console.log("userDetails", userDetails);
 
   useEffect(() => {
     axios
@@ -74,7 +73,7 @@ const PlayerProfile = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [userDetails]);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -91,18 +90,14 @@ const PlayerProfile = () => {
   };
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-
-  // function to the edit profiles
-
   // getting player details from backend
   useEffect(() => {
     axiosInstance
-      .get("/api/auth/getplayerdetails/", {})
+      .get(`/api/auth/getplayerdetails/${userDetails?.id}`, {})
       .then((res) => {
-        console.log("dataaaaaaaaaa222222", res.data);
+        console.log("dataaaaaaaaaa222222 ", res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
-        setEmail(res.data.email);
         setDiscription(res.data.Discription);
         setUser_image(res.data.user_image);
         const achiv = res.data.achivement;
@@ -116,8 +111,7 @@ const PlayerProfile = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-  const [form] = Form.useForm();
+  }, [userDetails]);
 
   return (
     <>

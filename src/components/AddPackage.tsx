@@ -8,11 +8,6 @@ import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 
 const AddPackage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fileList, setFileList] = useState([]);
-
-  const handleChange = (value: any) => {
-    console.log(`Selected: ${value}`);
-  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -24,13 +19,6 @@ const AddPackage = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-  };
-
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
   };
   const [duration, setDuration] = useState("");
   const [rate, setRate] = useState("");
@@ -156,6 +144,13 @@ const AddPackage = () => {
             required: true,
             message: "Please input your number!",
           },
+          {
+            validator: (_, value) => {
+              if (value <= 0) {
+                return Promise.reject(new Error("Rate must be greater than 0"));
+              }
+            }
+          }
         ]}
       >
         <InputNumber

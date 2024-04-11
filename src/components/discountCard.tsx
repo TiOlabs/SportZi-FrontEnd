@@ -35,7 +35,6 @@ const DiscountCard = (props: any) => {
                 // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                 // .resize(Resize.scale().width(200).height(200))
               }
-              
             />
           </div>
 

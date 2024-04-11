@@ -16,6 +16,10 @@ import { useContext, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { PlayerContext } from "../context/player.context";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
+import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
+import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
+import { fill } from "@cloudinary/url-gen/actions/resize";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -51,6 +55,48 @@ const PlayerEdit = ({
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
+  const [publicId, setPublicId] = useState("");
+  const [cloudName] = useState("dle0txcgt");
+  const [uploadPreset] = useState("n6ykxpof");
+  const [uwConfig] = useState({
+    cloudName,
+    uploadPreset,
+    cropping: true, //add a cropping step
+    cropWidth: 200, //crop the image to the given width
+    cropHeight: 200, //crop the image to the given height
+    showAdvancedOptions: true, //add advanced options (public_id and tag)
+    // sources: [ "local", "url"], // restrict the upload sources to URL and local files
+    // multiple: false,  //restrict upload to a single file
+    folder: "sportzi", //upload files to the specified folder
+    // tags: ["users", "profile"], //add the given tags to the uploaded files
+    // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
+    // clientAllowedFormats: ["images"], //restrict uploading to image files only
+    // maxImageFileSize: 2000000,  //restrict file size to less than 2MB
+    // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
+    // theme: "purple", //change to a purple theme
+    // maxImageHeight:100, //Scales the image down to a height of 2000 pixels before uploading
+    // minImageHeight:100, //Scales the image up to a height of 100 pixels before uploading
+    // cropImage: true, //crop the image to the given width and height
+    // widthOfCrop: "200px", //crop the image to the given width
+    // heightOfCrop: "200px", //crop the image to the given height
+    resize: fill(200, 200), //resize the image to the given width and height
+    w_200: fill(200), //resize the image to the given width
+    h_100: fill(100), //resize the image to the given height
+    c_fit: "fit", //applies the fit crop mode
+    cropingAspectRatio: 1, //crop the image to the given aspect ratio
+    croppingCoordinatesMode: "custom", //crop the image to the given aspect ratio
+    croppingShowDimensions: true, //crop the image to the given aspect ratio
+    croppingDefaultSelectionRatio: 1, //crop the image to the given aspect ratio
+    croppingValidateDimensions: true, //crop the image to the given aspect ratio
+  });
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+
+  const imgObject = cld.image(publicId);
+  console.log(imgObject);
 
   const showDrawer = () => {
     setOpen(true);
@@ -58,16 +104,20 @@ const PlayerEdit = ({
   const onClose = () => {
     setOpen(false);
   };
-
+  console.log("inside try");
+  console.log("inside try", userDetails?.id);
   const onFinish = () => {
     try {
+      console.log("inside tryyyyy");
+      console.log("inside tryyyyyy", userDetails?.id);
+      console.log("inside tryyyyyy", firstname);
       axiosInstance
-        .post("api/auth/updateplayerdetails", {
+        .put(`http://localhost:8000/api/auth/updatePlayerdetails/${userDetails?.id}`, {
           firstname: firstname,
           lastname: lastname,
           discription: discription,
           achivements: achivements.split(","),
-          image: user_image,
+          user_image: publicId,
         })
         .then((res) => {
           setOpen(false);
@@ -79,6 +129,7 @@ const PlayerEdit = ({
     } catch (error) {
       setOpen(false);
       onClose();
+      console.error("Error:", error);
     }
   };
   const { useBreakpoint } = Grid;
@@ -123,6 +174,7 @@ const PlayerEdit = ({
       sm: { span: 16 },
     },
   };
+
   return (
     <>
       <p>
@@ -294,27 +346,15 @@ const PlayerEdit = ({
                 },
               ]}
               style={{}}
-            >
-              <Upload
-                listType="picture-card"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 1 ? null : uploadButton}
-              </Upload>
-              <Modal
-                open={previewOpen}
-                title={previewTitle}
-                footer={null}
-                onCancel={handleCancel}
-              >
-                <img
-                  alt="example"
-                  style={{ width: "100%" }}
-                  src={previewImage}
-                />
-              </Modal>
+            ><CloudinaryUploadWidget uwConfig={uwConfig} setPublicId={setPublicId} />
+
+            <AdvancedImage
+              style={{ maxWidth: "100px" }}
+              cldImg={imgObject}
+              plugins={[responsive(), placeholder()]}
+            />
+    
+          
             </Form.Item>
           </Form>
         </Drawer>

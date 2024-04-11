@@ -19,14 +19,15 @@ import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
-import {Auth,ProtectedRoute,PlayerRoute,CoachRoute,ManagerRoute,AdminRoute} from "../middlewares/auth";
+import {Auth,ProtectedRoute} from "../middlewares/auth";
 
 const AppRoutes = () => {
   return (
     <>
       <Routes>
         <Route index element={<Home />} />
-        <Route path="coaches" element={<ProtectedRoute> <Coaches/> </ProtectedRoute>} /> 
+<!--         <Route path="coaches" element={<ProtectedRoute> <Coaches/> </ProtectedRoute>} />  -->
+        <Route path="coaches" element={<Coaches/> } /> 
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
