@@ -17,7 +17,6 @@ import CoachProfileUser from "../pages/profiles/CoachProfileUser";
 import Admin from "../pages/admin/admin";
 import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
-import Auth from "../middlewares/auth";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
 import {Auth,ProtectedRoute,PlayerRoute,CoachRoute,ManagerRoute,AdminRoute} from "../middlewares/auth";
@@ -27,7 +26,7 @@ const AppRoutes = () => {
     <>
       <Routes>
         <Route index element={<Home />} />
-        <Route path="coaches" element={<CoachRoute> <Coaches/> </CoachRoute>} /> 
+        <Route path="coaches" element={<ProtectedRoute> <Coaches/> </ProtectedRoute>} /> 
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
@@ -42,7 +41,7 @@ const AppRoutes = () => {
         <Route path="CoachUser" element={<CoachProfileUser />} />
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
-        <Route path="admin" element={<ProtectedRoute> <Admin/> </ProtectedRoute>} />
+        <Route path="admin" element={ <Admin/> } />
         <Route path="coachbooking" element={<CoachBookingForm />} />
         <Route path="profile" element={<PlayerProfile />} />
       </Routes>

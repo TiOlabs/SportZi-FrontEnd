@@ -9,11 +9,8 @@ import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axios from "axios";
 
-import  {Moment}  from "moment";
+import { Moment } from "moment";
 import axiosInstance from "../../axiosInstance";
-
-
-
 
 //responsiveness
 const formItemLayout = {
@@ -45,24 +42,11 @@ const buttonFormItemLayout = {
 
 //css
 const commonInputStyle = {
-  // backgroundColor: "#d2f0ef",
+  backgroundColor: "#d2f0ef",
   height: "40px",
 };
 
-const commonLabelStyle = {
-  color: "blue",
-  fontSize: "16px",
-};
-
 const { Option } = Select;
-
-const validatePhoneNumber = (_: any, value: string) => {
-  const phoneRegex = /^[0-9]{10}$/;
-  if (phoneRegex.test(value)) {
-    return Promise.resolve();
-  }
-  return Promise.reject("Invalid phone number");
-};
 
 // function starting
 const SignupCoach = () => {
@@ -77,6 +61,43 @@ const SignupCoach = () => {
   const [gender, setGender] = useState("");
   const [sport, setSport] = useState("");
 
+  const onFinish = async () => {
+    try {
+      const response = await axiosInstance
+        .post("/api/addcoach", {
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          password: password,
+          phone_number: phone,
+          DOB: selectedDateString,
+          gender: gender,
+          sport_name: sport,
+        })
+        .then((res) => {
+          console.log(res);
+          alert("Form submitted successfully!");
+          form.resetFields();
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err.response.data.message);
+        });
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+  };
+
+
+  const validateName =  (_: any, value: string) => {
+    const phoneRegex = /^[a-zA-Z]+$/;
+    if (!value || phoneRegex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Invalid name");
+  };
+
   const validatePassword = async (_: any, value: string) => {
     if (value && value.length < 8) {
       return Promise.reject("Password must be at least 8 characters");
@@ -84,35 +105,13 @@ const SignupCoach = () => {
     return Promise.resolve();
   };
 
-  const onFinish = async () => {
-    try {
-      const response = await axiosInstance.post("/api/addcoach", {
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        password: password,
-        phone_number: phone,
-        DOB: selectedDateString,
-        gender: gender,
-        sport_name:sport,
-      })
-      .then(res =>{
-        console.log(res);
-        alert("Form submitted successfully!");
-        form.resetFields();
-      }).catch(err =>{
-        console.log(err);
-        alert(err.response.data.message);
-      });
-
-
-    } catch (err) {
-      console.log(err);
-      alert(err);
+  const validatePhoneNumber = (_: any, value: string) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    if (phoneRegex.test(value)) {
+      return Promise.resolve();
     }
+    return Promise.reject("Invalid phone number");
   };
- 
-    
 
   return (
     <>
@@ -242,8 +241,11 @@ const SignupCoach = () => {
                     message: "Please input your firstname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
-                style={{ ...commonLabelStyle }}
+                // style={{ ...commonLabelStyle }}
               >
                 <Input
                   placeholder="Enter your first name"
@@ -262,6 +264,9 @@ const SignupCoach = () => {
                     message: "Please input your lastname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
               >
                 <Input
@@ -367,20 +372,22 @@ const SignupCoach = () => {
                 label="DOB"
                 rules={[
                   {
-                    type: "object" as const,
                     required: true,
                     message: "Please select the birth date!",
                   },
                 ]}
               >
                 <DatePicker
-                  onChange={(
-                    date: Moment | null,
-                    dateString: string | string[]
-                  ) => {
-                    setSelectedDateString(
-                      Array.isArray(dateString) ? dateString[0] : dateString
-                    );
+                  style={{
+                    ...commonInputStyle,
+                  }}
+                  onChange={(date: Moment | null) => {
+                    if (date) {
+                      const formattedDate = date.format("YYYY-MM-DD");
+                      setSelectedDateString(formattedDate);
+                    } else {
+                      setSelectedDateString("");
+                    }
                   }}
                 />
               </Form.Item>
@@ -470,7 +477,10 @@ const SignupCoach = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <Link to={"/login"}><a href="">Sign in here</a> </Link> 
+                  Already have an account{" "}
+                  <Link to={"/login"}>
+                    <a href="">Sign in here</a>{" "}
+                  </Link>
                 </div>
               </Form.Item>
             </Form>

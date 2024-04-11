@@ -161,7 +161,7 @@ const Navbar: React.FC = () => {
     setOpen(newOpen);
   };
   const token = Cookies.get("token");
-  console.log(token);
+  // console.log(token);
   function logOut() {
     // Remove the token cookie
     Cookies.remove("token");

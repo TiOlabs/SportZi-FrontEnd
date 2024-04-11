@@ -1,13 +1,12 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
 import { Form, Input, Row, Col, Button} from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+// import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
-import Home from "../home/home";
 
 const commonInputStyle = {
   height: "40px",
@@ -28,9 +27,7 @@ const Login = () => {
         })
         .then((res) => {
           navigate("/");
-          
-
-          console.log(res.data.token);
+          // console.log(res.data.token);
           Cookies.set("token", res.data.token, {
             expires: 1,
             httpOnly: false,
@@ -144,7 +141,6 @@ const Login = () => {
               ]}
             >
               <Input
-                // prefix={<LockOutlined className="site-form-item-icon" />}
                 style={commonInputStyle}
                 type="password"
                 placeholder="Password"
@@ -152,10 +148,6 @@ const Login = () => {
               />
             </Form.Item>
             <Form.Item style={{ textAlign: "right" }}>
-              {/* <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item> */}
-
               <a className="login-form-forgot" href="">
                 Forgot password
               </a>
