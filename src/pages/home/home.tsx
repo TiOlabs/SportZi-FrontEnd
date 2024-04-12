@@ -8,7 +8,7 @@ import AppFooter from "../../components/footer";
 import NavbarLogin from "../../components/NavBarLogin";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-
+import { usePlayer } from "../../context/player.context";
 // Redirect or perform other logout operations if necessary
 
 const Home = () => {
@@ -17,10 +17,11 @@ const Home = () => {
   useEffect(() => {
     setToken(Cookies.get("token"));
   }, []);
-
+  const { userDetails } = usePlayer();
+  console.log("userDetails", userDetails);
   return (
     <>
-      {token ? <Navbar /> : <NavbarLogin />}
+      {userDetails.id!=="" ? <Navbar/> : <NavbarLogin />}
       <HeroSection />
       <CoachCardSection />
       <DiscoutCardsSection />
