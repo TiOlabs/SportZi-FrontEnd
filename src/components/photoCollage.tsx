@@ -1,6 +1,6 @@
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { Col, Row } from "antd";
+import { Col, Row,Empty } from "antd";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
@@ -35,29 +35,52 @@ const PhotoCollage = () => {
       cloudName,
     },
   });
-  const items = Array.from({ length: 1 }).map(
-    (_, index) =>
-      userPhotos.slice(0, 8).map(
-        (photo: any, photoIndex: number) => (
-          console.log(photo.image),
-          (
-            <AdvancedImage
-              key={photoIndex}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center",
-              }}
-              cldImg={
-                cld.image(photo.image)
-                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                // .resize(Resize.scale().width(200).height(200))
-              }
-            />
-          )
+
+  
+  // Check if userPhotos is defined before using slice
+  const items = userPhotos ? 
+    Array.from({ length: 1 }).map((_, index) =>
+      userPhotos.slice(0, 8).map((photo: any, photoIndex: number) => (
+        console.log(photo.image),
+        (
+          <AdvancedImage
+            key={photoIndex}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+            cldImg={cld.image(photo.image)}
+          />
         )
-      )
+      ))
+    ) : <Empty />;
+  
+  // const items = Array.from({ length: 1 }).map(
+  //   (_, index) =>
+  //     userPhotos.slice(0, 8).map(
+  //       (photo: any, photoIndex: number) => (
+  //         console.log(photo.image),
+  //         (
+  //           <AdvancedImage
+  //             key={photoIndex}
+  //             style={{
+  //               width: "100%",
+  //               height: "100%",
+  //               objectFit: "cover",
+  //               objectPosition: "center",
+  //             }}
+  //             cldImg={
+  //               cld.image(photo.image)
+  //               // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+  //               // .resize(Resize.scale().width(200).height(200))
+  //             }
+  //           />
+  //         )
+  //       )
+  //     )
+  //   );
     //   <AdvancedImage
     //   style={{ height: "auto", width: "300px" }}
     //   cldImg={
@@ -78,7 +101,6 @@ const PhotoCollage = () => {
     //     objectPosition: "center",
     //   }}
     // />
-  );
   return (
     <Row
       style={{
@@ -90,7 +112,7 @@ const PhotoCollage = () => {
         marginBottom: "20px",
       }}
     >
-      <Row style={{ width: "90%" }}>
+      <Row style={{ width: "90%",display:"flex",alignItems:"center",justifyContent:"center" }}>
         <Col xs={24} sm={24} md={24} lg={24} xl={24}>
           <ResponsiveMasonry
             columnsCountBreakPoints={{ 300: 2, 500: 3, 700: 3, 900: 4 }}

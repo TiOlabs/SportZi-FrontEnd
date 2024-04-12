@@ -64,13 +64,10 @@ const AddPhotoButton = () => {
   );
   const [publicId, setPublicId] = useState("");
   const [cloudName] = useState("dle0txcgt");
-  const [uploadPreset] = useState("n6ykxpof");
+  const [uploadPreset] = useState("q25pptlj");
   const [uwConfig] = useState({
     cloudName,
     uploadPreset,
-    cropping: true, //add a cropping step
-    cropWidth: 200, //crop the image to the given width
-    cropHeight: 200, //crop the image to the given height
     showAdvancedOptions: true, //add advanced options (public_id and tag)
     // sources: [ "local", "url"], // restrict the upload sources to URL and local files
     // multiple: false,  //restrict upload to a single file
@@ -86,15 +83,6 @@ const AddPhotoButton = () => {
     // cropImage: true, //crop the image to the given width and height
     // widthOfCrop: "200px", //crop the image to the given width
     // heightOfCrop: "200px", //crop the image to the given height
-    resize: fill(200, 200), //resize the image to the given width and height
-    w_200: fill(200), //resize the image to the given width
-    h_100: fill(100), //resize the image to the given height
-    c_fit: "fit", //applies the fit crop mode
-    cropingAspectRatio: 1, //crop the image to the given aspect ratio
-    croppingCoordinatesMode: "custom", //crop the image to the given aspect ratio
-    croppingShowDimensions: true, //crop the image to the given aspect ratio
-    croppingDefaultSelectionRatio: 1, //crop the image to the given aspect ratio
-    croppingValidateDimensions: true, //crop the image to the given aspect ratio
   });
   const cld = new Cloudinary({
     cloud: {
