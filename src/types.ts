@@ -11,8 +11,8 @@ export interface Zone {
   rate: Number;
   arcade_location: String;
   manager_id: String;
-  opening_time: String;
-  closing_time: String;
+  open_time: String;
+  close_time: String;
   arcade_address: String;
   zone_image: String;
   arcade: Arcade;

@@ -21,9 +21,15 @@ import axiosInstance from "../../axiosInstance";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { UserIdContext } from "../../context/userId.context";
+import { useLocation } from "react-router-dom";
 const { Option } = Select;
 
 const BookingForm = () => {
+  const location = useLocation() as unknown as { bookings: any };
+  const { bookings } = location;
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [bookings]);
   const { setZoneBookings } = useContext(ZoneBookingsContext);
   const { setUserId } = useContext(UserIdContext);
   const [form] = Form.useForm();
@@ -236,8 +242,8 @@ const BookingForm = () => {
       });
     }, 1000);
   };
-  const openTime = 9.0;
-  const closeTime = 21.0;
+  const openTime = Number(zoneDetails?.open_time);
+  const closeTime = Number(zoneDetails?.close_time) ?? 0;
   const timeStep = 1;
   let buttonData = [];
   for (let i = openTime; i < closeTime; i += timeStep) {
@@ -374,14 +380,15 @@ const BookingForm = () => {
                 name="Time Slot"
                 style={{
                   display: "flex",
+                  marginTop: "20px",
                   flexDirection: "column",
                   rowGap: "20px",
                   width: "80%",
-                  height: "800px",
                   justifyContent: "center",
                   alignItems: "center",
                   alignSelf: "center",
-                  overflow: "auto",
+                  overflowY: "auto", // Set overflowY to "auto" to enable vertical scrolling
+                  maxHeight: "800px", // Adjust the maximum height to fit your layout
                 }}
               >
                 {bookingDate.map((booking) => {
@@ -447,6 +454,7 @@ const BookingForm = () => {
           <Col xs={8} lg={6}>
             <Button
               type="primary"
+              
               style={{
                 width: "90%",
                 height: "50px",
@@ -498,6 +506,8 @@ const BookingForm = () => {
         <AppFooter />
       </div>
     </div>
+   
+
   );
 };
 
