@@ -22,7 +22,8 @@ const ArcadeCard = (props: any) => {
   });
   console.log("props image hiiiiii", props.arcade_image);
   console.log("props", props);
-  console.log("props", props.arcade_rate);
+  console.log("props", props.arcade_rate[0].rate);
+
 
   return (
     <>
@@ -113,7 +114,7 @@ const ArcadeCard = (props: any) => {
             >
               <Rate
                 disabled
-                defaultValue={props.arcade_rate}
+                defaultValue={props.arcade_rate[0].rate}
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>

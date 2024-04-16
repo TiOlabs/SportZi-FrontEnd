@@ -87,7 +87,7 @@ export interface Arcade {
   arcade_name: String;
   arcade_email: String;
   arcade_location: String;
-  description: String;
+  distription: String;
   manager_id: String;
   opening_time: String;
   closing_time: String;
