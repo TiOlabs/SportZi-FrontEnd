@@ -26,7 +26,7 @@ const AppRoutes = () => {
     <>
       <Routes>
         <Route index element={<Home />} />
-        <Route
+        {/* <Route
           path="coaches"
           element={
             <ProtectedRoute>
@@ -34,7 +34,7 @@ const AppRoutes = () => {
               <Coaches />{" "}
             </ProtectedRoute>
           }
-        />
+        /> */}
         <Route path="coaches" element={<Coaches />} />
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
