@@ -236,12 +236,20 @@ const BookingForm = () => {
       });
     }, 1000);
   };
-  const openTime = 9.0;
-  const closeTime = 21.0;
-  const timeStep = 1;
+  const openTime = 9.00;
+  const closeTime = 21.00;
+  const timeStep =1;
   let buttonData = [];
+  
   for (let i = openTime; i < closeTime; i += timeStep) {
-    buttonData.push({ id: i, time: `${i}.00-${i + timeStep}.00` });
+    let nextTime = i + timeStep;
+    let hour = Math.floor(i);
+    let minute = (i - hour) * 60;
+    let nextHour = Math.floor(nextTime);
+    let nextMinute = (nextTime - nextHour) * 60;
+  
+    buttonData.push({ id: `${hour}:${minute < 10 ? '0' : ''}${minute}- ${nextHour}:${nextMinute < 10 ? '0' : ''}${nextMinute}`, time: `${hour}:${minute < 10 ? '0' : ''}${minute}- ${nextHour}:${nextMinute < 10 ? '0' : ''}${nextMinute}` });
+    console.log(buttonData)
   }
 
   // const buttonData = [
@@ -397,7 +405,7 @@ const BookingForm = () => {
                   <button
                     disabled={
                       bookingDate.find(
-                        (booking) => booking.time === button.id.toString()
+                        (booking) => booking.time === button.id
                       )
                         ? true
                         : false
@@ -405,21 +413,21 @@ const BookingForm = () => {
                     key={button.id}
                     id={button.id.toString()}
                     type="button"
-                    onClick={() => setTime(button.id.toString())}
+                    onClick={() => setTime(button.id)}
                     style={{
                       width: "100%",
                       padding: "5%",
                       backgroundColor: bookingDate.find(
-                        (booking) => booking.time === button.id.toString()
+                        (booking) => booking.time === button.id
                       )
                         ? "red"
-                        : button.id.toString() === time
+                        : button.id === time
                         ? "#1677FF"
                         : "white",
                     }}
                   >
                     {bookingDate.find(
-                      (booking) => booking.time === button.id.toString()
+                      (booking) => booking.time === button.id
                     )
                       ? "Booked"
                       : button.time}
