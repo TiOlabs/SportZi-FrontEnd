@@ -43,8 +43,10 @@ const AppRoutes = () => {
           path="bookings"
           element={
             <Auth>
-              {" "}
-              <BookingForm />{" "}
+              <ProtectedRoute>
+                {" "}
+                <BookingForm />{" "}
+              </ProtectedRoute>
             </Auth>
           }
         />
