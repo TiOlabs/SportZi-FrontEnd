@@ -4,6 +4,9 @@ import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
 import { ZoneBookingDetails } from "../../../types";
 import { Spin } from "antd";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { Link } from "react-router-dom";
 const { confirm } = Modal;
 
 const BookedArena = (props: any) => {
@@ -52,8 +55,6 @@ const BookedArena = (props: any) => {
         <Col
           style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}
         >
-          
-
           {filteredDataa.map((ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
               booking_id={ZoneBookingDetails.zone_booking_id}
@@ -70,6 +71,7 @@ const BookedArena = (props: any) => {
               booking_time={ZoneBookingDetails.time}
               participant_count={ZoneBookingDetails.participant_count}
               created_at={ZoneBookingDetails.created_at}
+              image={ZoneBookingDetails.user.user_image}
 
               // arcadeBookings={props.arcadeBookings}
               // setArcadeBookings={props.setArcadeBookings}
@@ -90,6 +92,7 @@ const BookedArena = (props: any) => {
     </Col>
   );
 };
+
 export default BookedArena;
 
 function DataRow(props: any) {
@@ -165,6 +168,12 @@ function DataRow(props: any) {
       },
     });
   };
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <Row
       style={{
@@ -230,15 +239,21 @@ function DataRow(props: any) {
         </div>
       </Col>
       <Col span={7}>
-        <div
-          style={{
-            borderRadius: "50%",
-            position: "absolute",
-            width: "80px",
-            height: "80px",
-            backgroundColor: "#000",
-          }}
-        ></div>
+        <Link to={`/profile/`}>
+          <AdvancedImage
+            style={{
+              borderRadius: "50%",
+              position: "absolute",
+              width: "80px",
+              height: "80px",
+            }}
+            cldImg={
+              cld.image(props?.image)
+              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+              // .resize(Resize.scale().width(200).height(200))
+            }
+          />
+        </Link>
         <div
           style={{
             display: "flex",
