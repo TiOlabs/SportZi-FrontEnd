@@ -15,6 +15,8 @@ import { AdvancedImage } from "@cloudinary/react";
 import { ZoneBookingDetails } from "../../types";
 import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
+import Home from "../home/home";
+import AppFooter from "../../components/footer";
 
 const requestList = [
   <CoachRequstRow />,
@@ -115,7 +117,7 @@ const PlayerProfile = () => {
 
   return (
     <>
-      <NavbarProfile />
+      {userDetails.id !== "" ? <NavbarProfile /> : <Home />}
 
       <style>
         @import
@@ -747,16 +749,21 @@ const PlayerProfile = () => {
             alignItems: "center",
           }}
         >
-          {playerBookingsData?.map((booking: ZoneBookingDetails) => (
-            <AvailableMetingstoPlayer
-              booking_id={booking.zone_booking_id}
-              zone_image={booking.zone.zone_image}
-              zone_name={booking.zone.zone_name}
-              booking_date={booking.date}
-              booking_time={booking.time}
-              venue={booking.zone.arcade.arcade_name}
-            />
-          ))}
+          {playerBookingsData && playerBookingsData.length > 0 ? (
+            playerBookingsData.map((booking: ZoneBookingDetails) => (
+              <AvailableMetingstoPlayer
+                key={booking.zone_booking_id} // Make sure to provide a unique key
+                booking_id={booking.zone_booking_id}
+                zone_image={booking.zone.zone_image}
+                zone_name={booking.zone.zone_name}
+                booking_date={booking.date}
+                booking_time={booking.time}
+                venue={booking.zone.arcade.arcade_name}
+              />
+            ))
+          ) : (
+            <p style={{ marginTop: "5%" }}>No bookings available.</p>
+          )}
         </div>
 
         {showMore ? (
@@ -789,6 +796,7 @@ const PlayerProfile = () => {
           </Button>
         )}
       </div>
+      <AppFooter />
     </>
   );
 };
