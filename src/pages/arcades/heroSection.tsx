@@ -133,7 +133,7 @@ const HeroSection = () => {
       <Row>
         <Col sm={0} xs={2} lg={3} md={3}></Col>
         <Col md={10} xs={20} lg={10}>
-          <div
+          {/* <div
             style={{
               width: "100%",
               marginTop: "-5%",
@@ -161,7 +161,7 @@ const HeroSection = () => {
                 </Space>
               </Button>
             </Dropdown>
-          </div>
+          </div> */}
         </Col>
         <Col sm={0} xs={4}></Col>
       </Row>

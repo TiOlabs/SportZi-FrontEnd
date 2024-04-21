@@ -87,18 +87,18 @@ export interface Arcade {
   arcade_name: String;
   arcade_email: String;
   arcade_location: String;
-  description: String;
+  distription: String;
   manager_id: String;
   opening_time: String;
   closing_time: String;
   arcade_address: String;
   arcade_image: String;
-  arcadefeedbacks: ArcadeFeedbacks;
+  arcadefeedbacks: ArcadeFeedbacks[];
 }
 
 export interface ArcadeFeedbacks {
+  arcade_feedback_id: String;
   rate: Number;
-  arcade_id: String;
   arcade: Arcade;
 }
 export interface Sport {
