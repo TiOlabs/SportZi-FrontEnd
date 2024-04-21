@@ -3,6 +3,7 @@ import {
   DollarOutlined,
   MenuOutlined,
   UserOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { Col, Row, Menu } from "antd";
 import type { MenuProps } from "antd";
@@ -19,6 +20,8 @@ import ComplitedBookings from "./paymentManagement/completedBookings";
 import AdminCanceled from "./paymentManagement/adminCancelled";
 import { ArcadeBookings } from "../../types";
 import axios from "axios";
+import UserReports from "./reportManagement/userReport";
+import { get } from "http";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -53,6 +56,9 @@ const items: MenuProps["items"] = [
     getItem("Booked Arena", "16"),
     getItem("Booked Coaches ", "17"),
     getItem("Package Enrolled", "18"),
+  ]),
+  getItem("Reports", "sub7", <WarningOutlined />, [
+    getItem("User Reports", "19"),
   ]),
 ];
 const SideBarAdminPage = () => {
@@ -108,6 +114,8 @@ const SideBarAdminPage = () => {
       setstts("bookedcoach");
     } else if (e.key === "18") {
       setstts("packageEnrolled");
+    }else if (e.key === "19") {
+      setstts("userReports");
     }
   };
   return (
@@ -177,6 +185,7 @@ const SideBarAdminPage = () => {
       {stts === "coachArcadeCanceled" && <CoachArcadeCancel />}
       {stts === "playerCanceled" && <PlayerCanceled />}
       {stts === "completedBooking" && <ComplitedBookings />}
+      {stts === "userReports" && <UserReports/>}
     </Row>
   );
 };
