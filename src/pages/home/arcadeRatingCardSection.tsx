@@ -46,7 +46,7 @@ const ArcadeRatingCardsSection = () => {
         {arcadeRatings?.map((arcadeRating: ArcadeFeedbacks) => (
           <Col lg={8} md={12} sm={24}>
             <ArcadeRatingCard
-              arcadeRating_id={arcadeRating.arcade_id}
+              arcadeRating_id={arcadeRating.arcade_feedback_id}
               arcadeRating={arcadeRating.rate}
               arcadeName={arcadeRating.arcade.arcade_name}
             />
