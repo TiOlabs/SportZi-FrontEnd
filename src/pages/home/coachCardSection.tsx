@@ -12,19 +12,18 @@ const CoachCardSection = () => {
   >([]);
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`
-        );
-        const data = await res.json();
-        setCoachAssignDetails(data);
-        console.log("coachaaaaaaaaaaa", data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
+    try{
+    const fetchData = async () => {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`
+      );
+      const data = await res.data;
+      setCoachAssignDetails(data);
+    };
+    fetchData();
+  } catch (e) {
+    console.log(e);
+  }
   }, []);
 
   const { lg, md, sm, xs } = useBreakpoint();

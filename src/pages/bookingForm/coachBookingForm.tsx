@@ -1,6 +1,6 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { Row, Col, Form, Button, Select, InputNumber, message } from "antd";
-import BookingFormPicture from "../../assets/BookingFormPicture.png";
+import BookingFormPicture from "../../assents/coachBookingForm1.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 
@@ -28,13 +28,13 @@ const CoachBookingForm = () => {
       }
     }
   };
-  
+
   return (
     <div style={{ margin: "2%" }}>
       {" "}
       <Row>
-        <Col lg={13} xs={24}></Col>
-        <Col lg={8} xs={24}>
+        <Col lg={24} xs={24}></Col>
+        <Col lg={24} xs={24}>
           {" "}
           <h1
             style={{
@@ -51,7 +51,7 @@ const CoachBookingForm = () => {
       <Form onFinish={handleFinish} layout="vertical">
         <Row>
           <Col xs={24} lg={10}>
-            <div style={{ backgroundColor: "#F0F8FF" }}>
+            <div style={{ backgroundColor: "#E9F6FC" }}>
               <Row gutter={16} style={{}}>
                 <Col
                   xs={24}
@@ -104,28 +104,23 @@ const CoachBookingForm = () => {
                   />
                 </Form.Item>
                 <Form.Item
-                  name="way_of_booking"
-                  label="Way of Booking"
-                  rules={[{ required: true }]}
+                  name="Duration"
+                  label="Duration"
+                  rules={[{ required: true, type: "number" }]}
                   style={{
                     width: "90%",
-                    marginTop: "0%",
                     marginLeft: "20px",
                   }}
                 >
-                  <Select
-                    placeholder="Select a Zone"
-                    onChange={(value) => setZone(value)}
-                    allowClear
+                  <InputNumber
                     style={{
                       height: "50px",
+                      width: "100%",
                       display: "flex",
-                      justifyContent: "center",
+                      alignItems: "center",
                     }}
-                  >
-                    <Option value="full">Full Zone</Option>
-                    <Option value="Individual">Individual</Option>
-                  </Select>
+                    onChange={(value) => setPcount(value?.toString() || "")}
+                  />
                 </Form.Item>
               </Row>
             </div>
@@ -137,7 +132,7 @@ const CoachBookingForm = () => {
           >
             <div
               style={{
-                backgroundColor: "#7493BF",
+                backgroundColor: "#BCE4EC",
                 width: "90%",
                 display: "flex",
                 justifyContent: "center",
@@ -263,7 +258,7 @@ const CoachBookingForm = () => {
         <Row>
           <Col xs={8} lg={6}>
             <Button
-              type="primary"
+           
               htmlType="submit"
               style={{
                 width: "90%",
@@ -271,6 +266,7 @@ const CoachBookingForm = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                backgroundColor: "#BAE5EE",
               }}
             >
               <LeftOutlined />
@@ -288,7 +284,7 @@ const CoachBookingForm = () => {
               }}
             >
               <Button
-                type="primary"
+              
                 htmlType="submit"
                 style={{
                   width: "90%",
@@ -296,6 +292,7 @@ const CoachBookingForm = () => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  backgroundColor: "#2EA8BF",
                 }}
               >
                 Submit

@@ -27,23 +27,23 @@ const handleMenuClick: MenuProps["onClick"] = (e) => {
 
 const items: MenuProps["items"] = [
   {
-    label: "Coach-1",
+    label: "Arcade-1",
     key: "1",
     icon: <UserOutlined />,
   },
   {
-    label: "Coach-2",
+    label: "Arcade-2",
     key: "2",
     icon: <UserOutlined />,
   },
   {
-    label: "Coach-3",
+    label: "Arcade-3",
     key: "3",
     icon: <UserOutlined />,
     danger: true,
   },
   {
-    label: "Coach-4",
+    label: "Arcade-4",
     key: "4",
     icon: <UserOutlined />,
     danger: true,
@@ -156,7 +156,7 @@ const HeroSection = () => {
             <Dropdown menu={menuProps}>
               <Button style={{ height: 40 }}>
                 <Space>
-                  Coaches
+                  Arcades
                   <DownOutlined />
                 </Space>
               </Button>

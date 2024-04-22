@@ -2,6 +2,7 @@ import { Col, Row } from "antd";
 import ArcadeCard from "../../components/ArcadeCardInArcadepage";
 import { useEffect, useState } from "react";
 import { Arcade } from "../../types";
+import axios from "axios";
 
 const ArcadeCardSection = () => {
   const [arcades, setarcades] = useState<Arcade[]>([]);
@@ -9,12 +10,12 @@ const ArcadeCardSection = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getarcadeDetails");
-
-        const data = await res.json();
-        console.log(data);
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails`
+        );
+        const data = await res.data;
         setarcades(data);
-        console.log(arcades);
+        console.log(arcades)
       };
       fetchData();
     } catch (e) {

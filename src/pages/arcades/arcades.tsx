@@ -16,10 +16,8 @@ const Arcades = () => {
     return ( 
         <>
         {token ? <Navbar /> : <NavbarLogin/>}
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3",marginTop:"30px" }}>
-          
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3",marginTop:"30px" }}>      
               <HeroSection />
-             
               <ArcadeCardSection />
               <AppFooter/>
          </div>

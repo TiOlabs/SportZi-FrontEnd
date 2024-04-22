@@ -2,23 +2,24 @@ import { Col, Row } from "antd";
 import ArcadeRatingCard from "../../components/arcadeRatingCard";
 import { useEffect, useState } from "react";
 import { ArcadeRating } from "../../types";
+import axios from "axios";
 const ArcadeRatingCardsSection = () => {
-    const [arcadeRatings, setArcadeRatings] = useState<ArcadeRating[]>([]);
-    useEffect(() => {   
-        try {
-            const fetchData = async () => {
-                const res = await fetch(
-                    "http://localhost:8000/api/getarcaderatings"
-                );
-                const data = await res.json();
-                setArcadeRatings(data);
-            };
-            fetchData();
-        } catch (e) {
-            console.log(e);
-        }
-    }, []);
-    console.log(arcadeRatings);
+  const [arcadeRatings, setArcadeRatings] = useState<ArcadeRating[]>([]);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getarcaderatings`
+        );
+        const data = await res.data;
+        setArcadeRatings(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+  console.log(arcadeRatings);
   return (
     <Row
       style={{
@@ -51,7 +52,6 @@ const ArcadeRatingCardsSection = () => {
             />
           </Col>
         ))}
-
       </Row>
     </Row>
   );
