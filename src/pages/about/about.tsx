@@ -67,7 +67,6 @@ const About = () => {
             style={{
               fontSize: 45,
               fontWeight: 300,
-
               marginTop: lg ? "12%" : "10%",
               marginBottom: lg ? "0%" : "3%",
               fontStyle: "kanit",

@@ -64,7 +64,7 @@ const AppRoutes = () => {
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
         <Route path="admin" element={<Admin />} />
-        <Route path="coachbooking" element={<CoachBookingForm />} />
+        <Route path="coachBookingForm" element={<CoachBookingForm />} />
         <Route path="profile" element={<PlayerProfile />} />
       </Routes>
     </>

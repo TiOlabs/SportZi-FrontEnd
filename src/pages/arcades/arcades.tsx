@@ -17,11 +17,11 @@ const Arcades = () => {
       const { userDetails } = usePlayer();
     return ( 
         <>
+
         {userDetails.id!=="" ? <Navbar/> : <NavbarLogin />}
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3",marginTop:"30px" }}>
           
               <HeroSection />
-             
               <ArcadeCardSection />
               <AppFooter/>
          </div>

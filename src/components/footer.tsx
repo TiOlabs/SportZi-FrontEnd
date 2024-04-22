@@ -1,6 +1,5 @@
-import { Col, Row, Select, Input, Button, List } from "antd";
+import { Col, Row, Select, Input, Button, } from "antd";
 import FooterLogo from "../assents/FooterLogo.png";
-import emailpng from "../assents/email.png";
 import type { SearchProps } from "antd/es/input/Search";
 import {
   MailOutlined,
@@ -21,10 +20,11 @@ import { Space } from "antd";
 const { Option } = Select;
 
 const buttonStyle = {
-  backgroundColor: "#9BBEED",
+  backgroundColor: "red",
   borderRadius: 0,
   borderColor: "#9BBEED",
   color: "#666666",
+  width: "30px",
 };
 
 const AppFooter = () => {
@@ -128,7 +128,6 @@ const AppFooter = () => {
                   width: "60%",
                   color: "#666666",
                   marginRight: "12%",
-
                   border: "none",
                   borderRadius: 0,
                   height: 34,
@@ -168,7 +167,7 @@ const AppFooter = () => {
                 Company
               </h4>
               <a
-                href="/About us"
+                href="/about"
                 style={{ color: "#626262", textDecoration: "none" }}
               >
                 <div
@@ -449,88 +448,3 @@ const AppFooter = () => {
 };
 
 export default AppFooter;
-
-/*
-import { Col, Row } from "antd";
-import FooterLogo from "../assents/FooterLogo.png";
-
-
-<style>
-  @import
-  url('https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap');
-</style>;
-
-
-const AppFooter = () => {
-  return (
-    <Row style={{backgroundColor:"EFF4FA"}}>
-<Row>
-    <Col lg={8}>
-    <img src={FooterLogo}
-    style={{height:"auto",width:"100%"}}/>
-    </Col>
-
-<Col sm={0} xs={6}></Col>
-        <Col md={8} xs={12}>
-        <div style={{ color: "#0E458E",
-              fontFamily: "Kanit, sans-serif",
-              fontSize: 22}}> Subscribe For Our Newsletter  </div>
-     
-        </Col>
-        <Col sm={0} xs={6}></Col>
-    
-</Row>
-
-    </Row>
-  );
-};
-
-export default AppFooter;
-
-
-
-
-
-
-
-
-
- const data = [
-  {
-    title1: 'Company',
-    content1 :['About us','Coaches','Arcades','Home']
-  },
-  {
-    title2: 'Resources',
-    content2 :['FAQ','Blog','Updates']
-  },
-  {
-    title3: 'Support',
-    content3:['Our story','Contact','News','Team']
-  },
-  {
-    title4: 'Site Map',
-    content4:['Packages','Meetings']
-  },
-]
-
-  
-
-
-
-
-
-
-
-
-
-<Row>
-
-
-
-
-</Row>
-
-
-
-*/

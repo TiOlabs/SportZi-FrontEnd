@@ -53,7 +53,6 @@ const ArcadeRatingCardsSection = () => {
             
           </Col>
         ))}
-
       </Row>
     </Row>
   );

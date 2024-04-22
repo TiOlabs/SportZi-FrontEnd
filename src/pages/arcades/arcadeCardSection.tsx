@@ -16,6 +16,7 @@ import type { SearchProps } from "antd/es/input/Search";
 import { DownOutlined, SortAscendingOutlined, StarOutlined, UserOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 
+
 const ArcadeCardSection = () => {
   const [loading, setLoading] = useState(true);
   const [arcades, setArcades] = useState<Arcade[]>([]);
@@ -24,6 +25,7 @@ const ArcadeCardSection = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
+
       const res = await fetch("http://localhost:8000/api/getarcadeDetails");
       const data = await res.json();
       let sortedArcades = [...data];

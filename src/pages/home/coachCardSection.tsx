@@ -22,6 +22,7 @@ const CoachCardSection = () => {
   const currentItems = coachAssignDetails.slice(startIndex, endIndex);
 
   useEffect(() => {
+
     try {
       const fetchData = async () => {
         const res = await fetch(
