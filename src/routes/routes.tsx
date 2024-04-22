@@ -4,7 +4,7 @@ import Coaches from "../pages/coaches/coaches";
 import Arcades from "../pages/arcades/arcades";
 import About from "../pages/about/about";
 import Login from "../pages/login/login";
-import Profiles from "../pages/profiles/profiles";
+// import Profiles from "../pages/profiles/profiles";
 import BookingForm from "../pages/bookingForm/bookingForm";
 import DiscountCardForm from "../pages/forms/discountCard.form";
 import SignupPlayer from "../pages/signup/signupPlayer";
@@ -17,9 +17,10 @@ import CoachProfileUser from "../pages/profiles/CoachProfileUser";
 import Admin from "../pages/admin/admin";
 import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
-import Auth from "../middlewares/auth";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
+import { Auth, ProtectedRoute } from "../middlewares/auth";
+
 const AppRoutes = () => {
   return (
     <>
@@ -28,12 +29,13 @@ const AppRoutes = () => {
         {/* <Route
           path="coaches"
           element={
-            <Auth>
-              <Coaches />
-            </Auth>
+            <ProtectedRoute>
+              {" "}
+              <Coaches />{" "}
+            </ProtectedRoute>
           }
         /> */}
-        <Route path="coaches" element={<Coaches />}/> 
+        <Route path="coaches" element={<Coaches />} />
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
@@ -41,7 +43,10 @@ const AppRoutes = () => {
           path="bookings"
           element={
             <Auth>
-              <BookingForm />
+              <ProtectedRoute>
+                {" "}
+                <BookingForm />{" "}
+              </ProtectedRoute>
             </Auth>
           }
         />
@@ -63,7 +68,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<PlayerProfile />} />
       </Routes>
     </>
-  ); /*  */
+  );
 };
 
 export default AppRoutes;

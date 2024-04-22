@@ -1,25 +1,24 @@
 import { Col, Row } from "antd";
 import ArcadeRatingCard from "../../components/arcadeRatingCard";
 import { useEffect, useState } from "react";
-import { ArcadeRating } from "../../types";
-import axios from "axios";
+import { ArcadeFeedbacks } from "../../types";
 const ArcadeRatingCardsSection = () => {
-  const [arcadeRatings, setArcadeRatings] = useState<ArcadeRating[]>([]);
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getarcaderatings`
-        );
-        const data = await res.data;
-        setArcadeRatings(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
-  console.log(arcadeRatings);
+    const [arcadeRatings, setArcadeRatings] = useState<ArcadeFeedbacks[]>([]);
+    useEffect(() => {   
+        try {
+            const fetchData = async () => {
+                const res = await fetch(
+                    "http://localhost:8000/api/getarcaderatings"
+                );
+                const data = await res.json();
+                setArcadeRatings(data);
+            };
+            fetchData();
+        } catch (e) {
+            console.log(e);
+        }
+    }, []);
+    console.log(arcadeRatings);
   return (
     <Row
       style={{
@@ -44,12 +43,14 @@ const ArcadeRatingCardsSection = () => {
         Arcade ratings
       </h1>
       <Row>
-        {arcadeRatings?.map((arcadeRating: ArcadeRating) => (
-          <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
+        {arcadeRatings?.map((arcadeRating: ArcadeFeedbacks) => (
+          <Col lg={8} md={12} sm={24}>
             <ArcadeRatingCard
-              arcadeRating_description={arcadeRating.discription}
+              arcadeRating_id={arcadeRating.arcade_feedback_id}
               arcadeRating={arcadeRating.rate}
+              arcadeName={arcadeRating.arcade.arcade_name}
             />
+            
           </Col>
         ))}
       </Row>

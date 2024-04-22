@@ -7,10 +7,9 @@ import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
 import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
-import axios from "axios";
-import moment, { Moment } from "moment";
+import axiosInstance from "../../axiosInstance";
+import { Moment } from "moment";
 
-// import axiosInstance from "../../axiosInstance";
 
 //responsiveness
 const formItemLayout = {
@@ -42,24 +41,13 @@ const buttonFormItemLayout = {
 
 //css
 const commonInputStyle = {
-  // backgroundColor: "#d2f0ef",
+  backgroundColor: "#d2f0ef",
   height: "40px",
 };
-
-const commonLabelStyle = {
-  color: "blue",
-  fontSize: "16px",
-};
-
 const { Option } = Select;
 
-const validatePhoneNumber = (_: any, value: string) => {
-  const phoneRegex = /^[0-9]{10}$/;
-  if (phoneRegex.test(value)) {
-    return Promise.resolve();
-  }
-  return Promise.reject("Invalid phone number");
-};
+
+
 
 // function starting
 const SignupPlayer = () => {
@@ -70,20 +58,14 @@ const SignupPlayer = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone_number, setPhone] = useState("");
-  // const [DOB, setDOB] = useState("");
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
 
-  const validatePassword = async (_: any, value: string) => {
-    if (value && value.length < 8) {
-      return Promise.reject("Password must be at least 8 characters");
-    }
-    return Promise.resolve();
-  };
+  
 
   const onFinish = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}api/addplayer`, {
+      const response = await axiosInstance.post("api/addplayer", {
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -93,16 +75,15 @@ const SignupPlayer = () => {
         password: password,
         phone_number: phone_number,
         accountNumber:"123456789789"
-      }).then(res =>{
+      })
+      .then(res =>{
         console.log(res);
         alert("Form submitted successfully!");
+        form.resetFields();
       }).catch(err =>{
         console.log(err);
         alert(err.response.data.message);
       });
-
-      // console.log(response);
-
     
     } catch (err) {
       console.log(err);
@@ -110,9 +91,34 @@ const SignupPlayer = () => {
     }
   };
 
+
+
+  const validateName =  (_: any, value: string) => {
+    const phoneRegex = /^[a-zA-Z]+$/;
+    if (!value || phoneRegex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Invalid name");
+  };
+
+  const validatePhoneNumber = (_: any, value: string) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    if (phoneRegex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("Invalid phone number");
+  };
+  
+  const validatePassword = async (_: any, value: string) => {
+    if (value && value.length < 8) {
+      return Promise.reject("Password must be at least 8 characters");
+    }
+    return Promise.resolve();
+  };
+
   return (
     <>
-      <Row>
+      <Row className="signupContainer" >
         {/* left column */}
         <Col
           sm={24}
@@ -123,7 +129,6 @@ const SignupPlayer = () => {
         >
           <div style={{ textAlign: "center" }}>
             <Flex vertical gap="large" style={{ width: "100%" }}>
-              {/* <Link to="/signupPlayer"> */}
               <Button
                 type="default"
                 block
@@ -135,7 +140,6 @@ const SignupPlayer = () => {
               >
                 I'm an Athlete
               </Button>
-              {/* </Link> */}
 
               <Link to="/signupCoach">
                 <Button
@@ -191,7 +195,7 @@ const SignupPlayer = () => {
         </Col>
 
         {/* right column */}
-        <Col sm={24} md={24} lg={12} xl={12} style={{ padding: 50 }}>
+        <Col sm={24} md={24} lg={12} xl={12} style={{ padding: 50}}>
           {/* form */}
           <div
             style={{
@@ -238,8 +242,11 @@ const SignupPlayer = () => {
                     message: "Please input your firstname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
-                style={{ ...commonLabelStyle }}
+                // style={{ ...commonLabelStyle }}
               >
                 <Input
                   placeholder="Enter your first name"
@@ -258,6 +265,9 @@ const SignupPlayer = () => {
                     message: "Please input your lastname",
                     whitespace: true,
                   },
+                  {
+                    validator:validateName,
+                  }
                 ]}
               >
                 <Input
@@ -324,11 +334,7 @@ const SignupPlayer = () => {
                       if (!value || getFieldValue("password") === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(
-                        new Error(
-                          "The new password that you entered do not match!"
-                        )
-                      );
+                      return Promise.reject("The new password that you entered do not match!");
                     },
                   }),
                 ]}
@@ -363,20 +369,23 @@ const SignupPlayer = () => {
                 label="DOB"
                 rules={[
                   {
-                    type: "object" as const,
+                    // type: "object" as const,
                     required: true,
                     message: "Please select the birth date!",
                   },
                 ]}
               >
                 <DatePicker
-                  onChange={(
-                    date: Moment | null,
-                    dateString: string | string[]
-                  ) => {
-                    setSelectedDateString(
-                      Array.isArray(dateString) ? dateString[0] : dateString
-                    );
+                  style={{
+                    ...commonInputStyle,
+                  }}
+                  onChange={(date: Moment | null) => {
+                    if (date) {
+                      const formattedDate = date.format("YYYY-MM-DD");
+                      setSelectedDateString(formattedDate);
+                    } else {
+                      setSelectedDateString(""); 
+                    }
                   }}
                 />
               </Form.Item>
@@ -448,7 +457,7 @@ const SignupPlayer = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <a href="">Sign in here</a>
+                  Already have an account <Link to={"/login"}><a href="">Sign in here</a> </Link> 
                 </div>
               </Form.Item>
             </Form>

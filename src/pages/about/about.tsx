@@ -8,6 +8,7 @@ import { Grid } from "antd";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import NavbarLogin from "../../components/NavBarLogin";
+import { usePlayer } from "../../context/player.context";
 
 const About = () => {
   const { useBreakpoint } = Grid;
@@ -16,9 +17,10 @@ const About = () => {
   useEffect(() => {
     setToken(Cookies.get("token"));
   }, []);
+  const { userDetails } = usePlayer();
   return (
     <div style={{}}>
-      {token ? <Navbar /> : <NavbarLogin />}
+     {userDetails.id!=="" ? <Navbar/> : <NavbarLogin />}
       {/* ............................................................ */}
       <Row
         style={{

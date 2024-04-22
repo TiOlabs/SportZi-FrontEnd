@@ -8,10 +8,10 @@ import AppFooter from "../../components/footer";
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
 import axios from "axios";
-import { Effect } from "@cloudinary/url-gen/actions";
-import { useEffect, useState } from "react";
-import { error } from "console";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { PlayerContext } from "../../context/player.context";
+import axiosInstance from "../../axiosInstance";
 
 interface PlayerData {
   role?: string;
@@ -25,17 +25,39 @@ const PlayerProfileUser = (props: any) => {
   const { playerID } = useParams();
   console.log(playerID);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
+  const { userDetails } = useContext(PlayerContext);
+  const [firstname, setFirstname] = useState(userDetails?.firstName);
+  const [lastname, setLastname] = useState(userDetails?.lastName);
+  const [discription, setDiscription] = useState(userDetails?.discription);
+  const [achivements, setAchivements] = useState(userDetails?.achivements);
+  const [user_image, setUser_image] = useState(userDetails?.image);
+  const AchivementsGetToArry = (achivements: string) => {
+    if (achivements) {
+      return achivements.split(",");
+    }
+    return [];
+  };
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/getplayerdetails")
+      .get("/api/auth/getplayerdetails/", {})
       .then((res) => {
-        console.log(res.data);
-        setPlayerData(res.data);
+        console.log("dataaaaaaaaaa222222", res.data);
+        setFirstname(res.data.firstname);
+        setLastname(res.data.lastname);
+        setDiscription(res.data.Discription);
+        setUser_image(res.data.user_image);
+        const achiv = res.data.achivement;
+        let achiveArr: string[] = [];
+        achiv.map((item: any) => {
+          achiveArr.push(item.achivement_details as string);
+        });
+        setAchivements(achiveArr.join(","));
+        // console.log("userDetails", userDetails);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
-  });
+  }, []);
 
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -65,7 +87,7 @@ const PlayerProfileUser = (props: any) => {
           }}
         >
           {" "}
-          <Image width={300} src={profilePic} preview={{ src: profilePic }} />
+          <Image width={300} src={user_image} preview={{ src: user_image }} />
         </Col>
         <Col
           xs={24}
@@ -106,9 +128,8 @@ const PlayerProfileUser = (props: any) => {
                   marginBottom: "0px",
                 }}
               >
-                {playerData?.firstname} {playerData?.lastname}
+                {firstname} {lastname}
               </h1>
-
               <p
                 style={{
                   margin: "0px",
@@ -215,79 +236,12 @@ const PlayerProfileUser = (props: any) => {
                 marginTop: "0px",
               }}
             >
-              I am a former elite rugby league player who would love to
-              encourage and mentor younger athletes to work towards their goals
-              and aspirations as well as to share my knowledge and give back to
-              the game that’s given me so much. My main position in rugby league
-              was halfback and I had the honour of representing QLD in the State
-              Of Origin
+              {discription}
             </p>
             <p
               style={{
                 color: "#000",
                 fontFamily: "kanit",
-
-                fontSize: "24px",
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-              }}
-            >
-              Sports
-            </p>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.5",
-              }}
-              itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
-                    }}
-                  >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
-
-            <p
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
                 fontSize: "24px",
                 fontStyle: "normal",
                 fontWeight: "400",
@@ -306,7 +260,7 @@ const PlayerProfileUser = (props: any) => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={AchivementsGetToArry(achivements)}
               renderItem={(item) => (
                 <List.Item
                   style={{

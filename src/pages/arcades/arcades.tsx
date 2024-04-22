@@ -5,6 +5,7 @@ import AppFooter from "../../components/footer";
 import NavbarLogin from "../../components/NavBarLogin";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
+import { usePlayer } from "../../context/player.context";
 
 
 const Arcades = () => {
@@ -13,10 +14,13 @@ const Arcades = () => {
     useEffect(() => {
         setToken(Cookies.get("token"));
       }, []);
+      const { userDetails } = usePlayer();
     return ( 
         <>
-        {token ? <Navbar /> : <NavbarLogin/>}
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3",marginTop:"30px" }}>      
+
+        {userDetails.id!=="" ? <Navbar/> : <NavbarLogin />}
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", lineHeight: "3",marginTop:"30px" }}>
+          
               <HeroSection />
               <ArcadeCardSection />
               <AppFooter/>

@@ -1,4 +1,3 @@
-import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { Row } from "antd";
 import { Rate } from "antd";
@@ -7,20 +6,19 @@ import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-
-const ArcadeRatingCard = (props:any) => {
-    const [cloudName] = useState("dle0txcgt");
-    const cld = new Cloudinary({
-      cloud: {
-        cloudName,
-      },
-    });
-    const { md } = useBreakpoint();
+const ArcadeRatingCard = (props: any) => {
+  const [cloudName] = useState("dle0txcgt");
+  // const cld = new Cloudinary({
+  //   cloud: {
+  //     cloudName,
+  //   },
+  // });
+  const { md } = useBreakpoint();
   return (
     <Row>
       <div
         style={{
-          width: md ? "450px": "328px",
+          width: md ? "450px" : "328px",
           height: "191px",
           backgroundColor: "#EFF4FA",
           display: "flex",
@@ -28,20 +26,18 @@ const ArcadeRatingCard = (props:any) => {
           marginLeft: "25px",
         }}
       >
-
-        <img 
-        src="https://sportsplanningguide.com/wp-content/uploads/2016/05/Woodside_WisconsinDellsCenter-1.jpg" 
-        style={{
-          width: md ? "242px" : "164px",
-          height: "191px",
-          WebkitClipPath: md? "polygon(0 0, 70% 0%, 100% 100%, 0% 100%)" : "polygon(0 0, 50% 0%, 100% 100%, 0% 100%)",
-          clipPath: "polygon(0 0, 100% 0%, 100% 100%, 0% 98%)",
-        
-        }}  >
-        
-        </img>
-        {
-        /* <AdvancedImage
+        <img
+          src="https://sportsplanningguide.com/wp-content/uploads/2016/05/Woodside_WisconsinDellsCenter-1.jpg"
+          style={{
+            width: md ? "242px" : "164px",
+            height: "191px",
+            WebkitClipPath: md
+              ? "polygon(0 0, 70% 0%, 100% 100%, 0% 100%)"
+              : "polygon(0 0, 50% 0%, 100% 100%, 0% 100%)",
+            clipPath: "polygon(0 0, 100% 0%, 100% 100%, 0% 98%)",
+          }}
+        ></img>
+        {/* <AdvancedImage
             cldImg={cld.image(props.arcadeRating_image)}
           style={{
             width: md ? "242px" : "164px",
@@ -77,11 +73,15 @@ const ArcadeRatingCard = (props:any) => {
                   fontWeight: "500",
                   fontStyle: "normal",
                   width: "150px",
+                  display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                   lineHeight: "1",
+                  textAlign: "center",
+                  
                 }}
               >
-                SSC Complex
+                {props.arcadeName}
               </div>
               <div
                 style={{
@@ -93,6 +93,7 @@ const ArcadeRatingCard = (props:any) => {
                   marginTop: "1px",
                   lineHeight: "2",
                   alignItems: "center",
+                  textAlign: "center",
                   display: "flex",
                 }}
               >
@@ -108,16 +109,30 @@ const ArcadeRatingCard = (props:any) => {
                 marginBottom: "5px",
               }}
             >
-              <Rate disabled defaultValue={props.arcadeRating} style={{ color: "#5587CC" ,fontSize:"12px" }} />
+              <Rate
+                disabled
+                defaultValue={props.arcadeRating}
+                style={{ color: "#5587CC", fontSize: "12px" }}
+              />
             </div>
-            <div className="Discription part" style={{ width: "100%", textAlign: "center", height: "auto", lineHeight:"3"}}>
+            <div
+              className="Discription part"
+              style={{
+                width: "100%",
+                textAlign: "center",
+                height: "auto",
+                lineHeight: "3",
+              }}
+            >
               <div>{props.arcadeRating_description}</div>
             </div>
           </div>
           <div className="BookArcadeButton">
-            <Link to="/bookings"><Button type="primary" style={{ backgroundColor: "#5587CC" }}>
-              Book Arcade
-            </Button></Link>
+            <Link to="/bookings">
+              <Button type="primary" style={{ backgroundColor: "#5587CC" }}>
+                Book Arcade
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
