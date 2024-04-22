@@ -19,34 +19,55 @@ import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
-import {Auth,ProtectedRoute} from "../middlewares/auth";
+import { Auth, ProtectedRoute } from "../middlewares/auth";
+import ChooseArcade from "../pages/login/chooseArcade";
 
 const AppRoutes = () => {
   return (
     <>
       <Routes>
         <Route index element={<Home />} />
-        <Route path="coaches" element={<Coaches/> } /> 
+        <Route path="coaches" element={<Coaches />} />
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
-        <Route path="bookings" element={<Auth> <BookingForm /> </Auth> } />
+        <Route
+          path="bookings"
+          element={
+            <Auth>
+              {" "}
+              <BookingForm />{" "}
+            </Auth>
+          }
+        />
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
         <Route path="signupPlayer" element={<SignupPlayer />} />
         <Route path="signupCoach" element={<SignupCoach />} />
         <Route path="coacheProfile" element={<CoachProfile />} />
         <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
         <Route path="PlayerUser" element={<PlayerProfileUser />} />
-        <Route path="forms/coachassigndetailsform" element={<CoachAssignDetailsForm />} />
+        <Route
+          path="forms/coachassigndetailsform"
+          element={<CoachAssignDetailsForm />}
+        />
         <Route path="CoachUser" element={<CoachProfileUser />} />
         <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
-        <Route path="admin" element={<ProtectedRoute> <Admin/> </ProtectedRoute>} />
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute>
+              {" "}
+              <Admin />{" "}
+            </ProtectedRoute>
+          }
+        />
         <Route path="coachbooking" element={<CoachBookingForm />} />
         <Route path="profile" element={<PlayerProfile />} />
+        <Route path="ChooseArchade" element={<ChooseArcade />} />
       </Routes>
     </>
-  ); 
+  );
 };
 
 export default AppRoutes;
