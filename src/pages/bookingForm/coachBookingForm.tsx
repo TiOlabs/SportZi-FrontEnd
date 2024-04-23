@@ -3,17 +3,21 @@ import { Row, Col, Form, Button, Select, InputNumber, message } from "antd";
 import BookingFormPicture from "../../assents/coachBookingForm1.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
+import axios from "axios";
+import { usePlayer } from "../../context/player.context";
 
 const { Option } = Select;
 
 const CoachBookingForm = () => {
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
-  const [zone, setZone] = useState("");
   const [pcount, setPcount] = useState("");
-
+  const [arcade, setArcade] = useState("");
+  const { userDetails } = usePlayer();
+  console.log("userDetails", userDetails); 
   const handleFinish = async () => {
-    console.log(date, time, zone, pcount);
+    console.log(date, time, pcount);
+    const pcountInt = parseInt(pcount);
     if (parseInt(pcount) <= 0) {
       message.error("Participant count must be more than 0");
       return; // Stop further execution
@@ -26,6 +30,24 @@ const CoachBookingForm = () => {
         console.log("Error");
         console.log(err);
       }
+    }
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/addCoachBooking`,
+        {
+          participant_count: pcountInt,
+          date: date,
+          time: time,
+          coach_id: "C00001",
+          player_id: userDetails.id,
+          zone_id:"Z00001",
+          arcade_id: "1",
+        }
+      );
+      console.log(res);
+    } catch (err) {
+      console.log("Error");
+      console.log(err);
     }
   };
 
@@ -104,23 +126,27 @@ const CoachBookingForm = () => {
                   />
                 </Form.Item>
                 <Form.Item
-                  name="Duration"
-                  label="Duration"
-                  rules={[{ required: true, type: "number" }]}
+                  name="arcade"
+                  label="Select Arcade"
+                  rules={[{ required: true }]}
                   style={{
                     width: "90%",
                     marginLeft: "20px",
                   }}
                 >
-                  <InputNumber
+                  <Select
+                    placeholder="Select a Arcade"
+                    onChange={(value) => setArcade(value)}
+                    allowClear
                     style={{
                       height: "50px",
-                      width: "100%",
                       display: "flex",
-                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                    onChange={(value) => setPcount(value?.toString() || "")}
-                  />
+                  >
+                    <Option value="full">SSC</Option>
+                    <Option value="Individual">CCC</Option>
+                  </Select>
                 </Form.Item>
               </Row>
             </div>
@@ -258,7 +284,6 @@ const CoachBookingForm = () => {
         <Row>
           <Col xs={8} lg={6}>
             <Button
-           
               htmlType="submit"
               style={{
                 width: "90%",
@@ -284,7 +309,6 @@ const CoachBookingForm = () => {
               }}
             >
               <Button
-              
                 htmlType="submit"
                 style={{
                   width: "90%",
