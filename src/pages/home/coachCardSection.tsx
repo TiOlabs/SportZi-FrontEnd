@@ -2,13 +2,14 @@ import { Button, Col, Row, Skeleton, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState } from "react";
-import { CoachAssignDetails } from "../../types";
+import { Coach } from "../../types";
 import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
+import axios from "axios";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<
-    CoachAssignDetails[]
+    Coach[]
   >([]);
   const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,18 +24,24 @@ const CoachCardSection = () => {
 
   useEffect(() => {
 
-    try {
-      const fetchData = async () => {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`
+    const fetchData = async () => {
+        try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getcoach`
         );
-        const data = await res.json();
-        setCoachAssignDetails(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
+        const data = await res.data;
+
+        // Filter the data to include only items with status "active"
+        const successCoaches = data.filter(
+          (coach: { status: string }) => coach.status === "active"
+        );
+        setCoachAssignDetails(successCoaches);
+
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
   }, []);
 
   const { lg, md, sm, xs } = useBreakpoint();
@@ -114,7 +121,7 @@ const CoachCardSection = () => {
                 }}
               >
                 {coachAssignDetails?.map(
-                  (coachAssignDetail: CoachAssignDetails) => (
+                  (coach: Coach ) => (
                     <Col
                       lg={{ span: 5 }}
                       md={{ span: 8 }}
@@ -122,16 +129,16 @@ const CoachCardSection = () => {
                       xs={{ span: 24 }}
                     >
                       <CoachCard
-                        coach_first_name={
-                          coachAssignDetail.coach.user.firstname
+                        coach_first_name={coach.user.firstname
+                          
                         }
-                        coach_last_name={coachAssignDetail.coach.user.lastname}
+                        coach_last_name={coach.user.lastname}
                         short_description={
-                          coachAssignDetail.coach.short_desctiption
+                          coach.short_desctiption
                         }
-                        rate={coachAssignDetail.coach.rate}
-                        duration={coachAssignDetail.duration}
-                        coach_image={coachAssignDetail.coach.user.user_image}
+                        rate={coach.rate}
+                        // duration={coachAssignDetail.duration}
+                        coach_image={coach.user.user_image}
                       />
                     </Col>
                   )

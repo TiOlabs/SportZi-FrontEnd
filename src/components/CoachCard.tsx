@@ -5,6 +5,7 @@ import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
 import { useState } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
+import { Link } from "react-router-dom";
 
 const CoachCard = (props: any) => {
   setTwoToneColor("blue");
@@ -74,6 +75,7 @@ const CoachCard = (props: any) => {
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
+            <Link to="/bookings">
               <Button
                 type="primary"
                 size="small"
@@ -85,6 +87,7 @@ const CoachCard = (props: any) => {
               >
                 Book Coach
               </Button>
+              </Link>
             </div>
           </div>
         </div>

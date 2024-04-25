@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { ZoneBookingsProvider } from "./context/zoneBookings.context";
 import { UserIdProvider } from "./context/userId.context";
+import { CoachBookingProvider } from "./context/coachBooking.context";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,9 +15,11 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <UserIdProvider>
-        <ZoneBookingsProvider>
-          <App />
-        </ZoneBookingsProvider>
+        <CoachBookingProvider>
+          <ZoneBookingsProvider>
+            <App />
+          </ZoneBookingsProvider>
+        </CoachBookingProvider>
       </UserIdProvider>
     </BrowserRouter>
   </React.StrictMode>
