@@ -9,6 +9,7 @@ const CoachBookingProvider = ({ children }: any) => {
   const [date, setDate] = useState("");
   const [pcount, setPcount] = useState("");
 
+
   useEffect(() => {
     const storedCoachId = localStorage.getItem("coachId") as string;
     console.log(storedCoachId);
@@ -41,4 +42,6 @@ const CoachBookingProvider = ({ children }: any) => {
   );
 };
 
+
 export { CoachBookingContext, CoachBookingProvider };
+

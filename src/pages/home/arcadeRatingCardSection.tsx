@@ -48,7 +48,7 @@ const ArcadeRatingCardsSection = () => {
             <ArcadeRatingCard
               arcadeRating_id={arcadeRating.arcade_feedback_id}
               arcadeRating={arcadeRating.rate}
-              arcadeName={arcadeRating.arcade.arcade_name}
+              // arcadeName={arcadeRating.arcade.arcade_name}
             />
             
           </Col>
