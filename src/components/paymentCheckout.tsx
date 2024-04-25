@@ -73,6 +73,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
       })
       .then((res) => {
         console.log("Payment completed.");
+        window.location.reload();
       })
       .catch((error) => {
         console.log(error);

@@ -22,6 +22,7 @@ import { jwtDecode } from "jwt-decode";
 import { UserIdContext } from "../../context/userId.context";
 import { useLocation } from "react-router-dom";
 import NavbarProfile from "../../components/NavBarProfile";
+import dayjs from "dayjs";
 
 const { Option } = Select;
 
@@ -121,6 +122,9 @@ const BookingForm = () => {
   console.log(paymentDetails);
 
   console.log(zoneDetails?.rate);
+  console.log(zoneDetails?.capacity);
+  const capacity = zoneDetails?.capacity;
+  console.log(capacity);
   const rate = zoneDetails?.rate;
   console.log(pcount);
   let fullAmount = Number(rate) * Number(pcount);
@@ -248,7 +252,6 @@ const BookingForm = () => {
   const closeTime = Number(zoneDetails?.close_time) ?? 0;
   const timeStep = 1;
   let buttonData = [];
-
   for (let i = openTime; i < closeTime; i += timeStep) {
     let nextTime = i + timeStep;
     let hour = Math.floor(i);
@@ -256,14 +259,38 @@ const BookingForm = () => {
     let nextHour = Math.floor(nextTime);
     let nextMinute = (nextTime - nextHour) * 60;
 
-    buttonData.push({
-      id: `${hour}:${minute < 10 ? "0" : ""}${minute}- ${nextHour}:${
-        nextMinute < 10 ? "0" : ""
-      }${nextMinute}`,
-      time: `${hour}:${minute < 10 ? "0" : ""}${minute}- ${nextHour}:${
-        nextMinute < 10 ? "0" : ""
-      }${nextMinute}`,
-    });
+    let formattedTime = `${hour}:${
+      minute < 10 ? "0" : ""
+    }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+
+    if (date === dayjs().format("YYYY-MM-DD")) {
+      // Split formattedTime into start and end times
+      const [startTime, endTime] = formattedTime.split("-");
+
+      // Parse start and end times into time objects
+      const formattedStartTime = dayjs(startTime, "HH:mm");
+      const formattedEndTime = dayjs(endTime, "HH:mm");
+      const currentTime = dayjs();
+
+      // Compare current time with start and end times
+      const disabled = currentTime.isAfter(formattedEndTime);
+      console.log(disabled);
+
+      // Push time slot with disabled property into buttonData
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: disabled,
+      });
+    } else {
+      // If it's not today's date, enable the time slot
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: false,
+      });
+    }
+
     console.log(buttonData);
   }
 
@@ -281,11 +308,11 @@ const BookingForm = () => {
   //   { id: "11", time: "19.00-20.00" },
   //   { id: "12", time: "20.00-21.00" },
   // ];
-
+  const formattedTime = dayjs().format("HH:mm");
   return (
     <>
-      <NavbarProfile  />
-      <div style={{ margin: "2%",marginTop:"4%" }}>
+      <NavbarProfile />
+      <div style={{ margin: "2%", marginTop: "4%" }}>
         <h1
           style={{
             display: "Flex",
@@ -333,7 +360,7 @@ const BookingForm = () => {
                   </Col>
                   <Form.Item
                     name="Participant Count"
-                    label="Participant Count"
+                    label={"Participant Count ( Maximum Participan Count is - "+zoneDetails?.capacity?.toString()+" )"}
                     rules={[{ required: true, type: "number" }]}
                     style={{
                       width: "90%",
@@ -347,6 +374,7 @@ const BookingForm = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
+                      max={capacity as (number | string | undefined)}
                       onChange={(value) => setPcount(value?.toString() || "")}
                     />
                   </Form.Item>
@@ -421,13 +449,7 @@ const BookingForm = () => {
                   })}
                   {buttonData.map((button) => (
                     <button
-                      disabled={
-                        bookingDate.find(
-                          (booking) => booking.time === button.id
-                        )
-                          ? true
-                          : false
-                      }
+                     disabled={button.disabled}
                       key={button.id}
                       id={button.id.toString()}
                       type="button"

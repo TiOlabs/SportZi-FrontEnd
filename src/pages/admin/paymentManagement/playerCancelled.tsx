@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal, Spin } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { Radio } from "antd";
@@ -116,6 +116,7 @@ const PlayerCanceled = () => {
         <Col
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
         >
+          {playerCanceled.length === 0 ? <Empty /> : null}
           {playerCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
               booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
