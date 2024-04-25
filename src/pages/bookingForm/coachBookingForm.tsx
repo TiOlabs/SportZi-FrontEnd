@@ -1,22 +1,78 @@
-import React, { useState } from "react";
-import { Row, Col, Form, Button, Select, InputNumber, message } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  Row,
+  Col,
+  Form,
+  Button,
+  Select,
+  InputNumber,
+  message,
+  Empty,
+} from "antd";
 import BookingFormPicture from "../../assents/coachBookingForm1.png";
 import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { usePlayer } from "../../context/player.context";
+import { CoachBookingContext } from "../../context/coachBooking.context";
+import { CoachAssignDetails, Zone } from "../../types";
 
 const { Option } = Select;
 
-const CoachBookingForm = () => {
-  const [time, setTime] = useState("");
-  const [date, setDate] = useState("");
-  const [pcount, setPcount] = useState("");
-  const [arcade, setArcade] = useState("");
+const CoachBookingForm: React.FC = () => {
+  const [time, setTime] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [pcount, setPcount] = useState<string>("");
+  const [arcade, setArcade] = useState<string>("");
+  const [coachAssignDetails, setCoachAssignDetails] = useState<
+    CoachAssignDetails[]
+  >([]);
   const { userDetails } = usePlayer();
-  console.log("userDetails", userDetails); 
+  const { coachId } = useContext(CoachBookingContext);
+  const [coachAssignArcades, setCoachAssignArcades] = useState<string[]>([]);
+  const [zoneForCoachBookings, setzoneForCoachBookings] = useState<Zone>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachId}`
+        );
+        const data = await res.json();
+        setCoachAssignDetails(data);
+        setCoachAssignArcades(
+          data.map(
+            (coachAssignDetail: CoachAssignDetails) =>
+              coachAssignDetail.arcade.arcade_name
+          )
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [coachId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getzoneForCoachBooking/${arcade}/${coachAssignDetails[0]?.coach.sport.sport_id}/${coachAssignDetails[0]?.coach.coach_id}`
+        );
+        const data = await res.json();
+        console.log(data);
+        setzoneForCoachBookings(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [arcade]);
+
+  console.log(zoneForCoachBookings?.zone_id);
+
   const handleFinish = async () => {
-    console.log(date, time, pcount);
+    console.log(date, time, pcount, zoneForCoachBookings);
     const pcountInt = parseInt(pcount);
     if (parseInt(pcount) <= 0) {
       message.error("Participant count must be more than 0");
@@ -26,6 +82,7 @@ const CoachBookingForm = () => {
       return; // Stop further execution
     } else {
       try {
+        // Add your logic here
       } catch (err) {
         console.log("Error");
         console.log(err);
@@ -38,10 +95,10 @@ const CoachBookingForm = () => {
           participant_count: pcountInt,
           date: date,
           time: time,
-          coach_id: "C00001",
+          coach_id: coachId,
           player_id: userDetails.id,
-          zone_id:"Z00001",
-          arcade_id: "1",
+          zone_id: zoneForCoachBookings?.zone_id,
+          arcade_id: arcade,
         }
       );
       console.log(res);
@@ -53,14 +110,12 @@ const CoachBookingForm = () => {
 
   return (
     <div style={{ margin: "2%" }}>
-      {" "}
       <Row>
         <Col lg={24} xs={24}></Col>
         <Col lg={24} xs={24}>
-          {" "}
           <h1
             style={{
-              display: "Flex",
+              display: "flex",
               justifyContent: "center",
               textAlign: "center",
               lineHeight: "2.5",
@@ -79,16 +134,16 @@ const CoachBookingForm = () => {
                   xs={24}
                   md={12}
                   lg={24}
-                  style={{ display: "Flex", justifyContent: "center" }}
+                  style={{ display: "flex", justifyContent: "center" }}
                 >
-                  <div style={{ display: "Flex", justifyContent: "center" }}>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
                     <img
                       src={BookingFormPicture}
                       alt="bookingForm"
                       style={{
                         width: "100%",
                         maxHeight: "350px",
-                        display: "Flex",
+                        display: "flex",
                         justifyContent: "center",
                         alignSelf: "center",
                       }}
@@ -96,7 +151,7 @@ const CoachBookingForm = () => {
                   </div>
                 </Col>
                 <Col style={{}} xs={24} md={12} lg={24}>
-                  <div style={{ display: "Flex", justifyContent: "center" }}>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
                     <Form.Item name="date" rules={[{ required: true }]}>
                       <Calender
                         onChange={(date: any) => {
@@ -144,8 +199,18 @@ const CoachBookingForm = () => {
                       justifyContent: "center",
                     }}
                   >
-                    <Option value="full">SSC</Option>
-                    <Option value="Individual">CCC</Option>
+                    {coachAssignArcades?.length === 0 ? (
+                      <Empty />
+                    ) : (
+                      coachAssignArcades?.map((arcadeName, index) => (
+                        <Option
+                          key={index}
+                          value={coachAssignDetails[0]?.arcade.arcade_id}
+                        >
+                          {arcadeName}
+                        </Option>
+                      ))
+                    )}
                   </Select>
                 </Form.Item>
               </Row>
@@ -264,7 +329,6 @@ const CoachBookingForm = () => {
                   20.00-21.00
                 </button>
               </Form.Item>
-              {/* </Form.Item> */}
             </div>
           </Col>
         </Row>

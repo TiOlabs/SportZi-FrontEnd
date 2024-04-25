@@ -33,6 +33,7 @@ export interface ZoneBookingDetails {
 }
 
 export interface Coach {
+  coach_id: String;
   rate: Number;
   coach_rating: Number;
   short_desctiption: String;
@@ -61,13 +62,16 @@ export interface UserPhone {
   phone_number: String;
 }
 export interface CoachAssignDetails {
-  assign_id: Number;
-  description: String;
+  coach_id: String;
+  arcade_id: String;
   duration: String;
-  state: String;
-  rate: string;
-  coach_image: String;
+  description: String;
+  assigned_date: Date;
+  status: String;
+  created_at: Date;
+  canceled_at: Date;
   coach: Coach;
+  arcade: Arcade;
 }
 
 export interface ArcadeBookings {
@@ -110,7 +114,7 @@ export interface CoachFeedbacks {
   coach_feedback_id: String;
   rate: Number;
 }
-export interface UserPhoto{
+export interface UserPhoto {
   user_id: String;
   image: String;
 }

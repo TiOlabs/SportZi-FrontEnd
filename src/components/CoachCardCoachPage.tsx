@@ -3,9 +3,12 @@ import "../styles/CoachCard.css";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { CoachBookingContext } from "../context/coachBooking.context";
 
 const CoachCardCoachPage = (props: any) => {
+  const {setCoachId} = useContext(CoachBookingContext);
   console.log("props", props);
   setTwoToneColor("blue");
   getTwoToneColor();
@@ -14,13 +17,15 @@ const CoachCardCoachPage = (props: any) => {
   console.log(props.coach_name);
   console.log(props.coach_sport);
   console.log(props.coach_rating);
+  localStorage.setItem("coachId", props.coach_id);
+  console.log(props.coach_id);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
-
+setCoachId(props.coach_id);
   return (
     <>
       <div className="mainCard">
@@ -69,6 +74,7 @@ const CoachCardCoachPage = (props: any) => {
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
+            <Link to="/CoachBookingForm">
               <Button
                 type="primary"
                 size="small"
@@ -80,6 +86,7 @@ const CoachCardCoachPage = (props: any) => {
               >
                 Book Coach
               </Button>
+              </Link>
             </div>
           </div>
         </div>
