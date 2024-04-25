@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal } from "antd";
+import { Col, Row, Button, Modal, Empty } from "antd";
 import { useEffect, useState } from "react";
 import { ZoneBookingDetails } from "../../../types";
 import axios from "axios";
@@ -69,6 +69,7 @@ const AdminCanceled = (props: any) => {
       console.log(e);
     }
   };
+ 
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Spin spinning={loading}>
@@ -107,7 +108,7 @@ const AdminCanceled = (props: any) => {
         </Row>
         <Col
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
-        >
+        >{adminCanceled.length === 0 ? <Empty /> : null}
           {adminCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
               booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
@@ -146,6 +147,7 @@ function DataRow(props: any) {
     setIsModalOpen(false);
   };
   console.log(props);
+
   return (
     <Row
       style={{

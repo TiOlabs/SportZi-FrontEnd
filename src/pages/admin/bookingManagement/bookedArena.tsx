@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal } from "antd";
+import { Col, Row, Button, Modal, Empty } from "antd";
 import { useEffect, useState } from "react";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
@@ -55,6 +55,7 @@ const BookedArena = (props: any) => {
         <Col
           style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}
         >
+          {filteredDataa.length === 0 ? <Empty /> : null}
           {filteredDataa.map((ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
               booking_id={ZoneBookingDetails.zone_booking_id}
@@ -174,6 +175,7 @@ function DataRow(props: any) {
       cloudName,
     },
   });
+ 
   return (
     <Row
       style={{

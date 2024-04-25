@@ -1,14 +1,43 @@
-import { Col, Row, Button } from "antd";
-import React, { useState } from "react";
+import { Col, Row, Button, Empty } from "antd";
+import React, { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { Radio } from "antd";
+import { ZoneBookingDetails } from "../../../types";
+import { Link } from "react-router-dom";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 const CompletedBookings = () => {
-    const [value, setValue] = useState(1);
+  const [value, setValue] = useState(1);
+  const [completedBookings, setCompletedBookings] = useState<
+    ZoneBookingDetails[]
+  >([]);
 
-    const onChange = (e: RadioChangeEvent) => {
-      console.log("radio checked", e.target.value);
-      setValue(e.target.value);
+  const onChange = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValue(e.target.value);
+  };
+  useEffect(() => {
+    const fetchCompletedBookings = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getCompleteArcadeBookings`
+        );
+        const data = await res.json();
+        console.log(data);
+        setCompletedBookings(data);
+      } catch (err) {
+        console.log(err);
+      }
     };
+    fetchCompletedBookings();
+  }, []);
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -26,7 +55,7 @@ const CompletedBookings = () => {
           />
         </Col>
       </Row>
-      <Row style={{marginTop:"20px"}}>
+      <Row style={{ marginTop: "20px" }}>
         <Col>
           {" "}
           <Radio.Group onChange={onChange} value={value}>
@@ -43,7 +72,7 @@ const CompletedBookings = () => {
           padding: "1%",
           marginTop: "20px",
         }}
-      >
+      >{completedBookings.length === 0 ? <Empty /> : null}
         <Col></Col>
         <Col span={8} style={{}}>
           <div
@@ -68,7 +97,7 @@ const CompletedBookings = () => {
               fontSize: "16px",
             }}
           >
-            Super Box Complex
+            {completedBookings[0]?.zone.zone_name}
           </div>
         </Col>
         <Col span={2} style={{}}>
@@ -83,19 +112,29 @@ const CompletedBookings = () => {
             }}
           >
             {" "}
-            100$
+            Rs.{" "}
+            {String(
+              Number(completedBookings[0]?.participant_count) *
+                Number(completedBookings[0]?.zone.rate)
+            )}
           </div>
         </Col>
         <Col span={8}>
-          <div
-            style={{
-              borderRadius: "50%",
-              position: "absolute",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "#000",
-            }}
-          ></div>
+          <Link to={`/profile/`}>
+            <AdvancedImage
+              style={{
+                borderRadius: "50%",
+                position: "absolute",
+                width: "80px",
+                height: "80px",
+              }}
+              cldImg={
+                cld.image(completedBookings[0]?.user.user_image as string)
+                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                // .resize(Resize.scale().width(200).height(200))
+              }
+            />
+          </Link>
           <div
             style={{
               display: "flex",
@@ -106,7 +145,8 @@ const CompletedBookings = () => {
               fontSize: "16px",
             }}
           >
-            Sasindu Daluwatta
+            {completedBookings[0]?.user.firstname}{" "}
+            {completedBookings[0]?.user.lastname}
           </div>
         </Col>
         <Col span={6} style={{}}>
