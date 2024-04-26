@@ -6,9 +6,14 @@ import NavbarLogin from "../../components/NavBarLogin";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { usePlayer } from "../../context/player.context";
+import { useLocation } from "react-router-dom";
 
 
 const Arcades = () => {
+  const arcades = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [arcades]);
     const [token, setToken] = useState<string | undefined>(undefined);
 
     useEffect(() => {

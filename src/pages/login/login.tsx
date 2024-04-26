@@ -1,19 +1,22 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
-import { Form, Input, Row, Col, Button} from "antd";
+import { Form, Input, Row, Col, Button } from "antd";
 // import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const commonInputStyle = {
   height: "40px",
 };
 
-
 const Login = () => {
+  const login = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [login]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -38,7 +41,6 @@ const Login = () => {
           alert(err.response.data.message);
           console.log("response error:", err);
         });
-
     } catch (err) {
       console.log(err);
       alert("Login failed...2");
@@ -106,7 +108,6 @@ const Login = () => {
             layout="vertical"
             onFinish={onFinish}
           >
-
             <div
               style={{
                 fontSize: "28px",
@@ -165,7 +166,7 @@ const Login = () => {
                   color: "#fff",
                   fontSize: "16px",
                 }}
-              > 
+              >
                 Log in
               </Button>
             </Form.Item>

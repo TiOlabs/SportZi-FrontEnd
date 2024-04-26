@@ -23,6 +23,8 @@ import { UserIdContext } from "../../context/userId.context";
 import { useLocation } from "react-router-dom";
 import NavbarProfile from "../../components/NavBarProfile";
 import dayjs from "dayjs";
+import { count } from "console";
+import { max } from "moment";
 
 const { Option } = Select;
 
@@ -86,8 +88,8 @@ const BookingForm = () => {
   }, [userId]);
   console.log(date);
   useEffect(() => {
-    try {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
         const res = await fetch(
           `http://localhost:8000/api/getarcadebookingbydate/${date}/${zoneId}`
         );
@@ -95,13 +97,75 @@ const BookingForm = () => {
         const data = await res.json();
         console.log(data);
         setBookingDate(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, [date]);
 
+        // Grouping data by booking time and calculating total participant count for each group
+        const groupedByTime: {
+          [key: string]: { bookings: any[]; totalParticipantCount: number };
+        } = data.reduce(
+          (
+            acc: {
+              [x: string]: { bookings: any[]; totalParticipantCount: number };
+            },
+            booking: { time: any; participant_count: any }
+          ) => {
+            const time = booking.time;
+            if (!acc[time]) {
+              acc[time] = { bookings: [], totalParticipantCount: 0 };
+            }
+            acc[time].bookings.push(booking);
+            acc[time].totalParticipantCount += booking.participant_count;
+            return acc;
+          },
+          {}
+        );
+
+        console.log("Grouped by time:");
+        console.log(groupedByTime);
+
+        // Logging participant count for each group
+        for (const time in groupedByTime) {
+          console.log(`Time: ${time}`);
+          console.log(
+            "Participant count:",
+            groupedByTime[time].totalParticipantCount
+          );
+        }
+
+        // Logging total participant count with respect to the relevant date
+        const totalParticipantCountByDate = Object.values(groupedByTime).reduce(
+          (total: number, group: any) => total + group.totalParticipantCount,
+          0
+        );
+        console.log(
+          `Total participant count for date ${date}:`,
+          totalParticipantCountByDate
+        );
+        const timeParticipantCounts = Object.entries(groupedByTime).map(
+          ([time, { totalParticipantCount }]) => ({
+            time,
+            totalParticipantCount,
+          })
+        );
+        console.log("Time Participant Counts:", timeParticipantCounts);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [date, zoneId]);
+
+  const participantCounts: number[] = bookingDate.map(
+    (booking) => booking.participant_count as number
+  );
+
+  console.log(participantCounts);
+  const sumParticipantCount: number = participantCounts.reduce(
+    (total: number, count: number) => total + count,
+    0
+  );
+
+  console.log("Sum of participant counts:", sumParticipantCount);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -309,6 +373,15 @@ const BookingForm = () => {
   //   { id: "12", time: "20.00-21.00" },
   // ];
   const formattedTime = dayjs().format("HH:mm");
+  console.log(capacity);
+  const calculateLinearGradientPercentage = (
+    count: number,
+    capacity: number
+  ) => {
+    console.log(count, capacity);
+    return (count / capacity) * 100 + "%";
+  };
+  let tot = 0;
   return (
     <>
       <NavbarProfile />
@@ -360,7 +433,11 @@ const BookingForm = () => {
                   </Col>
                   <Form.Item
                     name="Participant Count"
-                    label={"Participant Count ( Maximum Participan Count is - "+zoneDetails?.capacity?.toString()+" )"}
+                    label={
+                      "Participant Count ( Maximum Participan Count is - " +
+                      zoneDetails?.capacity?.toString() +
+                      " )"
+                    }
                     rules={[{ required: true, type: "number" }]}
                     style={{
                       width: "90%",
@@ -374,7 +451,7 @@ const BookingForm = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
-                      max={capacity as (number | string | undefined)}
+                      max={capacity as number | string | undefined}
                       onChange={(value) => setPcount(value?.toString() || "")}
                     />
                   </Form.Item>
@@ -443,13 +520,13 @@ const BookingForm = () => {
                     return (
                       <button
                         id={booking.time.toString()}
-                        style={{ backgroundColor: "red" }}
+                        style={{ backgroundColor: "red", width: "50%" }} // Adjusted width to 50%
                       ></button>
                     );
                   })}
                   {buttonData.map((button) => (
                     <button
-                     disabled={button.disabled}
+                      disabled={button.disabled}
                       key={button.id}
                       id={button.id.toString()}
                       type="button"
@@ -457,13 +534,15 @@ const BookingForm = () => {
                       style={{
                         width: "100%",
                         padding: "5%",
-                        backgroundColor: bookingDate.find(
+                        backgroundColor:
+                          button.id === time ? "#1677FF" : "white",
+                        // Adjusted background color to cover only half of the button when booked
+
+                        backgroundImage: bookingDate.find(
                           (booking) => booking.time === button.id
-                        )
-                          ? "red"
-                          : button.id === time
-                          ? "#1677FF"
-                          : "white",
+                        )?.participant_count
+                          ? `linear-gradient(to right, red ${50}%, ${button.id === time ? "#1677FF" : "white"} 0%)`
+                          : "none",
                       }}
                     >
                       {bookingDate.find((booking) => booking.time === button.id)
@@ -472,6 +551,7 @@ const BookingForm = () => {
                     </button>
                   ))}
                 </Form.Item>
+
                 {/* </Form.Item> */}
               </div>
             </Col>
