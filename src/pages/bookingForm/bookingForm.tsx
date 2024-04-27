@@ -29,6 +29,10 @@ import { max } from "moment";
 const { Option } = Select;
 
 const BookingForm = () => {
+  interface TimeParticipantCount {
+    time: string;
+    totalParticipantCount: number;
+  }
   const location = useLocation() as unknown as { bookings: any };
   const { bookings } = location;
   useEffect(() => {
@@ -46,6 +50,9 @@ const BookingForm = () => {
   const [bookingCount, setbookingCount] = useState<Number>();
   const [bookingDate, setBookingDate] = useState<ZoneBookingDetails[]>([]);
   const [paymentDetails, setPaymentDetails] = useState<User>();
+  const [timeParticipantCounts1, setTimeParticipantCounts1] = useState<
+    TimeParticipantCount[]
+  >([]);
   // payment_id: "",
   // oder_id: "",
   // items: "",
@@ -129,6 +136,7 @@ const BookingForm = () => {
             "Participant count:",
             groupedByTime[time].totalParticipantCount
           );
+          // setTc(groupedByTime[time].totalParticipantCount)
         }
 
         // Logging total participant count with respect to the relevant date
@@ -147,6 +155,7 @@ const BookingForm = () => {
           })
         );
         console.log("Time Participant Counts:", timeParticipantCounts);
+        setTimeParticipantCounts1(timeParticipantCounts);
       } catch (e) {
         console.log(e);
       }
@@ -155,6 +164,7 @@ const BookingForm = () => {
     fetchData();
   }, [date, zoneId]);
 
+  console.log("Time Participant Counts:", timeParticipantCounts1);
   const participantCounts: number[] = bookingDate.map(
     (booking) => booking.participant_count as number
   );
@@ -381,7 +391,9 @@ const BookingForm = () => {
     console.log(count, capacity);
     return (count / capacity) * 100 + "%";
   };
-  let tot = 0;
+  console.log("565");
+  console.log(capacity);
+  console.log(timeParticipantCounts1);
   return (
     <>
       <NavbarProfile />
@@ -434,9 +446,15 @@ const BookingForm = () => {
                   <Form.Item
                     name="Participant Count"
                     label={
-                      "Participant Count ( Maximum Participan Count is - " +
-                      zoneDetails?.capacity?.toString() +
-                      " )"
+                      <span>
+                        Participant Count ( Availiale Participant Count is -{" "}
+                        <span style={{ color: "red",fontSize:"16px" }}>
+                          {Number(capacity) -
+                            (timeParticipantCounts1.find((item) => item.time === time)
+                              ?.totalParticipantCount || 0)}
+                        </span>{" "}
+                        )
+                      </span>
                     }
                     rules={[{ required: true, type: "number" }]}
                     style={{
@@ -445,13 +463,19 @@ const BookingForm = () => {
                     }}
                   >
                     <InputNumber
+                      disabled={!date || !time}
                       style={{
                         height: "50px",
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
                       }}
-                      max={capacity as number | string | undefined}
+                      max={
+                        Number(capacity) -
+                        (timeParticipantCounts1.find(
+                          (item) => item.time === time
+                        )?.totalParticipantCount || 0)
+                      }
                       onChange={(value) => setPcount(value?.toString() || "")}
                     />
                   </Form.Item>
@@ -526,7 +550,11 @@ const BookingForm = () => {
                   })}
                   {buttonData.map((button) => (
                     <button
-                      disabled={button.disabled}
+                      disabled={
+                        timeParticipantCounts1.find(
+                          (item) => item.time === button.id
+                        )?.totalParticipantCount === capacity
+                      }
                       key={button.id}
                       id={button.id.toString()}
                       type="button"
@@ -535,23 +563,39 @@ const BookingForm = () => {
                         width: "100%",
                         padding: "5%",
                         backgroundColor:
-                          button.id === time ? "#1677FF" : "white",
+                          button.id === time ? "#1677FF " : "white",
                         // Adjusted background color to cover only half of the button when booked
-
                         backgroundImage: bookingDate.find(
                           (booking) => booking.time === button.id
-                        )?.participant_count
-                          ? `linear-gradient(to right, red ${50}%, ${button.id === time ? "#1677FF" : "white"} 0%)`
+                        )
+                          ? `linear-gradient(to right, #0F70AE ${
+                              ((timeParticipantCounts1.find(
+                                (item) => item.time === button.id
+                              )?.totalParticipantCount || 0) /
+                                Number(capacity)) *
+                              100
+                            }%, ${button.id === time ? "#1677FF" : "white"} 0%)`
                           : "none",
                       }}
                     >
-                      {bookingDate.find((booking) => booking.time === button.id)
-                        ? "Booked"
-                        : button.time}
+                      {bookingDate.find(
+                        (booking) => booking.time === button.id
+                      ) &&
+                      timeParticipantCounts1.find(
+                        (item) => item.time === button.id
+                      )?.totalParticipantCount === capacity
+                        ? "Fully Booked"
+                        : `${
+                            (timeParticipantCounts1.find(
+                              (item) => item.time === button.id
+                            )?.totalParticipantCount ?? 0) > 0
+                              ? button.time.toString()
+                              : button.time.toString()
+                          }`}
                     </button>
                   ))}
                 </Form.Item>
-
+                {/* ${button.time} */}
                 {/* </Form.Item> */}
               </div>
             </Col>

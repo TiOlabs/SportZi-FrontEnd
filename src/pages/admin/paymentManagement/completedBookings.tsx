@@ -19,25 +19,29 @@ const CompletedBookings = () => {
   useEffect(() => {
     const fetchCompletedBookings = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getCompleteArcadeBookings`
-        );
-        const data = await res.json();
-        console.log(data);
-        setCompletedBookings(data);
+        if (value === 2) {
+          // Fetch only when the value is 2 (Arcade Bookings)
+          const res = await fetch(
+            `${process.env.REACT_APP_API_URL}api/getCompleteArcadeBookings`
+          );
+          const data = await res.json();
+          console.log(data);
+          setCompletedBookings(data);
+        }
       } catch (err) {
         console.log(err);
       }
     };
     fetchCompletedBookings();
-  }, []);
+  }, [value]); // Add value to the dependency array to re-fetch when value changes
+
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
-
+  console.log("ggggg", completedBookings);
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -72,128 +76,146 @@ const CompletedBookings = () => {
           padding: "1%",
           marginTop: "20px",
         }}
-      >{completedBookings.length === 0 ? <Empty /> : null}
-        <Col></Col>
-        <Col span={8} style={{}}>
-          <div
+      >
+        {" "}
+        {completedBookings.length === 0 ? (
+          <Row
             style={{
-              borderRadius: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              position: "absolute",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "#000",
-            }}
-          ></div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-              height: "80px",
-              fontSize: "16px",
+              backgroundColor: "white",
+              padding: "1%",
+              marginTop: "20px",
+              marginLeft: "40%",
             }}
           >
-            {completedBookings[0]?.zone.zone_name}
-          </div>
-        </Col>
-        <Col span={2} style={{}}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "left",
-              alignItems: "center",
-              textAlign: "center",
-              height: "80px",
-              fontSize: "16px",
-            }}
-          >
-            {" "}
-            Rs.{" "}
-            {String(
-              Number(completedBookings[0]?.participant_count) *
-                Number(completedBookings[0]?.zone.rate)
-            )}
-          </div>
-        </Col>
-        <Col span={8}>
-          <Link to={`/profile/`}>
-            <AdvancedImage
-              style={{
-                borderRadius: "50%",
-                position: "absolute",
-                width: "80px",
-                height: "80px",
-              }}
-              cldImg={
-                cld.image(completedBookings[0]?.user.user_image as string)
-                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                // .resize(Resize.scale().width(200).height(200))
-              }
-            />
-          </Link>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-              height: "80px",
-              fontSize: "16px",
-            }}
-          >
-            {completedBookings[0]?.user.firstname}{" "}
-            {completedBookings[0]?.user.lastname}
-          </div>
-        </Col>
-        <Col span={6} style={{}}>
-          <div
-            style={{
-              height: "80px",
-              fontSize: "16px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              type="primary"
-              style={{ width: "100px", backgroundColor: "#0E458E" }}
-            >
-              <div
-                style={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
-                Details
-              </div>
-            </Button>
-            <Button
-              type="primary"
-              ghost
-              style={{ width: "130px", marginLeft: "20px" }}
-            >
-              <div
-                style={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
-                Return Money
-              </div>
-            </Button>
-          </div>
-        </Col>
+            <Empty />
+          </Row>
+        ) : (
+          completedBookings.map((booking, index) => (
+            <>
+              <Col></Col>
+              <Col span={8} style={{}}>
+                <div
+                  style={{
+                    borderRadius: "50%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "absolute",
+                    width: "80px",
+                    height: "80px",
+                    backgroundColor: "#000",
+                  }}
+                ></div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {completedBookings[0]?.zone.zone_name}
+                </div>
+              </Col>
+              <Col span={2} style={{}}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {" "}
+                  Rs.{" "}
+                  {String(
+                    Number(completedBookings[0]?.participant_count) *
+                      Number(completedBookings[0]?.zone.rate)
+                  )}
+                </div>
+              </Col>
+              <Col span={8}>
+                <Link to={`/profile/`}>
+                  <AdvancedImage
+                    style={{
+                      borderRadius: "50%",
+                      position: "absolute",
+                      width: "80px",
+                      height: "80px",
+                    }}
+                    cldImg={
+                      cld.image(completedBookings[0]?.user.user_image as string)
+                      // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                      // .resize(Resize.scale().width(200).height(200))
+                    }
+                  />
+                </Link>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {completedBookings[0]?.user.firstname}{" "}
+                  {completedBookings[0]?.user.lastname}
+                </div>
+              </Col>
+              <Col span={6} style={{}}>
+                <div
+                  style={{
+                    height: "80px",
+                    fontSize: "16px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "100px", backgroundColor: "#0E458E" }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "16px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      Details
+                    </div>
+                  </Button>
+                  <Button
+                    type="primary"
+                    ghost
+                    style={{ width: "130px", marginLeft: "20px" }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "16px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      Return Money
+                    </div>
+                  </Button>
+                </div>
+              </Col>
+            </>
+          ))
+        )}
       </Row>
     </Col>
   );
