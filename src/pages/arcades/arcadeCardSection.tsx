@@ -192,7 +192,7 @@ const ArcadeCardSection = () => {
               >
                 <Spin spinning={loading}>
                   <ArcadeCard
-                    fees={arcade.arcadefeedbacks[0].arcade_feedback_id}
+                    fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
                     arcade_name={arcade.arcade_name}
                     arcade_rate={arcade.arcadefeedbacks}
                     arcade_image={arcade.arcade_image}
