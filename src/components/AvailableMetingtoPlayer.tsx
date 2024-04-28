@@ -33,17 +33,23 @@ const AvailableMetingstoPlayer = (props: any) => {
           status: "canceled_By_Player",
         }
       );
-      props.setZoneBookingDetails((prev: any) => {
-        return prev.filter(
-          (zoneBookingDetails: ZoneBookingDetails) =>
-            zoneBookingDetails.zone_booking_id !== props.booking_id
-        );
-      });
+  
+      // Close modal
+      setIsModalOpen(false);
+  
+      // Update zone booking details
+      // props.setZoneBookingDetails((prev: any) =>
+      //   prev.filter(
+      //     (zoneBookingDetails: ZoneBookingDetails) =>
+      //       zoneBookingDetails.zone_booking_id !== props.booking_id
+      //   )
+      // );
     } catch (error) {
       console.log("error");
       console.log(error);
     }
   };
+  
   return (
     <>
       <Row

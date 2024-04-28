@@ -1,4 +1,4 @@
-import { Button, Col, Form, Row, List, Grid } from "antd";
+import { Button, Col, Form, Row, List, Grid, Empty } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
@@ -762,7 +762,7 @@ const PlayerProfile = () => {
               />
             ))
           ) : (
-            <p style={{ marginTop: "5%" }}>No bookings available.</p>
+            <Empty description="No Bookings Availiable"/>         
           )}
         </div>
 
