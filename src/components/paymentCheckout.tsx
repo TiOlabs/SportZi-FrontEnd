@@ -11,6 +11,7 @@ declare global {
 }
 
 const PaymentModal = (props: any): JSX.Element | null => {
+  console.log(props);
   const zoneBookings = useContext(ZoneBookingsContext);
   console.log(zoneBookings);
   console.log(zoneBookings.zoneBookings.date);
@@ -118,7 +119,9 @@ const PaymentModal = (props: any): JSX.Element | null => {
           props.time === "" ||
           props.pcount === ""||
           props.userId === "" ||
-          props.zoneId === ""
+          props.zoneId === ""||
+          props.pcount> props.avaiableParticipantCount||
+          props.reservation_type===""
         }
         onClick={pay}
       >

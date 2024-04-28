@@ -447,7 +447,7 @@ const BookingForm = () => {
                     name="Participant Count"
                     label={
                       <span>
-                        Participant Count ( Availiale Participant Count is -{" "}
+                        Participant Count ( Available Participant Count is -{" "}
                         <span style={{ color: "red", fontSize: "16px" }}>
                           {Number(capacity) -
                             (timeParticipantCounts1.find(
@@ -678,6 +678,12 @@ const BookingForm = () => {
                   pcount={pcount}
                   userId={userId}
                   zoneId={zoneId}
+                  reservation_type={zone}
+                  avaiableParticipantCount={
+                    Number(capacity) -
+                    (timeParticipantCounts1.find((item) => item.time === time)
+                      ?.totalParticipantCount ?? 0)
+                  }
                 />
               </div>
             </Col>
