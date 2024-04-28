@@ -448,10 +448,11 @@ const BookingForm = () => {
                     label={
                       <span>
                         Participant Count ( Availiale Participant Count is -{" "}
-                        <span style={{ color: "red",fontSize:"16px" }}>
+                        <span style={{ color: "red", fontSize: "16px" }}>
                           {Number(capacity) -
-                            (timeParticipantCounts1.find((item) => item.time === time)
-                              ?.totalParticipantCount || 0)}
+                            (timeParticipantCounts1.find(
+                              (item) => item.time === time
+                            )?.totalParticipantCount || 0)}
                         </span>{" "}
                         )
                       </span>
@@ -481,7 +482,7 @@ const BookingForm = () => {
                   </Form.Item>
                   <Form.Item
                     name="way_of_booking"
-                    label="Way of Booking"
+                    label="Reservation Type"
                     rules={[{ required: true }]}
                     style={{
                       width: "90%",
@@ -499,8 +500,26 @@ const BookingForm = () => {
                         justifyContent: "center",
                       }}
                     >
-                      <Option value="full">Full Zone</Option>
-                      <Option value="Individual">Individual</Option>
+                      {zoneDetails?.way_of_booking === "full" ? (
+                        <>
+                          <Option value="full">Full Zone</Option>
+                          <Option value="Individual" disabled>
+                            Individual
+                          </Option>
+                        </>
+                      ) : zoneDetails?.way_of_booking === "person_by_person" ? (
+                        <>
+                          <Option value="full" disabled>
+                            Full Zone
+                          </Option>
+                          <Option value="Individual">Individual</Option>
+                        </>
+                      ) : (
+                        <>
+                          <Option value="full">Full Zone</Option>
+                          <Option value="Individual">Individual</Option>
+                        </>
+                      )}
                     </Select>
                   </Form.Item>
                 </Row>
