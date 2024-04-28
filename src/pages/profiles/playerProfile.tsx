@@ -4,7 +4,7 @@ import profileBackground from "../../assents/profileBackground.png";
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, SetStateAction } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
@@ -30,6 +30,7 @@ const requestList = [
 ];
 
 const PlayerProfile = () => {
+  const [playerBookingsData, setPlayerBookingsData] = useState([]);
   const { userDetails } = useContext(PlayerContext);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
@@ -46,7 +47,7 @@ const PlayerProfile = () => {
     return [];
   };
   // see more buttons
-  const [playerBookingsData, setPlayerBookingsData] = useState<
+  const [playerBookingsData1, setPlayerBookingsData1] = useState<
     ZoneBookingDetails[]
   >([]);
   console.log(playerBookingsData);
@@ -115,6 +116,9 @@ const PlayerProfile = () => {
       });
   }, [userDetails]);
 
+  const setZoneBookingDetails1 = (updatedData: SetStateAction<ZoneBookingDetails[]>) => {
+    setPlayerBookingsData1(updatedData);
+  };
   return (
     <>
       {userDetails.id !== "" ? <NavbarProfile /> : <Home />}
@@ -759,6 +763,7 @@ const PlayerProfile = () => {
                 booking_date={booking.date}
                 booking_time={booking.time}
                 venue={booking.zone.arcade.arcade_name}
+                setZoneBookingDetails={setZoneBookingDetails1}
               />
             ))
           ) : (
