@@ -1,4 +1,4 @@
-import { Col, Row, Button, Empty } from "antd";
+import { Col, Row, Button, Empty, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { Radio } from "antd";
@@ -6,7 +6,10 @@ import { ZoneBookingDetails } from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import axios from "axios";
 const CompletedBookings = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [value, setValue] = useState(1);
   const [completedBookings, setCompletedBookings] = useState<
     ZoneBookingDetails[]
@@ -42,6 +45,46 @@ const CompletedBookings = () => {
     },
   });
   console.log("ggggg", completedBookings);
+  const showDeleteConfirm = async (zoneBookingId: string) => {
+    Modal.confirm({
+      title: "Are you sure delete this booking?",
+      icon: <ExclamationCircleOutlined />,
+      content: "This action cannot be undone",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        console.log("OK");
+        console.log(zoneBookingId);
+        try {
+          const res = await axios.delete(
+            `${process.env.REACT_APP_API_URL}api/deletearcadebooking/${zoneBookingId}`
+          );
+          console.log(res);
+          // Fetch the updated list of completed bookings after deletion
+          const updatedBookings = completedBookings.filter(
+            (booking) => booking.zone_booking_id !== zoneBookingId
+          );
+          setCompletedBookings(updatedBookings);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -101,8 +144,8 @@ const CompletedBookings = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     position: "absolute",
-                    width: "80px",
-                    height: "80px",
+                    width: "70px",
+                    height: "70px",
                     backgroundColor: "#000",
                   }}
                 ></div>
@@ -116,7 +159,7 @@ const CompletedBookings = () => {
                     fontSize: "16px",
                   }}
                 >
-                  {completedBookings[0]?.zone.zone_name}
+                  {booking.zone.zone_name}
                 </div>
               </Col>
               <Col span={2} style={{}}>
@@ -133,8 +176,8 @@ const CompletedBookings = () => {
                   {" "}
                   Rs.{" "}
                   {String(
-                    Number(completedBookings[0]?.participant_count) *
-                      Number(completedBookings[0]?.zone.rate)
+                    Number(booking.participant_count) *
+                      Number(booking.zone.rate)
                   )}
                 </div>
               </Col>
@@ -144,11 +187,11 @@ const CompletedBookings = () => {
                     style={{
                       borderRadius: "50%",
                       position: "absolute",
-                      width: "80px",
-                      height: "80px",
+                      width: "70px",
+                      height: "70px",
                     }}
                     cldImg={
-                      cld.image(completedBookings[0]?.user.user_image as string)
+                      cld.image(String(booking.user.user_image))
                       // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                       // .resize(Resize.scale().width(200).height(200))
                     }
@@ -164,8 +207,7 @@ const CompletedBookings = () => {
                     fontSize: "16px",
                   }}
                 >
-                  {completedBookings[0]?.user.firstname}{" "}
-                  {completedBookings[0]?.user.lastname}
+                  {booking.user.firstname} {booking.user.lastname}
                 </div>
               </Col>
               <Col span={6} style={{}}>
@@ -180,6 +222,7 @@ const CompletedBookings = () => {
                 >
                   <Button
                     type="primary"
+                    onClick={showModal}
                     style={{ width: "100px", backgroundColor: "#0E458E" }}
                   >
                     <div
@@ -194,10 +237,73 @@ const CompletedBookings = () => {
                       Details
                     </div>
                   </Button>
+                  <Modal
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                  >
+                    <div style={{ lineHeight: 3.0, fontSize: "160px" }}>
+                      <Row>
+                        <div style={{ fontSize: "28px", color: "#0E458E" }}>
+                          Booking Details
+                        </div>
+                        <Col span={24}>
+                          <b>Booking ID :</b> {booking.zone_booking_id}
+                        </Col>
+                        <Col span={24}>
+                          <Row>
+                            <Col span={16}>
+                              <b>Booked By : </b> {booking.user.firstname}{" "}
+                              {booking.user.lastname}
+                            </Col>
+                            <Col span={8}>
+                              <b>User ID : </b> {booking.user.user_id}
+                            </Col>
+                          </Row>
+                        </Col>
+                        <Col span={24}>
+                          <Row>
+                            <Col span={16}>
+                              <b>Arcade :</b> {booking.zone.arcade.arcade_name}
+                            </Col>
+                            <Col span={8}>
+                              <b>Arcade ID</b> : {booking.zone.arcade.arcade_id}
+                            </Col>
+                          </Row>
+                        </Col>
+                        <Col span={24}>
+                          <Row>
+                            <Col span={24}>
+                              <b>Zone :</b> {booking.zone.zone_name}
+                            </Col>
+                            <Col span={24}>
+                              <b>Zone_ID :</b> {booking.zone.zone_id}
+                            </Col>
+                          </Row>
+                        </Col>
+                        <Col span={24}>
+                          <b>Booking Date :</b> {booking.date}
+                        </Col>
+                        <Col span={24}>
+                          <b>Booking Time :</b> {booking.time}
+                        </Col>
+                        <Col span={24}>
+                          <b>Participant Count :</b>{" "}
+                          {Number(booking.participant_count)}
+                        </Col>
+                        <Col span={24}>
+                          <b>Created at :</b> {booking.created_at}
+                        </Col>
+                      </Row>
+                    </div>
+                  </Modal>
                   <Button
                     type="primary"
                     ghost
-                    style={{ width: "130px", marginLeft: "20px" }}
+                    onClick={() =>
+                      showDeleteConfirm(String(booking.zone_booking_id))
+                    }
+                    style={{ width: "100px", marginLeft: "20px" }}
                   >
                     <div
                       style={{
@@ -208,7 +314,7 @@ const CompletedBookings = () => {
                         textAlign: "center",
                       }}
                     >
-                      Return Money
+                      Delete
                     </div>
                   </Button>
                 </div>
