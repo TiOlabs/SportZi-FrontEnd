@@ -22,7 +22,7 @@ export interface ZoneBookingDetails {
   status: String;
   created_at: String;
   canceled_at: String;
-  rate:Number;
+  rate: Number;
   date: String;
   time: String;
   participant_count: Number;
@@ -100,15 +100,14 @@ export interface Arcade {
 
 export interface ArcadeFeedbacks {
   rate: Number;
-  arcade_id:String;
+  arcade_id: String;
 }
 export interface Sport {
   sport_id: String;
   sport_name: String;
 }
 
-export interface CoachFeedbacks{
+export interface CoachFeedbacks {
   coach_feedback_id: String;
   rate: Number;
-
 }

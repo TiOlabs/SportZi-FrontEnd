@@ -19,7 +19,6 @@ const CoachCardSection = () => {
         );
         const data = await res.json();
         setCoachAssignDetails(data);
-        console.log("coachaaaaaaaaaaa", data);
       };
       fetchData();
     } catch (e) {

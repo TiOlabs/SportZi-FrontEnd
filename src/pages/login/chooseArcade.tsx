@@ -1,18 +1,33 @@
 import { Col, Row } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ArcadeCardForMannager from "../../components/ArcadeCardForMannager";
 import axiosInstance from "../../axiosInstance";
+interface Arcade {
+  arcade_id: string;
+  arcade_name: string;
+  // Add other properties as needed
+}
 
+interface Manager {
+  Manager: {
+    arcade: Arcade[];
+    // Add other properties as needed
+  };
+}
 const ChooseArcade = () => {
+  const [managersArcades, setManagersArcades] = useState<Manager | null>(null);
+
   useEffect(() => {
-    console.log("useeffect");
     axiosInstance
+
       .get("/api/auth/getchoosenArcade/")
       .then((res) => {
-        console.log("kanishka", res.data);
+        const data = res.data;
+        setManagersArcades(data);
+        console.log(data);
       })
       .catch((err) => {
-        console.log("errorrrrrrrrrr", err);
+        console.log("error", err);
       });
   }, []);
 
@@ -43,11 +58,19 @@ const ChooseArcade = () => {
               marginBottom: "20px",
             }}
           >
+            {" "}
             Choose your Arcade
           </p>
-          <ArcadeCardForMannager name="ssc Ground" />
-          <ArcadeCardForMannager name="colombo city" />
-          <ArcadeCardForMannager name="magestic city" />
+
+          {managersArcades &&
+            managersArcades.Manager.arcade.map(
+              (arcade: Arcade, index: number) => (
+                <ArcadeCardForMannager
+                  name={arcade.arcade_name}
+                  // Add other props as needed
+                />
+              )
+            )}
         </Col>
         <Col xs={8}></Col>
       </Row>
