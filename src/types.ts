@@ -18,6 +18,9 @@ export interface Zone {
   arcade: Arcade;
   capacity: Number;
   description: String;
+  way_of_booking: String;
+  sport_id: String;
+  sport: Sport;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
