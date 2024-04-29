@@ -17,6 +17,7 @@ import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
 import Home from "../home/home";
 import AppFooter from "../../components/footer";
+import NavbarLogin from "../../components/NavBarLogin";
 
 const requestList = [
   <CoachRequstRow />,
@@ -116,12 +117,14 @@ const PlayerProfile = () => {
       });
   }, [userDetails]);
 
-  const setZoneBookingDetails1 = (updatedData: SetStateAction<ZoneBookingDetails[]>) => {
+  const setZoneBookingDetails1 = (
+    updatedData: SetStateAction<ZoneBookingDetails[]>
+  ) => {
     setPlayerBookingsData1(updatedData);
   };
   return (
     <>
-      {userDetails.id !== "" ? <NavbarProfile /> : <Home />}
+      {userDetails.id !== "" ? <NavbarProfile /> : <NavbarLogin />}
 
       <style>
         @import
@@ -767,7 +770,7 @@ const PlayerProfile = () => {
               />
             ))
           ) : (
-            <Empty description="No Bookings Availiable"/>         
+            <Empty description="No Bookings Availiable" />
           )}
         </div>
 
