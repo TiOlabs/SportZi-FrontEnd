@@ -16,9 +16,12 @@ import CoachReqestForArcade from "../../components/CoachReqestForArcade";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
+import axiosInstance from "../../axiosInstance";
+import { useParams } from "react-router-dom";
+import React from "react";
+
 import { Zone } from "../../types";
 import axios from "axios";
-import axiosInstance from "../../axiosInstance";
 
 const ArcadeProfileArcade = () => {
   const [zone, setZone] = useState<Zone[]>([]);
@@ -66,17 +69,28 @@ const ArcadeProfileArcade = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
+  const { ArcadeId } = useParams();
+  console.log("in the arcade", ArcadeId);
+
+  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
 
   useEffect(() => {
     axiosInstance
-      .get("/api/auth/getarchadedetails")
+      .get("/api/auth/getarchadedetails", {
+        params: {
+          ArcadeId: ArcadeId,
+        },
+      })
       .then((res) => {
-        setname(res.data.firstname);
+        console.log("aaaaaaaaaaaaaaaa", res.data);
+        setArcadeDetails(res.data);
       })
       .catch((err) => {
-        console.log("error msg", err);
+        console.log(err);
       });
   }, []);
+
+
   return (
     <>
       <style>
@@ -169,12 +183,7 @@ const ArcadeProfileArcade = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {arcadeDetails && arcadeDetails.distription}
               </Typography>
             </Col>
           </Row>
@@ -218,8 +227,8 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                {/* {name} */}
-                Colombo Cricket Club
+                {arcadeDetails && arcadeDetails.arcade_name}
+
               </h1>
               <p
                 style={{
@@ -248,7 +257,15 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                39/11/A Galle road bambalapitiya colombo 04
+                {arcadeDetails &&
+                  arcadeDetails.address
+                    .split(",")
+                    .map((line: string, index: number) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        <br />
+                      </React.Fragment>
+                    ))}
               </p>
             </div>
             <div

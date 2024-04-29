@@ -99,7 +99,6 @@ const PlayerProfile = () => {
     axiosInstance
       .get(`/api/auth/getplayerdetails/${userDetails?.id}`, {})
       .then((res) => {
-        console.log("dataaaaaaaaaa222222 ", res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
         setDiscription(res.data.Discription);
@@ -110,7 +109,6 @@ const PlayerProfile = () => {
           achiveArr.push(item.achivement_details as string);
         });
         setAchivements(achiveArr.join(","));
-        // console.log("userDetails", userDetails);
       })
       .catch((err) => {
         console.log(err);
@@ -149,7 +147,7 @@ const PlayerProfile = () => {
           }}
         >
           <AdvancedImage
-            style={{ height: "auto", width: "300px" }}
+            style={{ height: "300px", width: "300px" }}
             cldImg={
               cld.image(user_image)
               // .resize(Resize.crop().width(200).height(200).gravity('auto'))
