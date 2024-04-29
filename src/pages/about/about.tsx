@@ -9,8 +9,13 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import NavbarLogin from "../../components/NavBarLogin";
 import { usePlayer } from "../../context/player.context";
+import { useLocation } from "react-router-dom";
 
 const About = () => {
+  const about = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [about]);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const [token, setToken] = useState<string | undefined>(undefined);
@@ -20,7 +25,7 @@ const About = () => {
   const { userDetails } = usePlayer();
   return (
     <div style={{}}>
-     {userDetails.id!=="" ? <Navbar/> : <NavbarLogin />}
+      {userDetails.id !== "" ? <Navbar /> : <NavbarLogin />}
       {/* ............................................................ */}
       <Row
         style={{
@@ -213,7 +218,6 @@ const About = () => {
         <Col lg={4} xs={0} md={3}></Col>
       </Row>
 
-    
       {<AppFooter />}
     </div>
   );

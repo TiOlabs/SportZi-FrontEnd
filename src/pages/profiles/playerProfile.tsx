@@ -1,10 +1,10 @@
-import { Button, Col, Form, Row, List, Grid } from "antd";
+import { Button, Col, Form, Row, List, Grid, Empty } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, SetStateAction } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
@@ -17,6 +17,7 @@ import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
 import Home from "../home/home";
 import AppFooter from "../../components/footer";
+import NavbarLogin from "../../components/NavBarLogin";
 
 const requestList = [
   <CoachRequstRow />,
@@ -30,6 +31,7 @@ const requestList = [
 ];
 
 const PlayerProfile = () => {
+  const [playerBookingsData, setPlayerBookingsData] = useState([]);
   const { userDetails } = useContext(PlayerContext);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
@@ -46,7 +48,7 @@ const PlayerProfile = () => {
     return [];
   };
   // see more buttons
-  const [playerBookingsData, setPlayerBookingsData] = useState<
+  const [playerBookingsData1, setPlayerBookingsData1] = useState<
     ZoneBookingDetails[]
   >([]);
   console.log(playerBookingsData);
@@ -115,9 +117,14 @@ const PlayerProfile = () => {
       });
   }, [userDetails]);
 
+  const setZoneBookingDetails1 = (
+    updatedData: SetStateAction<ZoneBookingDetails[]>
+  ) => {
+    setPlayerBookingsData1(updatedData);
+  };
   return (
     <>
-      {userDetails.id !== "" ? <NavbarProfile /> : <Home />}
+      {userDetails.id !== "" ? <NavbarProfile /> : <NavbarLogin />}
 
       <style>
         @import
@@ -759,10 +766,11 @@ const PlayerProfile = () => {
                 booking_date={booking.date}
                 booking_time={booking.time}
                 venue={booking.zone.arcade.arcade_name}
+                setZoneBookingDetails={setZoneBookingDetails1}
               />
             ))
           ) : (
-            <p style={{ marginTop: "5%" }}>No bookings available.</p>
+            <Empty description="No Bookings Availiable" />
           )}
         </div>
 

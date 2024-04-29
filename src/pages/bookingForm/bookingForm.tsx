@@ -22,10 +22,17 @@ import { jwtDecode } from "jwt-decode";
 import { UserIdContext } from "../../context/userId.context";
 import { useLocation } from "react-router-dom";
 import NavbarProfile from "../../components/NavBarProfile";
+import dayjs from "dayjs";
+import { count } from "console";
+import { max } from "moment";
 
 const { Option } = Select;
 
 const BookingForm = () => {
+  interface TimeParticipantCount {
+    time: string;
+    totalParticipantCount: number;
+  }
   const location = useLocation() as unknown as { bookings: any };
   const { bookings } = location;
   useEffect(() => {
@@ -43,6 +50,9 @@ const BookingForm = () => {
   const [bookingCount, setbookingCount] = useState<Number>();
   const [bookingDate, setBookingDate] = useState<ZoneBookingDetails[]>([]);
   const [paymentDetails, setPaymentDetails] = useState<User>();
+  const [timeParticipantCounts1, setTimeParticipantCounts1] = useState<
+    TimeParticipantCount[]
+  >([]);
   // payment_id: "",
   // oder_id: "",
   // items: "",
@@ -85,8 +95,8 @@ const BookingForm = () => {
   }, [userId]);
   console.log(date);
   useEffect(() => {
-    try {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
         const res = await fetch(
           `http://localhost:8000/api/getarcadebookingbydate/${date}/${zoneId}`
         );
@@ -94,13 +104,78 @@ const BookingForm = () => {
         const data = await res.json();
         console.log(data);
         setBookingDate(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, [date]);
 
+        // Grouping data by booking time and calculating total participant count for each group
+        const groupedByTime: {
+          [key: string]: { bookings: any[]; totalParticipantCount: number };
+        } = data.reduce(
+          (
+            acc: {
+              [x: string]: { bookings: any[]; totalParticipantCount: number };
+            },
+            booking: { time: any; participant_count: any }
+          ) => {
+            const time = booking.time;
+            if (!acc[time]) {
+              acc[time] = { bookings: [], totalParticipantCount: 0 };
+            }
+            acc[time].bookings.push(booking);
+            acc[time].totalParticipantCount += booking.participant_count;
+            return acc;
+          },
+          {}
+        );
+
+        console.log("Grouped by time:");
+        console.log(groupedByTime);
+
+        // Logging participant count for each group
+        for (const time in groupedByTime) {
+          console.log(`Time: ${time}`);
+          console.log(
+            "Participant count:",
+            groupedByTime[time].totalParticipantCount
+          );
+          // setTc(groupedByTime[time].totalParticipantCount)
+        }
+
+        // Logging total participant count with respect to the relevant date
+        const totalParticipantCountByDate = Object.values(groupedByTime).reduce(
+          (total: number, group: any) => total + group.totalParticipantCount,
+          0
+        );
+        console.log(
+          `Total participant count for date ${date}:`,
+          totalParticipantCountByDate
+        );
+        const timeParticipantCounts = Object.entries(groupedByTime).map(
+          ([time, { totalParticipantCount }]) => ({
+            time,
+            totalParticipantCount,
+          })
+        );
+        console.log("Time Participant Counts:", timeParticipantCounts);
+        setTimeParticipantCounts1(timeParticipantCounts);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [date, zoneId]);
+
+  console.log("Time Participant Counts:", timeParticipantCounts1);
+  const participantCounts: number[] = bookingDate.map(
+    (booking) => booking.participant_count as number
+  );
+
+  console.log(participantCounts);
+  const sumParticipantCount: number = participantCounts.reduce(
+    (total: number, count: number) => total + count,
+    0
+  );
+
+  console.log("Sum of participant counts:", sumParticipantCount);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -121,6 +196,9 @@ const BookingForm = () => {
   console.log(paymentDetails);
 
   console.log(zoneDetails?.rate);
+  console.log(zoneDetails?.capacity);
+  const capacity = zoneDetails?.capacity;
+  console.log(capacity);
   const rate = zoneDetails?.rate;
   console.log(pcount);
   let fullAmount = Number(rate) * Number(pcount);
@@ -248,7 +326,6 @@ const BookingForm = () => {
   const closeTime = Number(zoneDetails?.close_time) ?? 0;
   const timeStep = 1;
   let buttonData = [];
-
   for (let i = openTime; i < closeTime; i += timeStep) {
     let nextTime = i + timeStep;
     let hour = Math.floor(i);
@@ -256,14 +333,38 @@ const BookingForm = () => {
     let nextHour = Math.floor(nextTime);
     let nextMinute = (nextTime - nextHour) * 60;
 
-    buttonData.push({
-      id: `${hour}:${minute < 10 ? "0" : ""}${minute}- ${nextHour}:${
-        nextMinute < 10 ? "0" : ""
-      }${nextMinute}`,
-      time: `${hour}:${minute < 10 ? "0" : ""}${minute}- ${nextHour}:${
-        nextMinute < 10 ? "0" : ""
-      }${nextMinute}`,
-    });
+    let formattedTime = `${hour}:${
+      minute < 10 ? "0" : ""
+    }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+
+    if (date === dayjs().format("YYYY-MM-DD")) {
+      // Split formattedTime into start and end times
+      const [startTime, endTime] = formattedTime.split("-");
+
+      // Parse start and end times into time objects
+      const formattedStartTime = dayjs(startTime, "HH:mm");
+      const formattedEndTime = dayjs(endTime, "HH:mm");
+      const currentTime = dayjs();
+
+      // Compare current time with start and end times
+      const disabled = currentTime.isAfter(formattedEndTime);
+      console.log(disabled);
+
+      // Push time slot with disabled property into buttonData
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: disabled,
+      });
+    } else {
+      // If it's not today's date, enable the time slot
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: false,
+      });
+    }
+
     console.log(buttonData);
   }
 
@@ -281,11 +382,22 @@ const BookingForm = () => {
   //   { id: "11", time: "19.00-20.00" },
   //   { id: "12", time: "20.00-21.00" },
   // ];
-
+  const formattedTime = dayjs().format("HH:mm");
+  console.log(capacity);
+  const calculateLinearGradientPercentage = (
+    count: number,
+    capacity: number
+  ) => {
+    console.log(count, capacity);
+    return (count / capacity) * 100 + "%";
+  };
+  console.log("565");
+  console.log(capacity);
+  console.log(timeParticipantCounts1);
   return (
     <>
-      <NavbarProfile  />
-      <div style={{ margin: "2%",marginTop:"4%" }}>
+      <NavbarProfile />
+      <div style={{ margin: "2%", marginTop: "4%" }}>
         <h1
           style={{
             display: "Flex",
@@ -332,27 +444,8 @@ const BookingForm = () => {
                     </div>
                   </Col>
                   <Form.Item
-                    name="Participant Count"
-                    label="Participant Count"
-                    rules={[{ required: true, type: "number" }]}
-                    style={{
-                      width: "90%",
-                      marginLeft: "20px",
-                    }}
-                  >
-                    <InputNumber
-                      style={{
-                        height: "50px",
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                      onChange={(value) => setPcount(value?.toString() || "")}
-                    />
-                  </Form.Item>
-                  <Form.Item
                     name="way_of_booking"
-                    label="Way of Booking"
+                    label="Reservation Type"
                     rules={[{ required: true }]}
                     style={{
                       width: "90%",
@@ -370,9 +463,64 @@ const BookingForm = () => {
                         justifyContent: "center",
                       }}
                     >
-                      <Option value="full">Full Zone</Option>
-                      <Option value="Individual">Individual</Option>
+                      {zoneDetails?.way_of_booking === "full" ? (
+                        <>
+                          <Option value="full">Full Zone</Option>
+                          <Option value="Individual" disabled>
+                            Individual
+                          </Option>
+                        </>
+                      ) : zoneDetails?.way_of_booking === "person_by_person" ? (
+                        <>
+                          <Option value="full" disabled>
+                            Full Zone
+                          </Option>
+                          <Option value="Individual">Individual</Option>
+                        </>
+                      ) : (
+                        <>
+                          <Option value="full">Full Zone</Option>
+                          <Option value="Individual">Individual</Option>
+                        </>
+                      )}
                     </Select>
+                  </Form.Item>
+                  <Form.Item
+                    name="Participant Count"
+                    label={
+                      <span>
+                        Participant Count ( Available Participant Count is -{" "}
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          {Number(capacity) -
+                            (timeParticipantCounts1.find(
+                              (item) => item.time === time
+                            )?.totalParticipantCount || 0)}
+                        </span>{" "}
+                        )
+                      </span>
+                    }
+                    rules={[{ required: true, type: "number" }]}
+                    style={{
+                      width: "90%",
+                      marginLeft: "20px",
+                    }}
+                  >
+                    <InputNumber
+                      disabled={!date || !time}
+                      style={{
+                        height: "50px",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                      max={
+                        Number(capacity) -
+                        (timeParticipantCounts1.find(
+                          (item) => item.time === time
+                        )?.totalParticipantCount || 0)
+                      }
+                      onChange={(value) => setPcount(value?.toString() || "")}
+                    />
                   </Form.Item>
                 </Row>
               </div>
@@ -415,18 +563,16 @@ const BookingForm = () => {
                     return (
                       <button
                         id={booking.time.toString()}
-                        style={{ backgroundColor: "red" }}
+                        style={{ backgroundColor: "red", width: "50%" }} // Adjusted width to 50%
                       ></button>
                     );
                   })}
                   {buttonData.map((button) => (
                     <button
                       disabled={
-                        bookingDate.find(
-                          (booking) => booking.time === button.id
-                        )
-                          ? true
-                          : false
+                        timeParticipantCounts1.find(
+                          (item) => item.time === button.id
+                        )?.totalParticipantCount === capacity
                       }
                       key={button.id}
                       id={button.id.toString()}
@@ -435,21 +581,40 @@ const BookingForm = () => {
                       style={{
                         width: "100%",
                         padding: "5%",
-                        backgroundColor: bookingDate.find(
+                        backgroundColor:
+                          button.id === time ? "#1677FF " : "white",
+                        // Adjusted background color to cover only half of the button when booked
+                        backgroundImage: bookingDate.find(
                           (booking) => booking.time === button.id
                         )
-                          ? "red"
-                          : button.id === time
-                          ? "#1677FF"
-                          : "white",
+                          ? `linear-gradient(to right, #0F70AE ${
+                              ((timeParticipantCounts1.find(
+                                (item) => item.time === button.id
+                              )?.totalParticipantCount || 0) /
+                                Number(capacity)) *
+                              100
+                            }%, ${button.id === time ? "#1677FF" : "white"} 0%)`
+                          : "none",
                       }}
                     >
-                      {bookingDate.find((booking) => booking.time === button.id)
-                        ? "Booked"
-                        : button.time}
+                      {bookingDate.find(
+                        (booking) => booking.time === button.id
+                      ) &&
+                      timeParticipantCounts1.find(
+                        (item) => item.time === button.id
+                      )?.totalParticipantCount === capacity
+                        ? "Fully Booked"
+                        : `${
+                            (timeParticipantCounts1.find(
+                              (item) => item.time === button.id
+                            )?.totalParticipantCount ?? 0) > 0
+                              ? button.time.toString()
+                              : button.time.toString()
+                          }`}
                     </button>
                   ))}
                 </Form.Item>
+                {/* ${button.time} */}
                 {/* </Form.Item> */}
               </div>
             </Col>
@@ -513,6 +678,12 @@ const BookingForm = () => {
                   pcount={pcount}
                   userId={userId}
                   zoneId={zoneId}
+                  reservation_type={zone}
+                  avaiableParticipantCount={
+                    Number(capacity) -
+                    (timeParticipantCounts1.find((item) => item.time === time)
+                      ?.totalParticipantCount ?? 0)
+                  }
                 />
               </div>
             </Col>

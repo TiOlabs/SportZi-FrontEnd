@@ -33,6 +33,11 @@ const AvailableMetingstoPlayer = (props: any) => {
           status: "canceled_By_Player",
         }
       );
+
+      // Close modal
+      setIsModalOpen(false);
+
+      // Update zone booking details
       props.setZoneBookingDetails((prev: any) => {
         return prev.filter(
           (zoneBookingDetails: ZoneBookingDetails) =>
@@ -44,6 +49,7 @@ const AvailableMetingstoPlayer = (props: any) => {
       console.log(error);
     }
   };
+
   return (
     <>
       <Row
