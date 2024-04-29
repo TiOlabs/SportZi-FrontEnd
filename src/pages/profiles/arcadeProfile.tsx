@@ -7,7 +7,7 @@ import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
 import PhotoCollage from "../../components/photoCollage";
 import ArcadeZoneCard from "../../components/ArcadeZoneCard";
-import AddZone from "../../components/AddZone"
+import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
 import { useEffect, useState } from "react";
@@ -25,8 +25,11 @@ const ArcadeProfileArcade = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/getZoneDetails`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getZoneDetails`
+        );
         const data = await res.data;
+        console.log(data);
         setZone(data);
       };
       fetchData();
@@ -55,7 +58,6 @@ const ArcadeProfileArcade = () => {
     <CoachReqestForArcade />,
     <CoachReqestForArcade />,
   ];
-
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -785,31 +787,36 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-            {zone.map((zone: Zone) => (
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard
-              zoneName={zone.zone_name}
-              rate={zone.rate}
-              zoneImage={zone.zone_image} 
-              description={zone.description}
-            />
-          </Col>
-          ))  
-          }
+          {zone.map((zone: Zone) => (
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              {" "}
+              <ArcadeZoneCard
+                zoneName={zone.zone_name}
+                rate={zone.rate}
+                zoneImage={zone.zone_image}
+                description={zone.description}
+                id={zone.zone_id}
+                capacity={zone.capacity}
+                open_time={zone.open_time}
+                close_time={zone.close_time}
+                way_of_booking={zone.way_of_booking}
+                sport={zone.sport.sport_name}
+              />
+            </Col>
+          ))}
           <Col
             style={{
               width: "100%",
@@ -862,7 +869,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "Kanit",
             }}
           >
-            Book Our Zones
+            Our Packages
           </Typography>
           <div
             style={{

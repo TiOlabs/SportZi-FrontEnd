@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Input, InputNumber, Modal, Select, Upload, message } from "antd";
+import { Button, Form, Input, InputNumber, Modal,message } from "antd";
 import { Cloudinary } from "@cloudinary/url-gen";
 import axios from "axios";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
@@ -176,7 +176,7 @@ const AddPackage = () => {
         />
       </Form.Item>
       <Form.Item
-        name="package"
+        name="package" 
         label="Add your Precentage For Coach"
         rules={[
           {
@@ -209,9 +209,6 @@ const AddPackage = () => {
       </Form.Item>
       <Form.Item>
         {contextHolder}
-        <Button type="primary" htmlType="submit" onClick={openMessage}>
-          Submit
-        </Button>
       </Form.Item>
     </Form>
       </Modal>
