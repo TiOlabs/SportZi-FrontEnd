@@ -101,6 +101,7 @@ export interface Arcade {
   arcade_address: String;
   arcade_image: String;
   arcadefeedbacks: ArcadeFeedbacks[];
+  zone: Zone[];
 }
 
 export interface ArcadeFeedbacks {
