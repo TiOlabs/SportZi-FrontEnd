@@ -15,7 +15,7 @@ import { LeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { usePlayer } from "../../context/player.context";
 import { CoachBookingContext } from "../../context/coachBooking.context";
-import { CoachAssignDetails, Zone } from "../../types";
+import { Arcade, CoachAssignDetails, Zone } from "../../types";
 
 const { Option } = Select;
 
@@ -24,13 +24,14 @@ const CoachBookingForm: React.FC = () => {
   const [date, setDate] = useState<string>("");
   const [pcount, setPcount] = useState<string>("");
   const [arcade, setArcade] = useState<string>("");
+  const [coachSport, setCoachSport] = useState<string>("");
   const [coachAssignDetails, setCoachAssignDetails] = useState<
     CoachAssignDetails[]
   >([]);
   const { userDetails } = usePlayer();
   const { coachId } = useContext(CoachBookingContext);
-  const [coachAssignArcades, setCoachAssignArcades] = useState<string[]>([]);
-  const [zoneForCoachBookings, setzoneForCoachBookings] = useState<Zone>();
+  const [zoneForCoachBookings, setzoneForCoachBookings] = useState<Zone[]>([]);
+  const [arcadesofCoache, setarcadesofCoache] = useState<Arcade>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,38 +40,49 @@ const CoachBookingForm: React.FC = () => {
           `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachId}`
         );
         const data = await res.json();
+        console.log(data);
         setCoachAssignDetails(data);
-        setCoachAssignArcades(
-          data.map(
-            (coachAssignDetail: CoachAssignDetails) =>
-              coachAssignDetail.arcade.arcade_name
-          )
-        );
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
   }, [coachId]);
-
+  console.log(arcade);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getzoneForCoachBooking/${arcade}/${coachAssignDetails[0]?.coach.sport.sport_id}/${coachAssignDetails[0]?.coach.coach_id}`
+          `${process.env.REACT_APP_API_URL}api/getcoach/${coachId}`
+        );
+        const data = await res.json();
+        console.log(data?.sport.sport_id);
+        setCoachSport(data?.sport.sport_id);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [coachId]);
+  console.log(coachSport);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+         `${process.env.REACT_APP_API_URL}api/getarcadeDetailsById/${arcade}`
         );
         const data = await res.json();
         console.log(data);
-        setzoneForCoachBookings(data);
+        setarcadesofCoache(data);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
   }, [arcade]);
-
-  console.log(zoneForCoachBookings?.zone_id);
-
+  // console.log(
+  //   arcadesofCoache?.zone.find((zone) => zone.sport.sport_id)?.zone_name
+  // );
   const handleFinish = async () => {
     console.log(date, time, pcount, zoneForCoachBookings);
     const pcountInt = parseInt(pcount);
@@ -97,7 +109,7 @@ const CoachBookingForm: React.FC = () => {
           time: time,
           coach_id: coachId,
           player_id: userDetails.id,
-          zone_id: zoneForCoachBookings?.zone_id,
+          // zone_id: zoneForCoachBookings.find(,
           arcade_id: arcade,
         }
       );
@@ -199,17 +211,46 @@ const CoachBookingForm: React.FC = () => {
                       justifyContent: "center",
                     }}
                   >
-                    {coachAssignArcades?.length === 0 ? (
+                    {coachAssignDetails?.length === 0 ? (
                       <Empty />
                     ) : (
-                      coachAssignArcades?.map((arcadeName, index) => (
-                        <Option
-                          key={index}
-                          value={coachAssignDetails[0]?.arcade.arcade_id}
-                        >
-                          {arcadeName}
+                      coachAssignDetails?.map((arcadeName, index) => (
+                        <Option key={index} value={arcadeName.arcade_id}>
+                          {arcadeName?.arcade.arcade_name}
                         </Option>
                       ))
+                    )}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="zone"
+                  label="Select Zone"
+                  rules={[{ required: true }]}
+                  style={{
+                    width: "90%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <Select
+                    placeholder="Select a Zone"
+                    onChange={(value) => setArcade(value)}
+                    allowClear
+                    style={{
+                      height: "50px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {arcadesofCoache?.zone ? (
+                      arcadesofCoache.zone
+                        .filter((zone) => zone.sport.sport_id === coachSport)
+                        .map((zone, index) => (
+                          <Option key={index} value={zone.zone_id}>
+                            {zone.zone_name}
+                          </Option>
+                        ))
+                    ) : (
+                      <Empty />
                     )}
                   </Select>
                 </Form.Item>
