@@ -7,7 +7,7 @@ import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
 import PhotoCollage from "../../components/photoCollage";
 import ArcadeZoneCard from "../../components/ArcadeZoneCard";
-import AddZone from "../../components/AddZone"
+import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
 import { useEffect, useState } from "react";
@@ -16,17 +16,23 @@ import CoachReqestForArcade from "../../components/CoachReqestForArcade";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
+import axiosInstance from "../../axiosInstance";
+import { useParams } from "react-router-dom";
+import React from "react";
+
 import { Zone } from "../../types";
 import axios from "axios";
-import axiosInstance from "../../axiosInstance";
 
 const ArcadeProfileArcade = () => {
   const [zone, setZone] = useState<Zone[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/getZoneDetails`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getZoneDetails`
+        );
         const data = await res.data;
+        console.log(data);
         setZone(data);
       };
       fetchData();
@@ -55,7 +61,6 @@ const ArcadeProfileArcade = () => {
     <CoachReqestForArcade />,
     <CoachReqestForArcade />,
   ];
-
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -64,17 +69,28 @@ const ArcadeProfileArcade = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
+  const { ArcadeId } = useParams();
+  console.log("in the arcade", ArcadeId);
+
+  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
 
   useEffect(() => {
     axiosInstance
-      .get("/api/auth/getarchadedetails")
+      .get("/api/auth/getarchadedetails", {
+        params: {
+          ArcadeId: ArcadeId,
+        },
+      })
       .then((res) => {
-        setname(res.data.firstname);
+        console.log("aaaaaaaaaaaaaaaa", res.data);
+        setArcadeDetails(res.data);
       })
       .catch((err) => {
-        console.log("error msg", err);
+        console.log(err);
       });
   }, []);
+
+
   return (
     <>
       <style>
@@ -167,12 +183,7 @@ const ArcadeProfileArcade = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {arcadeDetails && arcadeDetails.distription}
               </Typography>
             </Col>
           </Row>
@@ -216,8 +227,8 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                {/* {name} */}
-                Colombo Cricket Club
+                {arcadeDetails && arcadeDetails.arcade_name}
+
               </h1>
               <p
                 style={{
@@ -246,7 +257,15 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                39/11/A Galle road bambalapitiya colombo 04
+                {arcadeDetails &&
+                  arcadeDetails.address
+                    .split(",")
+                    .map((line: string, index: number) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        <br />
+                      </React.Fragment>
+                    ))}
               </p>
             </div>
             <div
@@ -785,31 +804,36 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-            {zone.map((zone: Zone) => (
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard
-              zoneName={zone.zone_name}
-              rate={zone.rate}
-              zoneImage={zone.zone_image} 
-              description={zone.description}
-            />
-          </Col>
-          ))  
-          }
+          {zone.map((zone: Zone) => (
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              {" "}
+              <ArcadeZoneCard
+                zoneName={zone.zone_name}
+                rate={zone.rate}
+                zoneImage={zone.zone_image}
+                description={zone.description}
+                id={zone.zone_id}
+                capacity={zone.capacity}
+                open_time={zone.open_time}
+                close_time={zone.close_time}
+                way_of_booking={zone.way_of_booking}
+                sport={zone.sport.sport_name}
+              />
+            </Col>
+          ))}
           <Col
             style={{
               width: "100%",
@@ -862,7 +886,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "Kanit",
             }}
           >
-            Book Our Zones
+            Our Packages
           </Typography>
           <div
             style={{

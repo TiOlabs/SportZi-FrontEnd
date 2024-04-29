@@ -19,6 +19,7 @@ export interface Zone {
   capacity: Number;
   description: String;
   way_of_booking: String;
+  sport_id: String;
   sport: Sport;
 }
 export interface ZoneBookingDetails {
@@ -117,6 +118,7 @@ export interface CoachFeedbacks {
   coach_feedback_id: String;
   rate: Number;
 }
+
 export interface UserPhoto {
   user_id: String;
   image: String;
