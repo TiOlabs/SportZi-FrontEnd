@@ -67,7 +67,7 @@ const ChooseArcade = () => {
               (arcade: Arcade, index: number) => (
                 <ArcadeCardForMannager
                   name={arcade.arcade_name}
-                  // Add other props as needed
+                  id={arcade.arcade_id}
                 />
               )
             )}

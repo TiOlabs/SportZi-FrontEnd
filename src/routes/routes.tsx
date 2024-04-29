@@ -51,7 +51,10 @@ const AppRoutes = () => {
           element={<CoachAssignDetailsForm />}
         />
         <Route path="CoachUser" element={<CoachProfileUser />} />
-        <Route path="ArcadeforArcade" element={<ArcadeProfileArcade />} />
+        <Route
+          path="ArcadeforArcade/:ArcadeId"
+          element={<ArcadeProfileArcade />}
+        />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
         <Route
           path="admin"

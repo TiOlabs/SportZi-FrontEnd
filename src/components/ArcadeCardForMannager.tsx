@@ -1,7 +1,13 @@
 import React from "react";
 import { Row, Col } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
+import { useNavigate } from "react-router-dom";
 const ArcadeCardForMannager = (props: any) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/ArcadeforArcade/${props.id}`); // replace 'props.id' with the unique id you want to use
+  };
   return (
     <>
       <style>
@@ -9,6 +15,7 @@ const ArcadeCardForMannager = (props: any) => {
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
       <Row
+        onClick={handleClick}
         style={{
           display: "flex",
           justifyContent: "center",
