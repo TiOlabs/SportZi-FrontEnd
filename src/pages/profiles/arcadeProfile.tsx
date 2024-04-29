@@ -90,7 +90,6 @@ const ArcadeProfileArcade = () => {
       });
   }, []);
 
-
   return (
     <>
       <style>
@@ -228,7 +227,6 @@ const ArcadeProfileArcade = () => {
                 }}
               >
                 {arcadeDetails && arcadeDetails.arcade_name}
-
               </h1>
               <p
                 style={{
@@ -249,7 +247,6 @@ const ArcadeProfileArcade = () => {
                   margin: "0px",
                   color: "#000",
                   fontFamily: "kanit",
-
                   fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "300",
@@ -257,15 +254,31 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                {arcadeDetails &&
+                {arcadeDetails?.address &&
                   arcadeDetails.address
                     .split(",")
-                    .map((line: string, index: number) => (
-                      <React.Fragment key={index}>
-                        {line}
-                        <br />
-                      </React.Fragment>
-                    ))}
+                    .map(
+                      (
+                        line:
+                          | string
+                          | number
+                          | boolean
+                          | React.ReactElement<
+                              any,
+                              string | React.JSXElementConstructor<any>
+                            >
+                          | Iterable<React.ReactNode>
+                          | React.ReactPortal
+                          | null
+                          | undefined,
+                        index: React.Key | null | undefined
+                      ) => (
+                        <React.Fragment key={index}>
+                          {line}
+                          <br />
+                        </React.Fragment>
+                      )
+                    )}
               </p>
             </div>
             <div
