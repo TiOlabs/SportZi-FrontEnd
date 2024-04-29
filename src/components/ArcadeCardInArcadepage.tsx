@@ -1,6 +1,4 @@
-
-import { Col, Row, Button, Flex, Skeleton } from "antd";
-import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
+import {Button} from "antd";
 import { getTwoToneColor } from "@ant-design/icons";
 import { useState } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
@@ -20,9 +18,10 @@ const ArcadeCard = (props: any) => {
       cloudName,
     },
   });
-  console.log("props image hiiiiii", props.arcade_image);
   console.log("props", props);
-  console.log("props", props.arcade_rate);
+  console.log("props", props.arcade_rate[0]?.rate);
+
+
 
   return (
     <>
@@ -76,20 +75,12 @@ const ArcadeCard = (props: any) => {
               }}
             >
               <AdvancedImage
-                style={{
-                  width: "100px",
-                  height: "100px",
-                  borderRadius: "100%",
-                  backgroundColor: "black",
-                }}
+                style={{ width: "80px", height: "80px", borderRadius: "50%" }}
                 cldImg={
-                  cld.image(props.AdvancedImage)
+                  cld.image(props.arcade_image)
                   // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                   // .resize(Resize.scale().width(200).height(200))
                 }
-                // border-radius: 50%;
-                // width: 80px;
-                // height: 80px;
               />
             </div>
 
@@ -113,7 +104,9 @@ const ArcadeCard = (props: any) => {
             >
               <Rate
                 disabled
-                defaultValue={props.arcade_rate}
+
+                defaultValue={props.arcade_rate[0]?.rate}
+
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>

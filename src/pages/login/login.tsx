@@ -1,20 +1,22 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
-import { Form, Input, Row, Col, Button} from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Form, Input, Row, Col, Button } from "antd";
+// import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router-dom";
-import Home from "../home/home";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const commonInputStyle = {
   height: "40px",
 };
 
-
 const Login = () => {
+  const login = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [login]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -28,9 +30,7 @@ const Login = () => {
         })
         .then((res) => {
           navigate("/");
-          
-
-          console.log(res.data.token);
+          // console.log(res.data.token);
           Cookies.set("token", res.data.token, {
             expires: 1,
             httpOnly: false,
@@ -41,7 +41,6 @@ const Login = () => {
           alert(err.response.data.message);
           console.log("response error:", err);
         });
-
     } catch (err) {
       console.log(err);
       alert("Login failed...2");
@@ -109,7 +108,6 @@ const Login = () => {
             layout="vertical"
             onFinish={onFinish}
           >
-
             <div
               style={{
                 fontSize: "28px",
@@ -144,7 +142,6 @@ const Login = () => {
               ]}
             >
               <Input
-                // prefix={<LockOutlined className="site-form-item-icon" />}
                 style={commonInputStyle}
                 type="password"
                 placeholder="Password"
@@ -152,10 +149,6 @@ const Login = () => {
               />
             </Form.Item>
             <Form.Item style={{ textAlign: "right" }}>
-              {/* <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item> */}
-
               <a className="login-form-forgot" href="">
                 Forgot password
               </a>
@@ -173,7 +166,7 @@ const Login = () => {
                   color: "#fff",
                   fontSize: "16px",
                 }}
-              > 
+              >
                 Log in
               </Button>
             </Form.Item>

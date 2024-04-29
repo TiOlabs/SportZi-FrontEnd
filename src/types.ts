@@ -11,11 +11,14 @@ export interface Zone {
   rate: Number;
   arcade_location: String;
   manager_id: String;
-  opening_time: String;
-  closing_time: String;
+  open_time: String;
+  close_time: String;
   arcade_address: String;
   zone_image: String;
   arcade: Arcade;
+  capacity: Number;
+  description: String;
+  way_of_booking: String;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
@@ -31,6 +34,7 @@ export interface ZoneBookingDetails {
 }
 
 export interface Coach {
+  coach_id: String;
   rate: Number;
   coach_rating: Number;
   short_desctiption: String;
@@ -52,19 +56,23 @@ export interface User {
   country: String;
   user_image: String;
   Phone: UserPhone;
+  userPhotos: UserPhoto;
 }
 export interface UserPhone {
   user_id: String;
   phone_number: String;
 }
 export interface CoachAssignDetails {
-  assign_id: Number;
-  description: String;
+  coach_id: String;
+  arcade_id: String;
   duration: String;
-  state: String;
-  rate: string;
-  coach_image: String;
+  description: String;
+  assigned_date: Date;
+  status: String;
+  created_at: Date;
+  canceled_at: Date;
   coach: Coach;
+  arcade: Arcade;
 }
 
 export interface ArcadeBookings {
@@ -79,28 +87,24 @@ export interface ArcadeBookings {
   cancel_by_admin: boolean;
 }
 
-export interface ArcadeRating {
-  discription: string;
-  rate: Number;
-}
-
 export interface Arcade {
   arcade_id: String;
   arcade_name: String;
   arcade_email: String;
   arcade_location: String;
-  description: String;
+  distription: String;
   manager_id: String;
   opening_time: String;
   closing_time: String;
   arcade_address: String;
   arcade_image: String;
-  arcadefeedbacks: ArcadeFeedbacks;
+  arcadefeedbacks: ArcadeFeedbacks[];
 }
 
 export interface ArcadeFeedbacks {
+  arcade_feedback_id: String;
   rate: Number;
-  arcade_id: String;
+  arcade: Arcade;
 }
 export interface Sport {
   sport_id: String;
@@ -110,4 +114,9 @@ export interface Sport {
 export interface CoachFeedbacks {
   coach_feedback_id: String;
   rate: Number;
+}
+
+export interface UserPhoto {
+  user_id: String;
+  image: String;
 }

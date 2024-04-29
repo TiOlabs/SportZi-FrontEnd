@@ -13,7 +13,6 @@ import { Popover } from "antd";
 import { Button } from "antd/es/radio";
 import Cookies from "js-cookie";
 import { usePlayer } from "../context/player.context";
-import { UserIdContext } from "../context/userId.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 
@@ -161,7 +160,7 @@ const Navbar: React.FC = () => {
     setOpen(newOpen);
   };
   const token = Cookies.get("token");
-  console.log(token);
+  // console.log(token);
   function logOut() {
     // Remove the token cookie
     Cookies.remove("token");

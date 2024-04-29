@@ -4,7 +4,7 @@ const UserIdContext = React.createContext();
 
 const UserIdProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
-    console.log('userId', userId);
+    // console.log('userId', userId);
 
     // Other context provider logic...
 

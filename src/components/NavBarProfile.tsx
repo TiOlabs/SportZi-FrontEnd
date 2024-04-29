@@ -15,6 +15,7 @@ import { Button } from "antd/es/radio";
 import { PlayerContext } from "../context/player.context";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import Cookies from "js-cookie";
 const NavbarProfile: React.FC = () => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -158,7 +159,12 @@ const NavbarProfile: React.FC = () => {
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
   };
-
+  function logOut() {
+    // Remove the token cookie
+    Cookies.remove("token");
+    console.log("Token removed");
+    // Redirect or perform other logout operations if necessary
+  }
   const content = (
     <div className="NavBarUserProfileClickDetail">
       <div
@@ -213,7 +219,7 @@ const NavbarProfile: React.FC = () => {
             fontSize: "15px",
           }}
         >
-         {userDetails?.role}
+          {userDetails?.role}
         </div>
         <Divider style={{}} />
       </div>
@@ -221,6 +227,10 @@ const NavbarProfile: React.FC = () => {
       <div>
         <Button
           type="primary"
+          onClick={() => {
+            logOut();
+            window.location.reload();
+          }}
           style={{
             width: "100%",
             marginTop: "10px",
@@ -605,7 +615,7 @@ const NavbarProfile: React.FC = () => {
                 onOpenChange={handleOpenChange}
               >
                 <a className="NavBarUserProfileImgThumsup">
-                <AdvancedImage
+                  <AdvancedImage
                     style={{
                       width: "45px",
                       height: "45px",

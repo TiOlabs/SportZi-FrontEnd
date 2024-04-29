@@ -1,10 +1,10 @@
-import { Button, Col, Form, Row, List, Grid } from "antd";
+import { Button, Col, Form, Row, List, Grid, Empty } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachRequstRow from "../../components/coachrequstrow";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, SetStateAction } from "react";
 import AvailableMetingstoPlayer from "../../components/AvailableMetingtoPlayer";
 import PhotoCollage from "../../components/photoCollage";
 import NavbarProfile from "../../components/NavBarProfile";
@@ -15,6 +15,8 @@ import { AdvancedImage } from "@cloudinary/react";
 import { ZoneBookingDetails } from "../../types";
 import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
+import Home from "../home/home";
+import AppFooter from "../../components/footer";
 
 const requestList = [
   <CoachRequstRow />,
@@ -28,15 +30,15 @@ const requestList = [
 ];
 
 const PlayerProfile = () => {
+  const [playerBookingsData, setPlayerBookingsData] = useState([]);
   const { userDetails } = useContext(PlayerContext);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
   const [firstname, setFirstname] = useState(userDetails?.firstName);
   const [lastname, setLastname] = useState(userDetails?.lastName);
-  const [email, setEmail] = useState(userDetails?.email);
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
-  const [user_image, setUser_image] = useState(userDetails?.image);
+  const [user_image, setUser_image] = useState(userDetails?.user_image);
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     if (achivements) {
@@ -44,9 +46,8 @@ const PlayerProfile = () => {
     }
     return [];
   };
-
   // see more buttons
-  const [playerBookingsData, setPlayerBookingsData] = useState<
+  const [playerBookingsData1, setPlayerBookingsData1] = useState<
     ZoneBookingDetails[]
   >([]);
   console.log(playerBookingsData);
@@ -54,6 +55,7 @@ const PlayerProfile = () => {
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
   const [show3, setShow3] = useState(false);
+  console.log("userDetails", userDetails);
 
   useEffect(() => {
     axios
@@ -74,7 +76,7 @@ const PlayerProfile = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [userDetails]);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -91,17 +93,13 @@ const PlayerProfile = () => {
   };
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
-
-  // function to the edit profiles
-
   // getting player details from backend
   useEffect(() => {
     axiosInstance
-      .get("/api/auth/getplayerdetails/", {})
+      .get(`/api/auth/getplayerdetails/${userDetails?.id}`, {})
       .then((res) => {
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
-        setEmail(res.data.email);
         setDiscription(res.data.Discription);
         setUser_image(res.data.user_image);
         const achiv = res.data.achivement;
@@ -114,12 +112,14 @@ const PlayerProfile = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-  const [form] = Form.useForm();
+  }, [userDetails]);
 
+  const setZoneBookingDetails1 = (updatedData: SetStateAction<ZoneBookingDetails[]>) => {
+    setPlayerBookingsData1(updatedData);
+  };
   return (
     <>
-      <NavbarProfile />
+      {userDetails.id !== "" ? <NavbarProfile /> : <Home />}
 
       <style>
         @import
@@ -751,16 +751,22 @@ const PlayerProfile = () => {
             alignItems: "center",
           }}
         >
-          {playerBookingsData?.map((booking: ZoneBookingDetails) => (
-            <AvailableMetingstoPlayer
-              booking_id={booking.zone_booking_id}
-              zone_image={booking.zone.zone_image}
-              zone_name={booking.zone.zone_name}
-              booking_date={booking.date}
-              booking_time={booking.time}
-              venue={booking.zone.arcade.arcade_name}
-            />
-          ))}
+          {playerBookingsData && playerBookingsData.length > 0 ? (
+            playerBookingsData.map((booking: ZoneBookingDetails) => (
+              <AvailableMetingstoPlayer
+                key={booking.zone_booking_id} // Make sure to provide a unique key
+                booking_id={booking.zone_booking_id}
+                zone_image={booking.zone.zone_image}
+                zone_name={booking.zone.zone_name}
+                booking_date={booking.date}
+                booking_time={booking.time}
+                venue={booking.zone.arcade.arcade_name}
+                setZoneBookingDetails={setZoneBookingDetails1}
+              />
+            ))
+          ) : (
+            <Empty description="No Bookings Availiable"/>         
+          )}
         </div>
 
         {showMore ? (
@@ -793,6 +799,7 @@ const PlayerProfile = () => {
           </Button>
         )}
       </div>
+      <AppFooter />
     </>
   );
 };

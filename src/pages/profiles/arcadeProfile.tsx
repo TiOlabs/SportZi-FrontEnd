@@ -1,9 +1,7 @@
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
 import { Col, List, Row, Typography, Image, Button } from "antd";
 import { Grid } from "antd";
-
 import backgroundImg from "../../assents/background2.png";
-import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
 import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
@@ -22,11 +20,28 @@ import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
 import React from "react";
 
+import { Zone } from "../../types";
+import axios from "axios";
+
 const ArcadeProfileArcade = () => {
+  const [zone, setZone] = useState<Zone[]>([]);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/getZoneDetails`);
+        const data = await res.data;
+        setZone(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
   const { useBreakpoint } = Grid;
-  const { lg, md, sm, xs } = useBreakpoint();
+  const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
+  const [name, setname] = useState();
   const AvailableBookings = [
     <AvailableBookingsArcade />,
     <AvailableBookingsArcade />,
@@ -52,7 +67,6 @@ const ArcadeProfileArcade = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
-
   const { ArcadeId } = useParams();
   console.log("in the arcade", ArcadeId);
 
@@ -73,6 +87,7 @@ const ArcadeProfileArcade = () => {
         console.log(err);
       });
   }, []);
+
 
   return (
     <>
@@ -118,7 +133,6 @@ const ArcadeProfileArcade = () => {
               lg={24}
               xl={24}
             >
-              {" "}
               <Image
                 width={300}
                 src={profilePic}
@@ -212,6 +226,7 @@ const ArcadeProfileArcade = () => {
                 }}
               >
                 {arcadeDetails && arcadeDetails.arcade_name}
+
               </h1>
               <p
                 style={{
@@ -787,6 +802,7 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
+            {zone.map((zone: Zone) => (
           <Col
             xs={24}
             sm={12}
@@ -802,42 +818,15 @@ const ArcadeProfileArcade = () => {
             }}
           >
             {" "}
-            <ArcadeZoneCard />
+            <ArcadeZoneCard
+              zoneName={zone.zone_name}
+              rate={zone.rate}
+              zoneImage={zone.zone_image} 
+              description={zone.description}
+            />
           </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard />
-          </Col>
+          ))  
+          }
           <Col
             style={{
               width: "100%",
@@ -1108,20 +1097,21 @@ const ArcadeProfileArcade = () => {
           )}
         </Row>
 
-        {AvailableBookings.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
+        {Array.isArray(AvailableBookings) &&
+          AvailableBookings.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
 
         {showMore ? (
           <Button
@@ -1187,20 +1177,21 @@ const ArcadeProfileArcade = () => {
           alignItems: "center",
         }}
       >
-        {CoachReqestToArchade.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
+        {Array.isArray(CoachReqestToArchade) &&
+          CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
 
         {showMore ? (
           <Button

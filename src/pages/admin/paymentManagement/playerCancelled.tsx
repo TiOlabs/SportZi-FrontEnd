@@ -1,10 +1,15 @@
-import { Col, Row, Button, Modal } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { Radio } from "antd";
 import axios from "axios";
 import { ZoneBookingDetails } from "../../../types";
+import { Link } from "react-router-dom";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { any } from "prop-types";
 const PlayerCanceled = () => {
+  const [loading, setLoading] = useState(true);
   const [value, setValue] = useState(1);
   const [playerBookingDetails, setPlayerBookingDetails] = useState<
     ZoneBookingDetails[]
@@ -12,7 +17,7 @@ const PlayerCanceled = () => {
   const [playerCanceled, setPlayerCanceled] = useState<ZoneBookingDetails[]>(
     []
   );
-
+  const[canceledByPlayer, setCanceledByPlayer] = useState<ZoneBookingDetails[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -30,90 +35,110 @@ const PlayerCanceled = () => {
             arcadeBooking.status === "canceled_By_Player"
         );
         console.log(playerCanceledBookings);
-
+        
+        setCanceledByPlayer(playerCanceledBookings);
         setPlayerCanceled(playerCanceledBookings);
         console.log(playerCanceled);
+        setLoading(false);
       };
       fetchData();
     } catch (e) {
       console.log(e);
     }
-  });
-
+  }, []);
   const onChange = (e: RadioChangeEvent) => {
-    console.log("radio checked", e.target.value);
-    setValue(e.target.value);
-    console.log(value);
+    const newValue = e.target.value;
+    setValue(newValue);
 
-    if (value === 1) {
-      const playerCanceledBookings = playerBookingDetails.filter((arcadeBooking: ZoneBookingDetails) => {
-        const canceledTime = new Date(arcadeBooking.canceled_at as string).getTime(); // Convert canceled_at to a valid Date object
-        const createdTime = new Date(arcadeBooking.created_at as string).getTime();
-        const timeDifference = canceledTime - createdTime;
-        const twentyFourHoursInMillis = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        return timeDifference < twentyFourHoursInMillis;
-      });
-      setPlayerCanceled(playerCanceledBookings);
-    }else if (value === 2) {
-      const playerCanceledBookings = playerBookingDetails.filter((arcadeBooking: ZoneBookingDetails) => {
-        const canceledTime = new Date(arcadeBooking.canceled_at as string).getTime(); // Convert canceled_at to a valid Date object
-        const createdTime = new Date(arcadeBooking.created_at as string).getTime();
-        const timeDifference = canceledTime - createdTime;
-        console.log(timeDifference);
-        const twentyFourHoursInMillis = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        return timeDifference > twentyFourHoursInMillis;
-      });
-      setPlayerCanceled(playerCanceledBookings);
+    if (newValue === 1) {
+      const below24Hours = canceledByPlayer.filter(
+        (arcadeBooking: ZoneBookingDetails) => {
+          const canceledTime = new Date(
+            arcadeBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            arcadeBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference < twentyFourHoursInMillis;
+        }
+      );
+      console.log(below24Hours);
+      setPlayerCanceled(below24Hours);
+    } else if (newValue === 2) {
+      const above24Hours = canceledByPlayer.filter(
+        (arcadeBooking: ZoneBookingDetails) => {
+          const canceledTime = new Date(
+            arcadeBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            arcadeBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+
+          return timeDifference >= twentyFourHoursInMillis;
+        }
+      );
+      console.log(above24Hours);
+      setPlayerCanceled(above24Hours);
     }
-};
+  };
 
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Player</h2>
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Cancelled By Player</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+            />
+          </Col>
+        </Row>
+        <Row style={{ marginTop: "20px" }}>
+          <Col>
+            {" "}
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={1}>Before 24 hours</Radio>
+              <Radio value={2}>After 24 hours</Radio>
+            </Radio.Group>
+          </Col>
+        </Row>
+        <Col
+          style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
+        >
+          {playerCanceled.length === 0 ? <Empty /> : null}
+          {playerCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
+            <DataRow
+              booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+              booked_Arena={ZoneBookingDetails.zone.zone_name}
+              booked_by={ZoneBookingDetails.user.firstname}
+              rate={
+                Number(ZoneBookingDetails.zone.rate) *
+                Number(ZoneBookingDetails.participant_count)
+              }
+              user_id={ZoneBookingDetails.user.user_id}
+              zone_id={ZoneBookingDetails.zone.zone_id}
+              zone={ZoneBookingDetails.zone.zone_name}
+              booking_date={ZoneBookingDetails.date}
+              booking_time={ZoneBookingDetails.time}
+              participant_count={ZoneBookingDetails.participant_count}
+              created_at={ZoneBookingDetails.created_at}
+              canceled_at={ZoneBookingDetails.canceled_at}
+              image={ZoneBookingDetails.user.user_image}
+            />
+          ))}
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-      <Row style={{ marginTop: "20px" }}>
-        <Col>
-          {" "}
-          <Radio.Group onChange={onChange} value={value}>
-            <Radio value={1}>Before 24 hours</Radio>
-            <Radio value={2}>After 24 hours</Radio>
-          </Radio.Group>
-        </Col>
-      </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
-        {playerCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
-          <DataRow
-            booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-            booked_Arena={ZoneBookingDetails.zone.zone_name}
-            booked_by={ZoneBookingDetails.user.firstname}
-            rate={
-              Number(ZoneBookingDetails.zone.rate) *
-              Number(ZoneBookingDetails.participant_count)
-            }
-            user_id={ZoneBookingDetails.user.user_id}
-            zone_id={ZoneBookingDetails.zone.zone_id}
-            zone={ZoneBookingDetails.zone.zone_name}
-            booking_date={ZoneBookingDetails.date}
-            booking_time={ZoneBookingDetails.time}
-            participant_count={ZoneBookingDetails.participant_count}
-            created_at={ZoneBookingDetails.created_at}
-            canceled_at={ZoneBookingDetails.canceled_at}
-          />
-        ))}
-      </Col>
+      </Spin>
     </Col>
   );
 };
@@ -132,6 +157,12 @@ function DataRow(props: any) {
     setIsModalOpen(false);
   };
   console.log(props);
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <Row
       style={{
@@ -182,15 +213,21 @@ function DataRow(props: any) {
         </div>
       </Col>
       <Col span={8}>
-        <div
-          style={{
-            borderRadius: "50%",
-            position: "absolute",
-            width: "80px",
-            height: "80px",
-            backgroundColor: "#000",
-          }}
-        ></div>
+        <Link to={`/profile/`}>
+          <AdvancedImage
+            style={{
+              borderRadius: "50%",
+              position: "absolute",
+              width: "80px",
+              height: "80px",
+            }}
+            cldImg={
+              cld.image(props?.image)
+              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+              // .resize(Resize.scale().width(200).height(200))
+            }
+          />
+        </Link>
         <div
           style={{
             display: "flex",
@@ -310,4 +347,3 @@ function DataRow(props: any) {
     </Row>
   );
 }
- 

@@ -8,17 +8,24 @@ import { Grid } from "antd";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import NavbarLogin from "../../components/NavBarLogin";
+import { usePlayer } from "../../context/player.context";
+import { useLocation } from "react-router-dom";
 
 const About = () => {
+  const about = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [about]);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const [token, setToken] = useState<string | undefined>(undefined);
   useEffect(() => {
     setToken(Cookies.get("token"));
   }, []);
+  const { userDetails } = usePlayer();
   return (
     <div style={{}}>
-      {token ? <Navbar /> : <NavbarLogin />}
+      {userDetails.id !== "" ? <Navbar /> : <NavbarLogin />}
       {/* ............................................................ */}
       <Row
         style={{
@@ -65,7 +72,6 @@ const About = () => {
             style={{
               fontSize: 45,
               fontWeight: 300,
-
               marginTop: lg ? "12%" : "10%",
               marginBottom: lg ? "0%" : "3%",
               fontStyle: "kanit",
@@ -212,7 +218,6 @@ const About = () => {
         <Col lg={4} xs={0} md={3}></Col>
       </Row>
 
-    
       {<AppFooter />}
     </div>
   );

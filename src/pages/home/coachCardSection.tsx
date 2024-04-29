@@ -1,29 +1,47 @@
 import { Button, Col, Row, Skeleton, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
-import { md } from "node-forge";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState } from "react";
-import { CoachAssignDetails } from "../../types";
+import { Coach } from "../../types";
+import type { PaginationProps } from "antd";
+import { Pagination } from "antd";
 import axios from "axios";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<
-    CoachAssignDetails[]
+    Coach[]
   >([]);
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = coachAssignDetails.slice(startIndex, endIndex);
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getcoachassignvalues`
+
+    const fetchData = async () => {
+        try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getcoach`
         );
-        const data = await res.json();
-        setCoachAssignDetails(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
+        const data = await res.data;
+
+        // Filter the data to include only items with status "active"
+        const successCoaches = data.filter(
+          (coach: { status: string }) => coach.status === "active"
+        );
+        setCoachAssignDetails(successCoaches);
+
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
   }, []);
 
   const { lg, md, sm, xs } = useBreakpoint();
@@ -38,7 +56,6 @@ const CoachCardSection = () => {
       <Row
         style={{
           width: "100%",
-
           display: "flex",
           overflowX: "auto",
           whiteSpace: "nowrap",
@@ -66,7 +83,6 @@ const CoachCardSection = () => {
                 width: "100%",
                 alignItems: "center",
                 textAlign: "center",
-
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
@@ -81,20 +97,6 @@ const CoachCardSection = () => {
               >
                 Our Best Coaches
               </Typography>
-              <Button
-                style={{
-                  position: "absolute",
-                  right: "0",
-                  top: "35%",
-                  color: "#1B5DB7",
-                  background: "none",
-                  border: "none",
-                  fontFamily: "Kanit",
-                  fontSize: "18px",
-                }}
-              >
-                See More
-              </Button>
             </Row>
             <div
               style={{
@@ -103,10 +105,12 @@ const CoachCardSection = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "column",
+                paddingBottom: "20px",
               }}
             >
               <Row
                 style={{
+                  overflowX: "hidden",
                   width: "100%",
                   display: "flex",
                   justifyContent: "center",
@@ -117,7 +121,7 @@ const CoachCardSection = () => {
                 }}
               >
                 {coachAssignDetails?.map(
-                  (coachAssignDetail: CoachAssignDetails) => (
+                  (coach: Coach ) => (
                     <Col
                       lg={{ span: 5 }}
                       md={{ span: 8 }}
@@ -125,218 +129,32 @@ const CoachCardSection = () => {
                       xs={{ span: 24 }}
                     >
                       <CoachCard
-                        coach_first_name={
-                          coachAssignDetail.coach.user.firstname
+                        coach_first_name={coach.user.firstname
+                          
                         }
-                        coach_last_name={coachAssignDetail.coach.user.lastname}
+                        coach_last_name={coach.user.lastname}
                         short_description={
-                          coachAssignDetail.coach.short_desctiption
+                          coach.short_desctiption
                         }
-                        rate={coachAssignDetail.coach.rate}
-                        duration={coachAssignDetail.duration}
-                        coach_image={coachAssignDetail.coach_image}
+                        rate={coach.rate}
+                        // duration={coachAssignDetail.duration}
+                        coach_image={coach.user.user_image}
                       />
                     </Col>
                   )
                 )}
+
               </Row>
+              <Pagination
+                style={{ marginTop: "-30px" }}
+                current={currentPage}
+                onChange={handlePageChange}
+                total={coachAssignDetails.length}
+                pageSize={itemsPerPage}
+              />
             </div>
           </Row>
         </Col>
-
-        {/* <Col
-          xs={{ span: 24 }}
-          sm={{ span: 24 }}
-          md={{ span: 24 }}
-          lg={{ span: 24 }}
-          xl={{ span: 24 }}
-        >
-          <Row
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              background: "rgba(27, 93, 183, 0.07)",
-            }}
-          >
-            <Row
-              style={{
-                width: "100%",
-                alignItems: "center",
-                textAlign: "center",
-              
-                position: "relative",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Typography
-                style={{
-                  color: " #0E458E",
-                  fontSize: md ? "30px" : "20px",
-                  fontFamily: "Kanit",
-                }}
-              >
-                Our Best Coaches
-              </Typography>
-              <Button
-                style={{
-                  position: "absolute",
-                  right: "0",
-                  top: "35%",
-                  color: "#1B5DB7",
-                  background: "none",
-                  border: "none",
-                  fontFamily: "Kanit",
-                  fontSize: "18px",
-                }}
-              >
-                See More
-              </Button>
-            </Row>
-
-            <div
-              style={{
-                display: "flex",
-                width: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-              }}
-            >
-              <Row
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "450px",
-                  overflowY: "scroll",
-                  flexWrap: "nowrap",
-                }}
-              >
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-                <Col
-                  xs={{ span: 24 }}
-                  sm={{ span: 12 }}
-                  md={{ span: 8 }}
-                  lg={{ span: 5 }}
-                  xl={{ span: 5 }}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CoachCard />
-                </Col>
-              </Row>
-            </div>
-          </Row>
-        </Col> */}
       </Row>
     </>
   );

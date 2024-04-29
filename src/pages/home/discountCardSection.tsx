@@ -12,9 +12,9 @@ const DiscoutCardsSection = () => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getdiscountcardvalues"
+          `${process.env.REACT_APP_API_URL}api/getdiscountcardvalues`
         );
-        const data = await res.data;
+        const data = await res.data;   //response data
         setDiscounts(data);
       };
       fetchData();
@@ -44,6 +44,7 @@ const DiscoutCardsSection = () => {
           justifyContent: "center",
           height: "450px",
           overflow: "auto",
+        
         }}
       >
         {discounts?.map((discount: Discount) => (
@@ -51,12 +52,13 @@ const DiscoutCardsSection = () => {
             lg={{ span: 8 }}
             md={{ span: 12 }}
             sm={{ span: 24 }}
+          
           >
             <DiscountCard // Also use the stringified discount ID as a key for the DiscountCard component
               zoneId={discount.zone.zone_id} // Pass the discount ID as a prop to the DiscountCard component
-              zone_name={discount.zone.zone_name}
-              discount_percentage={discount.discount_percentage}
-              description={discount.description}
+              zone_name={discount.zone.zone_name} 
+              discount_percentage={discount.discount_percentage} 
+              description={discount.description}  
               discount_image={discount.discount_image}
             />
           </Col>

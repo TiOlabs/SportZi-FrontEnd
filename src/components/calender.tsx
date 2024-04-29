@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import type { Dayjs } from "dayjs";
@@ -11,15 +11,15 @@ const Calender = (props: any) => {
 
   const { token } = theme.useToken();
 
-  // const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
-  //   console.log(value.format("YYYY-MM-DD"), mode);
-  //   console.log("44444")
-  // };
-
   const wrapperStyle: React.CSSProperties = {
     width: 300,
     border: `1px solid ${token.colorBorderSecondary}`,
     borderRadius: token.borderRadiusLG,
+  };
+
+  const disabledDate = (current: Dayjs) => {
+    // Disable dates before today
+    return current < dayjs().startOf("day");
   };
 
   const onChange = (date: any) => {
@@ -105,9 +105,7 @@ const Calender = (props: any) => {
             </div>
           );
         }}
-        // onPanelChange={onPanelChange}
-        // onChange={(date) => (date.format("YYYY-MM-DD"))}
-
+        disabledDate={disabledDate}
         onChange={onChange}
       />
     </div>

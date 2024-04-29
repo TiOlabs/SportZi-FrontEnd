@@ -1,9 +1,18 @@
 import { Button, Col, Grid, Row, Typography } from "antd";
 import Image from "antd/lib/image";
 import zoneCardpic from "../assents/pro.png";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { useState } from "react";
 
 const ArcadeZoneCard = (props:any) => {
   console.log(props)
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   return (
@@ -28,13 +37,15 @@ const ArcadeZoneCard = (props:any) => {
             height: lg ? "170px" : "150px",
           }}
         >
-          {" "}
-          <Image
-            height={"100%"}
-            width="100%"
-            src={zoneCardpic}
-            preview={{ src: zoneCardpic }}
-          />
+          <AdvancedImage style={{ height: "100%", width: "100%" }}
+              cldImg={
+                cld.image(props.zoneImage)
+                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                // .resize(Resize.scale().width(200).height(200))
+              }
+              
+            />
+        
         </Row>
         <Row
           style={{
@@ -64,8 +75,8 @@ const ArcadeZoneCard = (props:any) => {
                 color: "#003783",
               }}
             >
-              {" "}
-              Cricket Practice net
+              {props.zoneName}
+              
             </Typography>
             <Typography
               style={{
@@ -85,8 +96,7 @@ const ArcadeZoneCard = (props:any) => {
                 width: "80%",
               }}
             >
-              jjjb jvkhb kgy jkyfyjv kwfewf wefwefcqev wfe3qefq yfjyv you can
-              join any two days for the
+              {props.description}
             </Typography>
             <Row
               style={{
@@ -112,7 +122,7 @@ const ArcadeZoneCard = (props:any) => {
                     color: "#5587CC",
                   }}
                 >
-                  159$
+                  Rs.{props.rate}
                 </Typography>
                 <Typography
                   style={{

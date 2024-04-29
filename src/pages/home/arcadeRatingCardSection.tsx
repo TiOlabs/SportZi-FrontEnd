@@ -1,9 +1,9 @@
 import { Col, Row } from "antd";
 import ArcadeRatingCard from "../../components/arcadeRatingCard";
 import { useEffect, useState } from "react";
-import { ArcadeRating } from "../../types";
+import { ArcadeFeedbacks } from "../../types";
 const ArcadeRatingCardsSection = () => {
-    const [arcadeRatings, setArcadeRatings] = useState<ArcadeRating[]>([]);
+    const [arcadeRatings, setArcadeRatings] = useState<ArcadeFeedbacks[]>([]);
     useEffect(() => {   
         try {
             const fetchData = async () => {
@@ -43,15 +43,16 @@ const ArcadeRatingCardsSection = () => {
         Arcade ratings
       </h1>
       <Row>
-        {arcadeRatings?.map((arcadeRating: ArcadeRating) => (
-          <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
+        {arcadeRatings?.map((arcadeRating: ArcadeFeedbacks) => (
+          <Col lg={8} md={12} sm={24}>
             <ArcadeRatingCard
-              arcadeRating_description={arcadeRating.discription}
+              arcadeRating_id={arcadeRating.arcade_feedback_id}
               arcadeRating={arcadeRating.rate}
+              // arcadeName={arcadeRating.arcade.arcade_name}
             />
+            
           </Col>
         ))}
-
       </Row>
     </Row>
   );

@@ -27,6 +27,15 @@ const AppRoutes = () => {
     <>
       <Routes>
         <Route index element={<Home />} />
+        {/* <Route
+          path="coaches"
+          element={
+            <ProtectedRoute>
+              {" "}
+              <Coaches />{" "}
+            </ProtectedRoute>
+          }
+        /> */}
         <Route path="coaches" element={<Coaches />} />
         <Route path="arcades" element={<Arcades />} />
         <Route path="about" element={<About />} />
@@ -35,8 +44,10 @@ const AppRoutes = () => {
           path="bookings"
           element={
             <Auth>
-              {" "}
-              <BookingForm />{" "}
+              <ProtectedRoute>
+                {" "}
+                <BookingForm />{" "}
+              </ProtectedRoute>
             </Auth>
           }
         />
@@ -56,16 +67,8 @@ const AppRoutes = () => {
           element={<ArcadeProfileArcade />}
         />
         <Route path="arcadeProfile" element={<ArcadeProfileUser />} />
-        <Route
-          path="admin"
-          element={
-            <ProtectedRoute>
-              {" "}
-              <Admin />{" "}
-            </ProtectedRoute>
-          }
-        />
-        <Route path="coachbooking" element={<CoachBookingForm />} />
+        <Route path="admin" element={<Admin />} />
+        <Route path="coachBookingForm" element={<CoachBookingForm />} />
         <Route path="profile" element={<PlayerProfile />} />
         <Route path="ChooseArchade" element={<ChooseArcade />} />
       </Routes>

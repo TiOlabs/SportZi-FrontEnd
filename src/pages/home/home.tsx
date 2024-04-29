@@ -8,19 +8,25 @@ import AppFooter from "../../components/footer";
 import NavbarLogin from "../../components/NavBarLogin";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-
+import { usePlayer } from "../../context/player.context";
+import { useLocation } from "react-router-dom";
 // Redirect or perform other logout operations if necessary
 
 const Home = () => {
+  const index = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [index]);
   const [token, setToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     setToken(Cookies.get("token"));
   }, []);
-
+  const { userDetails } = usePlayer();
+  console.log("userDetails", userDetails);
   return (
     <>
-      {token ? <Navbar /> : <NavbarLogin />}
+      {userDetails.id!=="" ? <Navbar/> : <NavbarLogin />}
       <HeroSection />
       <CoachCardSection />
       <DiscoutCardsSection />
