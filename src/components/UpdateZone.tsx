@@ -154,20 +154,20 @@ console.log(props.sport)
           
           <Form.Item
             name="ArcadeName"
-            label="Arcade Name"
+            label="Zone Name"
             rules={[
               {
                 type: "string",
-                message: "Please enter a arcade name!",
+                message: "Please enter a Zone name!",
               },
               {
                 required: true,
-                message: "Please input your Arcade Name!",
+                message: "Please input your Zone Name!",
               },
             ]}
           >
             <Input
-              placeholder="Arcade Name"
+              placeholder="Zone Name"
               defaultValue={arcadeName}
               onChange={(e) => {
                 setArcadeName(e.target.value);
@@ -176,7 +176,7 @@ console.log(props.sport)
           </Form.Item>
           <Form.Item
             name="capacity"
-            label="Arcade capacity"
+            label="Zone capacity"
             rules={[
               {
                 type: "number",
@@ -206,7 +206,7 @@ console.log(props.sport)
 
           <Form.Item
             name="rate"
-            label="Arcade rate"
+            label="Zone rate"
             rules={[
               {
                 type: "number",
@@ -235,15 +235,15 @@ console.log(props.sport)
           </Form.Item>
           <Form.Item
             name="Discription"
-            label="Arcade discription"
+            label="Zone discription"
             rules={[
               {
                 type: "string",
-                message: "Please enter a arcade discription!",
+                message: "Please enter a Zone discription!",
               },
               {
                 required: true,
-                message: "Please input your Arcade Discrition!",
+                message: "Please input your Zone Discrition!",
               },
             ]}
           >
@@ -302,11 +302,11 @@ console.log(props.sport)
           </Form.Item>
           <Form.Item
             name="TimeStart"
-            label="Update Arcade Open Time"
+            label="Update Zone Open Time"
             rules={[
               {
                 required: true,
-                message: "Please select Arcade Open time!",
+                message: "Please select Zone Open time!",
               },
             ]}
           >
@@ -323,11 +323,11 @@ console.log(props.sport)
           </Form.Item>
           <Form.Item
             name="TimeClose"
-            label="Update Arcade Close Time"
+            label="Update Zone Close Time"
             rules={[
               {
                 required: true,
-                message: "Please select arcade Close Time!",
+                message: "Please select Zone Close Time!",
               },
             ]}
           >

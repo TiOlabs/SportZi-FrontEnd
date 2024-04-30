@@ -19,20 +19,22 @@ import reviewBacground from "../../assents/ReviewBackground.png";
 import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
 import React from "react";
-import { Zone } from "../../types";
+import { Arcade, Zone } from "../../types";
 import axios from "axios";
+import { useArcade } from "../../context/Arcade.context";
 
 const ArcadeProfileArcade = () => {
-  const [zone, setZone] = useState<Zone[]>([]);
+  const { managerDetails } = useArcade();
+  const [arcade, setArcade] = useState<Arcade>();
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getZoneDetails`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetails/${ArcadeId}`
         );
         const data = await res.data;
         console.log(data);
-        setZone(data);
+        setArcade(data);
       };
       fetchData();
     } catch (e) {
@@ -816,7 +818,7 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          {zone.map((zone: Zone) => (
+          {arcade?.zone.map((zone: Zone) => (
             <Col
               xs={24}
               sm={12}
