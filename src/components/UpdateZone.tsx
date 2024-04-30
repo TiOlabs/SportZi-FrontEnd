@@ -15,8 +15,10 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import dayjs from "dayjs";
+import { useParams } from "react-router-dom";
 
 const UpdateZone = (props: any) => {
+  const { ArcadeId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -111,7 +113,7 @@ console.log(props.sport)
           zone_image: publicId,
           open_time: startedTime,
           close_time: closedTime,
-          arcade_id: "A00001",
+          arcade_id: ArcadeId,
           sport_id: sportcc,
         }
 

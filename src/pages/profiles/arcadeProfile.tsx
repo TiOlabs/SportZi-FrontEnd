@@ -1021,7 +1021,7 @@ const ArcadeProfileArcade = () => {
           }}
         >
           {" "}
-          Availale bookings for suberb box complex
+          Availale bookings for your complex
         </Typography>
       </Row>
       <Row

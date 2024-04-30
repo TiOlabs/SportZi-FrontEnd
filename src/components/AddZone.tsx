@@ -26,7 +26,11 @@ const AddZone = () => {
 
   const handleOk = () => {
     setIsModalOpen(false);
-    messageApi.success({ content: 'Submitted successfully!', key, duration: 2 });
+    messageApi.success({
+      content: "Submitted successfully!",
+      key,
+      duration: 2,
+    });
     window.location.reload();
   };
 
@@ -35,6 +39,7 @@ const AddZone = () => {
   };
 
   const [rate, setRate] = useState("");
+  const [discount, setdiscount] = useState("");
   const [capacity, setCapacity] = useState("");
   const [way, setWay] = useState("");
   const [arcadeName, setArcadeName] = useState("");
@@ -91,49 +96,47 @@ const AddZone = () => {
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
-      try {
-        const res = await axios.post(
-          `${process.env.REACT_APP_API_URL}api/addZoneDetails`,
-          {
-            zone_name: arcadeName,
-            capacity: capacityint,
-            rate: rateint,
-            description: discription,
-            way_of_booking: way,
-            zone_image: publicId,
-            open_time: startedTime,
-            close_time: closedTime,
-            arcade_id: ArcadeId,
-            sport_id: sport,
-          }
-        );
-        console.log();
-        UpdateData();
-
-      } catch (error) {
-        console.log(error);
-      }
-      handleOk();
-    };
-    const UpdateData = async () => {
-      try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/updateZoneDetails/:id`
-        );
-        setArcadeName(res.data);
-        setCapacity(res.data);
-        setClosedTime(res.data);
-        setDiscription(res.data);
-        setRate(res.data);
-        setWay(res.data);
-        setStartedTime(res.data);
-        setSport(res.data);
-
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    console.log(arcadeName);
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addZoneDetails`,
+        {
+          zone_name: arcadeName,
+          capacity: capacityint,
+          rate: rateint,
+          description: discription,
+          way_of_booking: way,
+          zone_image: publicId,
+          open_time: startedTime,
+          close_time: closedTime,
+          arcade_id: ArcadeId,
+          sport_id: sport,
+        }
+      );
+      console.log();
+      UpdateData();
+    } catch (error) {
+      console.log(error);
+    }
+    handleOk();
+  };
+  const UpdateData = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/updateZoneDetails/:id`
+      );
+      setArcadeName(res.data);
+      setCapacity(res.data);
+      setClosedTime(res.data);
+      setDiscription(res.data);
+      setRate(res.data);
+      setWay(res.data);
+      setStartedTime(res.data);
+      setSport(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(arcadeName);
   return (
     <>
       <Button
@@ -171,7 +174,6 @@ const AddZone = () => {
               {
                 type: "string",
                 message: "Please enter a Zone name!",
-                
               },
               {
                 required: true,
@@ -242,6 +244,34 @@ const AddZone = () => {
             />
           </Form.Item>
           <Form.Item
+            name="discount"
+            label="Add your discount (if any)"
+            rules={[
+              {
+                type: "number",
+                message: "Please enter a valid number!",
+              },
+              {
+                message: "Please input your number!",
+              },
+              {
+                validator: (_, value) => {
+                  if (value <= 0) {
+                    return Promise.reject("Rate should be greater than 0");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <InputNumber
+              placeholder="discount"
+              style={{ width: "100%" }}
+              onChange={(value) => setdiscount(value?.toString() || "")}
+            />
+          </Form.Item>
+
+          <Form.Item
             name="Discription"
             label="Add your Zone discription"
             rules={[
@@ -261,7 +291,7 @@ const AddZone = () => {
               onChange={(e) => setDiscription(e.target.value)}
             />
           </Form.Item>
-          
+
           <Form.Item
             name="way_of_booking"
             label="Way of Booking"
@@ -277,7 +307,9 @@ const AddZone = () => {
               onChange={(value) => setWay(value)}
             >
               <Select.Option value="full">full</Select.Option>
-              <Select.Option value="person_by_person">person_by_person</Select.Option>
+              <Select.Option value="person_by_person">
+                person_by_person
+              </Select.Option>
               <Select.Option value="Both">Both</Select.Option>
             </Select>
           </Form.Item>
@@ -315,7 +347,12 @@ const AddZone = () => {
           >
             <TimePicker
               format="HH:mm"
-              onChange={(time, timeString: string | string[]) => handleTimeChangeStart(time, Array.isArray(timeString) ? timeString[0] : timeString)}
+              onChange={(time, timeString: string | string[]) =>
+                handleTimeChangeStart(
+                  time,
+                  Array.isArray(timeString) ? timeString[0] : timeString
+                )
+              }
             />
           </Form.Item>
           <Form.Item
@@ -330,7 +367,12 @@ const AddZone = () => {
           >
             <TimePicker
               format="HH:mm"
-              onChange={(time, timeString: string | string[]) => handleTimeChangeClose(time, Array.isArray(timeString) ? timeString[0] : timeString)}
+              onChange={(time, timeString: string | string[]) =>
+                handleTimeChangeClose(
+                  time,
+                  Array.isArray(timeString) ? timeString[0] : timeString
+                )
+              }
             />
           </Form.Item>
 
