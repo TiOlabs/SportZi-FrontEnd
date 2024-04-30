@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Button,
+  Checkbox,
   Form,
   Input,
   InputNumber,
@@ -23,7 +24,7 @@ const AddZone = () => {
   const showModal = () => {
     setIsModalOpen(true);
   };
-
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const handleOk = () => {
     setIsModalOpen(false);
     messageApi.success({
@@ -40,6 +41,7 @@ const AddZone = () => {
 
   const [rate, setRate] = useState("");
   const [discount, setdiscount] = useState("");
+  const[discountDiscription, setdiscountDiscription] = useState("");
   const [capacity, setCapacity] = useState("");
   const [way, setWay] = useState("");
   const [arcadeName, setArcadeName] = useState("");
@@ -110,6 +112,8 @@ const AddZone = () => {
           close_time: closedTime,
           arcade_id: ArcadeId,
           sport_id: sport,
+          discount: discount,
+          discount_description: discountDiscription,
         }
       );
       console.log();
@@ -243,15 +247,23 @@ const AddZone = () => {
               onChange={(value) => setRate(value?.toString() || "")}
             />
           </Form.Item>
+          <Checkbox
+            checked={componentDisabled}
+            onChange={(e) => setComponentDisabled(e.target.checked)}
+          >
+            Add Discount
+          </Checkbox>
+
           <Form.Item
             name="discount"
-            label="Add your discount (if any)"
+            label="discount persentage"
             rules={[
               {
                 type: "number",
                 message: "Please enter a valid number!",
               },
               {
+                required: true,
                 message: "Please input your number!",
               },
               {
@@ -265,29 +277,51 @@ const AddZone = () => {
             ]}
           >
             <InputNumber
-              placeholder="discount"
+              disabled={!componentDisabled}
+              placeholder="discount persentage"
               style={{ width: "100%" }}
               onChange={(value) => setdiscount(value?.toString() || "")}
+            />
+          </Form.Item>
+          <Form.Item
+            name="discuntDiscription"
+            label="Add a description about discount"
+            rules={[
+              {
+                type: "string",
+                message: "Please enter a Zone description!",
+              },
+              {
+                required: true,
+                message: "Please input your Zone Descrition!",
+              },
+            ]}
+          >
+            <TextArea
+              disabled={!componentDisabled}
+              rows={2}
+              placeholder="descrition"
+              onChange={(e) => setdiscountDiscription(e.target.value)}
             />
           </Form.Item>
 
           <Form.Item
             name="Discription"
-            label="Add your Zone discription"
+            label="Add your Zone description"
             rules={[
               {
                 type: "string",
-                message: "Please enter a Zone discription!",
+                message: "Please enter a Zone description!",
               },
               {
                 required: true,
-                message: "Please input your Zone Discrition!",
+                message: "Please input your Zone Descrition!",
               },
             ]}
           >
             <TextArea
               rows={4}
-              placeholder="discrition"
+              placeholder="descrition"
               onChange={(e) => setDiscription(e.target.value)}
             />
           </Form.Item>
