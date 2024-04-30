@@ -41,9 +41,9 @@ const UpdateZone = (props: any) => {
   const [startedTime, setStartedTime] = useState<any>(props.open_time);
   const [closedTime, setClosedTime] = useState<string | null>(props.close_time);
   const [discription, setDiscription] = useState(props.description);
-  const [sport,setSport] = useState(props.sport);
-  console.log(sport);
-
+  const [sportc,setSportc] = useState("");
+  console.log(sportc);
+console.log(props.sport)
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -94,7 +94,12 @@ const UpdateZone = (props: any) => {
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
-    try {
+    let sportcc=sportc
+    if(sportcc === ""){
+      sportcc=props.sport_id
+    }
+      try {
+        console.log(sportcc)
       const res = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
         {
@@ -107,7 +112,7 @@ const UpdateZone = (props: any) => {
           open_time: startedTime,
           close_time: closedTime,
           arcade_id: "A00001",
-          sport_id: sport,
+          sport_id: sportcc,
         }
 
       );
@@ -284,15 +289,15 @@ const UpdateZone = (props: any) => {
           >
             <Select
               placeholder="Select a sport"
-              defaultValue={sport}
-              onChange={(value) => setSport(value)}
+              defaultValue={props.sport}
+              onChange={(value) => setSportc(value)}
             >
-              <Select.Option value="cricket">Cricket</Select.Option>
-              <Select.Option value="Swimming">Swimming</Select.Option>
-              <Select.Option value="FootBall">FootBall</Select.Option>
-              <Select.Option value="Gym">Gym</Select.Option>
-              <Select.Option value="NetBall">NetBall</Select.Option>
-              <Select.Option value="Batmintain">Batmintain</Select.Option>
+              <Select.Option value="S00001">Cricket</Select.Option>
+              <Select.Option value="S00002">FootBall</Select.Option>
+              <Select.Option value="S00003">Swimming</Select.Option>
+              <Select.Option value="S00004">Gym</Select.Option>
+              <Select.Option value="S00005">NetBall</Select.Option>
+              <Select.Option value="S00006">Batmintain</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item

@@ -19,7 +19,6 @@ import reviewBacground from "../../assents/ReviewBackground.png";
 import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
 import React from "react";
-
 import { Arcade, Zone } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
@@ -846,6 +845,7 @@ const ArcadeProfileArcade = () => {
                 close_time={zone.close_time}
                 way_of_booking={zone.way_of_booking}
                 sport={zone.sport.sport_name}
+                sport_id={zone.sport.sport_id}
               />
             </Col>
           ))}
