@@ -164,6 +164,7 @@ const ArcadeZoneCard = (props: any) => {
                 close_time= {props.close_time}
                 capacity= {props.capacity}
                 sport= {props.sport}
+                sport_id= {props.sport_id}
                 
                 />
                 
