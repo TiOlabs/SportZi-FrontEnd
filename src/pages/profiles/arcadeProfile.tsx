@@ -7,7 +7,8 @@ import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
 import PhotoCollage from "../../components/photoCollage";
 import ArcadeZoneCard from "../../components/ArcadeZoneCard";
-import AddZone from "../../components/AddZone"
+import AddZone from "../../components/AddZone";
+import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
 import { useEffect, useState } from "react";
@@ -21,19 +22,6 @@ import axios from "axios";
 import axiosInstance from "../../axiosInstance";
 
 const ArcadeProfileArcade = () => {
-  const [zone, setZone] = useState<Zone[]>([]);
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/getZoneDetails`);
-        const data = await res.data;
-        setZone(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
   const { useBreakpoint } = Grid;
   const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
@@ -75,6 +63,7 @@ const ArcadeProfileArcade = () => {
         console.log("error msg", err);
       });
   }, []);
+
   return (
     <>
       <style>
@@ -216,8 +205,7 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                {/* {name} */}
-                Colombo Cricket Club
+                {arcadeDetails && arcadeDetails.arcade_name}
               </h1>
               <p
                 style={{
@@ -785,7 +773,6 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-            {zone.map((zone: Zone) => (
           <Col
             xs={24}
             sm={12}
@@ -801,15 +788,8 @@ const ArcadeProfileArcade = () => {
             }}
           >
             {" "}
-            <ArcadeZoneCard
-              zoneName={zone.zone_name}
-              rate={zone.rate}
-              zoneImage={zone.zone_image} 
-              description={zone.description}
-            />
+            <ArcadeZoneCard />
           </Col>
-          ))  
-          }
           <Col
             style={{
               width: "100%",

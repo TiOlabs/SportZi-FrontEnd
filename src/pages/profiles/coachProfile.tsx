@@ -7,12 +7,19 @@ import { Image } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachAccepteLst from "../../components/CoachAcceptedList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CoachReqestList from "../../components/CoachRequestList";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import NavbarProfile from "../../components/NavBarProfile";
+import axios from "axios";
+import axiosInstance from "../../axiosInstance";
+interface CoachDetails {
+  firstname: string;
+  lastname: string;
+  email: string;
+}
 const acceptedMeetings = [
   <CoachAccepteLst />,
   <CoachAccepteLst />,
@@ -48,9 +55,27 @@ const CoachProfile = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
+  const [coachDetails, setCoachDetails] = useState<{
+    firstname: string;
+    lastname: string;
+    email: string;
+    Discription: string;
+    user_image: string;
+  } | null>(null);
+  useEffect(() => {
+    axiosInstance
+      .get("/api/auth/getcoachdetails")
+      .then((res) => {
+        setCoachDetails(res.data);
+        console.log("coach detailsaaaaaaaaaaaa", res.data);
+      })
+      .catch((err) => {
+        console.log("kaaaaaaaaaaa", err);
+      });
+  }, []);
   return (
     <>
-    <NavbarProfile/>
+      <NavbarProfile />
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
@@ -143,12 +168,7 @@ const CoachProfile = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {coachDetails?.Discription}
               </Typography>
             </Col>
           </Row>
@@ -192,7 +212,7 @@ const CoachProfile = () => {
                   marginBottom: "0px",
                 }}
               >
-                Sandun Malage
+                {coachDetails?.firstname} {coachDetails?.lastname}
               </h1>
               <p
                 style={{
@@ -1040,7 +1060,7 @@ const CoachProfile = () => {
             </Col>
           </Row>
         </Col>
-        <AppFooter/>
+        <AppFooter />
       </Row>
     </>
   );

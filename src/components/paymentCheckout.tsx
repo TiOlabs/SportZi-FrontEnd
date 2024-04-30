@@ -114,14 +114,13 @@ const PaymentModal = (props: any): JSX.Element | null => {
           alignItems: "center",
         }}
         disabled={
-          
-        props.date === "" ||
+          props.date === "" ||
           props.time === "" ||
-          props.pcount === ""||
+          props.pcount === "" ||
           props.userId === "" ||
-          props.zoneId === ""||
-          props.pcount> props.avaiableParticipantCount||
-          props.reservation_type===""
+          props.zoneId === "" ||
+          props.pcount > props.avaiableParticipantCount ||
+          props.reservation_type === ""
         }
         onClick={pay}
       >
