@@ -14,8 +14,10 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
+import { useParams } from "react-router-dom";
 
 const AddZone = () => {
+  const { ArcadeId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -101,7 +103,7 @@ const AddZone = () => {
             zone_image: publicId,
             open_time: startedTime,
             close_time: closedTime,
-            arcade_id: "A00001",
+            arcade_id: ArcadeId,
             sport_id: sport,
           }
         );
@@ -164,35 +166,35 @@ const AddZone = () => {
           </div>
           <Form.Item
             name="ArcadeName"
-            label="Add your Arcade Name"
+            label="Add your Zone Name"
             rules={[
               {
                 type: "string",
-                message: "Please enter a arcade name!",
+                message: "Please enter a Zone name!",
                 
               },
               {
                 required: true,
-                message: "Please input your Arcade Name!",
+                message: "Please input your Zone Name!",
               },
             ]}
           >
             <Input
-              placeholder="Arcade Name"
+              placeholder="Zone Name"
               onChange={(e) => setArcadeName(e.target.value)}
             />
           </Form.Item>
           <Form.Item
             name="capacity"
-            label="Add your arcade capacity"
+            label="Add your Zone capacity"
             rules={[
               {
                 type: "number",
-                message: "Please enter zone capacity!",
+                message: "Please enter Zone capacity!",
               },
               {
                 required: true,
-                message: "Please input zone capacity!",
+                message: "Please input Zone capacity!",
               },
               {
                 validator: (_, value) => {
@@ -213,7 +215,7 @@ const AddZone = () => {
 
           <Form.Item
             name="rate"
-            label="Add your rate"
+            label="Add your rate (per hour)"
             rules={[
               {
                 type: "number",
@@ -241,15 +243,15 @@ const AddZone = () => {
           </Form.Item>
           <Form.Item
             name="Discription"
-            label="Add your Arcade discription"
+            label="Add your Zone discription"
             rules={[
               {
                 type: "string",
-                message: "Please enter a arcade discription!",
+                message: "Please enter a Zone discription!",
               },
               {
                 required: true,
-                message: "Please input your Arcade Discrition!",
+                message: "Please input your Zone Discrition!",
               },
             ]}
           >
@@ -303,11 +305,11 @@ const AddZone = () => {
           </Form.Item>
           <Form.Item
             name="TimeStart"
-            label="Add Arcade Open Time"
+            label="Add Zone Open Time"
             rules={[
               {
                 required: true,
-                message: "Please select Arcade Open time!",
+                message: "Please select Zone Open time!",
               },
             ]}
           >
@@ -318,11 +320,11 @@ const AddZone = () => {
           </Form.Item>
           <Form.Item
             name="TimeClose"
-            label="Add Arcade Close Time"
+            label="Add Zone Close Time"
             rules={[
               {
                 required: true,
-                message: "Please select arcade Close Time!",
+                message: "Please select Zone Close Time!",
               },
             ]}
           >
