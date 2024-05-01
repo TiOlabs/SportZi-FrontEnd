@@ -1,6 +1,16 @@
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
-import { Col, List, Row, Typography, Image, Button } from "antd";
-import { Grid } from "antd";
+import {
+  Col,
+  List,
+  Row,
+  Typography,
+  Image,
+  Button,
+  Checkbox,
+  ConfigProvider,
+  Empty,
+} from "antd";
+import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profilePic from "../../assents/pro.png";
 import CoachCard from "../../components/CoachCard";
@@ -22,8 +32,17 @@ import React from "react";
 import { Arcade, Zone, ZoneBookingDetails } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
+import type { CheckboxProps, RadioChangeEvent } from "antd";
+import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 
 const ArcadeProfileArcade = () => {
+  const [value, setValue] = useState(1);
+
+  const onChange = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValue(e.target.value);
+  };
+  console.log("value", value);
   const { ArcadeId } = useParams();
   const { managerDetails } = useArcade();
   const [arcade, setArcade] = useState<Arcade>();
@@ -52,17 +71,33 @@ const ArcadeProfileArcade = () => {
       .then((res) => {
         console.log("Response data:", res.data);
 
-        // Filter bookings with status "success"
+        // Get the current date in the format YYYY-MM-DD
+        const currentDate = new Date();
+        const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+
+        // Filter bookings with status "success" and booking dates based on value
         const filteredBookings: Zone[] = res.data.zone.reduce(
           (accumulator: Zone[], zone: Zone) => {
             console.log("Zone:", zone);
-            const successBookings = zone.zoneBookingDetails.filter(
-              (booking) => booking.status === "success"
-            );
-            if (successBookings.length > 0) {
+            const targetBookings = zone.zoneBookingDetails.filter((booking) => {
+              if (value === 1) {
+                return (
+                  booking.status === "success" &&
+                  booking.date > formattedCurrentDate
+                );
+              } else if (value === 2) {
+                return (
+                  booking.status === "success" &&
+                  booking.date < formattedCurrentDate
+                );
+              } else if (value === 3) {
+                return booking.status === "canceled_By_Arcade";
+              }
+            });
+            if (targetBookings.length > 0) {
               accumulator.push({
                 ...zone,
-                zoneBookingDetails: successBookings,
+                zoneBookingDetails: targetBookings,
               });
             }
             return accumulator;
@@ -76,7 +111,7 @@ const ArcadeProfileArcade = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, [ArcadeId]);
+  }, [ArcadeId, value]);
 
   const { useBreakpoint } = Grid;
   const { lg, md } = useBreakpoint();
@@ -156,6 +191,8 @@ const ArcadeProfileArcade = () => {
             alignItems: "center",
           }}
         >
+          {" "}
+          {arcadeBookings.length === 0 ? <Empty /> : null}
           <Row
             style={{
               width: "100%",
@@ -185,7 +222,6 @@ const ArcadeProfileArcade = () => {
               />
             </Col>
           </Row>
-
           <Row
             style={{
               position: "relative",
@@ -811,7 +847,7 @@ const ArcadeProfileArcade = () => {
       >
         <AddPhotoButton />
       </div>
-      <PhotoCollage />
+      <PhotoCollageForArcade />
 
       <Row
         style={{
@@ -1052,20 +1088,177 @@ const ArcadeProfileArcade = () => {
           marginTop: "60px",
         }}
       >
-        <Typography
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            {" "}
+            Availale bookings for your complex
+          </Typography>
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
           style={{
+            display: "flex",
             alignItems: "center",
-            color: "#0E458E",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: lg ? "32px" : "24px",
-            paddingBottom: "10px",
-            marginBottom: "0px",
+            justifyContent: "center",
           }}
         >
-          {" "}
-          Availale bookings for your complex
-        </Typography>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={1}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={2}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={3}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
       </Row>
       <Row
         style={{
@@ -1102,7 +1295,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Coach
+            Athelte
           </Col>
           <Col
             style={{
@@ -1161,19 +1354,27 @@ const ArcadeProfileArcade = () => {
             </Col>
           )}
         </Row>
-
-        {(arcadeBookings || []).map((zone: Zone) =>
-          (zone.zoneBookingDetails || []).map((booking: ZoneBookingDetails) => (
-            <AvailableBookingsArcade
-              booking_id={booking.zone_booking_id}
-              booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-              zoneName={zone.zone_name}
-              time={booking.time}
-              date={booking.date}
-              rate={zone.rate}
-              zoneImage={zone.zone_image}
-            />
-          ))
+        {arcadeBookings.length > 0 ? (
+          <>
+            {(arcadeBookings || []).map((zone: Zone) =>
+              (zone.zoneBookingDetails || []).map(
+                (booking: ZoneBookingDetails) => (
+                  <AvailableBookingsArcade
+                    user_image={booking.user.user_image}
+                    booking_id={booking.zone_booking_id}
+                    booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                    zoneName={zone.zone_name}
+                    time={booking.time}
+                    date={booking.date}
+                    rate={zone.rate}
+                    zoneImage={zone.zone_image}
+                  />
+                )
+              )
+            )}
+          </>
+        ) : (
+          <Empty />
         )}
 
         {/* {showMore ? (

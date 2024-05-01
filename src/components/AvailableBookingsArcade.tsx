@@ -4,6 +4,8 @@ import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import axios from "axios";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const AvailableBookingsArcade = (props: any) => {
   console.log(props);
@@ -65,6 +67,12 @@ const AvailableBookingsArcade = (props: any) => {
       console.log(error);
     }
   };
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <Row
@@ -84,17 +92,21 @@ const AvailableBookingsArcade = (props: any) => {
         <Col xs={8} sm={8} md={8} lg={6} xl={6}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <div
+              <AdvancedImage
                 style={{
-                  backgroundColor: "#000",
                   width: "90px",
-                  height: "81px",
+                  height: "90px",
                   borderRadius: "50%",
                   marginRight: "10px",
                   backgroundImage: `url(${profilePic})`,
                   backgroundSize: "cover",
                 }}
-              ></div>
+                cldImg={
+                  cld.image(props?.user_image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
             </Col>
             <Col
               style={{
@@ -224,17 +236,21 @@ const AvailableBookingsArcade = (props: any) => {
           <Col xs={24} sm={12} md={12} lg={8} xl={8}>
             <Row style={{ width: "100%" }}>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                <div
+                <AdvancedImage
                   style={{
-                    backgroundColor: "#000",
                     width: "90px",
-                    height: "81px",
+                    height: "90px",
                     borderRadius: "50%",
                     marginRight: "10px",
                     backgroundImage: `url(${profilePic})`,
                     backgroundSize: "cover",
                   }}
-                ></div>
+                  cldImg={
+                    cld.image(props?.user_image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
               </Col>
               <Col
                 style={{
@@ -351,7 +367,7 @@ const AvailableBookingsArcade = (props: any) => {
           </Button>,
         ]}
       >
-        <div style={{justifyContent:"center",alignItems:"center"}}>
+        <div style={{ justifyContent: "center", alignItems: "center" }}>
           This may Highly effected to you! are you sure you want to cancel the
           booking?{" "}
         </div>{" "}
