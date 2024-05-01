@@ -13,7 +13,7 @@ import PackageEnrolled from "./bookingManagement/packageEnrolled";
 import PlayerManagement from "./userManagement/playerManagement";
 import CoachManagement from "./userManagement/coachesManagement";
 import ArcadeManagement from "./userManagement/arcadeManagement";
-import CoachArcadeCancel from "./paymentManagement/coachArcadeCancel";
+import CoachArcadeCancel from "./paymentManagement/arcadeCancel";
 import PlayerCanceled from "./paymentManagement/playerCancelled";
 import ComplitedBookings from "./paymentManagement/completedBookings";
 import AdminCanceled from "./paymentManagement/adminCancelled";
