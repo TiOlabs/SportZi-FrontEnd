@@ -15,7 +15,6 @@ import { AdvancedImage } from "@cloudinary/react";
 import { ZoneBookingDetails } from "../../types";
 import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
-import Home from "../home/home";
 import AppFooter from "../../components/footer";
 import NavbarLogin from "../../components/NavBarLogin";
 

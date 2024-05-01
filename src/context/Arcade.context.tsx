@@ -38,6 +38,7 @@ const ArcadeProvider = ({ children }: any) => {
             .get(`http://localhost:8000/api/getarcadeDetailsById/${id}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
+              
               try {
                 setManagerDetails({
                   id: res.data.manager_id,
