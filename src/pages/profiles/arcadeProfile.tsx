@@ -19,18 +19,20 @@ import reviewBacground from "../../assents/ReviewBackground.png";
 import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
 import React from "react";
-import { Arcade, Zone } from "../../types";
+import { Arcade, Zone, ZoneBookingDetails } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
 
 const ArcadeProfileArcade = () => {
+  const { ArcadeId } = useParams();
   const { managerDetails } = useArcade();
   const [arcade, setArcade] = useState<Arcade>();
+  const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getZoneDetails/${ArcadeId}`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
         );
         const data = await res.data;
         console.log(data);
@@ -41,19 +43,60 @@ const ArcadeProfileArcade = () => {
       console.log(e);
     }
   }, []);
+  useEffect(() => {
+    axios
+      .get<Arcade>(
+        process.env.REACT_APP_API_URL +
+          `api/getarcadebookingForArcade/${ArcadeId}`
+      )
+      .then((res) => {
+        console.log("Response data:", res.data);
+
+        // Filter bookings with status "success"
+        const filteredBookings: Zone[] = res.data.zone.reduce(
+          (accumulator: Zone[], zone: Zone) => {
+            console.log("Zone:", zone);
+            const successBookings = zone.zoneBookingDetails.filter(
+              (booking) => booking.status === "success"
+            );
+            if (successBookings.length > 0) {
+              accumulator.push({
+                ...zone,
+                zoneBookingDetails: successBookings,
+              });
+            }
+            return accumulator;
+          },
+          []
+        );
+
+        setArcadeBookings(filteredBookings);
+        console.log("Filtered bookings:", filteredBookings);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [ArcadeId]);
+
   const { useBreakpoint } = Grid;
   const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [name, setname] = useState();
   const AvailableBookings = [
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
+    (arcadeBookings || []).map((zone: Zone) =>
+      (zone.zoneBookingDetails || []).map((booking: ZoneBookingDetails) => (
+        <AvailableBookingsArcade
+          booking_id={booking.zone_booking_id}
+          booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+          zoneName={zone.zone_name}
+          time={booking.time}
+          date={booking.date}
+          rate={zone.rate}
+          zoneImage={zone.zone_image}
+        />
+      ))
+    ),
   ];
 
   const CoachReqestToArchade = [
@@ -70,7 +113,7 @@ const ArcadeProfileArcade = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
-  const { ArcadeId } = useParams();
+
   console.log("in the arcade", ArcadeId);
 
   const [arcadeDetails, setArcadeDetails] = useState<any>(null);
@@ -1119,23 +1162,21 @@ const ArcadeProfileArcade = () => {
           )}
         </Row>
 
-        {Array.isArray(AvailableBookings) &&
-          AvailableBookings.slice(0, numberOfItemsShown).map(
-            (request, index) => (
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-                key={index}
-              >
-                {request}
-              </div>
-            )
-          )}
+        {(arcadeBookings || []).map((zone: Zone) =>
+          (zone.zoneBookingDetails || []).map((booking: ZoneBookingDetails) => (
+            <AvailableBookingsArcade
+              booking_id={booking.zone_booking_id}
+              booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+              zoneName={zone.zone_name}
+              time={booking.time}
+              date={booking.date}
+              rate={zone.rate}
+              zoneImage={zone.zone_image}
+            />
+          ))
+        )}
 
-        {showMore ? (
+        {/* {showMore ? (
           <Button
             style={{
               alignItems: "center",
@@ -1163,7 +1204,7 @@ const ArcadeProfileArcade = () => {
           >
             See Less
           </Button>
-        )}
+        )} */}
       </Row>
 
       <Row

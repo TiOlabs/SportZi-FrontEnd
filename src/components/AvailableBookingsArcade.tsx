@@ -3,12 +3,16 @@ import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
+import axios from "axios";
 
-const AvailableBookingsArcade = () => {
+const AvailableBookingsArcade = (props: any) => {
+  console.log(props);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -16,12 +20,51 @@ const AvailableBookingsArcade = () => {
 
   const handleOk = () => {
     setIsModalOpen(false);
+    setIsConfirmModalOpen(false);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setIsConfirmModalOpen(false);
   };
+  const showDeleteConfirm = async () => {
+    setIsConfirmModalOpen(true);
+    setIsModalOpen(false);
+    // try {
+    //   const response = await axios.put(
+    //     `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+    //     {
+    //       zone_booking_id: props.booking_id,
+    //       status: "canceled_By_Player",
+    //     }
+    //   );
 
+    //   // Close modal
+    //   setIsConfirmModalOpen(false);
+
+    //   // Update zone booking details
+
+    // } catch (error) {
+    //   console.log("error");
+    //   console.log(error);
+    // }
+  };
+  const showDelete = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+        {
+          zone_booking_id: props.booking_id,
+          status: "canceled_By_Arcade",
+        }
+      );
+
+      setIsConfirmModalOpen(false);
+    } catch (error) {
+      console.log("error");
+      console.log(error);
+    }
+  };
   return (
     <>
       <Row
@@ -32,6 +75,7 @@ const AvailableBookingsArcade = () => {
           height: "auto",
           display: "flex",
           justifyContent: "center",
+          borderStyle: "dotted",
 
           border: "1px solid #EFF4FA",
           alignItems: "center",
@@ -68,7 +112,7 @@ const AvailableBookingsArcade = () => {
               lg={12}
               xl={12}
             >
-              kanishka jj
+              {props.booked_by}
             </Col>
           </Row>
         </Col>
@@ -88,7 +132,7 @@ const AvailableBookingsArcade = () => {
           lg={6}
           xl={6}
         >
-          Date
+          {props.date}
         </Col>
         <Col
           style={{
@@ -106,7 +150,7 @@ const AvailableBookingsArcade = () => {
           lg={6}
           xl={6}
         >
-          Time
+          {props.time}
         </Col>
         {lg && (
           <Col
@@ -125,14 +169,14 @@ const AvailableBookingsArcade = () => {
             lg={6}
             xl={6}
           >
-            Venue
+            {props.zoneName}
           </Col>
         )}
       </Row>
 
       <Modal
         width={1000}
-        title="Basic Modal"
+        title="Booking Details"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -145,7 +189,7 @@ const AvailableBookingsArcade = () => {
               fontFamily: "kanit",
             }}
             key="back"
-            onClick={handleCancel}
+            onClick={showDeleteConfirm}
           >
             Cancel Meeting
           </Button>,
@@ -160,7 +204,7 @@ const AvailableBookingsArcade = () => {
             type="primary"
             onClick={handleOk}
           >
-            Cancel Meeting
+            OK
           </Button>,
         ]}
       >
@@ -208,7 +252,7 @@ const AvailableBookingsArcade = () => {
                 lg={12}
                 xl={12}
               >
-                kanishka jj
+                {props.booked_by}
               </Col>
             </Row>
           </Col>
@@ -228,7 +272,7 @@ const AvailableBookingsArcade = () => {
             lg={8}
             xl={8}
           >
-            Date
+            {props.date}
           </Col>
           <Col
             style={{
@@ -246,7 +290,7 @@ const AvailableBookingsArcade = () => {
             lg={8}
             xl={8}
           >
-            Time
+            {props.time}
           </Col>
 
           <Col
@@ -265,9 +309,52 @@ const AvailableBookingsArcade = () => {
             lg={8}
             xl={8}
           >
-            Venue
+            {props.zoneName}
           </Col>
         </Row>
+      </Modal>
+      <Modal
+        width={1000}
+        title="Conformation!"
+        open={isConfirmModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#0E458E",
+              border: "1px solid #0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            key="back"
+            onClick={handleCancel}
+          >
+            No, Keep Meeting
+          </Button>,
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#FF0000",
+              border: "1px solid #FF0000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            onClick={showDelete}
+            key="submit"
+            type="primary"
+          >
+            Yes,Cancel
+          </Button>,
+        ]}
+      >
+        <div style={{justifyContent:"center",alignItems:"center"}}>
+          This may Highly effected to you! are you sure you want to cancel the
+          booking?{" "}
+        </div>{" "}
       </Modal>
     </>
   );
