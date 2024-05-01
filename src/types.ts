@@ -21,6 +21,7 @@ export interface Zone {
   way_of_booking: String;
   sport_id: String;
   sport: Sport;
+  zoneBookingDetails: ZoneBookingDetails[]; 
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
