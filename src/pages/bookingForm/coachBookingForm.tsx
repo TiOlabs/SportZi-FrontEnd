@@ -8,6 +8,7 @@ import {
   InputNumber,
   message,
   Empty,
+  ConfigProvider,
 } from "antd";
 import BookingFormPicture from "../../assents/coachBookingForm1.png";
 import Calender from "../../components/calender";
@@ -15,22 +16,51 @@ import { LeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { usePlayer } from "../../context/player.context";
 import { CoachBookingContext } from "../../context/coachBooking.context";
-import { CoachAssignDetails, Zone } from "../../types";
+import { Arcade, CoachAssignDetails, Zone } from "../../types";
+import dayjs from "dayjs";
+import { time } from "console";
+import PaymentModal from "../../components/paymentCheckout";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
+  const { userId } = usePlayer();
+  const [userDetails, setUserDetails] = useState<any>();
   const [time, setTime] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [pcount, setPcount] = useState<string>("");
   const [arcade, setArcade] = useState<string>("");
+  const [coachSport, setCoachSport] = useState<string>("");
   const [coachAssignDetails, setCoachAssignDetails] = useState<
     CoachAssignDetails[]
   >([]);
-  const { userDetails } = usePlayer();
+  const [decodedValues, setDecodedValues] = useState<any>();
   const { coachId } = useContext(CoachBookingContext);
-  const [coachAssignArcades, setCoachAssignArcades] = useState<string[]>([]);
-  const [zoneForCoachBookings, setzoneForCoachBookings] = useState<Zone>();
+  const [zoneForCoachBookings, setzoneForCoachBookings] = useState<Zone[]>([]);
+  const [arcadesofCoache, setarcadesofCoache] = useState<Arcade>();
+  useEffect(() => {
+    const token = Cookies.get("token");
+    const decoded = token ? jwtDecode(token) : undefined;
+    setDecodedValues(decoded);
+  }, []);
+  const userID = decodedValues?.userId;
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const resPaymentDetails = await fetch(
+          `http://localhost:8000/api/getuser/${userID}`
+        );
+        const paymentDetailsData = await resPaymentDetails.json();
+        console.log(paymentDetailsData);
+        setUserDetails(paymentDetailsData);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, [userID]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,38 +69,49 @@ const CoachBookingForm: React.FC = () => {
           `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachId}`
         );
         const data = await res.json();
+        console.log(data);
         setCoachAssignDetails(data);
-        setCoachAssignArcades(
-          data.map(
-            (coachAssignDetail: CoachAssignDetails) =>
-              coachAssignDetail.arcade.arcade_name
-          )
-        );
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
   }, [coachId]);
-
+  console.log(arcade);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getzoneForCoachBooking/${arcade}/${coachAssignDetails[0]?.coach.sport.sport_id}/${coachAssignDetails[0]?.coach.coach_id}`
+          `${process.env.REACT_APP_API_URL}api/getcoach/${coachId}`
+        );
+        const data = await res.json();
+        console.log(data?.sport.sport_id);
+        setCoachSport(data?.sport.sport_id);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [coachId]);
+  console.log(coachSport);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+         `${process.env.REACT_APP_API_URL}api/getarcadeDetailsById/${arcade}`
         );
         const data = await res.json();
         console.log(data);
-        setzoneForCoachBookings(data);
+        setarcadesofCoache(data);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
   }, [arcade]);
-
-  console.log(zoneForCoachBookings?.zone_id);
-
+  // console.log(
+  //   arcadesofCoache?.zone.find((zone) => zone.sport.sport_id)?.zone_name
+  // );
   const handleFinish = async () => {
     console.log(date, time, pcount, zoneForCoachBookings);
     const pcountInt = parseInt(pcount);
@@ -97,7 +138,7 @@ const CoachBookingForm: React.FC = () => {
           time: time,
           coach_id: coachId,
           player_id: userDetails.id,
-          zone_id: zoneForCoachBookings?.zone_id,
+          // zone_id: zoneForCoachBookings.find(,
           arcade_id: arcade,
         }
       );
@@ -107,7 +148,54 @@ const CoachBookingForm: React.FC = () => {
       console.log(err);
     }
   };
+  // eslint-disable-next-line no-octal
+  const openTime = 8.0;
+  const closeTime = 23.0;
+  const timeStep = 1;
+  let buttonData = [];
+  for (let i = openTime; i < closeTime; i += timeStep) {
+    let nextTime = i + timeStep;
+    let hour = Math.floor(i);
+    let minute = (i - hour) * 60;
+    let nextHour = Math.floor(nextTime);
+    let nextMinute = (nextTime - nextHour) * 60;
 
+    let formattedTime = `${hour}:${
+      minute < 10 ? "0" : ""
+    }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+
+    if (date === dayjs().format("YYYY-MM-DD")) {
+      // Split formattedTime into start and end times
+      const [startTime, endTime] = formattedTime.split("-");
+
+      // Parse start and end times into time objects
+      const formattedStartTime = dayjs(startTime, "HH:mm");
+      const formattedEndTime = dayjs(endTime, "HH:mm");
+      const currentTime = dayjs();
+
+      // Compare current time with start and end times
+      const disabled = currentTime.isAfter(formattedEndTime);
+      console.log(disabled);
+
+      // Push time slot with disabled property into buttonData
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: disabled,
+      });
+    } else {
+      // If it's not today's date, enable the time slot
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: false,
+      });
+    }
+
+    console.log(buttonData);
+  }
+  console.log(time);
+  const [messageApi, contextHolder] = message.useMessage();
   return (
     <div style={{ margin: "2%" }}>
       <Row>
@@ -199,17 +287,46 @@ const CoachBookingForm: React.FC = () => {
                       justifyContent: "center",
                     }}
                   >
-                    {coachAssignArcades?.length === 0 ? (
+                    {coachAssignDetails?.length === 0 ? (
                       <Empty />
                     ) : (
-                      coachAssignArcades?.map((arcadeName, index) => (
-                        <Option
-                          key={index}
-                          value={coachAssignDetails[0]?.arcade.arcade_id}
-                        >
-                          {arcadeName}
+                      coachAssignDetails?.map((arcadeName, index) => (
+                        <Option key={index} value={arcadeName.arcade_id}>
+                          {arcadeName?.arcade.arcade_name}
                         </Option>
                       ))
+                    )}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="zone"
+                  label="Select Zone"
+                  rules={[{ required: true }]}
+                  style={{
+                    width: "90%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <Select
+                    placeholder="Select a Zone"
+                    onChange={(value) => setArcade(value)}
+                    allowClear
+                    style={{
+                      height: "50px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {arcadesofCoache?.zone ? (
+                      arcadesofCoache.zone
+                        .filter((zone) => zone.sport.sport_id === coachSport)
+                        .map((zone, index) => (
+                          <Option key={index} value={zone.zone_id}>
+                            {zone.zone_name}
+                          </Option>
+                        ))
+                    ) : (
+                      <Empty />
                     )}
                   </Select>
                 </Form.Item>
@@ -240,94 +357,37 @@ const CoachBookingForm: React.FC = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   alignSelf: "center",
-                  overflow: "auto",
                 }}
               >
-                <button
-                  type="button"
-                  onClick={() => setTime("9")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  9.00-10.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("12")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  10.00-11.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("13")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  11.00-12.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("14")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  12.00-13.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("15")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  13.00-14.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("16")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  14.00-15.00
-                </button>
+                {buttonData.map((button) => (
+                  <ConfigProvider
+                    theme={{
+                      components: {
+                        Button: {
+                          colorPrimaryHover: "white",
+                        },
+                      },
+                    }}
+                  >
+                    <Button
+                      key={button.id}
+                      id={button.id.toString()}
+                      disabled={button.disabled}
+                      style={{
+                        width: "100%",
+                        height: "60px",
 
-                <button
-                  type="button"
-                  onClick={() => setTime("17")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  15.00-16.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("18")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  16.00-17.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("19")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  17.00-18.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("20")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  18.00-19.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("21")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  19.00-20.00
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTime("22")}
-                  style={{ width: "100%", padding: "5%" }}
-                >
-                  20.00-21.00
-                </button>
+                        backgroundColor:
+                          button.id === time ? "#488ca8" : "#2EA8BF",
+                      }}
+                      onClick={() => {
+                        setTime(button.time);
+                      }}
+                    >
+                      {button.time}
+                    </Button>
+                  </ConfigProvider>
+                ))}
               </Form.Item>
             </div>
           </Col>
@@ -372,19 +432,33 @@ const CoachBookingForm: React.FC = () => {
                 marginTop: "0%",
               }}
             >
-              <Button
+              {contextHolder}
+
+              <PaymentModal
                 htmlType="submit"
-                style={{
-                  width: "90%",
-                  height: "50px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#2EA8BF",
-                }}
-              >
-                Submit
-              </Button>
+                item={"Zone Booking"}
+                orderId={5}
+                amount={500}
+                currency={"LKR"}
+                first_name={userDetails?.firstname}
+                last_name={userDetails?.lastname}
+                email={userDetails?.email}
+                phone={userDetails?.Phone}
+                address={userDetails?.address}
+                city={userDetails?.city}
+                country={userDetails?.country}
+                date={date}
+                time={time}
+                pcount={pcount}
+                userId={userId}
+                //zoneId={zoneId}
+                //reservation_type={zone}
+                //avaiableParticipantCount={
+                 // Number(capacity) -
+                 // (timeParticipantCounts1.find((item) => item.time === time)
+                  //  ?.totalParticipantCount ?? 0)
+                //}
+              />
             </div>
           </Col>
         </Row>

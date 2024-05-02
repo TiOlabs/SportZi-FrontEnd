@@ -18,6 +18,7 @@ export interface Zone {
   arcade: Arcade;
   capacity: Number;
   description: String;
+  sport: Sport;
   way_of_booking: String;
 }
 export interface ZoneBookingDetails {
@@ -98,6 +99,7 @@ export interface Arcade {
   closing_time: String;
   arcade_address: String;
   arcade_image: String;
+  zone: Zone[];
   arcadefeedbacks: ArcadeFeedbacks[];
 }
 
