@@ -23,6 +23,23 @@ export interface Zone {
   sport: Sport;
   zoneBookingDetails: ZoneBookingDetails[]; 
 }
+export interface Package {
+  package_id: String;
+  package_name: String;
+  description: String;
+  package_image: String;
+  rate_per_person: Number;
+  created_at : String;
+  canceled_at : String;
+  status : String ;
+  arcade_id : String ;
+  percentageForCoach : Number;
+  discount : Discount[];
+  arcade : Arcade;
+  coachApplyDetailsForPackage : String;
+  playerPackageEnrollDetails : String;
+ 
+}
 export interface ZoneBookingDetails {
   zone_booking_id: String;
   status: String;
@@ -103,6 +120,7 @@ export interface Arcade {
   arcade_image: String;
   arcadefeedbacks: ArcadeFeedbacks[];
   zone: Zone[];
+  package: Package[];
 }
 
 export interface ArcadeFeedbacks {

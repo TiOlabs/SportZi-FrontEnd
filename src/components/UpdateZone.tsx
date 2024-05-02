@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Form,
@@ -130,9 +130,10 @@ console.log(props.sport)
       <Button
         onClick={showModal}
         style={{
-          backgroundColor: "blue",
+          backgroundColor: "#5587CC",
           color: "white",
           fontFamily: "kanit",
+          marginLeft: "-10px",
         }}
       >
         Update

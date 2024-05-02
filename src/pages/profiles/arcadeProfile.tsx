@@ -6,7 +6,6 @@ import {
   Typography,
   Image,
   Button,
-  Checkbox,
   ConfigProvider,
   Empty,
 } from "antd";
@@ -15,7 +14,6 @@ import backgroundImg from "../../assents/background2.png";
 import profilePic from "../../assents/pro.png";
 import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
-import PhotoCollage from "../../components/photoCollage";
 import ArcadeZoneCard from "../../components/ArcadeZoneCard";
 import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
@@ -29,15 +27,15 @@ import reviewBacground from "../../assents/ReviewBackground.png";
 import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
 import React from "react";
-import { Arcade, Zone, ZoneBookingDetails } from "../../types";
+import { Arcade, Package, Zone, ZoneBookingDetails } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
-import type { CheckboxProps, RadioChangeEvent } from "antd";
+import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
-
+  const [packageDetail, setPackageDetail] = useState<Arcade>();
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -62,6 +60,22 @@ const ArcadeProfileArcade = () => {
       console.log(e);
     }
   }, []);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${ArcadeId}`
+        );
+        const data = await res.data;
+        console.log(data);
+        setPackageDetail(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   useEffect(() => {
     axios
       .get<Arcade>(
@@ -117,7 +131,6 @@ const ArcadeProfileArcade = () => {
   const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
-  const [name, setname] = useState();
   const AvailableBookings = [
     (arcadeBookings || []).map((zone: Zone) =>
       (zone.zoneBookingDetails || []).map((booking: ZoneBookingDetails) => (
@@ -168,7 +181,7 @@ const ArcadeProfileArcade = () => {
         console.log(err);
       });
   }, []);
-
+console.log("arcadeDetails", packageDetail);
   return (
     <>
       <style>
@@ -1002,80 +1015,33 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadePackages />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadePackages />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadePackages />
-          </Col>
-          <Col
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-            xs={24}
-          >
-            <Button
-              style={{
-                color: "#1B5DB7",
-                background: "none",
-                border: "none",
-                fontFamily: "Kanit",
-                fontSize: "18px",
-                marginBottom: "30px",
-              }}
-            >
-              See More
-            </Button>
-          </Col>
+          {packageDetail?.package.map((pkg : Package) => (
+              <Col
+                key={pkg.package_id.toString()}
+                xs={24}
+                sm={12}
+                md={12}
+                lg={8}
+                xl={8}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <ArcadePackages
+                  packageName={pkg.package_name}
+                  packageDescription={pkg.description}
+                  rate={pkg.rate_per_person}
+                  package_id={pkg.package_id}
+                  ArcadeName={pkg.arcade.arcade_name}
+                  packageImage={pkg.package_image}
+                  CoachPrecentage={pkg.percentageForCoach}
+                />
+              </Col>
+            ))}
         </Row>
       </Row>
 

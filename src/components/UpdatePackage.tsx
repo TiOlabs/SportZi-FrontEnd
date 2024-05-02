@@ -7,8 +7,9 @@ import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { useParams } from "react-router-dom";
 
-const AddPackage = () => {
+const UpdatePackage = (props : any) => {
   const { ArcadeId } = useParams();
+console.log("props",props);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -28,11 +29,11 @@ const AddPackage = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const [rate, setRate] = useState("");
-  const [description, setDescription] = useState("");
-  const [publicId, setPublicId] = useState("");
-  const [PackageName, setPackageName] = useState("");
-  const [CoachPrecentage, setCoachPrecentage] = useState("");
+  const [rate, setRate] = useState(props.rate);
+  const [description, setDescription] = useState(props.packageDescription);
+  const [publicId, setPublicId] = useState(props.packageImage);
+  const [PackageName, setPackageName] = useState(props.packageName);
+  const [CoachPrecentage, setCoachPrecentage] = useState(props.coachPrecentage);
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("ihi7kd8o");
   const [uwConfig] = useState({
@@ -69,23 +70,22 @@ const AddPackage = () => {
     },
   });
   const imgObject = cld.image(publicId);
-
   const handleFinish = async () => {
     console.log("rate", rate);
     console.log("description", description);
     console.log("CoachPrecentage", CoachPrecentage);
+    console.log("PackageName", props.package_id);
 const rateInt = parseInt(rate);
 const CoachPrecentageInt = parseInt(CoachPrecentage);
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/addPackageDetails`,
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}api/updatePackageDetails/${props.package_id}`,
         {
           package_name: PackageName,
           rate_per_person: rateInt,
           description: description,
           percentageForCoach: CoachPrecentageInt,
           package_image: publicId,
-          arcade_id : ArcadeId
         }
       );
       console.log(res);
@@ -99,14 +99,12 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
       <Button
         onClick={showModal}
         style={{
-          backgroundColor: "#EFF4FA",
-          color: "#0E458E",
-          borderRadius: "3px",
+          backgroundColor: "#5587CC",
+          color: "white",
           fontFamily: "kanit",
-          borderColor: "#0E458E",
         }}
       >
-        Add Package
+        Update
       </Button>
 
       <Modal
@@ -122,11 +120,11 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
       <div
         style={{ display: "flex", justifyContent: "center", color: "#0E458E" }}
       >
-        <h1>Arcade Package Form</h1>
+        <h1>Arcade Package Update</h1>
       </div>
       <Form.Item
         name="package"
-        label="Add your Package Name"
+        label="Update Package Name"
         rules={[
           {
             type: "string",
@@ -139,6 +137,7 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
         ]}
       >
         <Input
+        defaultValue={props.packageName}
           placeholder="Package Name"
           style={{ width: "100%" }}
           onChange={(e) => setPackageName(e.target.value)}
@@ -147,7 +146,7 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
 
       <Form.Item
         name="rate"
-        label="Add your rate per person"
+        label="Update rate per person"
         rules={[
           {
             type: "number",
@@ -167,6 +166,7 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
         ]}
       >
         <InputNumber
+        defaultValue={props.rate}
           placeholder="rate"
           style={{ width: "100%" }}
           onChange={(value) => setRate(value?.toString() || "")}
@@ -174,7 +174,7 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
       </Form.Item>
       <Form.Item
         name="description"
-        label="Add Discription About Package"
+        label="Update Package Discription"
         rules={[
           {
             required: true,
@@ -183,6 +183,7 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
         ]}
       >
         <TextArea
+        defaultValue={props.packageDescription}
           rows={2}
           placeholder="Description"
           onChange={(e) => setDescription(e.target.value)}
@@ -190,7 +191,7 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
       </Form.Item>
       <Form.Item
         name="CoachPrecentage"
-        label="Add your Coach Precentage"
+        label="Update Coach Precentage"
         rules={[
           {
             type: "number",
@@ -213,6 +214,7 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
         ]}
       >
         <InputNumber
+        defaultValue={props.coachPrecentage}
           placeholder="Coach Precentage"
           style={{ width: "100%" }}
           onChange={(value) => setCoachPrecentage(value?.toString() || "")}
@@ -221,13 +223,14 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
 
       {/* .................. picture upload........................  */}
 
-      <Form.Item label="Upload Package Info Image">
+      <Form.Item label="Update Package Info Image">
         <CloudinaryUploadWidget uwConfig={uwConfig} setPublicId={setPublicId} />
 
         <AdvancedImage
           style={{ maxWidth: "100px" }}
           cldImg={imgObject}
           plugins={[responsive(), placeholder()]}
+          defaultValue={props.packageImage}
         />
       </Form.Item>
       <Form.Item>
@@ -239,4 +242,4 @@ const CoachPrecentageInt = parseInt(CoachPrecentage);
   );
 };
 
-export default AddPackage;
+export default UpdatePackage;
