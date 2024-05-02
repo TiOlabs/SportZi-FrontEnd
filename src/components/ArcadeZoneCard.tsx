@@ -1,12 +1,10 @@
-import { Button, Col, Grid, Row, Typography } from "antd";
-import Image from "antd/lib/image";
-import zoneCardpic from "../assents/pro.png";
+import { Button, Col, Grid, Modal, Row, Typography } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { useState } from "react";
-
-const ArcadeZoneCard = (props:any) => {
-  console.log(props)
+import axios from "axios";
+import UpdateZone from "./UpdateZone";
+const ArcadeZoneCard = (props: any) => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -14,7 +12,21 @@ const ArcadeZoneCard = (props:any) => {
     },
   });
   const { useBreakpoint } = Grid;
-  const { lg, md, sm, xs } = useBreakpoint();
+  const { lg } = useBreakpoint();
+  const [open, setOpen] = useState(false);
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+  const handleConfirmDelete = () =>{
+    window.location.reload();
+
+  }
+
   return (
     <>
       <style>
@@ -37,15 +49,14 @@ const ArcadeZoneCard = (props:any) => {
             height: lg ? "170px" : "150px",
           }}
         >
-          <AdvancedImage style={{ height: "100%", width: "100%" }}
-              cldImg={
-                cld.image(props.zoneImage)
-                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                // .resize(Resize.scale().width(200).height(200))
-              }
-              
-            />
-        
+          <AdvancedImage
+            style={{ height: "100%", width: "100%" }}
+            cldImg={
+              cld.image(props.zoneImage)
+              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+              // .resize(Resize.scale().width(200).height(200))
+            }
+          />
         </Row>
         <Row
           style={{
@@ -76,7 +87,6 @@ const ArcadeZoneCard = (props:any) => {
               }}
             >
               {props.zoneName}
-              
             </Typography>
             <Typography
               style={{
@@ -143,15 +153,55 @@ const ArcadeZoneCard = (props:any) => {
                   alignItems: "center",
                 }}
               >
-                <Button
-                  style={{
-                    backgroundColor: "#5587CC",
-                    color: "white",
-                    borderRadius: "3px",
-                  }}
-                >
-                  Book{" "}
-                </Button>
+                <UpdateZone 
+                id={props.id}
+                rate= {props.rate} 
+                name= {props.zoneName}
+                description = {props.description}
+                zoneImage= {props.zoneImage}
+                way_of_booking= {props.way_of_booking}
+                open_time= {props.open_time}
+                close_time= {props.close_time}
+                capacity= {props.capacity}
+                sport= {props.sport}
+                sport_id= {props.sport_id}
+                
+                />
+                
+                  <Button
+                    style={{
+                      backgroundColor: "red",
+                      color: "white",
+                      borderRadius: "3px",
+                    }}
+                    onClick={showModal}
+                  >
+                    Delete
+                  </Button>
+                  <Modal
+                    visible={open}
+                    onOk={async (e) => {
+                      const url = `${process.env.REACT_APP_API_URL}api/deleteZoneDetails/${props.id}`;
+                      
+                      axios
+                        .delete(url)
+                        .then((response) => {
+                            console.log(response);
+                          if (response.status === 200) {
+                            console.log("success");
+                          } else {
+                            console.log("error");
+                          }
+                        })
+                        .catch((e) => console.log(e));
+                        handleConfirmDelete();
+                    }
+                    
+                  }
+                    onCancel={handleCancel}
+                  >
+                    <p>Are you sure you want to delete this arcade zone?</p>
+                  </Modal>
               </Col>
             </Row>
           </Col>
@@ -161,12 +211,3 @@ const ArcadeZoneCard = (props:any) => {
   );
 };
 export default ArcadeZoneCard;
-
-
-
-
-
-
-
-
-

@@ -15,8 +15,8 @@ import { AdvancedImage } from "@cloudinary/react";
 import { ZoneBookingDetails } from "../../types";
 import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
-import Home from "../home/home";
 import AppFooter from "../../components/footer";
+import NavbarLogin from "../../components/NavBarLogin";
 
 const requestList = [
   <CoachRequstRow />,
@@ -98,7 +98,6 @@ const PlayerProfile = () => {
     axiosInstance
       .get(`/api/auth/getplayerdetails/${userDetails?.id}`, {})
       .then((res) => {
-        console.log("dataaaaaaaaaa222222 ", res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
         setDiscription(res.data.Discription);
@@ -109,19 +108,20 @@ const PlayerProfile = () => {
           achiveArr.push(item.achivement_details as string);
         });
         setAchivements(achiveArr.join(","));
-        // console.log("userDetails", userDetails);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [userDetails]);
 
-  const setZoneBookingDetails1 = (updatedData: SetStateAction<ZoneBookingDetails[]>) => {
+  const setZoneBookingDetails1 = (
+    updatedData: SetStateAction<ZoneBookingDetails[]>
+  ) => {
     setPlayerBookingsData1(updatedData);
   };
   return (
     <>
-      {userDetails.id !== "" ? <NavbarProfile /> : <Home />}
+      {userDetails.id !== "" ? <NavbarProfile /> : <NavbarLogin />}
 
       <style>
         @import
@@ -146,7 +146,7 @@ const PlayerProfile = () => {
           }}
         >
           <AdvancedImage
-            style={{ height: "auto", width: "300px" }}
+            style={{ height: "300px", width: "300px" }}
             cldImg={
               cld.image(user_image)
               // .resize(Resize.crop().width(200).height(200).gravity('auto'))
@@ -767,7 +767,7 @@ const PlayerProfile = () => {
               />
             ))
           ) : (
-            <Empty description="No Bookings Availiable"/>         
+            <Empty description="No Bookings Availiable" />
           )}
         </div>
 

@@ -1,13 +1,23 @@
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
-import { Col, List, Row, Typography, Image, Button } from "antd";
-import { Grid } from "antd";
+import {
+  Col,
+  List,
+  Row,
+  Typography,
+  Image,
+  Button,
+  Checkbox,
+  ConfigProvider,
+  Empty,
+} from "antd";
+import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profilePic from "../../assents/pro.png";
 import CoachCard from "../../components/CoachCard";
 import AddPhotoButton from "../../components/addPhotoButton";
 import PhotoCollage from "../../components/photoCollage";
 import ArcadeZoneCard from "../../components/ArcadeZoneCard";
-import AddZone from "../../components/AddZone"
+import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
 import { useEffect, useState } from "react";
@@ -16,37 +26,112 @@ import CoachReqestForArcade from "../../components/CoachReqestForArcade";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
-import { Zone } from "../../types";
-import axios from "axios";
 import axiosInstance from "../../axiosInstance";
+import { useParams } from "react-router-dom";
+import React from "react";
+import { Arcade, Zone, ZoneBookingDetails } from "../../types";
+import axios from "axios";
+import { useArcade } from "../../context/Arcade.context";
+import type { CheckboxProps, RadioChangeEvent } from "antd";
+import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 
 const ArcadeProfileArcade = () => {
-  const [zone, setZone] = useState<Zone[]>([]);
+  const [value, setValue] = useState(1);
+
+  const onChange = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValue(e.target.value);
+  };
+  console.log("value", value);
+  const { ArcadeId } = useParams();
+  const { managerDetails } = useArcade();
+  const [arcade, setArcade] = useState<Arcade>();
+  const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/getZoneDetails`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
+        );
         const data = await res.data;
-        setZone(data);
+        console.log(data);
+        setArcade(data);
       };
       fetchData();
     } catch (e) {
       console.log(e);
     }
   }, []);
+  useEffect(() => {
+    axios
+      .get<Arcade>(
+        process.env.REACT_APP_API_URL +
+          `api/getarcadebookingForArcade/${ArcadeId}`
+      )
+      .then((res) => {
+        console.log("Response data:", res.data);
+
+        // Get the current date in the format YYYY-MM-DD
+        const currentDate = new Date();
+        const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+
+        // Filter bookings with status "success" and booking dates based on value
+        const filteredBookings: Zone[] = res.data.zone.reduce(
+          (accumulator: Zone[], zone: Zone) => {
+            console.log("Zone:", zone);
+            const targetBookings = zone.zoneBookingDetails.filter((booking) => {
+              if (value === 1) {
+                return (
+                  booking.status === "success" &&
+                  booking.date > formattedCurrentDate
+                );
+              } else if (value === 2) {
+                return (
+                  booking.status === "success" &&
+                  booking.date < formattedCurrentDate
+                );
+              } else if (value === 3) {
+                return booking.status === "canceled_By_Arcade";
+              }
+            });
+            if (targetBookings.length > 0) {
+              accumulator.push({
+                ...zone,
+                zoneBookingDetails: targetBookings,
+              });
+            }
+            return accumulator;
+          },
+          []
+        );
+
+        setArcadeBookings(filteredBookings);
+        console.log("Filtered bookings:", filteredBookings);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [ArcadeId, value]);
+
   const { useBreakpoint } = Grid;
   const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [name, setname] = useState();
   const AvailableBookings = [
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
-    <AvailableBookingsArcade />,
+    (arcadeBookings || []).map((zone: Zone) =>
+      (zone.zoneBookingDetails || []).map((booking: ZoneBookingDetails) => (
+        <AvailableBookingsArcade
+          booking_id={booking.zone_booking_id}
+          booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+          zoneName={zone.zone_name}
+          time={booking.time}
+          date={booking.date}
+          rate={zone.rate}
+          zoneImage={zone.zone_image}
+        />
+      ))
+    ),
   ];
 
   const CoachReqestToArchade = [
@@ -55,7 +140,6 @@ const ArcadeProfileArcade = () => {
     <CoachReqestForArcade />,
     <CoachReqestForArcade />,
   ];
-
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -65,16 +149,26 @@ const ArcadeProfileArcade = () => {
     }
   };
 
+  console.log("in the arcade", ArcadeId);
+
+  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
+
   useEffect(() => {
     axiosInstance
-      .get("/api/auth/getarchadedetails")
+      .get("/api/auth/getarchadedetails", {
+        params: {
+          ArcadeId: ArcadeId,
+        },
+      })
       .then((res) => {
-        setname(res.data.firstname);
+        console.log("aaaaaaaaaaaaaaaa", res.data);
+        setArcadeDetails(res.data);
       })
       .catch((err) => {
-        console.log("error msg", err);
+        console.log(err);
       });
   }, []);
+
   return (
     <>
       <style>
@@ -97,6 +191,8 @@ const ArcadeProfileArcade = () => {
             alignItems: "center",
           }}
         >
+          {" "}
+          {arcadeBookings.length === 0 ? <Empty /> : null}
           <Row
             style={{
               width: "100%",
@@ -126,7 +222,6 @@ const ArcadeProfileArcade = () => {
               />
             </Col>
           </Row>
-
           <Row
             style={{
               position: "relative",
@@ -167,12 +262,7 @@ const ArcadeProfileArcade = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {arcadeDetails && arcadeDetails.distription}
               </Typography>
             </Col>
           </Row>
@@ -216,8 +306,7 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                {/* {name} */}
-                Colombo Cricket Club
+                {arcadeDetails && arcadeDetails.arcade_name}
               </h1>
               <p
                 style={{
@@ -238,7 +327,6 @@ const ArcadeProfileArcade = () => {
                   margin: "0px",
                   color: "#000",
                   fontFamily: "kanit",
-
                   fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "300",
@@ -246,7 +334,31 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                39/11/A Galle road bambalapitiya colombo 04
+                {arcadeDetails?.address &&
+                  arcadeDetails.address
+                    .split(",")
+                    .map(
+                      (
+                        line:
+                          | string
+                          | number
+                          | boolean
+                          | React.ReactElement<
+                              any,
+                              string | React.JSXElementConstructor<any>
+                            >
+                          | Iterable<React.ReactNode>
+                          | React.ReactPortal
+                          | null
+                          | undefined,
+                        index: React.Key | null | undefined
+                      ) => (
+                        <React.Fragment key={index}>
+                          {line}
+                          <br />
+                        </React.Fragment>
+                      )
+                    )}
               </p>
             </div>
             <div
@@ -735,7 +847,7 @@ const ArcadeProfileArcade = () => {
       >
         <AddPhotoButton />
       </div>
-      <PhotoCollage />
+      <PhotoCollageForArcade />
 
       <Row
         style={{
@@ -785,31 +897,37 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-            {zone.map((zone: Zone) => (
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard
-              zoneName={zone.zone_name}
-              rate={zone.rate}
-              zoneImage={zone.zone_image} 
-              description={zone.description}
-            />
-          </Col>
-          ))  
-          }
+          {arcade?.zone.map((zone: Zone) => (
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              {" "}
+              <ArcadeZoneCard
+                zoneName={zone.zone_name}
+                rate={zone.rate}
+                zoneImage={zone.zone_image}
+                description={zone.description}
+                id={zone.zone_id}
+                capacity={zone.capacity}
+                open_time={zone.open_time}
+                close_time={zone.close_time}
+                way_of_booking={zone.way_of_booking}
+                sport={zone.sport.sport_name}
+                sport_id={zone.sport.sport_id}
+              />
+            </Col>
+          ))}
           <Col
             style={{
               width: "100%",
@@ -862,7 +980,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "Kanit",
             }}
           >
-            Book Our Zones
+            Our Packages
           </Typography>
           <div
             style={{
@@ -970,20 +1088,177 @@ const ArcadeProfileArcade = () => {
           marginTop: "60px",
         }}
       >
-        <Typography
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            {" "}
+            Availale bookings for your complex
+          </Typography>
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
           style={{
+            display: "flex",
             alignItems: "center",
-            color: "#0E458E",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: lg ? "32px" : "24px",
-            paddingBottom: "10px",
-            marginBottom: "0px",
+            justifyContent: "center",
           }}
         >
-          {" "}
-          Availale bookings for suberb box complex
-        </Typography>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={1}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={2}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={3}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
       </Row>
       <Row
         style={{
@@ -1020,7 +1295,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Coach
+            Athelte
           </Col>
           <Col
             style={{
@@ -1079,24 +1354,30 @@ const ArcadeProfileArcade = () => {
             </Col>
           )}
         </Row>
+        {arcadeBookings.length > 0 ? (
+          <>
+            {(arcadeBookings || []).map((zone: Zone) =>
+              (zone.zoneBookingDetails || []).map(
+                (booking: ZoneBookingDetails) => (
+                  <AvailableBookingsArcade
+                    user_image={booking.user.user_image}
+                    booking_id={booking.zone_booking_id}
+                    booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                    zoneName={zone.zone_name}
+                    time={booking.time}
+                    date={booking.date}
+                    rate={zone.rate}
+                    zoneImage={zone.zone_image}
+                  />
+                )
+              )
+            )}
+          </>
+        ) : (
+          <Empty />
+        )}
 
-        {Array.isArray(AvailableBookings) &&
-          AvailableBookings.slice(0, numberOfItemsShown).map(
-            (request, index) => (
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-                key={index}
-              >
-                {request}
-              </div>
-            )
-          )}
-
-        {showMore ? (
+        {/* {showMore ? (
           <Button
             style={{
               alignItems: "center",
@@ -1124,7 +1405,7 @@ const ArcadeProfileArcade = () => {
           >
             See Less
           </Button>
-        )}
+        )} */}
       </Row>
 
       <Row

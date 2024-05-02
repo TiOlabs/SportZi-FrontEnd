@@ -4,7 +4,7 @@ import zoneCardpic from "../assents/pro.png";
 
 const ArcadePackages = () => {
   const { useBreakpoint } = Grid;
-  const { lg, md, sm, xs } = useBreakpoint();
+  const { lg} = useBreakpoint();
   return (
     <>
       <style>

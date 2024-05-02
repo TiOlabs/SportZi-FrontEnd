@@ -6,12 +6,15 @@ import { Routes } from "react-router-dom";
 import AppRoutes from "./routes/routes";
 
 import { PlayerProvider } from "./context/player.context";
+import { ArcadeProvider } from "./context/Arcade.context";
 
 function App() {
   return (
-    <PlayerProvider>
-      <AppRoutes />
-    </PlayerProvider>
+    <ArcadeProvider>
+      <PlayerProvider>
+        <AppRoutes />
+      </PlayerProvider>
+    </ArcadeProvider>
   );
 }
 

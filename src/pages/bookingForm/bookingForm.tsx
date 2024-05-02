@@ -444,43 +444,6 @@ const BookingForm = () => {
                     </div>
                   </Col>
                   <Form.Item
-                    name="Participant Count"
-                    label={
-                      <span>
-                        Participant Count ( Available Participant Count is -{" "}
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          {Number(capacity) -
-                            (timeParticipantCounts1.find(
-                              (item) => item.time === time
-                            )?.totalParticipantCount || 0)}
-                        </span>{" "}
-                        )
-                      </span>
-                    }
-                    rules={[{ required: true, type: "number" }]}
-                    style={{
-                      width: "90%",
-                      marginLeft: "20px",
-                    }}
-                  >
-                    <InputNumber
-                      disabled={!date || !time}
-                      style={{
-                        height: "50px",
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                      max={
-                        Number(capacity) -
-                        (timeParticipantCounts1.find(
-                          (item) => item.time === time
-                        )?.totalParticipantCount || 0)
-                      }
-                      onChange={(value) => setPcount(value?.toString() || "")}
-                    />
-                  </Form.Item>
-                  <Form.Item
                     name="way_of_booking"
                     label="Reservation Type"
                     rules={[{ required: true }]}
@@ -521,6 +484,43 @@ const BookingForm = () => {
                         </>
                       )}
                     </Select>
+                  </Form.Item>
+                  <Form.Item
+                    name="Participant Count"
+                    label={
+                      <span>
+                        Participant Count ( Available Participant Count is -{" "}
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          {Number(capacity) -
+                            (timeParticipantCounts1.find(
+                              (item) => item.time === time
+                            )?.totalParticipantCount || 0)}
+                        </span>{" "}
+                        )
+                      </span>
+                    }
+                    rules={[{ required: true, type: "number" }]}
+                    style={{
+                      width: "90%",
+                      marginLeft: "20px",
+                    }}
+                  >
+                    <InputNumber
+                      disabled={!date || !time}
+                      style={{
+                        height: "50px",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                      max={
+                        Number(capacity) -
+                        (timeParticipantCounts1.find(
+                          (item) => item.time === time
+                        )?.totalParticipantCount || 0)
+                      }
+                      onChange={(value) => setPcount(value?.toString() || "")}
+                    />
                   </Form.Item>
                 </Row>
               </div>

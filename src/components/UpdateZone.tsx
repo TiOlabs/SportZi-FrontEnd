@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
-  Checkbox,
   Form,
   Input,
   InputNumber,
@@ -15,16 +14,16 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
+import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
 
-const AddZone = () => {
+const UpdateZone = (props: any) => {
   const { ArcadeId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const showModal = () => {
     setIsModalOpen(true);
   };
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
+
   const handleOk = () => {
     setIsModalOpen(false);
     messageApi.success({
@@ -34,24 +33,23 @@ const AddZone = () => {
     });
     window.location.reload();
   };
-
+  const [rate, setRate] = useState(props.rate);
+  const [capacity, setCapacity] = useState(props.capacity);
+  const [way, setWay] = useState(props.way_of_booking);
+  const [arcadeName, setArcadeName] = useState(props.name);
+  const [publicId, setPublicId] = useState(props.zone_image);
+  const [cloudName] = useState("dle0txcgt");
+  const [uploadPreset] = useState("ihi7kd8o");
+  const [startedTime, setStartedTime] = useState<any>(props.open_time);
+  const [closedTime, setClosedTime] = useState<string | null>(props.close_time);
+  const [discription, setDiscription] = useState(props.description);
+  const [sportc,setSportc] = useState("");
+  console.log(sportc);
+console.log(props.sport)
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
-  const [rate, setRate] = useState("");
-  const [discount, setdiscount] = useState("");
-  const[discountDiscription, setdiscountDiscription] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const [way, setWay] = useState("");
-  const [arcadeName, setArcadeName] = useState("");
-  const [publicId, setPublicId] = useState("");
-  const [cloudName] = useState("dle0txcgt");
-  const [uploadPreset] = useState("ihi7kd8o");
-  const [startedTime, setStartedTime] = useState<string | null>(null);
-  const [closedTime, setClosedTime] = useState<string | null>(null);
-  const [discription, setDiscription] = useState("");
-  const [sport, setSport] = useState("");
+  console.log(arcadeName)
   const handleTimeChangeStart = (time: any, timeString: string) => {
     setStartedTime(timeString);
     console.log("Selected time:", timeString);
@@ -98,9 +96,14 @@ const AddZone = () => {
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/addZoneDetails`,
+    let sportcc=sportc
+    if(sportcc === ""){
+      sportcc=props.sport_id
+    }
+      try {
+        console.log(sportcc)
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
         {
           zone_name: arcadeName,
           capacity: capacityint,
@@ -111,51 +114,30 @@ const AddZone = () => {
           open_time: startedTime,
           close_time: closedTime,
           arcade_id: ArcadeId,
-          sport_id: sport,
-          discount: discount,
-          discount_description: discountDiscription,
+          sport_id: sportcc,
         }
+
       );
-      console.log();
-      UpdateData();
+      console.log(res);
     } catch (error) {
+      console.log("Error:");
       console.log(error);
     }
     handleOk();
   };
-  const UpdateData = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/updateZoneDetails/:id`
-      );
-      setArcadeName(res.data);
-      setCapacity(res.data);
-      setClosedTime(res.data);
-      setDiscription(res.data);
-      setRate(res.data);
-      setWay(res.data);
-      setStartedTime(res.data);
-      setSport(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  console.log(arcadeName);
   return (
     <>
       <Button
         onClick={showModal}
         style={{
-          backgroundColor: "#EFF4FA",
-          color: "#0E458E",
-          borderRadius: "3px",
+          backgroundColor: "blue",
+          color: "white",
           fontFamily: "kanit",
-          borderColor: "#0E458E",
         }}
       >
-        Add Zone
+        Update
       </Button>
-
+      {console.log("arcadeName", arcadeName)}
       <Modal visible={isModalOpen} onOk={handleFinish} onCancel={handleCancel}>
         <Form
           layout="vertical"
@@ -169,11 +151,12 @@ const AddZone = () => {
               color: "#0E458E",
             }}
           >
-            <h1>Application Form - For add a zone</h1>
+            <h1>Update Arcade Details</h1>
           </div>
+          
           <Form.Item
             name="ArcadeName"
-            label="Add your Zone Name"
+            label="Zone Name"
             rules={[
               {
                 type: "string",
@@ -187,20 +170,23 @@ const AddZone = () => {
           >
             <Input
               placeholder="Zone Name"
-              onChange={(e) => setArcadeName(e.target.value)}
+              defaultValue={arcadeName}
+              onChange={(e) => {
+                setArcadeName(e.target.value);
+              }}
             />
           </Form.Item>
           <Form.Item
             name="capacity"
-            label="Add your Zone capacity"
+            label="Zone capacity"
             rules={[
               {
                 type: "number",
-                message: "Please enter Zone capacity!",
+                message: "Please enter zone capacity!",
               },
               {
                 required: true,
-                message: "Please input Zone capacity!",
+                message: "Please input zone capacity!",
               },
               {
                 validator: (_, value) => {
@@ -215,13 +201,14 @@ const AddZone = () => {
             <InputNumber
               placeholder="capacity"
               style={{ width: "100%" }}
+              defaultValue={capacity}
               onChange={(value) => setCapacity(value?.toString() || "")}
             />
           </Form.Item>
 
           <Form.Item
             name="rate"
-            label="Add your rate (per hour)"
+            label="Zone rate"
             rules={[
               {
                 type: "number",
@@ -244,84 +231,28 @@ const AddZone = () => {
             <InputNumber
               placeholder="rate"
               style={{ width: "100%" }}
+              defaultValue={rate}
               onChange={(value) => setRate(value?.toString() || "")}
             />
           </Form.Item>
-          <Checkbox
-            checked={componentDisabled}
-            onChange={(e) => setComponentDisabled(e.target.checked)}
-          >
-            Add Discount
-          </Checkbox>
-
-          <Form.Item
-            name="discount"
-            label="discount persentage"
-            rules={[
-              {
-                type: "number",
-                message: "Please enter a valid number!",
-              },
-              {
-                required: true,
-                message: "Please input your number!",
-              },
-              {
-                validator: (_, value) => {
-                  if (value <= 0) {
-                    return Promise.reject("Rate should be greater than 0");
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <InputNumber
-              disabled={!componentDisabled}
-              placeholder="discount persentage"
-              style={{ width: "100%" }}
-              onChange={(value) => setdiscount(value?.toString() || "")}
-            />
-          </Form.Item>
-          <Form.Item
-            name="discuntDiscription"
-            label="Add a description about discount"
-            rules={[
-              {
-                type: "string",
-                message: "Please enter a Zone description!",
-              },
-              {
-                required: true,
-                message: "Please input your Zone Descrition!",
-              },
-            ]}
-          >
-            <TextArea
-              disabled={!componentDisabled}
-              rows={2}
-              placeholder="descrition"
-              onChange={(e) => setdiscountDiscription(e.target.value)}
-            />
-          </Form.Item>
-
           <Form.Item
             name="Discription"
-            label="Add your Zone description"
+            label="Zone discription"
             rules={[
               {
                 type: "string",
-                message: "Please enter a Zone description!",
+                message: "Please enter a Zone discription!",
               },
               {
                 required: true,
-                message: "Please input your Zone Descrition!",
+                message: "Please input your Zone Discrition!",
               },
             ]}
           >
             <TextArea
               rows={4}
-              placeholder="descrition"
+              placeholder="discrition"
+              defaultValue={discription}
               onChange={(e) => setDiscription(e.target.value)}
             />
           </Form.Item>
@@ -338,6 +269,7 @@ const AddZone = () => {
           >
             <Select
               placeholder="Select a way of booking"
+              defaultValue={way}
               onChange={(value) => setWay(value)}
             >
               <Select.Option value="full">full</Select.Option>
@@ -353,17 +285,18 @@ const AddZone = () => {
             rules={[
               {
                 required: true,
-                message: "Please select a sport!",
+                message: "Please select a sport",
               },
             ]}
           >
             <Select
               placeholder="Select a sport"
-              onChange={(value) => setSport(value)}
+              defaultValue={props.sport}
+              onChange={(value) => setSportc(value)}
             >
               <Select.Option value="S00001">Cricket</Select.Option>
-              <Select.Option value="S00003">Swimming</Select.Option>
               <Select.Option value="S00002">FootBall</Select.Option>
+              <Select.Option value="S00003">Swimming</Select.Option>
               <Select.Option value="S00004">Gym</Select.Option>
               <Select.Option value="S00005">NetBall</Select.Option>
               <Select.Option value="S00006">Batmintain</Select.Option>
@@ -371,7 +304,7 @@ const AddZone = () => {
           </Form.Item>
           <Form.Item
             name="TimeStart"
-            label="Add Zone Open Time"
+            label="Update Zone Open Time"
             rules={[
               {
                 required: true,
@@ -381,6 +314,7 @@ const AddZone = () => {
           >
             <TimePicker
               format="HH:mm"
+              defaultValue={dayjs(startedTime, "HH:mm")}
               onChange={(time, timeString: string | string[]) =>
                 handleTimeChangeStart(
                   time,
@@ -391,7 +325,7 @@ const AddZone = () => {
           </Form.Item>
           <Form.Item
             name="TimeClose"
-            label="Add Zone Close Time"
+            label="Update Zone Close Time"
             rules={[
               {
                 required: true,
@@ -401,6 +335,7 @@ const AddZone = () => {
           >
             <TimePicker
               format="HH:mm"
+              defaultValue={dayjs(closedTime, "HH:mm")}
               onChange={(time, timeString: string | string[]) =>
                 handleTimeChangeClose(
                   time,
@@ -409,7 +344,6 @@ const AddZone = () => {
               }
             />
           </Form.Item>
-
           {/* .................. picture upload........................  */}
 
           <Form.Item label="Upload Zone Image">
@@ -422,6 +356,7 @@ const AddZone = () => {
               style={{ maxWidth: "100px" }}
               cldImg={imgObject}
               plugins={[responsive(), placeholder()]}
+              defaultValue={publicId}
             />
           </Form.Item>
         </Form>
@@ -430,4 +365,4 @@ const AddZone = () => {
   );
 };
 
-export default AddZone;
+export default UpdateZone;

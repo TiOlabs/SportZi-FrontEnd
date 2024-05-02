@@ -22,7 +22,6 @@ import { time } from "console";
 import PaymentModal from "../../components/paymentCheckout";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
-
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
@@ -61,6 +60,7 @@ const CoachBookingForm: React.FC = () => {
       console.log("errrr", e);
     }
   }, [userID]);
+
 
   useEffect(() => {
     const fetchData = async () => {

@@ -20,6 +20,9 @@ export interface Zone {
   description: String;
   sport: Sport;
   way_of_booking: String;
+  sport_id: String;
+  sport: Sport;
+  zoneBookingDetails: ZoneBookingDetails[]; 
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
@@ -101,6 +104,7 @@ export interface Arcade {
   arcade_image: String;
   zone: Zone[];
   arcadefeedbacks: ArcadeFeedbacks[];
+  zone: Zone[];
 }
 
 export interface ArcadeFeedbacks {
@@ -117,6 +121,7 @@ export interface CoachFeedbacks {
   coach_feedback_id: String;
   rate: Number;
 }
+
 export interface UserPhoto {
   user_id: String;
   image: String;
