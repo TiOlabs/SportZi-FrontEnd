@@ -322,11 +322,25 @@ const BookingForm = () => {
     }, 1000);
   };
 
-  const openTime = Number(zoneDetails?.open_time);
-  const closeTime = Number(zoneDetails?.close_time) ?? 0;
+  const openTimeStr = zoneDetails?.open_time ?? "";
+  const closeTimeStr = zoneDetails?.close_time ?? "";
+  console.log(openTimeStr); 
+
+  // Split the time string to get hours and minutes
+  const [openHour, openMinute] = openTimeStr.split(":").map(Number);
+  const [closeHour, closeMinute] = closeTimeStr.split(":").map(Number);
+
+  // Concatenate hours and minutes with a period
+  const openTime = openHour + openMinute / 60;
+  const closeTime = closeHour + closeMinute / 60;
+
+  console.log(openTime); // Example: 8.0
+  console.log(closeTime); // Example: 17.0
+
   const timeStep = 1;
   let buttonData = [];
   for (let i = openTime; i < closeTime; i += timeStep) {
+    console.log(i);
     let nextTime = i + timeStep;
     let hour = Math.floor(i);
     let minute = (i - hour) * 60;
@@ -336,6 +350,11 @@ const BookingForm = () => {
     let formattedTime = `${hour}:${
       minute < 10 ? "0" : ""
     }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+    // let formattedTime = `${hour < 10 ? "0" + hour : hour}:${
+    //   minute < 10 ? "0" : ""
+    // }${minute}- ${nextHour < 10 ? "0" + nextHour : nextHour}:${
+    //   nextMinute < 10 ? "0" : ""
+    // }${nextMinute}`;
 
     if (date === dayjs().format("YYYY-MM-DD")) {
       // Split formattedTime into start and end times
