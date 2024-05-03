@@ -1,16 +1,34 @@
-import { Button, Col, Grid, Row, Typography } from "antd";
-import Image from "antd/lib/image";
-import zoneCardpic from "../assents/pro.png";
+import { Button, Col, Grid, Modal, Row, Typography } from "antd";
+import { useState } from "react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage } from "@cloudinary/react";
+import UpdatePackage from "./UpdatePackage";
+import axios from "axios";
 
-const ArcadePackages = () => {
+const ArcadePackages = (props: any) => {
+  console.log("lol ", props);
+  console.log("lol ", props.packageImage);
   const { useBreakpoint } = Grid;
-  const { lg} = useBreakpoint();
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const [open, setOpen] = useState(false);
+  const handleCancel = () => {
+    setOpen(false);
+  };
+  const showModal = () => {
+    setOpen(true);
+  };
+  const handleConfirmDelete = () =>{
+    window.location.reload();
+
+  }
+  const { lg } = useBreakpoint();
   return (
     <>
-      <style>
-        @import
-        url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
-      </style>
       <Row
         style={{
           boxShadow: "0.2px 0.2px 2px 0.2px rgba(0, 0, 0, 0.2)",
@@ -29,12 +47,9 @@ const ArcadePackages = () => {
             height: lg ? "170px" : "150px",
           }}
         >
-          {" "}
-          <Image
-            height={"100%"}
-            width="100%"
-            src={zoneCardpic}
-            preview={{ src: zoneCardpic }}
+          <AdvancedImage
+            style={{ height: "100%", width: "100%" }}
+            cldImg={cld.image(props.packageImage)}
           />
         </Row>
         <Row
@@ -66,7 +81,7 @@ const ArcadePackages = () => {
               }}
             >
               {" "}
-              Swimming Practice
+              {props.packageName}
             </Typography>
             <Typography
               style={{
@@ -74,6 +89,7 @@ const ArcadePackages = () => {
                 fontWeight: "light",
                 color: "black",
                 width: "80%",
+                fontFamily: "kanit",
               }}
             >
               Conduct By
@@ -86,7 +102,7 @@ const ArcadePackages = () => {
                 width: "80%",
               }}
             >
-              Sunil,nimal
+              Zone : {props.ArcadeName}
             </Typography>
             <Typography
               style={{
@@ -96,8 +112,7 @@ const ArcadePackages = () => {
                 width: "80%",
               }}
             >
-              jjjb jvkhb kgy jkyfyjv kwfewf wefwefcqev wfe3qefq yfjyv you can
-              join any two days for the
+              {props.packageDescription}
             </Typography>
             <Row
               style={{
@@ -123,7 +138,7 @@ const ArcadePackages = () => {
                     color: "#5587CC",
                   }}
                 >
-                  159$
+                  {props.rate}$
                 </Typography>
                 <Typography
                   style={{
@@ -144,15 +159,48 @@ const ArcadePackages = () => {
                   alignItems: "center",
                 }}
               >
+                <UpdatePackage
+                  packageName={props.packageName}
+                  packageDescription={props.packageDescription}
+                  rate={props.rate}
+                  package_id={props.package_id}
+                  packageImage={props.packageImage}
+                  coachPrecentage={props.CoachPrecentage}
+                />
                 <Button
-                  style={{
-                    backgroundColor: "#5587CC",
-                    color: "white",
-                    borderRadius: "3px",
-                  }}
-                >
-                  Join{" "}
-                </Button>
+                    style={{
+                      backgroundColor: "red",
+                      color: "white",
+                      borderRadius: "3px",
+                    }}
+                    onClick={showModal}
+                  >
+                    Delete
+                  </Button>
+                  <Modal
+                    visible={open}
+                    onOk={async (e) => {
+                      const url = `${process.env.REACT_APP_API_URL}api/deletePackageDetails/${props.package_id}`;
+                      
+                      axios
+                        .delete(url)
+                        .then((response) => {
+                            alert("Package Deleted Successfully");
+                          if (response.status === 200) {
+                            console.log("success");
+                          } else {
+                            console.log("error");
+                          }
+                        })
+                        .catch((e) => console.log(e));
+                        handleConfirmDelete();
+                    }
+                    
+                  }
+                    onCancel={handleCancel}
+                  >
+                    <p>Are you sure you want to delete this arcade zone?</p>
+                  </Modal>
               </Col>
             </Row>
           </Col>
