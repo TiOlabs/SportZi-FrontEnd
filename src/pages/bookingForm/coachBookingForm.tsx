@@ -16,21 +16,24 @@ import { LeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { usePlayer } from "../../context/player.context";
 import { CoachBookingContext } from "../../context/coachBooking.context";
-import { Arcade, CoachAssignDetails, Zone } from "../../types";
+import { Arcade, Coach, CoachAssignDetails, Zone } from "../../types";
 import dayjs from "dayjs";
 import { time } from "console";
 import PaymentModal from "../../components/paymentCheckout";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
-  const { userId } = usePlayer();
+  const { setZoneBookings } = useContext(ZoneBookingsContext);
   const [userDetails, setUserDetails] = useState<any>();
+  const [coachData, setcoachData] = useState<Coach>();
   const [time, setTime] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [pcount, setPcount] = useState<string>("");
   const [arcade, setArcade] = useState<string>("");
+  const [zone, setZone] = useState<string>("");
   const [coachSport, setCoachSport] = useState<string>("");
   const [coachAssignDetails, setCoachAssignDetails] = useState<
     CoachAssignDetails[]
@@ -63,6 +66,7 @@ const CoachBookingForm: React.FC = () => {
 
 
   useEffect(() => {
+    console.log(coachId);
     const fetchData = async () => {
       try {
         const res = await fetch(
@@ -76,17 +80,19 @@ const CoachBookingForm: React.FC = () => {
       }
     };
     fetchData();
-  }, [coachId]);
+  }, [coachId,arcade]);
   console.log(arcade);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getcoach/${coachId}`
+          `${process.env.REACT_APP_API_URL}api/getcoache/${coachId}`
         );
         const data = await res.json();
-        console.log(data?.sport.sport_id);
-        setCoachSport(data?.sport.sport_id);
+        console.log(data);
+        setcoachData(data);
+        console.log(data.sport_id);
+        setCoachSport(data?.sport_id);
       } catch (err) {
         console.log(err);
       }
@@ -98,7 +104,7 @@ const CoachBookingForm: React.FC = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-         `${process.env.REACT_APP_API_URL}api/getarcadeDetailsById/${arcade}`
+         `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${arcade}`
         );
         const data = await res.json();
         console.log(data);
@@ -123,7 +129,13 @@ const CoachBookingForm: React.FC = () => {
       return; // Stop further execution
     } else {
       try {
-        // Add your logic here
+        setZoneBookings({
+          date: date,
+          time: time,
+          participant_count: pcountInt,
+          user_id: userDetails.user_id,
+          zone_id: zone,
+        });
       } catch (err) {
         console.log("Error");
         console.log(err);
@@ -196,6 +208,7 @@ const CoachBookingForm: React.FC = () => {
   }
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
+  let fullAmount=Number(coachData?.rate)*1;
   return (
     <div style={{ margin: "2%" }}>
       <Row>
@@ -291,7 +304,7 @@ const CoachBookingForm: React.FC = () => {
                       <Empty />
                     ) : (
                       coachAssignDetails?.map((arcadeName, index) => (
-                        <Option key={index} value={arcadeName.arcade_id}>
+                        <Option key={index} value={arcadeName?.arcade_id}>
                           {arcadeName?.arcade.arcade_name}
                         </Option>
                       ))
@@ -309,7 +322,7 @@ const CoachBookingForm: React.FC = () => {
                 >
                   <Select
                     placeholder="Select a Zone"
-                    onChange={(value) => setArcade(value)}
+                    onChange={(value) => setZone(value)}
                     allowClear
                     style={{
                       height: "50px",
@@ -438,19 +451,22 @@ const CoachBookingForm: React.FC = () => {
                 htmlType="submit"
                 item={"Zone Booking"}
                 orderId={5}
-                amount={500}
+                amount={fullAmount}
                 currency={"LKR"}
                 first_name={userDetails?.firstname}
                 last_name={userDetails?.lastname}
                 email={userDetails?.email}
-                phone={userDetails?.Phone}
+                phone={userDetails?.phone}
                 address={userDetails?.address}
                 city={userDetails?.city}
-                country={userDetails?.country}
+                country={userDetails?.contry}
                 date={date}
                 time={time}
                 pcount={pcount}
-                userId={userId}
+                userId={userDetails?.user_id}
+                zoneId={zone}
+                arcadeId={arcade}
+
                 //zoneId={zoneId}
                 //reservation_type={zone}
                 //avaiableParticipantCount={
