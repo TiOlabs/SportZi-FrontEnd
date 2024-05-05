@@ -419,35 +419,75 @@ const CoachBookingForm: React.FC = () => {
                 }}
               >
                 {dayOfWeek && avaliability && avaliability.length > 0 ? (
-                  avaliability.map((item: any) =>
-                    item.date === dayOfWeek && item.time ? (
-                      <ConfigProvider
-                        theme={{
-                          components: {
-                            Button: {
-                              colorPrimaryHover: "white",
+                  <>
+                    {/* Filter available slots for the selected day */}
+                    {avaliability
+                      .filter(
+                        (item: any) => item.date === dayOfWeek && item.time
+                      )
+                      .flatMap((item: any) => {
+                        const timeRange = item.time.split("-"); // Split the time range
+                        const startHour = parseFloat(
+                          timeRange[0].split(":")[0]
+                        ); // Get the start hour
+                        const endHour = parseFloat(timeRange[1].split(":")[0]); // Get the end hour
+                        const timeIncrement = 2; // Set the time increment to half-hour
+
+                        const timeSlots = [];
+
+                        // Generate time slots half-hour by half-hour
+                        for (
+                          let i = startHour;
+                          i < endHour;
+                          i += timeIncrement
+                        ) {
+                          const startTimeHour = Math.floor(i);
+                          const startTimeMinutes = i % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
+                          const endTimeHour = Math.floor(i + timeIncrement);
+                          const endTimeMinutes =
+                            (i + timeIncrement) % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
+
+                          const startTime = `${startTimeHour}:${startTimeMinutes}`;
+                          const endTime = `${endTimeHour}:${endTimeMinutes}`;
+
+                          timeSlots.push({
+                            startTime,
+                            endTime,
+                          });
+                        }
+
+                        return timeSlots;
+                      })
+                      .map((slot: any, index: number) => (
+                        <ConfigProvider
+                          theme={{
+                            components: {
+                              Button: {
+                                colorPrimaryHover: "white",
+                              },
                             },
-                          },
-                        }}
-                        key={item.time} // Use a unique key for each time slot
-                      >
-                        <Button
-                          id={item.time} // Use the time as the ID
-                          style={{
-                            width: "100%",
-                            height: "60px",
-                            backgroundColor:
-                              item.time === time ? "#488ca8" : "#2EA8BF",
                           }}
-                          onClick={() => {
-                            setTime(item.time);
-                          }}
+                          key={index} // Use a unique key for each time slot
                         >
-                          {item.time}
-                        </Button>
-                      </ConfigProvider>
-                    ) : null
-                  )
+                          <Button
+                            id={`${slot.startTime}-${slot.endTime}`} // Use the start and end times as the ID
+                            style={{
+                              width: "100%",
+                              height: "60px",
+                              backgroundColor:
+                                `${slot.startTime}-${slot.endTime}` === time
+                                  ? "#488ca8"
+                                  : "#2EA8BF",
+                            }}
+                            onClick={() => {
+                              setTime(`${slot.startTime}-${slot.endTime}`);
+                            }}
+                          >
+                            {`${slot.startTime}-${slot.endTime}`}
+                          </Button>
+                        </ConfigProvider>
+                      ))}
+                  </>
                 ) : (
                   <Empty />
                 )}
