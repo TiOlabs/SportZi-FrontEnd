@@ -9,6 +9,7 @@ import {
   message,
   Empty,
   ConfigProvider,
+  Calendar,
 } from "antd";
 import BookingFormPicture from "../../assents/coachBookingForm1.png";
 import Calender from "../../components/calender";
@@ -28,6 +29,7 @@ const { Option } = Select;
 const CoachBookingForm: React.FC = () => {
   const { setZoneBookings } = useContext(ZoneBookingsContext);
   const [userDetails, setUserDetails] = useState<any>();
+  const [avaliability, setAvaliability] = useState<any>();
   const [coachData, setcoachData] = useState<Coach>();
   const [time, setTime] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -42,6 +44,19 @@ const CoachBookingForm: React.FC = () => {
   const { coachId } = useContext(CoachBookingContext);
   const [zoneForCoachBookings, setzoneForCoachBookings] = useState<Zone[]>([]);
   const [arcadesofCoache, setarcadesofCoache] = useState<Arcade>();
+  const [dayOfWeek, setDayOfWeek] = useState<string>("");
+  const [datee, setDatee] = useState<Date | null>(null);
+
+  const handleDateChange = (datee: any) => {
+    setDatee(datee);
+  };
+  const handleDateSelect = (datee: any) => {
+    const day = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+    }).format(datee);
+    console.log(day);
+    setDayOfWeek(day);
+  };
   useEffect(() => {
     const token = Cookies.get("token");
     const decoded = token ? jwtDecode(token) : undefined;
@@ -64,7 +79,6 @@ const CoachBookingForm: React.FC = () => {
     }
   }, [userID]);
 
-
   useEffect(() => {
     console.log(coachId);
     const fetchData = async () => {
@@ -80,7 +94,7 @@ const CoachBookingForm: React.FC = () => {
       }
     };
     fetchData();
-  }, [coachId,arcade]);
+  }, [coachId, arcade]);
   console.log(arcade);
   useEffect(() => {
     const fetchData = async () => {
@@ -104,7 +118,7 @@ const CoachBookingForm: React.FC = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-         `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${arcade}`
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${arcade}`
         );
         const data = await res.json();
         console.log(data);
@@ -115,6 +129,28 @@ const CoachBookingForm: React.FC = () => {
     };
     fetchData();
   }, [arcade]);
+  console.log(coachId);
+  console.log(dayOfWeek);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getCoachAvailiability/${coachId}`
+        );
+        const data = await res.json();
+        console.log(data);
+        const filteredData = data.filter(
+          (item: any) => item.coach_id === coachId && item.date === dayOfWeek
+        );
+        console.log(filteredData);
+
+        setAvaliability(filteredData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [coachId, dayOfWeek]);
   // console.log(
   //   arcadesofCoache?.zone.find((zone) => zone.sport.sport_id)?.zone_name
   // );
@@ -208,7 +244,8 @@ const CoachBookingForm: React.FC = () => {
   }
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
-  let fullAmount=Number(coachData?.rate)*1;
+  let fullAmount = Number(coachData?.rate) * 1;
+  console.log(avaliability);
   return (
     <div style={{ margin: "2%" }}>
       <Row>
@@ -254,11 +291,20 @@ const CoachBookingForm: React.FC = () => {
                 <Col style={{}} xs={24} md={12} lg={24}>
                   <div style={{ display: "flex", justifyContent: "center" }}>
                     <Form.Item name="date" rules={[{ required: true }]}>
-                      <Calender
-                        onChange={(date: any) => {
-                          setDate(date);
+                      <ConfigProvider
+                        theme={{
+                          token: {
+                            controlHeightLG: 20,
+                            borderRadiusLG: 10,
+                          },
                         }}
-                      />
+                      >
+                        <Calendar
+                          style={{ width: "94%", marginLeft: "3%" }}
+                          onChange={handleDateChange}
+                          onSelect={handleDateSelect}
+                        />
+                      </ConfigProvider>
                     </Form.Item>
                   </div>
                 </Col>
@@ -372,35 +418,79 @@ const CoachBookingForm: React.FC = () => {
                   alignSelf: "center",
                 }}
               >
-                {buttonData.map((button) => (
-                  <ConfigProvider
-                    theme={{
-                      components: {
-                        Button: {
-                          colorPrimaryHover: "white",
-                        },
-                      },
-                    }}
-                  >
-                    <Button
-                      key={button.id}
-                      id={button.id.toString()}
-                      disabled={button.disabled}
-                      style={{
-                        width: "100%",
-                        height: "60px",
+                {dayOfWeek && avaliability && avaliability.length > 0 ? (
+                  <>
+                    {/* Filter available slots for the selected day */}
+                    {avaliability
+                      .filter(
+                        (item: any) => item.date === dayOfWeek && item.time
+                      )
+                      .flatMap((item: any) => {
+                        const timeRange = item.time.split("-"); // Split the time range
+                        const startHour = parseFloat(
+                          timeRange[0].split(":")[0]
+                        ); // Get the start hour
+                        const endHour = parseFloat(timeRange[1].split(":")[0]); // Get the end hour
+                        const timeIncrement = 2; // Set the time increment to half-hour
 
-                        backgroundColor:
-                          button.id === time ? "#488ca8" : "#2EA8BF",
-                      }}
-                      onClick={() => {
-                        setTime(button.time);
-                      }}
-                    >
-                      {button.time}
-                    </Button>
-                  </ConfigProvider>
-                ))}
+                        const timeSlots = [];
+
+                        // Generate time slots half-hour by half-hour
+                        for (
+                          let i = startHour;
+                          i < endHour;
+                          i += timeIncrement
+                        ) {
+                          const startTimeHour = Math.floor(i);
+                          const startTimeMinutes = i % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
+                          const endTimeHour = Math.floor(i + timeIncrement);
+                          const endTimeMinutes =
+                            (i + timeIncrement) % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
+
+                          const startTime = `${startTimeHour}:${startTimeMinutes}`;
+                          const endTime = `${endTimeHour}:${endTimeMinutes}`;
+
+                          timeSlots.push({
+                            startTime,
+                            endTime,
+                          });
+                        }
+
+                        return timeSlots;
+                      })
+                      .map((slot: any, index: number) => (
+                        <ConfigProvider
+                          theme={{
+                            components: {
+                              Button: {
+                                colorPrimaryHover: "white",
+                              },
+                            },
+                          }}
+                          key={index} // Use a unique key for each time slot
+                        >
+                          <Button
+                            id={`${slot.startTime}-${slot.endTime}`} // Use the start and end times as the ID
+                            style={{
+                              width: "100%",
+                              height: "60px",
+                              backgroundColor:
+                                `${slot.startTime}-${slot.endTime}` === time
+                                  ? "#488ca8"
+                                  : "#2EA8BF",
+                            }}
+                            onClick={() => {
+                              setTime(`${slot.startTime}-${slot.endTime}`);
+                            }}
+                          >
+                            {`${slot.startTime}-${slot.endTime}`}
+                          </Button>
+                        </ConfigProvider>
+                      ))}
+                  </>
+                ) : (
+                  <Empty />
+                )}
               </Form.Item>
             </div>
           </Col>
@@ -470,9 +560,9 @@ const CoachBookingForm: React.FC = () => {
                 //zoneId={zoneId}
                 //reservation_type={zone}
                 //avaiableParticipantCount={
-                 // Number(capacity) -
-                 // (timeParticipantCounts1.find((item) => item.time === time)
-                  //  ?.totalParticipantCount ?? 0)
+                // Number(capacity) -
+                // (timeParticipantCounts1.find((item) => item.time === time)
+                //  ?.totalParticipantCount ?? 0)
                 //}
               />
             </div>
