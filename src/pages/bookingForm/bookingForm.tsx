@@ -268,6 +268,7 @@ const BookingForm = () => {
           participant_count: pcountint,
           user_id: userId,
           zone_id: zoneId,
+          way_of_booking: zone,
         });
 
         // setZoneBookings(
@@ -324,7 +325,7 @@ const BookingForm = () => {
 
   const openTimeStr = zoneDetails?.open_time ?? "";
   const closeTimeStr = zoneDetails?.close_time ?? "";
-  console.log(openTimeStr); 
+  console.log(openTimeStr);
 
   // Split the time string to get hours and minutes
   const [openHour, openMinute] = openTimeStr.split(":").map(Number);
@@ -617,11 +618,14 @@ const BookingForm = () => {
                       }}
                     >
                       {bookingDate.find(
-                        (booking) => booking.time === button.id
-                      ) &&
-                      timeParticipantCounts1.find(
-                        (item) => item.time === button.id
-                      )?.totalParticipantCount === capacity
+                        (booking) =>
+                          booking.time === button.id &&
+                          booking.way_of_booking === "full"
+                      )
+                        ? "Fully Booked" 
+                        : timeParticipantCounts1.find(
+                            (item) => item.time === button.id
+                          )?.totalParticipantCount === capacity
                         ? "Fully Booked"
                         : `${
                             (timeParticipantCounts1.find(

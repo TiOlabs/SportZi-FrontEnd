@@ -51,6 +51,7 @@ export interface ZoneBookingDetails {
   participant_count: Number;
   user: User;
   zone: Zone;
+  way_of_booking: String; 
 }
 
 export interface Coach {
