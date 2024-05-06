@@ -597,7 +597,6 @@ const CoachBookingForm: React.FC = () => {
                 arcadeId={arcade}
                 sportId={coachSport}
                 coach_id={coachId}
-
                 //zoneId={zoneId}
                 //reservation_type={zone}
                 //avaiableParticipantCount={
