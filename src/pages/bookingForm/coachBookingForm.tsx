@@ -45,11 +45,18 @@ const CoachBookingForm: React.FC = () => {
   const [zoneForCoachBookings, setzoneForCoachBookings] = useState<Zone[]>([]);
   const [arcadesofCoache, setarcadesofCoache] = useState<Arcade>();
   const [dayOfWeek, setDayOfWeek] = useState<string>("");
-  const [datee, setDatee] = useState<Date | null>(null);
+  const [datee, setDatee] = useState<String>("");
+  const [coachBookings, setCoachBookings] = useState<any[]>([]);
 
   const handleDateChange = (datee: any) => {
-    setDatee(datee);
+    // Extract the date part from the Day.js object
+    const formattedDate = datee.format("YYYY-MM-DD");
+    console.log(formattedDate);
+
+    // Set the formatted date using setDatee
+    setDatee(formattedDate);
   };
+
   const handleDateSelect = (datee: any) => {
     const day = new Intl.DateTimeFormat("en-US", {
       weekday: "long",
@@ -154,7 +161,23 @@ const CoachBookingForm: React.FC = () => {
   // console.log(
   //   arcadesofCoache?.zone.find((zone) => zone.sport.sport_id)?.zone_name
   // );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getCoachBookings`
+        );
+        const data = await res.json();
+        console.log(data);
+        setCoachBookings(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
   const handleFinish = async () => {
+    console.log("gggggggggg");
     console.log(date, time, pcount, zoneForCoachBookings);
     const pcountInt = parseInt(pcount);
     if (parseInt(pcount) <= 0) {
@@ -166,7 +189,7 @@ const CoachBookingForm: React.FC = () => {
     } else {
       try {
         setZoneBookings({
-          date: date,
+          date: datee,
           time: time,
           participant_count: pcountInt,
           user_id: userDetails.user_id,
@@ -177,24 +200,24 @@ const CoachBookingForm: React.FC = () => {
         console.log(err);
       }
     }
-    try {
-      const res = await axios.post(
-        `http://localhost:8000/api/addCoachBooking`,
-        {
-          participant_count: pcountInt,
-          date: date,
-          time: time,
-          coach_id: coachId,
-          player_id: userDetails.id,
-          // zone_id: zoneForCoachBookings.find(,
-          arcade_id: arcade,
-        }
-      );
-      console.log(res);
-    } catch (err) {
-      console.log("Error");
-      console.log(err);
-    }
+    // try {
+    //   const res = await axios.post(
+    //     `http://localhost:8000/api/addCoachBooking`,
+    //     {
+    //       participant_count: pcountInt,
+    //       date: date,
+    //       time: time,
+    //       coach_id: coachId,
+    //       player_id: userDetails.id,
+    //       // zone_id: zoneForCoachBookings.find(,
+    //       arcade_id: arcade,
+    //     }
+    //   );
+    //   console.log(res);
+    // } catch (err) {
+    //   console.log("Error");
+    //   console.log(err);
+    // }
   };
   // eslint-disable-next-line no-octal
   const openTime = 8.0;
@@ -290,21 +313,12 @@ const CoachBookingForm: React.FC = () => {
                 </Col>
                 <Col style={{}} xs={24} md={12} lg={24}>
                   <div style={{ display: "flex", justifyContent: "center" }}>
-                    <Form.Item name="date" rules={[{ required: true }]}>
-                      <ConfigProvider
-                        theme={{
-                          token: {
-                            controlHeightLG: 20,
-                            borderRadiusLG: 10,
-                          },
-                        }}
-                      >
-                        <Calendar
-                          style={{ width: "94%", marginLeft: "3%" }}
-                          onChange={handleDateChange}
-                          onSelect={handleDateSelect}
-                        />
-                      </ConfigProvider>
+                    <Form.Item name="datee" rules={[{ required: true }]}>
+                      <Calendar
+                        style={{ width: "94%", marginLeft: "3%" }}
+                        onChange={handleDateChange}
+                        onSelect={handleDateSelect}
+                      />
                     </Form.Item>
                   </div>
                 </Col>
@@ -470,20 +484,45 @@ const CoachBookingForm: React.FC = () => {
                           key={index} // Use a unique key for each time slot
                         >
                           <Button
-                            id={`${slot.startTime}-${slot.endTime}`} // Use the start and end times as the ID
+                            id={`${slot.startTime}-${slot.endTime}`}
+                            disabled={coachBookings
+                              .find(
+                                (item) =>
+                                  item.date === datee &&
+                                  item.zone_id === zone &&
+                                  item.coach_id === coachId &&
+                                  item.time === `${slot.startTime}-${slot.endTime}`
+                              )
+                              
+                              } // Use the start and end times as the ID
                             style={{
                               width: "100%",
                               height: "60px",
                               backgroundColor:
-                                `${slot.startTime}-${slot.endTime}` === time
-                                  ? "#488ca8"
-                                  : "#2EA8BF",
-                            }}
+                              `${slot.startTime}-${slot.endTime}` === time
+                                ? "#488ca8"
+                                : coachBookings.some(
+                                    (item) =>
+                                      item.date === datee &&
+                                      item.zone_id === zone &&
+                                      item.coach_id === coachId &&
+                                      item.time === `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? "#FF0000" // Red color when disabled
+                                : "#2EA8BF",
+                          }}
                             onClick={() => {
                               setTime(`${slot.startTime}-${slot.endTime}`);
                             }}
-                          >
-                            {`${slot.startTime}-${slot.endTime}`}
+                          >{coachBookings.some(
+                            (item) =>
+                              item.date === datee &&
+                              item.zone_id === zone &&
+                              item.coach_id === coachId &&
+                              item.time === `${slot.startTime}-${slot.endTime}`
+                          )
+                            ? "Booked"
+                            : `${slot.startTime}-${slot.endTime}`}
                           </Button>
                         </ConfigProvider>
                       ))}
@@ -539,7 +578,7 @@ const CoachBookingForm: React.FC = () => {
 
               <PaymentModal
                 htmlType="submit"
-                item={"Zone Booking"}
+                item={"Coach Booking"}
                 orderId={5}
                 amount={fullAmount}
                 currency={"LKR"}
@@ -550,12 +589,14 @@ const CoachBookingForm: React.FC = () => {
                 address={userDetails?.address}
                 city={userDetails?.city}
                 country={userDetails?.contry}
-                date={date}
+                date={datee}
                 time={time}
                 pcount={pcount}
                 userId={userDetails?.user_id}
                 zoneId={zone}
                 arcadeId={arcade}
+                sportId={coachSport}
+                coach_id={coachId}
 
                 //zoneId={zoneId}
                 //reservation_type={zone}
