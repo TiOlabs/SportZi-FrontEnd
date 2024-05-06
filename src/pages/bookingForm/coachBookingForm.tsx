@@ -155,6 +155,7 @@ const CoachBookingForm: React.FC = () => {
   //   arcadesofCoache?.zone.find((zone) => zone.sport.sport_id)?.zone_name
   // );
   const handleFinish = async () => {
+    console.log("gggggggggg");
     console.log(date, time, pcount, zoneForCoachBookings);
     const pcountInt = parseInt(pcount);
     if (parseInt(pcount) <= 0) {
@@ -166,7 +167,7 @@ const CoachBookingForm: React.FC = () => {
     } else {
       try {
         setZoneBookings({
-          date: date,
+          date: datee,
           time: time,
           participant_count: pcountInt,
           user_id: userDetails.user_id,
@@ -177,24 +178,24 @@ const CoachBookingForm: React.FC = () => {
         console.log(err);
       }
     }
-    try {
-      const res = await axios.post(
-        `http://localhost:8000/api/addCoachBooking`,
-        {
-          participant_count: pcountInt,
-          date: date,
-          time: time,
-          coach_id: coachId,
-          player_id: userDetails.id,
-          // zone_id: zoneForCoachBookings.find(,
-          arcade_id: arcade,
-        }
-      );
-      console.log(res);
-    } catch (err) {
-      console.log("Error");
-      console.log(err);
-    }
+    // try {
+    //   const res = await axios.post(
+    //     `http://localhost:8000/api/addCoachBooking`,
+    //     {
+    //       participant_count: pcountInt,
+    //       date: date,
+    //       time: time,
+    //       coach_id: coachId,
+    //       player_id: userDetails.id,
+    //       // zone_id: zoneForCoachBookings.find(,
+    //       arcade_id: arcade,
+    //     }
+    //   );
+    //   console.log(res);
+    // } catch (err) {
+    //   console.log("Error");
+    //   console.log(err);
+    // }
   };
   // eslint-disable-next-line no-octal
   const openTime = 8.0;
@@ -290,21 +291,12 @@ const CoachBookingForm: React.FC = () => {
                 </Col>
                 <Col style={{}} xs={24} md={12} lg={24}>
                   <div style={{ display: "flex", justifyContent: "center" }}>
-                    <Form.Item name="date" rules={[{ required: true }]}>
-                      <ConfigProvider
-                        theme={{
-                          token: {
-                            controlHeightLG: 20,
-                            borderRadiusLG: 10,
-                          },
-                        }}
-                      >
-                        <Calendar
-                          style={{ width: "94%", marginLeft: "3%" }}
-                          onChange={handleDateChange}
-                          onSelect={handleDateSelect}
-                        />
-                      </ConfigProvider>
+                    <Form.Item name="datee" rules={[{ required: true }]}>
+                      <Calendar
+                        style={{ width: "94%", marginLeft: "3%" }}
+                        onChange={handleDateChange}
+                        onSelect={handleDateSelect}
+                      />
                     </Form.Item>
                   </div>
                 </Col>
@@ -539,7 +531,7 @@ const CoachBookingForm: React.FC = () => {
 
               <PaymentModal
                 htmlType="submit"
-                item={"Zone Booking"}
+                item={"Coach Booking"}
                 orderId={5}
                 amount={fullAmount}
                 currency={"LKR"}
@@ -550,12 +542,13 @@ const CoachBookingForm: React.FC = () => {
                 address={userDetails?.address}
                 city={userDetails?.city}
                 country={userDetails?.contry}
-                date={date}
+                date={datee}
                 time={time}
                 pcount={pcount}
                 userId={userDetails?.user_id}
                 zoneId={zone}
                 arcadeId={arcade}
+                sportId={coachSport}
 
                 //zoneId={zoneId}
                 //reservation_type={zone}
