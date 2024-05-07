@@ -486,7 +486,7 @@ const BookingForm = () => {
                       {zoneDetails?.way_of_booking === "full" ? (
                         <>
                           <Option value="full">Full Zone</Option>
-                          <Option value="Individual" disabled>
+                          <Option value="person_by_person" disabled>
                             Individual
                           </Option>
                         </>
@@ -495,12 +495,12 @@ const BookingForm = () => {
                           <Option value="full" disabled>
                             Full Zone
                           </Option>
-                          <Option value="Individual">Individual</Option>
+                          <Option value="person_by_person">Individual</Option>
                         </>
                       ) : (
                         <>
                           <Option value="full">Full Zone</Option>
-                          <Option value="Individual">Individual</Option>
+                          <Option value="person_by_person">Individual</Option>
                         </>
                       )}
                     </Select>
@@ -589,7 +589,11 @@ const BookingForm = () => {
                   })}
                   {buttonData.map((button) => (
                     <button
-                      disabled={
+                      disabled={bookingDate.find(
+                        (booking) =>
+                          booking.time === button.id &&
+                          booking.way_of_booking === "full"
+                      ) !== undefined ||
                         timeParticipantCounts1.find(
                           (item) => item.time === button.id
                         )?.totalParticipantCount === capacity
@@ -601,12 +605,23 @@ const BookingForm = () => {
                       style={{
                         width: "100%",
                         padding: "5%",
-                        backgroundColor:
-                          button.id === time ? "#1677FF " : "white",
+                        backgroundColor: bookingDate.find(
+                          (booking) =>
+                            booking.time === button.id &&
+                            booking.way_of_booking === "full"
+                        )
+                          ? "#0F70AE" // If fully booked, set background color to red
+                          : button.id === time // Otherwise, use the original logic for background color
+                          ? "#1677FF"
+                          : "white",
                         // Adjusted background color to cover only half of the button when booked
                         backgroundImage: bookingDate.find(
-                          (booking) => booking.time === button.id
+                          (booking) =>
+                            booking.time === button.id &&
+                            booking.way_of_booking === "full"
                         )
+                          ? "none" // If fully booked, no gradient needed
+                          : bookingDate.find((booking) => booking.time === button.id)
                           ? `linear-gradient(to right, #0F70AE ${
                               ((timeParticipantCounts1.find(
                                 (item) => item.time === button.id

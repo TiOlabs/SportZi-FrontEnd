@@ -71,7 +71,8 @@ const PaymentModal = (props: any): JSX.Element | null => {
         participant_count: zoneBookings.zoneBookings.participant_count,
         user_id: zoneBookings.zoneBookings.user_id,
         zone_id: zoneBookings.zoneBookings.zone_id,
-        way_of_booking: zoneBookings.zoneBookings.way_of_booking, 
+        way_of_booking: zoneBookings.zoneBookings.way_of_booking
+        , 
       })
       .then((res) => {
         console.log("Payment completed.");
