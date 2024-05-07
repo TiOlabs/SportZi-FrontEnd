@@ -72,7 +72,24 @@ const PaymentModal = (props: any): JSX.Element | null => {
         user_id: zoneBookings.zoneBookings.user_id,
         zone_id: zoneBookings.zoneBookings.zone_id,
         way_of_booking: zoneBookings.zoneBookings.way_of_booking
-        , 
+      })
+      .then((res) => {
+        console.log("Payment completed.");
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(`-------error is ${error}`);
+      });
+      axios.post("http://localhost:8000/api/addCoachBooking", {
+        status: "success",
+        date: zoneBookings.zoneBookings.date,
+        time: zoneBookings.zoneBookings.time,
+        participant_count: zoneBookings.zoneBookings.participant_count,
+        player_id: zoneBookings.zoneBookings.user_id,
+        zone_id: zoneBookings.zoneBookings.zone_id,
+        coach_id:props.coach_id,
+        arcade_id:props.arcadeId
       })
       .then((res) => {
         console.log("Payment completed.");
@@ -129,7 +146,8 @@ const PaymentModal = (props: any): JSX.Element | null => {
           props.pcount === "" ||
           props.userId === "" ||
           props.zoneId === ""||
-          props.pcount > props.avaiableParticipantCount 
+          props.pcount > props.avaiableParticipantCount ||
+          props.reservation_type === ""
         }
         onClick={pay}
       >
