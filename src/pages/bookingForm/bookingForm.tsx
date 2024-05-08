@@ -269,6 +269,7 @@ const BookingForm = () => {
           user_id: userId,
           zone_id: zoneId,
           way_of_booking: zone,
+          booking_type: "zone",
         });
 
         // setZoneBookings(
