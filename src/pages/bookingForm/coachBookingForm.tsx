@@ -74,6 +74,7 @@ const CoachBookingForm: React.FC = () => {
     setDatee(formattedDate);
   };
 
+
   const handleDateSelect = (datee: any) => {
     const day = new Intl.DateTimeFormat("en-US", {
       weekday: "long",
@@ -210,22 +211,6 @@ const CoachBookingForm: React.FC = () => {
     }
   }, []);
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbydate/${datee}/${zone}`
-        );
-
-        const data = await res.json();
-        console.log(data);
-        setZoneBookingDetails(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, [zone, datee]);
-  useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch(
@@ -276,7 +261,7 @@ const CoachBookingForm: React.FC = () => {
           0
         );
         console.log(
-          `Total participant count for date ${date}:`,
+          `Total participant count for date ${datee}:`,
           totalParticipantCountByDate
         );
         const timeParticipantCounts = Object.entries(groupedByTime).map(
@@ -293,7 +278,7 @@ const CoachBookingForm: React.FC = () => {
     };
 
     fetchData();
-  }, [date, zone]);
+  }, [datee, zone]);
 
   const handleFinish = async () => {
     console.log("gggggggggg");
@@ -391,6 +376,8 @@ const CoachBookingForm: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   let fullAmount = Number(coachData?.rate) * 1;
   console.log(avaliability);
+ console.log(zoneDetails?.capacity);
+  const capacity = zoneDetails?.capacity;
   return (
     <div style={{ margin: "2%" }}>
       <Row>
@@ -676,7 +663,7 @@ const CoachBookingForm: React.FC = () => {
                               height: "60px",
                               backgroundColor:
                                 `${slot.startTime}-${slot.endTime}` === time
-                                  ? "#488ca8"
+                                  ? "#1677FF"
                                   : coachBookings.some(
                                       (item) =>
                                         item.date === datee &&
@@ -699,39 +686,41 @@ const CoachBookingForm: React.FC = () => {
                                     })
                                   ? "#FF0000" // Red color when disabled
                                   : "#2EA8BF",
-                              backgroundImage: zoneBookingDetails.find(
+                              backgroundImage: bookingDate.find(
                                 (booking) =>
                                   booking.time ===
                                     `${slot.startTime}-${slot.endTime}` &&
                                   booking.date === datee &&
-                                  booking.zone_id === zone &&
+                                  booking.zone.zone_id === zone &&
                                   booking.way_of_booking === "full"
                               )
-                              ? "none" // If fully booked, no gradient needed
-                              : zoneBookingDetails.find((booking) => {
+                                ? "none" // If fully booked, no gradient needed
+                                : bookingDate.find((booking) => {
+                                    console.log("hhhhhhhh");
                                     console.log(zoneDetails?.capacity);
                                     console.log(timeParticipantCounts1);
                                     console.log(booking.way_of_booking);
+                                    console.log(booking.zone.capacity)
                                     return (
                                       booking.time ===
-                                      `${slot.startTime}-${slot.endTime}`&&
-                                      booking.way_of_booking ==="person_by_person"&&
+                                        `${slot.startTime}-${slot.endTime}` &&
+                                      booking.way_of_booking ===
+                                        "person_by_person" &&
                                       booking.date === datee &&
-                                      booking.zone_id === zone &&
-                                      booking.booking_type==="zone"
-
+                                      booking.zone.zone_id === zone &&
+                                      booking.booking_type === "zone"
                                     );
                                   })
                                 ? `linear-gradient(to right, #0F70AE ${
                                   ((timeParticipantCounts1.find(
-                                    (item) => item.time ===`${slot.startTime}-${slot.endTime}`
+                                    (item) => item.time === `${slot.startTime}-${slot.endTime}`
                                   )?.totalParticipantCount || 0) /
-                                    Number(zoneDetails?.capacity)) *
+                                    Number(capacity)) *
                                   100
                                   }%, ${
                                     `${slot.startTime}-${slot.endTime}` === time
                                       ? "#1677FF"
-                                      : "green"
+                                      : "#2EA8BF"
                                   } 0%)`
                                 : "none",
                             }}
