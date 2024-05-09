@@ -52,6 +52,7 @@ export interface ZoneBookingDetails {
   user: User;
   zone: Zone;
   way_of_booking: String; 
+  booking_type: String;
 }
 
 export interface Coach {

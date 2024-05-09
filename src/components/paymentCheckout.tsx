@@ -63,15 +63,22 @@ const PaymentModal = (props: any): JSX.Element | null => {
     console.log("-----------befoe");
     console.log(zoneBookings);
     console.log(zoneBookings.zoneBookings.date);
+    console.log(zoneBookings.zoneBookings.time);
+    console.log(zoneBookings.zoneBookings.participant_count);
+    console.log(zoneBookings.zoneBookings.user_id);
+    console.log(zoneBookings.zoneBookings.zone_id);
+    console.log(zoneBookings.zoneBookings.way_of_booking);
+    console.log(zoneBookings.zoneBookings.booking_type);
     axios
       .post("http://localhost:8000/api/addarcadebooking", {
         status: "success",
         date: zoneBookings.zoneBookings.date,
         time: zoneBookings.zoneBookings.time,
-        participant_count: zoneBookings.zoneBookings.participant_count,
+        participant_count: zoneBookings.zoneBookings.participant_count, 
         user_id: zoneBookings.zoneBookings.user_id,
         zone_id: zoneBookings.zoneBookings.zone_id,
-        way_of_booking: zoneBookings.zoneBookings.way_of_booking
+        way_of_booking: zoneBookings.zoneBookings.way_of_booking,
+        booking_type: zoneBookings.zoneBookings.booking_type,
       })
       .then((res) => {
         console.log("Payment completed.");
@@ -81,6 +88,13 @@ const PaymentModal = (props: any): JSX.Element | null => {
         console.log(error);
         console.log(`-------error is ${error}`);
       });
+      console.log(zoneBookings.zoneBookings.date);
+      console.log(zoneBookings.zoneBookings.time);
+      console.log(zoneBookings.zoneBookings.participant_count);
+      console.log(zoneBookings.zoneBookings.user_id);
+      console.log(zoneBookings.zoneBookings.zone_id);
+      console.log(props.coach_id);
+      console.log(props.arcadeId);
       axios.post("http://localhost:8000/api/addCoachBooking", {
         status: "success",
         date: zoneBookings.zoneBookings.date,
