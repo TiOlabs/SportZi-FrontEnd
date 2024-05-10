@@ -289,10 +289,21 @@ const CoachBookingForm: React.FC = () => {
       message.error("Participant count must be more than 0");
       return; // Stop further execution
     } else if (time === "") {
-      message.error("time must be selected");
+      message.error("Time must be selected");
       return; // Stop further execution
     } else {
       try {
+        // Get current date and time
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const currentDay = String(currentDate.getDate()).padStart(2, '0');
+        const currentHours = String(currentDate.getHours()).padStart(2, '0');
+        const currentMinutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const currentSeconds = String(currentDate.getSeconds()).padStart(2, '0');
+        
+        const currentDateTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
+  
         setZoneBookings({
           date: datee,
           time: time,
@@ -301,31 +312,17 @@ const CoachBookingForm: React.FC = () => {
           zone_id: zone,
           way_of_booking: reservationType,
           booking_type: "coach",
+          created_at: currentDateTime, // Set current date and time
+
         });
       } catch (err) {
         console.log("Error");
         console.log(err);
       }
     }
-    // try {
-    //   const res = await axios.post(
-    //     `http://localhost:8000/api/addCoachBooking`,
-    //     {
-    //       participant_count: pcountInt,
-    //       date: date,
-    //       time: time,
-    //       coach_id: coachId,
-    //       player_id: userDetails.id,
-    //       // zone_id: zoneForCoachBookings.find(,
-    //       arcade_id: arcade,
-    //     }
-    //   );
-    //   console.log(res);
-    // } catch (err) {
-    //   console.log("Error");
-    //   console.log(err);
-    // }
   };
+  
+
   // eslint-disable-next-line no-octal
   const openTime = 8.0;
   const closeTime = 23.0;
@@ -376,7 +373,7 @@ const CoachBookingForm: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   let fullAmount = Number(coachData?.rate) * 1;
   console.log(avaliability);
- console.log(zoneDetails?.capacity);
+  console.log(zoneDetails?.capacity);
   const capacity = zoneDetails?.capacity;
   return (
     <div style={{ margin: "2%" }}>
@@ -655,7 +652,10 @@ const CoachBookingForm: React.FC = () => {
                                     `${slot.startTime}-${slot.endTime}` &&
                                   item.way_of_booking === "full"
                                 );
-                              }) !== undefined
+                              }) !== undefined ||
+                              !zone ||
+                              !arcade
+
                             }
                             // Use the start and end times as the ID
                             style={{
@@ -700,7 +700,8 @@ const CoachBookingForm: React.FC = () => {
                                     console.log(zoneDetails?.capacity);
                                     console.log(timeParticipantCounts1);
                                     console.log(booking.way_of_booking);
-                                    console.log(booking.zone.capacity)
+                                    console.log(booking.zone.capacity);
+
                                     return (
                                       booking.time ===
                                         `${slot.startTime}-${slot.endTime}` &&
@@ -712,11 +713,14 @@ const CoachBookingForm: React.FC = () => {
                                     );
                                   })
                                 ? `linear-gradient(to right, #0F70AE ${
-                                  ((timeParticipantCounts1.find(
-                                    (item) => item.time === `${slot.startTime}-${slot.endTime}`
-                                  )?.totalParticipantCount || 0) /
-                                    Number(capacity)) *
-                                  100
+                                    ((timeParticipantCounts1.find(
+                                      (item) =>
+                                        item.time ===
+                                        `${slot.startTime}-${slot.endTime}`
+                                    )?.totalParticipantCount || 0) /
+                                      Number(capacity)) *
+                                    100
+
                                   }%, ${
                                     `${slot.startTime}-${slot.endTime}` === time
                                       ? "#1677FF"
@@ -841,4 +845,4 @@ const CoachBookingForm: React.FC = () => {
   );
 };
 
-export default CoachBookingForm;
+export default CoachBookingForm
