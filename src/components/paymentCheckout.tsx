@@ -80,6 +80,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         way_of_booking: zoneBookings.zoneBookings.way_of_booking,
         booking_type: zoneBookings.zoneBookings.booking_type,
         created_at:zoneBookings.zoneBookings.created_at
+
       })
       .then((res) => {
         console.log("Payment completed.");
@@ -97,6 +98,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
       console.log(props.coach_id);
       console.log(props.arcadeId);
       console.log(zoneBookings.zoneBookings.created_at);
+
       axios.post("http://localhost:8000/api/addCoachBooking", {
         status: "success",
         date: zoneBookings.zoneBookings.date,
@@ -107,6 +109,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         coach_id:props.coach_id,
         arcade_id:props.arcadeId,
         created_at:zoneBookings.zoneBookings.created_at,
+
       })
       .then((res) => {
         console.log("Payment completed.");

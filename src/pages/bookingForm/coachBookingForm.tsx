@@ -74,6 +74,7 @@ const CoachBookingForm: React.FC = () => {
     setDatee(formattedDate);
   };
 
+
   const handleDateSelect = (datee: any) => {
     const day = new Intl.DateTimeFormat("en-US", {
       weekday: "long",
@@ -312,6 +313,7 @@ const CoachBookingForm: React.FC = () => {
           way_of_booking: reservationType,
           booking_type: "coach",
           created_at: currentDateTime, // Set current date and time
+
         });
       } catch (err) {
         console.log("Error");
@@ -653,6 +655,7 @@ const CoachBookingForm: React.FC = () => {
                               }) !== undefined ||
                               !zone ||
                               !arcade
+
                             }
                             // Use the start and end times as the ID
                             style={{
@@ -698,6 +701,7 @@ const CoachBookingForm: React.FC = () => {
                                     console.log(timeParticipantCounts1);
                                     console.log(booking.way_of_booking);
                                     console.log(booking.zone.capacity);
+
                                     return (
                                       booking.time ===
                                         `${slot.startTime}-${slot.endTime}` &&
@@ -716,6 +720,7 @@ const CoachBookingForm: React.FC = () => {
                                     )?.totalParticipantCount || 0) /
                                       Number(capacity)) *
                                     100
+
                                   }%, ${
                                     `${slot.startTime}-${slot.endTime}` === time
                                       ? "#1677FF"

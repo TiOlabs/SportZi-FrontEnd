@@ -269,6 +269,7 @@ const BookingForm = () => {
           user_id: userId,
           zone_id: zoneId,
           way_of_booking: zone,
+          booking_type:"zone"
         });
 
         // setZoneBookings(
@@ -348,45 +349,40 @@ const BookingForm = () => {
     let nextHour = Math.floor(nextTime);
     let nextMinute = (nextTime - nextHour) * 60;
 
-    let formattedTime = `${hour}:${
-      minute < 10 ? "0" : ""
-    }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
-    // let formattedTime = `${hour < 10 ? "0" + hour : hour}:${
-    //   minute < 10 ? "0" : ""
-    // }${minute}- ${nextHour < 10 ? "0" + nextHour : nextHour}:${
-    //   nextMinute < 10 ? "0" : ""
-    // }${nextMinute}`;
+    let formattedTime = `${hour}:${minute < 10 ? "0" : ""}${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+    formattedTime = formattedTime.replace(/\s/g, ''); // Remove any spaces
 
     if (date === dayjs().format("YYYY-MM-DD")) {
-      // Split formattedTime into start and end times
-      const [startTime, endTime] = formattedTime.split("-");
+        // Split formattedTime into start and end times
+        const [startTime, endTime] = formattedTime.split("-");
 
-      // Parse start and end times into time objects
-      const formattedStartTime = dayjs(startTime, "HH:mm");
-      const formattedEndTime = dayjs(endTime, "HH:mm");
-      const currentTime = dayjs();
+        // Parse start and end times into time objects
+        const formattedStartTime = dayjs(startTime, "HH:mm");
+        const formattedEndTime = dayjs(endTime, "HH:mm");
+        const currentTime = dayjs();
 
-      // Compare current time with start and end times
-      const disabled = currentTime.isAfter(formattedEndTime);
-      console.log(disabled);
+        // Compare current time with start and end times
+        const disabled = currentTime.isAfter(formattedEndTime);
+        console.log(disabled);
 
-      // Push time slot with disabled property into buttonData
-      buttonData.push({
-        id: formattedTime,
-        time: formattedTime,
-        disabled: disabled,
-      });
+        // Push time slot with disabled property into buttonData
+        buttonData.push({
+            id: formattedTime,
+            time: formattedTime,
+            disabled: disabled,
+        });
     } else {
-      // If it's not today's date, enable the time slot
-      buttonData.push({
-        id: formattedTime,
-        time: formattedTime,
-        disabled: false,
-      });
+        // If it's not today's date, enable the time slot
+        buttonData.push({
+            id: formattedTime,
+            time: formattedTime,
+            disabled: false,
+        });
     }
 
     console.log(buttonData);
-  }
+}
+
 
   // const buttonData = [
   //   { id: "1", time: "9.00-10.00" },
