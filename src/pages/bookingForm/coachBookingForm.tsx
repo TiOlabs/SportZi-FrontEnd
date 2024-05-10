@@ -17,7 +17,13 @@ import { LeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { usePlayer } from "../../context/player.context";
 import { CoachBookingContext } from "../../context/coachBooking.context";
-import { Arcade, Coach, CoachAssignDetails, Zone } from "../../types";
+import {
+  Arcade,
+  Coach,
+  CoachAssignDetails,
+  Zone,
+  ZoneBookingDetails,
+} from "../../types";
 import dayjs from "dayjs";
 import { time } from "console";
 import PaymentModal from "../../components/paymentCheckout";
@@ -27,6 +33,10 @@ import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
+  interface TimeParticipantCount {
+    time: string;
+    totalParticipantCount: number;
+  }
   const { setZoneBookings } = useContext(ZoneBookingsContext);
   const [userDetails, setUserDetails] = useState<any>();
   const [avaliability, setAvaliability] = useState<any>();
@@ -47,6 +57,13 @@ const CoachBookingForm: React.FC = () => {
   const [dayOfWeek, setDayOfWeek] = useState<string>("");
   const [datee, setDatee] = useState<String>("");
   const [coachBookings, setCoachBookings] = useState<any[]>([]);
+  const [zoneDetails, setZoneDetails] = useState<Zone>();
+  const [reservationType, setReservationType] = useState<string>("");
+  const [zoneBookingDetails, setZoneBookingDetails] = useState<any[]>([]);
+  const [bookingDate, setBookingDate] = useState<ZoneBookingDetails[]>([]);
+  const [timeParticipantCounts1, setTimeParticipantCounts1] = useState<
+    TimeParticipantCount[]
+  >([]);
 
   const handleDateChange = (datee: any) => {
     // Extract the date part from the Day.js object
@@ -147,7 +164,7 @@ const CoachBookingForm: React.FC = () => {
         const data = await res.json();
         console.log(data);
         const filteredData = data.filter(
-          (item: any) => item.coach_id === coachId && item.date === dayOfWeek
+          (item: any) => item.coach_id === coachId && item.day === dayOfWeek
         );
         console.log(filteredData);
 
@@ -176,49 +193,134 @@ const CoachBookingForm: React.FC = () => {
     };
     fetchData();
   }, []);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `http://localhost:8000/api/getZoneDetails/${zone}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setZoneDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8000/api/getarcadebookingbydate/${datee}/${zone}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setBookingDate(data);
+
+        // Grouping data by booking time and calculating total participant count for each group
+        const groupedByTime: {
+          [key: string]: { bookings: any[]; totalParticipantCount: number };
+        } = data.reduce(
+          (
+            acc: {
+              [x: string]: { bookings: any[]; totalParticipantCount: number };
+            },
+            booking: { time: any; participant_count: any }
+          ) => {
+            const time = booking.time;
+            if (!acc[time]) {
+              acc[time] = { bookings: [], totalParticipantCount: 0 };
+            }
+            acc[time].bookings.push(booking);
+            acc[time].totalParticipantCount += booking.participant_count;
+            return acc;
+          },
+          {}
+        );
+
+        console.log("Grouped by time:");
+        console.log(groupedByTime);
+
+        // Logging participant count for each group
+        for (const time in groupedByTime) {
+          console.log(`Time: ${time}`);
+          console.log(
+            "Participant count:",
+            groupedByTime[time].totalParticipantCount
+          );
+          // setTc(groupedByTime[time].totalParticipantCount)
+        }
+
+        // Logging total participant count with respect to the relevant date
+        const totalParticipantCountByDate = Object.values(groupedByTime).reduce(
+          (total: number, group: any) => total + group.totalParticipantCount,
+          0
+        );
+        console.log(
+          `Total participant count for date ${datee}:`,
+          totalParticipantCountByDate
+        );
+        const timeParticipantCounts = Object.entries(groupedByTime).map(
+          ([time, { totalParticipantCount }]) => ({
+            time,
+            totalParticipantCount,
+          })
+        );
+        console.log("Time Participant Counts:", timeParticipantCounts);
+        setTimeParticipantCounts1(timeParticipantCounts);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [datee, zone]);
+
   const handleFinish = async () => {
     console.log("gggggggggg");
     console.log(date, time, pcount, zoneForCoachBookings);
+    console.log(userDetails.user_id);
     const pcountInt = parseInt(pcount);
     if (parseInt(pcount) <= 0) {
       message.error("Participant count must be more than 0");
       return; // Stop further execution
     } else if (time === "") {
-      message.error("time must be selected");
+      message.error("Time must be selected");
       return; // Stop further execution
     } else {
       try {
+        // Get current date and time
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const currentDay = String(currentDate.getDate()).padStart(2, '0');
+        const currentHours = String(currentDate.getHours()).padStart(2, '0');
+        const currentMinutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const currentSeconds = String(currentDate.getSeconds()).padStart(2, '0');
+        
+        const currentDateTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
+  
         setZoneBookings({
           date: datee,
           time: time,
           participant_count: pcountInt,
           user_id: userDetails.user_id,
           zone_id: zone,
+          way_of_booking: reservationType,
+          booking_type: "coach",
+          created_at: currentDateTime, // Set current date and time
         });
       } catch (err) {
         console.log("Error");
         console.log(err);
       }
     }
-    // try {
-    //   const res = await axios.post(
-    //     `http://localhost:8000/api/addCoachBooking`,
-    //     {
-    //       participant_count: pcountInt,
-    //       date: date,
-    //       time: time,
-    //       coach_id: coachId,
-    //       player_id: userDetails.id,
-    //       // zone_id: zoneForCoachBookings.find(,
-    //       arcade_id: arcade,
-    //     }
-    //   );
-    //   console.log(res);
-    // } catch (err) {
-    //   console.log("Error");
-    //   console.log(err);
-    // }
   };
+  
+
   // eslint-disable-next-line no-octal
   const openTime = 8.0;
   const closeTime = 23.0;
@@ -269,6 +371,8 @@ const CoachBookingForm: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   let fullAmount = Number(coachData?.rate) * 1;
   console.log(avaliability);
+  console.log(zoneDetails?.capacity);
+  const capacity = zoneDetails?.capacity;
   return (
     <div style={{ margin: "2%" }}>
       <Row>
@@ -403,6 +507,48 @@ const CoachBookingForm: React.FC = () => {
                     )}
                   </Select>
                 </Form.Item>
+                <Form.Item
+                  name="way_of_booking"
+                  label="Reservation Type"
+                  rules={[{ required: true }]}
+                  style={{
+                    width: "90%",
+                    marginTop: "0%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <Select
+                    placeholder="Reservatin Type"
+                    onChange={(value) => setReservationType(value)}
+                    allowClear
+                    style={{
+                      height: "50px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {zoneDetails?.way_of_booking === "full" ? (
+                      <>
+                        <Option value="full">Full Zone</Option>
+                        <Option value="person_by_person" disabled>
+                          Individual
+                        </Option>
+                      </>
+                    ) : zoneDetails?.way_of_booking === "person_by_person" ? (
+                      <>
+                        <Option value="full" disabled>
+                          Full Zone
+                        </Option>
+                        <Option value="person_by_person">Individual</Option>
+                      </>
+                    ) : (
+                      <>
+                        <Option value="full">Full Zone</Option>
+                        <Option value="person_by_person">Individual</Option>
+                      </>
+                    )}
+                  </Select>
+                </Form.Item>
               </Row>
             </div>
           </Col>
@@ -437,7 +583,7 @@ const CoachBookingForm: React.FC = () => {
                     {/* Filter available slots for the selected day */}
                     {avaliability
                       .filter(
-                        (item: any) => item.date === dayOfWeek && item.time
+                        (item: any) => item.day === dayOfWeek && item.time
                       )
                       .flatMap((item: any) => {
                         const timeRange = item.time.split("-"); // Split the time range
@@ -445,7 +591,7 @@ const CoachBookingForm: React.FC = () => {
                           timeRange[0].split(":")[0]
                         ); // Get the start hour
                         const endHour = parseFloat(timeRange[1].split(":")[0]); // Get the end hour
-                        const timeIncrement = 2; // Set the time increment to half-hour
+                        const timeIncrement = 1; // Set the time increment to half-hour
 
                         const timeSlots = [];
 
@@ -485,44 +631,123 @@ const CoachBookingForm: React.FC = () => {
                         >
                           <Button
                             id={`${slot.startTime}-${slot.endTime}`}
-                            disabled={coachBookings
-                              .find(
+                            disabled={
+                              coachBookings.find(
                                 (item) =>
                                   item.date === datee &&
                                   item.zone_id === zone &&
                                   item.coach_id === coachId &&
-                                  item.time === `${slot.startTime}-${slot.endTime}`
-                              )
-                              
-                              } // Use the start and end times as the ID
+                                  item.time ===
+                                    `${slot.startTime}-${slot.endTime}`
+                              ) !== undefined ||
+                              zoneBookingDetails.find((item) => {
+                                console.log(item.date);
+                                console.log(item.time); // Logging item.date
+                                return (
+                                  item.date === datee &&
+                                  item.zone_id === zone &&
+                                  item.time ===
+                                    `${slot.startTime}-${slot.endTime}` &&
+                                  item.way_of_booking === "full"
+                                );
+                              }) !== undefined ||
+                              !zone ||
+                              !arcade
+                            }
+                            // Use the start and end times as the ID
                             style={{
                               width: "100%",
                               height: "60px",
                               backgroundColor:
-                              `${slot.startTime}-${slot.endTime}` === time
-                                ? "#488ca8"
-                                : coachBookings.some(
-                                    (item) =>
-                                      item.date === datee &&
-                                      item.zone_id === zone &&
-                                      item.coach_id === coachId &&
-                                      item.time === `${slot.startTime}-${slot.endTime}`
-                                  )
-                                ? "#FF0000" // Red color when disabled
-                                : "#2EA8BF",
-                          }}
+                                `${slot.startTime}-${slot.endTime}` === time
+                                  ? "#1677FF"
+                                  : coachBookings.some(
+                                      (item) =>
+                                        item.date === datee &&
+                                        item.zone_id === zone &&
+                                        item.coach_id === coachId &&
+                                        item.time ===
+                                          `${slot.startTime}-${slot.endTime}`
+                                    ) ||
+                                    zoneBookingDetails.find((item) => {
+                                      console.log(item.date);
+                                      console.log(item.time);
+                                      console.log(item.way_of_booking);
+                                      return (
+                                        item.date === datee &&
+                                        item.zone_id === zone &&
+                                        item.way_of_booking === "full" &&
+                                        item.time ===
+                                          `${slot.startTime}-${slot.endTime}`
+                                      );
+                                    })
+                                  ? "#FF0000" // Red color when disabled
+                                  : "#2EA8BF",
+                              backgroundImage: bookingDate.find(
+                                (booking) =>
+                                  booking.time ===
+                                    `${slot.startTime}-${slot.endTime}` &&
+                                  booking.date === datee &&
+                                  booking.zone.zone_id === zone &&
+                                  booking.way_of_booking === "full"
+                              )
+                                ? "none" // If fully booked, no gradient needed
+                                : bookingDate.find((booking) => {
+                                    console.log("hhhhhhhh");
+                                    console.log(zoneDetails?.capacity);
+                                    console.log(timeParticipantCounts1);
+                                    console.log(booking.way_of_booking);
+                                    console.log(booking.zone.capacity);
+                                    return (
+                                      booking.time ===
+                                        `${slot.startTime}-${slot.endTime}` &&
+                                      booking.way_of_booking ===
+                                        "person_by_person" &&
+                                      booking.date === datee &&
+                                      booking.zone.zone_id === zone &&
+                                      booking.booking_type === "zone"
+                                    );
+                                  })
+                                ? `linear-gradient(to right, #0F70AE ${
+                                    ((timeParticipantCounts1.find(
+                                      (item) =>
+                                        item.time ===
+                                        `${slot.startTime}-${slot.endTime}`
+                                    )?.totalParticipantCount || 0) /
+                                      Number(capacity)) *
+                                    100
+                                  }%, ${
+                                    `${slot.startTime}-${slot.endTime}` === time
+                                      ? "#1677FF"
+                                      : "#2EA8BF"
+                                  } 0%)`
+                                : "none",
+                            }}
                             onClick={() => {
                               setTime(`${slot.startTime}-${slot.endTime}`);
                             }}
-                          >{coachBookings.some(
-                            (item) =>
-                              item.date === datee &&
-                              item.zone_id === zone &&
-                              item.coach_id === coachId &&
-                              item.time === `${slot.startTime}-${slot.endTime}`
-                          )
-                            ? "Booked"
-                            : `${slot.startTime}-${slot.endTime}`}
+                          >
+                            {coachBookings.some(
+                              (item) =>
+                                item.date === datee &&
+                                item.zone_id === zone &&
+                                item.coach_id === coachId &&
+                                item.time ===
+                                  `${slot.startTime}-${slot.endTime}`
+                            ) ||
+                            zoneBookingDetails.find((item) => {
+                              console.log(item.date);
+                              console.log(item.time); // Logging item.date
+                              return (
+                                item.date === datee &&
+                                item.zone_id === zone &&
+                                item.time ===
+                                  `${slot.startTime}-${slot.endTime}` &&
+                                item.way_of_booking === "full"
+                              );
+                            })
+                              ? "Booked"
+                              : `${slot.startTime}-${slot.endTime}`}
                           </Button>
                         </ConfigProvider>
                       ))}
@@ -597,6 +822,7 @@ const CoachBookingForm: React.FC = () => {
                 arcadeId={arcade}
                 sportId={coachSport}
                 coach_id={coachId}
+                reservation_type={reservationType}
                 //zoneId={zoneId}
                 //reservation_type={zone}
                 //avaiableParticipantCount={
@@ -614,4 +840,4 @@ const CoachBookingForm: React.FC = () => {
   );
 };
 
-export default CoachBookingForm;
+export default CoachBookingForm

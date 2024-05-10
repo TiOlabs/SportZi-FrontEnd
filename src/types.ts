@@ -52,8 +52,34 @@ export interface ZoneBookingDetails {
   user: User;
   zone: Zone;
   way_of_booking: String; 
+  booking_type: String;
 }
 
+export interface CoachBookingDetails {
+  booking_id: String;
+  status: String;
+  created_at: String;
+  canceled_at: String;
+  participant_count: Number;
+  date: String;
+  time: String;
+  coach_id: String;
+  arcade_id: String;
+  player_id: String;
+  zone_id: String;
+  rate: Number;
+  player: Player;
+  coach: Coach;
+  zone: Zone;
+  arcade: Arcade;
+  way_of_booking: String;
+
+}
+export interface Player{
+player_id: String;
+coachBookingDetails: CoachBookingDetails[];
+user: User;
+}
 export interface Coach {
   coach_id: String;
   rate: Number;
@@ -78,6 +104,7 @@ export interface User {
   user_image: String;
   Phone: UserPhone;
   userPhotos: UserPhoto;
+  player:Player
 }
 export interface UserPhone {
   user_id: String;
