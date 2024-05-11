@@ -262,6 +262,24 @@ const BookingForm = () => {
       return; // Stop further execution
     } else {
       try {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = String(currentDate.getMonth() + 1).padStart(
+          2,
+          "0"
+        );
+        const currentDay = String(currentDate.getDate()).padStart(2, "0");
+        const currentHours = String(currentDate.getHours()).padStart(2, "0");
+        const currentMinutes = String(currentDate.getMinutes()).padStart(
+          2,
+          "0"
+        );
+        const currentSeconds = String(currentDate.getSeconds()).padStart(
+          2,
+          "0"
+        );
+
+        const currentDateTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
         setZoneBookings({
           date: date,
           time: time,
@@ -269,7 +287,8 @@ const BookingForm = () => {
           user_id: userId,
           zone_id: zoneId,
           way_of_booking: zone,
-          booking_type:"zone"
+          booking_type: "zone",
+          created_at: currentDateTime,
         });
 
         // setZoneBookings(
@@ -349,40 +368,41 @@ const BookingForm = () => {
     let nextHour = Math.floor(nextTime);
     let nextMinute = (nextTime - nextHour) * 60;
 
-    let formattedTime = `${hour}:${minute < 10 ? "0" : ""}${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
-    formattedTime = formattedTime.replace(/\s/g, ''); // Remove any spaces
+    let formattedTime = `${hour}:${
+      minute < 10 ? "0" : ""
+    }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+    formattedTime = formattedTime.replace(/\s/g, ""); // Remove any spaces
 
     if (date === dayjs().format("YYYY-MM-DD")) {
-        // Split formattedTime into start and end times
-        const [startTime, endTime] = formattedTime.split("-");
+      // Split formattedTime into start and end times
+      const [startTime, endTime] = formattedTime.split("-");
 
-        // Parse start and end times into time objects
-        const formattedStartTime = dayjs(startTime, "HH:mm");
-        const formattedEndTime = dayjs(endTime, "HH:mm");
-        const currentTime = dayjs();
+      // Parse start and end times into time objects
+      const formattedStartTime = dayjs(startTime, "HH:mm");
+      const formattedEndTime = dayjs(endTime, "HH:mm");
+      const currentTime = dayjs();
 
-        // Compare current time with start and end times
-        const disabled = currentTime.isAfter(formattedEndTime);
-        console.log(disabled);
+      // Compare current time with start and end times
+      const disabled = currentTime.isAfter(formattedEndTime);
+      console.log(disabled);
 
-        // Push time slot with disabled property into buttonData
-        buttonData.push({
-            id: formattedTime,
-            time: formattedTime,
-            disabled: disabled,
-        });
+      // Push time slot with disabled property into buttonData
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: disabled,
+      });
     } else {
-        // If it's not today's date, enable the time slot
-        buttonData.push({
-            id: formattedTime,
-            time: formattedTime,
-            disabled: false,
-        });
+      // If it's not today's date, enable the time slot
+      buttonData.push({
+        id: formattedTime,
+        time: formattedTime,
+        disabled: false,
+      });
     }
 
     console.log(buttonData);
-}
-
+  }
 
   // const buttonData = [
   //   { id: "1", time: "9.00-10.00" },
@@ -548,7 +568,8 @@ const BookingForm = () => {
             >
               <div
                 style={{
-                  backgroundColor: "#7493BF",
+                  // backgroundColor: "#7493BF",
+                  backgroundColor: "#95C0F3",
                   width: "90%",
                   display: "flex",
                   justifyContent: "center",
@@ -574,22 +595,15 @@ const BookingForm = () => {
                     maxHeight: "800px", // Adjust the maximum height to fit your layout
                   }}
                 >
-                  {bookingDate.map((booking) => {
-                    console.log(booking.time);
-                    return (
-                      <button
-                        id={booking.time.toString()}
-                        style={{ backgroundColor: "red", width: "50%" }} // Adjusted width to 50%
-                      ></button>
-                    );
-                  })}
+                 
                   {buttonData.map((button) => (
                     <button
-                      disabled={bookingDate.find(
-                        (booking) =>
-                          booking.time === button.id &&
-                          booking.way_of_booking === "full"
-                      ) !== undefined ||
+                      disabled={
+                        bookingDate.find(
+                          (booking) =>
+                            booking.time === button.id &&
+                            booking.way_of_booking === "full"
+                        ) !== undefined ||
                         timeParticipantCounts1.find(
                           (item) => item.time === button.id
                         )?.totalParticipantCount === capacity
@@ -617,7 +631,9 @@ const BookingForm = () => {
                             booking.way_of_booking === "full"
                         )
                           ? "none" // If fully booked, no gradient needed
-                          : bookingDate.find((booking) => booking.time === button.id)
+                          : bookingDate.find(
+                              (booking) => booking.time === button.id
+                            )
                           ? `linear-gradient(to right, #0F70AE ${
                               ((timeParticipantCounts1.find(
                                 (item) => item.time === button.id
@@ -633,7 +649,7 @@ const BookingForm = () => {
                           booking.time === button.id &&
                           booking.way_of_booking === "full"
                       )
-                        ? "Fully Booked" 
+                        ? "Fully Booked"
                         : timeParticipantCounts1.find(
                             (item) => item.time === button.id
                           )?.totalParticipantCount === capacity

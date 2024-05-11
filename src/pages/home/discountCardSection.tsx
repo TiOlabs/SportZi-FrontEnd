@@ -59,7 +59,7 @@ const DiscoutCardsSection = () => {
               zone_name={discount.zone.zone_name} 
               discount_percentage={discount.discount_percentage} 
               description={discount.description}  
-              discount_image={discount.discount_image}
+              discount_image={discount.zone.zone_image}
             />
           </Col>
         ))}

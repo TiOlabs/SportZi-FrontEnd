@@ -75,7 +75,7 @@ const CoachCard = (props: any) => {
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
-            <Link to="/bookings">
+            <Link to="/CoachBookingForm">
               <Button
                 type="primary"
                 size="small"
