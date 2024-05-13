@@ -162,8 +162,6 @@ const ArcadeProfileArcade = () => {
     }
   };
 
-  const { ArcadeId } = useParams();
-
 
   console.log("in the arcade", ArcadeId);
 
