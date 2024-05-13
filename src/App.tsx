@@ -7,13 +7,16 @@ import AppRoutes from "./routes/routes";
 
 import { PlayerProvider } from "./context/player.context";
 import { ArcadeProvider } from "./context/Arcade.context";
+import { CoachProvider } from "./context/coach.context";
 
 function App() {
   return (
     <ArcadeProvider>
-      <PlayerProvider>
-        <AppRoutes />
-      </PlayerProvider>
+      <CoachProvider>
+        <PlayerProvider>
+          <AppRoutes />
+        </PlayerProvider>
+      </CoachProvider>
     </ArcadeProvider>
   );
 }
