@@ -16,6 +16,8 @@ import { PlayerContext } from "../context/player.context";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import Cookies from "js-cookie";
+import { CoachContext } from "../context/coach.context";
+import { ArcadeContext } from "../context/Arcade.context";
 const NavbarProfile: React.FC = () => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -24,6 +26,8 @@ const NavbarProfile: React.FC = () => {
     },
   });
   const { userDetails } = useContext(PlayerContext);
+  const { coachDetails } = useContext(CoachContext);
+  const { managerDetails } = useContext(ArcadeContext);
 
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
@@ -181,21 +185,64 @@ const NavbarProfile: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          <AdvancedImage
-            style={{
-              width: "50px",
-              height: "50px",
-              marginLeft: "10px",
-              marginTop: "10px",
-              borderRadius: "50%",
-              border: "1px solid black",
-            }}
-            cldImg={
-              cld.image(userDetails?.image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
-          />
+          {userDetails.role === "PLAYER" && (
+            <Link to={`/profile/`}>
+              <AdvancedImage
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  marginLeft: "10px",
+                  marginTop: "10px",
+                  borderRadius: "50%",
+                  border: "1px solid black",
+                }}
+                cldImg={
+                  cld.image(userDetails?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
+            </Link>
+          )}
+          {managerDetails.role === "MANAGER" && (
+            <Link to={`/ChooseArchade/`}>
+              <AdvancedImage
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  marginLeft: "10px",
+                  marginTop: "10px",
+                  borderRadius: "50%",
+                  border: "1px solid black",
+                }}
+                cldImg={
+                  cld.image(managerDetails?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
+            </Link>
+          )}
+
+          {coachDetails.role === "COACH" && (
+            <Link to={`/coachProfile/`}>
+              <AdvancedImage
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  marginLeft: "10px",
+                  marginTop: "10px",
+                  borderRadius: "50%",
+                  border: "1px solid black",
+                }}
+                cldImg={
+                  cld.image(coachDetails?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
+            </Link>
+          )}
         </div>
         <div
           className="NavBarUserProfileNameLaptop"
@@ -208,7 +255,9 @@ const NavbarProfile: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          {userDetails.firstName} {userDetails.lastName}
+          {userDetails.firstName && userDetails.lastName
+            ? `${userDetails.firstName} ${userDetails.lastName}`
+            : `${coachDetails.firstName} ${coachDetails.lastName}`}
         </div>
         <div
           className="NavBarUserProfileStatusLaptop"
@@ -219,7 +268,7 @@ const NavbarProfile: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          {userDetails?.role}
+          {userDetails?.role ? userDetails?.role : coachDetails?.role}
         </div>
         <Divider style={{}} />
       </div>
@@ -625,9 +674,11 @@ const NavbarProfile: React.FC = () => {
                       border: "1px solid black",
                     }}
                     cldImg={
-                      cld.image(userDetails?.image)
-                      // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                      // .resize(Resize.scale().width(200).height(200))
+                      userDetails && userDetails.image
+                        ? cld.image(userDetails.image)
+                        : // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                          // .resize(Resize.scale().width(200).height(200))
+                          cld.image(coachDetails.image)
                     }
                   />
                 </a>

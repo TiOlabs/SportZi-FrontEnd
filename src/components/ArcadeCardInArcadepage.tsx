@@ -151,6 +151,7 @@ const ArcadeCard = (props: any) => {
               <Button
                 type="primary"
                 size="small"
+                onClick={handleClick}
                 style={{
                   fontSize: "15px",
                   background: "white",

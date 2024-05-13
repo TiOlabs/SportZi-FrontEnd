@@ -12,17 +12,34 @@ import ArcadeZoneCard from "../../components/ArcadeZoneCard";
 import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
+import { Arcade, Zone } from "../../types";
+import axios from "axios";
+import NavbarProfile from "../../components/NavBarProfile";
+import NavbarLogin from "../../components/NavBarLogin";
+import { PlayerContext } from "../../context/player.context";
+import { CoachContext } from "../../context/coach.context";
+import { ArcadeContext } from "../../context/Arcade.context";
+import ArcadeZoneCardUserView from "../../components/arcadeZoneCard(UserView)";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const { ArcadeId } = useParams();
-  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
+  const [arcadeDetails1, setArcadeDetails] = useState<any>(null);
+  const [arcade, setArcade] = useState<Arcade>();
+  const { userDetails } = useContext(PlayerContext);
+  const { coachDetails } = useContext(CoachContext);
+  const { arcadeDetails } = useContext(ArcadeContext);
+  console.log("userDetails", userDetails);
+  console.log("coachDetails", coachDetails);
+
   useEffect(() => {
     axiosInstance
       .get("/api/auth/getarchadedetails", {
@@ -38,9 +55,37 @@ const ArcadeProfileUser = () => {
         console.log("daddds", err);
       });
   }, []);
-
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
+        );
+        const data = await res.data;
+        console.log(data);
+        setArcade(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+  console.log("arcade", arcade?.arcade_image);
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
+      {userDetails !== "" ||
+      coachDetails !== "" ||
+      arcadeDetails !== "" ? (
+        <NavbarProfile />
+      ) : (
+        <NavbarLogin />
+      )}
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
@@ -84,10 +129,13 @@ const ArcadeProfileUser = () => {
               xl={24}
             >
               {" "}
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(arcade?.arcade_image.toString())
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
@@ -132,7 +180,7 @@ const ArcadeProfileUser = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.distription}
+                {arcadeDetails1 && arcadeDetails1.distription}
               </Typography>
               <Button
                 style={{
@@ -188,7 +236,7 @@ const ArcadeProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.arcade_name}
+                {arcadeDetails1 && arcadeDetails1.arcade_name}
               </h1>
               <p
                 style={{
@@ -696,16 +744,7 @@ const ArcadeProfileUser = () => {
           Photos
         </p>
       </div>
-      <div
-        style={{
-          width: "95%",
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "10px",
-        }}
-      >
-        <AddPhotoButton />
-      </div>
+
       <PhotoCollage />
 
       <Row
@@ -754,57 +793,37 @@ const ArcadeProfileUser = () => {
             flexDirection: "row",
           }}
         >
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadeZoneCard />
-          </Col>
+          {arcade?.zone.map((zone: Zone) => (
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              {" "}
+              <ArcadeZoneCardUserView
+                zoneName={zone.zone_name}
+                rate={zone.rate}
+                zoneImage={zone.zone_image}
+                description={zone.description}
+                id={zone.zone_id}
+                capacity={zone.capacity}
+                open_time={zone.open_time}
+                close_time={zone.close_time}
+                way_of_booking={zone.way_of_booking}
+                sport={zone.sport.sport_name}
+                sport_id={zone.sport.sport_id}
+              />
+            </Col>
+          ))}
           <Col
             style={{
               width: "100%",
@@ -857,7 +876,7 @@ const ArcadeProfileUser = () => {
               fontFamily: "Kanit",
             }}
           >
-            Book Our Zones
+            Enroll To Our Packages
           </Typography>
           <div
             style={{
