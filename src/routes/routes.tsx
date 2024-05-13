@@ -54,7 +54,7 @@ const AppRoutes = () => {
         <Route path="forms/discountcardform" element={<DiscountCardForm />} />
         <Route path="signupPlayer" element={<SignupPlayer />} />
         <Route path="signupCoach" element={<SignupCoach />} />
-        <Route path="coacheProfile" element={<CoachProfile />} />
+        <Route path="coachProfile" element={<CoachProfile />} />
         <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
         <Route path="PlayerUser" element={<PlayerProfileUser />} />
         <Route
