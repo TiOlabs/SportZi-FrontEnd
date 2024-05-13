@@ -30,6 +30,8 @@ import PaymentModal from "../../components/paymentCheckout";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import { ZoneBookingsContext } from "../../context/zoneBookings.context";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
@@ -73,7 +75,6 @@ const CoachBookingForm: React.FC = () => {
     // Set the formatted date using setDatee
     setDatee(formattedDate);
   };
-
 
   const handleDateSelect = (datee: any) => {
     const day = new Intl.DateTimeFormat("en-US", {
@@ -209,7 +210,7 @@ const CoachBookingForm: React.FC = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [zone]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -289,10 +290,30 @@ const CoachBookingForm: React.FC = () => {
       message.error("Participant count must be more than 0");
       return; // Stop further execution
     } else if (time === "") {
-      message.error("time must be selected");
+      message.error("Time must be selected");
       return; // Stop further execution
     } else {
       try {
+        // Get current date and time
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = String(currentDate.getMonth() + 1).padStart(
+          2,
+          "0"
+        );
+        const currentDay = String(currentDate.getDate()).padStart(2, "0");
+        const currentHours = String(currentDate.getHours()).padStart(2, "0");
+        const currentMinutes = String(currentDate.getMinutes()).padStart(
+          2,
+          "0"
+        );
+        const currentSeconds = String(currentDate.getSeconds()).padStart(
+          2,
+          "0"
+        );
+
+        const currentDateTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
+
         setZoneBookings({
           date: datee,
           time: time,
@@ -301,31 +322,15 @@ const CoachBookingForm: React.FC = () => {
           zone_id: zone,
           way_of_booking: reservationType,
           booking_type: "coach",
+          created_at: currentDateTime, // Set current date and time
         });
       } catch (err) {
         console.log("Error");
         console.log(err);
       }
     }
-    // try {
-    //   const res = await axios.post(
-    //     `http://localhost:8000/api/addCoachBooking`,
-    //     {
-    //       participant_count: pcountInt,
-    //       date: date,
-    //       time: time,
-    //       coach_id: coachId,
-    //       player_id: userDetails.id,
-    //       // zone_id: zoneForCoachBookings.find(,
-    //       arcade_id: arcade,
-    //     }
-    //   );
-    //   console.log(res);
-    // } catch (err) {
-    //   console.log("Error");
-    //   console.log(err);
-    // }
   };
+
   // eslint-disable-next-line no-octal
   const openTime = 8.0;
   const closeTime = 23.0;
@@ -376,8 +381,14 @@ const CoachBookingForm: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   let fullAmount = Number(coachData?.rate) * 1;
   console.log(avaliability);
- console.log(zoneDetails?.capacity);
+  console.log(zoneDetails?.capacity);
   const capacity = zoneDetails?.capacity;
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <div style={{ margin: "2%" }}>
       <Row>
@@ -493,6 +504,7 @@ const CoachBookingForm: React.FC = () => {
                     placeholder="Select a Zone"
                     onChange={(value) => setZone(value)}
                     allowClear
+                    disabled={!arcade}
                     style={{
                       height: "50px",
                       display: "flex",
@@ -523,9 +535,10 @@ const CoachBookingForm: React.FC = () => {
                   }}
                 >
                   <Select
-                    placeholder="Reservatin Type"
+                    placeholder="Reservation Type"
                     onChange={(value) => setReservationType(value)}
                     allowClear
+                    disabled={!time || !datee}
                     style={{
                       height: "50px",
                       display: "flex",
@@ -540,6 +553,19 @@ const CoachBookingForm: React.FC = () => {
                         </Option>
                       </>
                     ) : zoneDetails?.way_of_booking === "person_by_person" ? (
+                      <>
+                        <Option value="full" disabled>
+                          Full Zone
+                        </Option>
+                        <Option value="person_by_person">Individual</Option>
+                      </>
+                    ) : zoneDetails?.way_of_booking === "Both" &&
+                      bookingDate.find(
+                        (item) =>
+                          item.date === datee &&
+                          item.zone.zone_id === zone &&
+                          item.time === time
+                      ) ? (
                       <>
                         <Option value="full" disabled>
                           Full Zone
@@ -598,7 +624,7 @@ const CoachBookingForm: React.FC = () => {
                         const endHour = parseFloat(timeRange[1].split(":")[0]); // Get the end hour
                         const timeIncrement = 1; // Set the time increment to half-hour
 
-                        const timeSlots = [];
+                        const timeSlots: any[] = [];
 
                         // Generate time slots half-hour by half-hour
                         for (
@@ -623,6 +649,21 @@ const CoachBookingForm: React.FC = () => {
 
                         return timeSlots;
                       })
+                      // Sort the time slots based on start time
+                      .sort(
+                        (
+                          a: { startTime: string },
+                          b: { startTime: string }
+                        ) => {
+                          const timeA = a.startTime.split(":");
+                          const timeB = b.startTime.split(":");
+                          return (
+                            parseInt(timeA[0]) * 60 +
+                            parseInt(timeA[1]) -
+                            (parseInt(timeB[0]) * 60 + parseInt(timeB[1]))
+                          );
+                        }
+                      )
                       .map((slot: any, index: number) => (
                         <ConfigProvider
                           theme={{
@@ -643,24 +684,67 @@ const CoachBookingForm: React.FC = () => {
                                   item.zone_id === zone &&
                                   item.coach_id === coachId &&
                                   item.time ===
-                                    `${slot.startTime}-${slot.endTime}`
+                                    `${slot.startTime}-${slot.endTime}` &&
+                                  item.status === "success"
                               ) !== undefined ||
-                              zoneBookingDetails.find((item) => {
+                              bookingDate.find((item) => {
                                 console.log(item.date);
                                 console.log(item.time); // Logging item.date
                                 return (
                                   item.date === datee &&
-                                  item.zone_id === zone &&
+                                  item.zone.zone_id === zone &&
                                   item.time ===
                                     `${slot.startTime}-${slot.endTime}` &&
-                                  item.way_of_booking === "full"
+                                  item.way_of_booking === "full" &&
+                                  item.status === "success"
                                 );
-                              }) !== undefined
+                              }) !== undefined ||
+                              !zone ||
+                              !arcade
                             }
                             // Use the start and end times as the ID
                             style={{
                               width: "100%",
                               height: "60px",
+                              backgroundImage: bookingDate.find(
+                                (booking) =>
+                                  booking.time ===
+                                    `${slot.startTime}-${slot.endTime}` &&
+                                  booking.date === datee &&
+                                  booking.zone.zone_id === zone &&
+                                  booking.way_of_booking === "full" &&
+                                  booking.status === "success"
+                              )
+                                ? "none" // If fully booked, no gradient needed
+                                : bookingDate.find((item) => {
+                                    console.log("hhhhhhhh");
+                                    console.log(zoneDetails?.capacity);
+                                    console.log(timeParticipantCounts1);
+                                    return (
+                                      item.date === datee &&
+                                      item.zone.zone_id === zone &&
+                                      item.time ===
+                                        `${slot.startTime}-${slot.endTime}` &&
+                                      item.way_of_booking ===
+                                        "person_by_person" &&
+                                      item.booking_type === "zone" &&
+                                      item.status === "success"
+                                    );
+                                  })
+                                ? `linear-gradient(to right, #0F70AE ${
+                                    ((timeParticipantCounts1.find(
+                                      (item) =>
+                                        item.time ===
+                                        `${slot.startTime}-${slot.endTime}`
+                                    )?.totalParticipantCount || 0) /
+                                      Number(capacity)) *
+                                    100
+                                  }%, ${
+                                    `${slot.startTime}-${slot.endTime}` === time
+                                      ? "#1677FF"
+                                      : "#2EA8BF"
+                                  } 0%)`
+                                : "none",
                               backgroundColor:
                                 `${slot.startTime}-${slot.endTime}` === time
                                   ? "#1677FF"
@@ -670,59 +754,24 @@ const CoachBookingForm: React.FC = () => {
                                         item.zone_id === zone &&
                                         item.coach_id === coachId &&
                                         item.time ===
-                                          `${slot.startTime}-${slot.endTime}`
+                                          `${slot.startTime}-${slot.endTime}` &&
+                                        item.status === "success"
                                     ) ||
-                                    zoneBookingDetails.find((item) => {
+                                    bookingDate.find((item) => {
                                       console.log(item.date);
                                       console.log(item.time);
                                       console.log(item.way_of_booking);
                                       return (
                                         item.date === datee &&
-                                        item.zone_id === zone &&
+                                        item.zone.zone_id === zone &&
                                         item.way_of_booking === "full" &&
                                         item.time ===
-                                          `${slot.startTime}-${slot.endTime}`
+                                          `${slot.startTime}-${slot.endTime}` &&
+                                        item.status === "success"
                                       );
                                     })
                                   ? "#FF0000" // Red color when disabled
                                   : "#2EA8BF",
-                              backgroundImage: bookingDate.find(
-                                (booking) =>
-                                  booking.time ===
-                                    `${slot.startTime}-${slot.endTime}` &&
-                                  booking.date === datee &&
-                                  booking.zone.zone_id === zone &&
-                                  booking.way_of_booking === "full"
-                              )
-                                ? "none" // If fully booked, no gradient needed
-                                : bookingDate.find((booking) => {
-                                    console.log("hhhhhhhh");
-                                    console.log(zoneDetails?.capacity);
-                                    console.log(timeParticipantCounts1);
-                                    console.log(booking.way_of_booking);
-                                    console.log(booking.zone.capacity)
-                                    return (
-                                      booking.time ===
-                                        `${slot.startTime}-${slot.endTime}` &&
-                                      booking.way_of_booking ===
-                                        "person_by_person" &&
-                                      booking.date === datee &&
-                                      booking.zone.zone_id === zone &&
-                                      booking.booking_type === "zone"
-                                    );
-                                  })
-                                ? `linear-gradient(to right, #0F70AE ${
-                                  ((timeParticipantCounts1.find(
-                                    (item) => item.time === `${slot.startTime}-${slot.endTime}`
-                                  )?.totalParticipantCount || 0) /
-                                    Number(capacity)) *
-                                  100
-                                  }%, ${
-                                    `${slot.startTime}-${slot.endTime}` === time
-                                      ? "#1677FF"
-                                      : "#2EA8BF"
-                                  } 0%)`
-                                : "none",
                             }}
                             onClick={() => {
                               setTime(`${slot.startTime}-${slot.endTime}`);
@@ -734,17 +783,19 @@ const CoachBookingForm: React.FC = () => {
                                 item.zone_id === zone &&
                                 item.coach_id === coachId &&
                                 item.time ===
-                                  `${slot.startTime}-${slot.endTime}`
+                                  `${slot.startTime}-${slot.endTime}` &&
+                                item.status === "success"
                             ) ||
-                            zoneBookingDetails.find((item) => {
+                            bookingDate.find((item) => {
                               console.log(item.date);
                               console.log(item.time); // Logging item.date
                               return (
                                 item.date === datee &&
-                                item.zone_id === zone &&
+                                item.zone.zone_id === zone &&
                                 item.time ===
                                   `${slot.startTime}-${slot.endTime}` &&
-                                item.way_of_booking === "full"
+                                item.way_of_booking === "full" &&
+                                item.status === "success"
                               );
                             })
                               ? "Booked"

@@ -12,7 +12,7 @@ import axiosInstance from "../../axiosInstance";
 import { PlayerContext } from "../../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
-import { ZoneBookingDetails } from "../../types";
+import { CoachBookingDetails, ZoneBookingDetails } from "../../types";
 import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
 import AppFooter from "../../components/footer";
@@ -31,6 +31,7 @@ const requestList = [
 
 const PlayerProfile = () => {
   const [playerBookingsData, setPlayerBookingsData] = useState([]);
+  const [coachBookingData, setCoachBookingData] = useState([]);
   const { userDetails } = useContext(PlayerContext);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
@@ -70,6 +71,26 @@ const PlayerProfile = () => {
           return prev.filter(
             (playerBookingDetails: ZoneBookingDetails) =>
               playerBookingDetails.status === "success"
+          );
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [userDetails]);
+  console.log("userDetails", userDetails);  
+  useEffect(() => {
+    axios
+      .get(
+        process.env.REACT_APP_API_URL + `api/getCoachBooking/${userDetails?.id}`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setCoachBookingData(res.data);
+        setCoachBookingData((prev: any) => {
+          return prev.filter(
+            (coachBookingData: CoachBookingDetails) =>
+              coachBookingData.status === "success"
           );
         });
       })
@@ -573,21 +594,31 @@ const PlayerProfile = () => {
             md={8}
             lg={6}
             xl={6}
-          ></Col>
+          >Venue</Col>
         </Row>
 
-        {requestList.slice(0, numberOfItemsShown).map((request, index) => (
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-            key={index}
-          >
-            {request}
-          </div>
-        ))}
+        {coachBookingData && coachBookingData.length > 0 ? (
+          coachBookingData.map((booking: CoachBookingDetails) => (
+            // Check if booking type is "zone"
+
+            <CoachRequstRow
+              key={booking.booking_id} // Make sure to provide a unique key
+              booking_id={booking.booking_id}
+              coach_image={booking.coach.user.user_image}
+              coach_name={
+                booking.coach.user.firstname + " " + booking.coach.user.lastname
+              }
+              booking_date={booking.date}
+              booking_time={booking.time}
+              venue={booking.arcade.arcade_name}
+              user_id={booking.player.user.user_id}
+              created_at={booking.created_at}
+              setZoneBookingDetails={setZoneBookingDetails1}
+            />
+          ))
+        ) : (
+          <Empty description="No Bookings Availiable" />
+        )}
 
         {showMore ? (
           <Button
@@ -754,20 +785,24 @@ const PlayerProfile = () => {
           }}
         >
           {playerBookingsData && playerBookingsData.length > 0 ? (
-            playerBookingsData.map((booking: ZoneBookingDetails) => (
-              <AvailableMetingstoPlayer
-                key={booking.zone_booking_id} // Make sure to provide a unique key
-                booking_id={booking.zone_booking_id}
-                zone_image={booking.zone.zone_image}
-                zone_name={booking.zone.zone_name}
-                booking_date={booking.date}
-                booking_time={booking.time}
-                venue={booking.zone.arcade.arcade_name}
-                setZoneBookingDetails={setZoneBookingDetails1}
-              />
-            ))
+            playerBookingsData.map(
+              (booking: ZoneBookingDetails) =>
+                // Check if booking type is "zone"
+                booking.booking_type === "zone" ? (
+                  <AvailableMetingstoPlayer
+                    key={booking.zone_booking_id} // Make sure to provide a unique key
+                    booking_id={booking.zone_booking_id}
+                    zone_image={booking.zone.zone_image}
+                    zone_name={booking.zone.zone_name}
+                    booking_date={booking.date}
+                    booking_time={booking.time}
+                    venue={booking.zone.arcade.arcade_name}
+                    setZoneBookingDetails={setZoneBookingDetails1}
+                  />
+                ) : null // Return null for bookings that are not of type "zone"
+            )
           ) : (
-            <Empty description="No Bookings Availiable" />
+            <Empty description="No Bookings Available" />
           )}
         </div>
 
