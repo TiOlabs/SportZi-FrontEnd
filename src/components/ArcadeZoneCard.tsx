@@ -5,6 +5,7 @@ import { useState } from "react";
 import axios from "axios";
 import UpdateZone from "./UpdateZone";
 const ArcadeZoneCard = (props: any) => {
+  console.log("lol ", props);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -29,10 +30,6 @@ const ArcadeZoneCard = (props: any) => {
 
   return (
     <>
-      <style>
-        @import
-        url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
-      </style>
       <Row
         style={{
           width: lg ? "360px" : "300px",
@@ -164,6 +161,7 @@ const ArcadeZoneCard = (props: any) => {
                 close_time= {props.close_time}
                 capacity= {props.capacity}
                 sport= {props.sport}
+                sport_id= {props.sport_id}
                 
                 />
                 

@@ -162,7 +162,7 @@ const ArcadeCard = (props: any) => {
                   height: "40px",
                 }}
               >
-                Book Now
+                View Profile
               </Button>
             </div>
           </div>

@@ -59,7 +59,13 @@ const AppRoutes = () => {
         <Route path="PlayerUser" element={<PlayerProfileUser />} />
         <Route
           path="forms/coachassigndetailsform"
-          element={<CoachAssignDetailsForm />}
+          element={
+            <Auth>
+              <ProtectedRoute>
+                <CoachAssignDetailsForm />
+              </ProtectedRoute>
+            </Auth>
+          }
         />
         <Route path="CoachUser" element={<CoachProfileUser />} />
         <Route
@@ -68,7 +74,16 @@ const AppRoutes = () => {
         />
         <Route path="arcadeProfile/:ArcadeId" element={<ArcadeProfileUser />} />
         <Route path="admin" element={<Admin />} />
-        <Route path="coachBookingForm" element={<CoachBookingForm />} />
+        <Route
+          path="coachBookingForm"
+          element={
+            <Auth>
+              <ProtectedRoute>
+                <CoachBookingForm />{" "}
+              </ProtectedRoute>
+            </Auth>
+          }
+        />
         <Route path="profile" element={<PlayerProfile />} />
         <Route path="ChooseArchade" element={<ChooseArcade />} />
       </Routes>

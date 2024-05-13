@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Form,
@@ -15,8 +15,10 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import dayjs from "dayjs";
+import { useParams } from "react-router-dom";
 
 const UpdateZone = (props: any) => {
+  const { ArcadeId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -41,9 +43,9 @@ const UpdateZone = (props: any) => {
   const [startedTime, setStartedTime] = useState<any>(props.open_time);
   const [closedTime, setClosedTime] = useState<string | null>(props.close_time);
   const [discription, setDiscription] = useState(props.description);
-  const [sport,setSport] = useState(props.sport);
-  console.log(sport);
-
+  const [sportc,setSportc] = useState("");
+  console.log(sportc);
+console.log(props.sport)
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -94,7 +96,12 @@ const UpdateZone = (props: any) => {
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
-    try {
+    let sportcc=sportc
+    if(sportcc === ""){
+      sportcc=props.sport_id
+    }
+      try {
+        console.log(sportcc)
       const res = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
         {
@@ -106,8 +113,8 @@ const UpdateZone = (props: any) => {
           zone_image: publicId,
           open_time: startedTime,
           close_time: closedTime,
-          arcade_id: "A00001",
-          sport_id: sport,
+          arcade_id: ArcadeId,
+          sport_id: sportcc,
         }
 
       );
@@ -123,9 +130,10 @@ const UpdateZone = (props: any) => {
       <Button
         onClick={showModal}
         style={{
-          backgroundColor: "blue",
+          backgroundColor: "#5587CC",
           color: "white",
           fontFamily: "kanit",
+          marginLeft: "-10px",
         }}
       >
         Update
@@ -149,20 +157,20 @@ const UpdateZone = (props: any) => {
           
           <Form.Item
             name="ArcadeName"
-            label="Arcade Name"
+            label="Zone Name"
             rules={[
               {
                 type: "string",
-                message: "Please enter a arcade name!",
+                message: "Please enter a Zone name!",
               },
               {
                 required: true,
-                message: "Please input your Arcade Name!",
+                message: "Please input your Zone Name!",
               },
             ]}
           >
             <Input
-              placeholder="Arcade Name"
+              placeholder="Zone Name"
               defaultValue={arcadeName}
               onChange={(e) => {
                 setArcadeName(e.target.value);
@@ -171,7 +179,7 @@ const UpdateZone = (props: any) => {
           </Form.Item>
           <Form.Item
             name="capacity"
-            label="Arcade capacity"
+            label="Zone capacity"
             rules={[
               {
                 type: "number",
@@ -201,7 +209,7 @@ const UpdateZone = (props: any) => {
 
           <Form.Item
             name="rate"
-            label="Arcade rate"
+            label="Zone rate"
             rules={[
               {
                 type: "number",
@@ -230,15 +238,15 @@ const UpdateZone = (props: any) => {
           </Form.Item>
           <Form.Item
             name="Discription"
-            label="Arcade discription"
+            label="Zone discription"
             rules={[
               {
                 type: "string",
-                message: "Please enter a arcade discription!",
+                message: "Please enter a Zone discription!",
               },
               {
                 required: true,
-                message: "Please input your Arcade Discrition!",
+                message: "Please input your Zone Discrition!",
               },
             ]}
           >
@@ -284,24 +292,24 @@ const UpdateZone = (props: any) => {
           >
             <Select
               placeholder="Select a sport"
-              defaultValue={sport}
-              onChange={(value) => setSport(value)}
+              defaultValue={props.sport}
+              onChange={(value) => setSportc(value)}
             >
-              <Select.Option value="cricket">Cricket</Select.Option>
-              <Select.Option value="Swimming">Swimming</Select.Option>
-              <Select.Option value="FootBall">FootBall</Select.Option>
-              <Select.Option value="Gym">Gym</Select.Option>
-              <Select.Option value="NetBall">NetBall</Select.Option>
-              <Select.Option value="Batmintain">Batmintain</Select.Option>
+              <Select.Option value="S00001">Cricket</Select.Option>
+              <Select.Option value="S00002">FootBall</Select.Option>
+              <Select.Option value="S00003">Swimming</Select.Option>
+              <Select.Option value="S00004">Gym</Select.Option>
+              <Select.Option value="S00005">NetBall</Select.Option>
+              <Select.Option value="S00006">Batmintain</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item
             name="TimeStart"
-            label="Update Arcade Open Time"
+            label="Update Zone Open Time"
             rules={[
               {
                 required: true,
-                message: "Please select Arcade Open time!",
+                message: "Please select Zone Open time!",
               },
             ]}
           >
@@ -318,11 +326,11 @@ const UpdateZone = (props: any) => {
           </Form.Item>
           <Form.Item
             name="TimeClose"
-            label="Update Arcade Close Time"
+            label="Update Zone Close Time"
             rules={[
               {
                 required: true,
-                message: "Please select arcade Close Time!",
+                message: "Please select Zone Close Time!",
               },
             ]}
           >

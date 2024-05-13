@@ -10,6 +10,8 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { usePlayer } from "../../context/player.context";
 import { useLocation } from "react-router-dom";
+import { useArcade } from "../../context/Arcade.context";
+import { useCoach } from "../../context/coach.context";
 // Redirect or perform other logout operations if necessary
 
 const Home = () => {
@@ -23,10 +25,18 @@ const Home = () => {
     setToken(Cookies.get("token"));
   }, []);
   const { userDetails } = usePlayer();
+  const { managerDetails } = useArcade();
+  const{coachDetails}=useCoach();
   console.log("userDetails", userDetails);
+  console.log("managerDetails", managerDetails);
+  console.log("coachDetails", coachDetails);
   return (
     <>
-      {userDetails.id!=="" ? <Navbar/> : <NavbarLogin />}
+      {userDetails.id !== "" || managerDetails.id !== "" || coachDetails.id!=="" ? (
+        <Navbar />
+      ) : (
+        <NavbarLogin />
+      )}
       <HeroSection />
       <CoachCardSection />
       <DiscoutCardsSection />

@@ -1,8 +1,4 @@
-import {
-  EditOutlined,
-  LogoutOutlined,
-  MenuOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useEffect, useState, useContext } from "react";
@@ -15,6 +11,8 @@ import Cookies from "js-cookie";
 import { usePlayer } from "../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
+import { useArcade } from "../context/Arcade.context";
+import { useCoach } from "../context/coach.context";
 
 const Navbar: React.FC = () => {
   const [cloudName] = useState("dle0txcgt");
@@ -24,7 +22,11 @@ const Navbar: React.FC = () => {
     },
   });
   const { userDetails } = usePlayer();
+  const { managerDetails } = useArcade();
+  const { coachDetails } = useCoach();
+  console.log(managerDetails);
   console.log(userDetails);
+  console.log(coachDetails);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -175,7 +177,6 @@ const Navbar: React.FC = () => {
 
   // }
 
-
   const content = (
     <div className="NavBarUserProfileClickDetail">
       <div
@@ -192,23 +193,64 @@ const Navbar: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          <Link to={`/profile/`}>
-            <AdvancedImage
-              style={{
-                width: "50px",
-                height: "50px",
-                marginLeft: "10px",
-                marginTop: "10px",
-                borderRadius: "50%",
-                border: "1px solid black",
-              }}
-              cldImg={
-                cld.image(userDetails?.image)
-                // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                // .resize(Resize.scale().width(200).height(200))
-              }
-            />
-          </Link>
+          {userDetails.role === "PLAYER" && (
+            <Link to={`/profile/`}>
+              <AdvancedImage
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  marginLeft: "10px",
+                  marginTop: "10px",
+                  borderRadius: "50%",
+                  border: "1px solid black",
+                }}
+                cldImg={
+                  cld.image(userDetails?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
+            </Link>
+          )}
+          {managerDetails.role === "MANAGER" && (
+            <Link to={`/ChooseArchade/`}>
+              <AdvancedImage
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  marginLeft: "10px",
+                  marginTop: "10px",
+                  borderRadius: "50%",
+                  border: "1px solid black",
+                }}
+                cldImg={
+                  cld.image(managerDetails?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
+            </Link>
+          )}
+
+          {coachDetails.role === "COACH" && (
+            <Link to={`/coachProfile/`}>
+              <AdvancedImage
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  marginLeft: "10px",
+                  marginTop: "10px",
+                  borderRadius: "50%",
+                  border: "1px solid black",
+                }}
+                cldImg={
+                  cld.image(coachDetails?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
+            </Link>
+          )}
         </div>
         <div
           className="NavBarUserProfileNameLaptop"
@@ -221,8 +263,11 @@ const Navbar: React.FC = () => {
             marginTop: "10px",
           }}
         >
-          {userDetails.firstName} {userDetails.lastName}
+          {userDetails.firstName && userDetails.lastName
+            ? `${userDetails.firstName} ${userDetails.lastName}`
+            : `${coachDetails.firstName} ${coachDetails.lastName}`}
         </div>
+
         <div
           className="NavBarUserProfileStatusLaptop"
           style={{
@@ -232,7 +277,7 @@ const Navbar: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          {userDetails?.role}
+          {userDetails?.role ? userDetails?.role : coachDetails?.role}
         </div>
         <Divider style={{}} />
       </div>
@@ -243,7 +288,6 @@ const Navbar: React.FC = () => {
           onClick={() => {
             logOut();
             window.location.reload();
-            
           }}
           style={{
             width: "100%",
@@ -264,7 +308,6 @@ const Navbar: React.FC = () => {
       </div>
     </div>
   );
-
 
   const bgStyle = () => {
     if (pathname === "/") {
@@ -757,9 +800,12 @@ const Navbar: React.FC = () => {
                       border: "1px solid black",
                     }}
                     cldImg={
-                      cld.image(userDetails?.image)
-                      // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                      // .resize(Resize.scale().width(200).height(200))
+                      userDetails && userDetails.image
+                        ? cld.image(userDetails.image)
+                        : // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                          // .resize(Resize.scale().width(200).height(200))
+                          cld.image(coachDetails.image)
+                          // render coach's image if userDetails is empty
                     }
                   />
                 </a>

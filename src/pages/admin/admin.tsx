@@ -13,12 +13,13 @@ import PackageEnrolled from "./bookingManagement/packageEnrolled";
 import PlayerManagement from "./userManagement/playerManagement";
 import CoachManagement from "./userManagement/coachesManagement";
 import ArcadeManagement from "./userManagement/arcadeManagement";
-import CoachArcadeCancel from "./paymentManagement/coachArcadeCancel";
+import CoachArcadeCancel from "./paymentManagement/arcadeCancel";
 import PlayerCanceled from "./paymentManagement/playerCancelled";
 import ComplitedBookings from "./paymentManagement/completedBookings";
 import AdminCanceled from "./paymentManagement/adminCancelled";
 import { ArcadeBookings } from "../../types";
 import axios from "axios";
+import { get } from "http";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -46,13 +47,14 @@ const items: MenuProps["items"] = [
   getItem("Payment Manegement", "sub5", <DollarOutlined />, [
     getItem("completed Booking", "12"),
     getItem("Player Canceled", "13"),
-    getItem("Coach/Arcade Canceled", "14"),
-    getItem("Admin Canceled", "15"),
+    getItem("Arcade Canceled", "14"),
+    getItem("Coach Canceled", "15"),
+    getItem("Admin Canceled", "16"),
   ]),
   getItem("Booking Management", "sub6", <AuditOutlined />, [
-    getItem("Booked Arena", "16"),
-    getItem("Booked Coaches ", "17"),
-    getItem("Package Enrolled", "18"),
+    getItem("Booked Arena", "17"),
+    getItem("Booked Coaches ", "18"),
+    getItem("Package Enrolled", "19"),
   ]),
 ];
 const SideBarAdminPage = () => {
@@ -99,14 +101,16 @@ const SideBarAdminPage = () => {
     } else if (e.key === "13") {
       setstts("playerCanceled");
     } else if (e.key === "14") {
-      setstts("coachArcadeCanceled");
+      setstts("ArcadeCanceled");
     } else if (e.key === "15") {
-      setstts("adminCanceled");
+      setstts("CoachCanceled");
     } else if (e.key === "16") {
-      setstts("bookedArena");
+      setstts("adminCanceled");
     } else if (e.key === "17") {
-      setstts("bookedcoach");
+      setstts("bookedArena");
     } else if (e.key === "18") {
+      setstts("bookedcoach");
+    }else if (e.key === "19") {
       setstts("packageEnrolled");
     }
   };
@@ -174,7 +178,7 @@ const SideBarAdminPage = () => {
       {stts === "PlayerManagement" && <PlayerManagement />}
       {stts === "CoachManagement" && <CoachManagement />}
       {stts === "ArcadeManagement" && <ArcadeManagement />}
-      {stts === "coachArcadeCanceled" && <CoachArcadeCancel />}
+      {stts === "ArcadeCanceled" && <CoachArcadeCancel />}
       {stts === "playerCanceled" && <PlayerCanceled />}
       {stts === "completedBooking" && <ComplitedBookings />}
     </Row>
