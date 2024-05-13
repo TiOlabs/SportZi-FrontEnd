@@ -6,11 +6,12 @@ import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
 import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import { Moment } from "moment";
 import axiosInstance from "../../axiosInstance";
+import { Sport } from "../../types";
 
 //responsiveness
 const formItemLayout = {
@@ -60,7 +61,21 @@ const SignupCoach = () => {
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
   const [sport, setSport] = useState("");
+  const [sportDetails, setSportDetails] = useState<Sport[]>([]);
 
+  useEffect(() => {
+    const fetchSports = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getSportDetails`
+        );
+        setSportDetails(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSports();
+  }, []);
   const onFinish = async () => {
     try {
       const response = await axiosInstance
@@ -72,7 +87,7 @@ const SignupCoach = () => {
           phone_number: phone,
           DOB: selectedDateString,
           gender: gender,
-          sport_name: sport,
+          sport_id: sport,
         })
         .then((res) => {
           console.log(res);
@@ -89,8 +104,7 @@ const SignupCoach = () => {
     }
   };
 
-
-  const validateName =  (_: any, value: string) => {
+  const validateName = (_: any, value: string) => {
     const phoneRegex = /^[a-zA-Z]+$/;
     if (!value || phoneRegex.test(value)) {
       return Promise.resolve();
@@ -242,8 +256,8 @@ const SignupCoach = () => {
                     whitespace: true,
                   },
                   {
-                    validator:validateName,
-                  }
+                    validator: validateName,
+                  },
                 ]}
                 // style={{ ...commonLabelStyle }}
               >
@@ -265,8 +279,8 @@ const SignupCoach = () => {
                     whitespace: true,
                   },
                   {
-                    validator:validateName,
-                  }
+                    validator: validateName,
+                  },
                 ]}
               >
                 <Input
@@ -433,11 +447,24 @@ const SignupCoach = () => {
                   },
                 ]}
               >
-                <Input
-                  placeholder="Enter your sport"
-                  style={commonInputStyle}
-                  onChange={(e) => setSport(e.target.value)}
-                />
+                <Select
+                  placeholder="select your Sport"
+                  onChange={(value) => setSport(value)}
+                  style={{
+                    ...commonInputStyle,
+                    border: "1px solid #ccc",
+                    padding: "4px",
+                  }}
+                >
+                  {sportDetails.map((sport) => (
+                    <Option
+                      value={sport.sport_id}
+                      style={{ ...commonInputStyle, border: "1px solid #ccc" }}
+                    >
+                      {sport.sport_name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
