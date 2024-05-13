@@ -3,11 +3,11 @@ import axiosInstance from "../axiosInstance";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
-export const ArcadeContext = createContext<any>(null);
+export const CoachContext = createContext<any>(null);
 
-const ArcadeProvider = ({ children }: any) => {
+const CoachProvider = ({ children }: any) => {
   const [decodedValues, setDecodedValues] = useState<any>();
-  const [managerDetails, setManagerDetails] = useState<any>({
+  const [coachDetails, setCoachDetails] = useState<any>({
     id: "",
     firstName: "",
     lastName: "",
@@ -26,30 +26,27 @@ const ArcadeProvider = ({ children }: any) => {
   console.log("decodedValues", decodedValues);
 
   console.log("decodedValues", decodedValues?.userId);
-  const id = decodedValues?.userId;
+  const t = decodedValues?.userId;
 
   useEffect(() => {
     try {
       const fetchData = async () => {
-        if (id) {
+        if (t) {
           // Check if t is not null
           axiosInstance
-            .get(`http://localhost:8000/api/getarcadeDetailsById/${id}`)
+            .get(`http://localhost:8000/api/auth/getcoachDetailsForCoach/${t}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
-              
-              try {
-                setManagerDetails({
-                  id: res.data.manager_id,
-                  firstName: res.data.user.firstname,
-                  lastName: res.data.user.lastname,
-                  role: res.data.user.role,
-                  image: res.data.user.user_image,
-                });
-              } catch (err) {
-                console.log(err);
-              }
-              console.log("dataaaaaaaaaa", res.data);
+              setCoachDetails({
+                id: res.data.user_id,
+                firstName: res.data.firstname,
+                lastName: res.data.lastname,
+                role: res.data.role,
+                image: res.data.user_image,
+                phoneNumbers: res.data.phone[0].phone_number,
+                discription: res.data.Discription,
+                achivements: res.data.achivements,
+              });
             })
             .catch((err) => {
               console.log(err);
@@ -61,22 +58,22 @@ const ArcadeProvider = ({ children }: any) => {
       console.error("Error:", error);
       // Handle error responses here if needed
     }
-  }, [id]);
-  console.log("managerDetails", managerDetails);
+  }, [t]);
+
   // console.log("t", t);
   return (
-    <ArcadeContext.Provider value={{ managerDetails }}>
+    <CoachContext.Provider value={{ coachDetails }}>
       {children}
-    </ArcadeContext.Provider>
+    </CoachContext.Provider>
   );
 };
 
-function useArcade() {
-  const context = useContext(ArcadeContext);
+function useCoach() {
+  const context = useContext(CoachContext);
   if (context === undefined) {
-    throw new Error("usePlayer must be used within a PlayerProvider");
+    throw new Error("useCoach must be used within a CoachProvider");
   }
   return context;
 }
 
-export { ArcadeProvider, useArcade };
+export { CoachProvider, useCoach };
