@@ -635,6 +635,7 @@ const BookingForm = () => {
                               (booking) =>
                                 booking.time === button.id &&
                                 booking.status === "success"
+
                             )
                           ? `linear-gradient(to right, #0F70AE ${
                               ((timeParticipantCounts1.find(

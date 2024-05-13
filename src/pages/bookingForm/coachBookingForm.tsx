@@ -650,6 +650,7 @@ const CoachBookingForm: React.FC = () => {
                         return timeSlots;
                       })
                       // Sort the time slots based on start time
+
                       .sort(
                         (
                           a: { startTime: string },
@@ -729,6 +730,7 @@ const CoachBookingForm: React.FC = () => {
                                         "person_by_person" &&
                                       item.booking_type === "zone" &&
                                       item.status === "success"
+
                                     );
                                   })
                                 ? `linear-gradient(to right, #0F70AE ${
