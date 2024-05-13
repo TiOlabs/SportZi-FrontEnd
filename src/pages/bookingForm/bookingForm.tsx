@@ -595,7 +595,6 @@ const BookingForm = () => {
                     maxHeight: "800px", // Adjust the maximum height to fit your layout
                   }}
                 >
-                 
                   {buttonData.map((button) => (
                     <button
                       disabled={
@@ -618,7 +617,8 @@ const BookingForm = () => {
                         backgroundColor: bookingDate.find(
                           (booking) =>
                             booking.time === button.id &&
-                            booking.way_of_booking === "full"
+                            booking.way_of_booking === "full" &&
+                            booking.status === "success"
                         )
                           ? "#0F70AE" // If fully booked, set background color to red
                           : button.id === time // Otherwise, use the original logic for background color
@@ -632,7 +632,10 @@ const BookingForm = () => {
                         )
                           ? "none" // If fully booked, no gradient needed
                           : bookingDate.find(
-                              (booking) => booking.time === button.id
+                              (booking) =>
+                                booking.time === button.id &&
+                                booking.status === "success"
+
                             )
                           ? `linear-gradient(to right, #0F70AE ${
                               ((timeParticipantCounts1.find(
@@ -647,11 +650,13 @@ const BookingForm = () => {
                       {bookingDate.find(
                         (booking) =>
                           booking.time === button.id &&
-                          booking.way_of_booking === "full"
+                          booking.way_of_booking === "full" &&
+                          booking.status === "success"
                       )
                         ? "Fully Booked"
                         : timeParticipantCounts1.find(
-                            (item) => item.time === button.id
+                            (item) => item.time === button.id 
+                            
                           )?.totalParticipantCount === capacity
                         ? "Fully Booked"
                         : `${
