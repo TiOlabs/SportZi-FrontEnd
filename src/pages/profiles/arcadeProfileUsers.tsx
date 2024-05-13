@@ -12,14 +12,32 @@ import ArcadeZoneCard from "../../components/ArcadeZoneCard";
 import AddZone from "../../components/AddZone";
 import ArcadePackages from "../../components/ArcadePackages";
 import AddPackage from "../../components/AddPackage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
-
+import { useParams } from "react-router-dom";
+import axiosInstance from "../../axiosInstance";
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
+  const { ArcadeId } = useParams();
+  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
+  useEffect(() => {
+    axiosInstance
+      .get("/api/auth/getarchadedetails", {
+        params: {
+          ArcadeId: ArcadeId,
+        },
+      })
+      .then((res) => {
+        setArcadeDetails(res.data);
+        console.log("dataaaaaa", res.data);
+      })
+      .catch((err) => {
+        console.log("daddds", err);
+      });
+  }, []);
 
   return (
     <>
@@ -114,12 +132,7 @@ const ArcadeProfileUser = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {arcadeDetails && arcadeDetails.distription}
               </Typography>
               <Button
                 style={{
@@ -175,7 +188,7 @@ const ArcadeProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                Super box complex
+                {arcadeDetails && arcadeDetails.arcade_name}
               </h1>
               <p
                 style={{

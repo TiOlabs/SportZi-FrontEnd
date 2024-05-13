@@ -1,16 +1,21 @@
-import {Button} from "antd";
+import { Button } from "antd";
 import { getTwoToneColor } from "@ant-design/icons";
 import { useState } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import { Rate } from "antd";
-
+import { useNavigate } from "react-router-dom";
 <style>
   @import
   url('https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap')
 </style>;
 
 const ArcadeCard = (props: any) => {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/arcadeProfile/${props.arcade_id}`);
+  };
+
   getTwoToneColor();
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -20,8 +25,6 @@ const ArcadeCard = (props: any) => {
   });
   console.log("props", props);
   console.log("props", props.arcade_rate[0]?.rate);
-
-
 
   return (
     <>
@@ -63,6 +66,7 @@ const ArcadeCard = (props: any) => {
             }}
           >
             <div
+              onClick={handleClick}
               style={{
                 borderRadius: "100%",
                 width: "100px",
@@ -86,6 +90,7 @@ const ArcadeCard = (props: any) => {
 
             <div style={{ marginTop: "8px" }}>
               <p
+                onClick={handleClick}
                 style={{ color: "#1B5DB7", fontSize: 22, fontFamily: "kanit" }}
               >
                 {props.arcade_name}
@@ -104,9 +109,7 @@ const ArcadeCard = (props: any) => {
             >
               <Rate
                 disabled
-
                 defaultValue={props.arcade_rate[0]?.rate}
-
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>

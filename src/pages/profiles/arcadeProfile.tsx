@@ -162,10 +162,13 @@ const ArcadeProfileArcade = () => {
     }
   };
 
+  const { ArcadeId } = useParams();
+
+
   console.log("in the arcade", ArcadeId);
 
-  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
 
+  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
   useEffect(() => {
     axiosInstance
       .get("/api/auth/getarchadedetails", {
@@ -174,7 +177,6 @@ const ArcadeProfileArcade = () => {
         },
       })
       .then((res) => {
-        console.log("aaaaaaaaaaaaaaaa", res.data);
         setArcadeDetails(res.data);
       })
       .catch((err) => {
