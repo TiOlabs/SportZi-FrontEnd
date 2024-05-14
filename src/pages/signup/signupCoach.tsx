@@ -1,6 +1,6 @@
 import "../../styles/signup.css";
 
-import { Flex } from "antd";
+import { Flex, InputNumber } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
@@ -58,6 +58,7 @@ const SignupCoach = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [rate, setrate] = useState("");
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
   const [sport, setSport] = useState("");
@@ -76,7 +77,10 @@ const SignupCoach = () => {
     };
     fetchSports();
   }, []);
+
   const onFinish = async () => {
+    const rateint = parseInt(rate);
+    console.log(rateint); 
     try {
       const response = await axiosInstance
         .post("/api/addcoach", {
@@ -87,6 +91,7 @@ const SignupCoach = () => {
           phone_number: phone,
           DOB: selectedDateString,
           gender: gender,
+          rate: rateint,
           sport_id: sport,
         })
         .then((res) => {
@@ -377,6 +382,34 @@ const SignupCoach = () => {
                   placeholder="Enter your contact number"
                   style={commonInputStyle}
                   onChange={(e) => setPhone(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item
+                name="rate"
+                label="Add your hourly rate"
+                rules={[
+                  {
+                    type: "number",
+                    message: "Please enter rate!",
+                  },
+                  {
+                    required: true,
+                    message: "Please input rate!",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (value <= 0) {
+                        return Promise.reject("rate should be greater than 0");
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <InputNumber
+                  placeholder="capacity"
+                  style={{ width: "100%" }}
+                  onChange={(value) => setrate(value?.toString() || "")}
                 />
               </Form.Item>
 

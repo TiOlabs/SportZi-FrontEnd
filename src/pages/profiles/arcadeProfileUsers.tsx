@@ -18,7 +18,7 @@ import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
-import { Arcade, Zone } from "../../types";
+import { Arcade, CoachAssignDetails, Zone } from "../../types";
 import axios from "axios";
 import NavbarProfile from "../../components/NavBarProfile";
 import NavbarLogin from "../../components/NavBarLogin";
@@ -28,6 +28,7 @@ import { ArcadeContext } from "../../context/Arcade.context";
 import ArcadeZoneCardUserView from "../../components/arcadeZoneCard(UserView)";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import CoachApplyForm from "../../components/coachApplyForArcade";
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -37,6 +38,9 @@ const ArcadeProfileUser = () => {
   const { userDetails } = useContext(PlayerContext);
   const { coachDetails } = useContext(CoachContext);
   const { arcadeDetails } = useContext(ArcadeContext);
+  const [coachesInArcade, setCoachesInArcade] = useState<CoachAssignDetails[]>(
+    []
+  );
   console.log("userDetails", userDetails);
   console.log("coachDetails", coachDetails);
 
@@ -70,6 +74,24 @@ const ArcadeProfileUser = () => {
       console.log(e);
     }
   }, []);
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${ArcadeId}`,
+        {}
+      )
+      .then((res) => {
+        // Filter data where status is "success"
+
+        const filteredData = res.data.filter(
+          (item: { status: string }) => item.status === "success"
+        );
+        setCoachesInArcade(filteredData);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [ArcadeId]);
   console.log("arcade", arcade?.arcade_image);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -79,9 +101,7 @@ const ArcadeProfileUser = () => {
   });
   return (
     <>
-      {userDetails !== "" ||
-      coachDetails !== "" ||
-      arcadeDetails !== "" ? (
+      {userDetails !== "" || coachDetails !== "" || arcadeDetails !== "" ? (
         <NavbarProfile />
       ) : (
         <NavbarLogin />
@@ -182,18 +202,14 @@ const ArcadeProfileUser = () => {
               >
                 {arcadeDetails1 && arcadeDetails1.distription}
               </Typography>
-              <Button
+              <div
                 style={{
-                  backgroundColor: "#5587CC",
-                  fontFamily: "kanit",
-                  color: "#fff",
-                  borderRadius: "3px",
                   marginTop: "30px",
                 }}
               >
                 {" "}
-                Apply for coaching
-              </Button>
+                <CoachApplyForm />
+              </div>
             </Col>
           </Row>
         </Col>
@@ -664,46 +680,15 @@ const ArcadeProfileUser = () => {
                 justifyContent: "center",
               }}
             >
-              <CoachCard />
-            </Col>
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <CoachCard />
-            </Col>
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <CoachCard />
-            </Col>
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <CoachCard />
+              {coachesInArcade.map((coach: CoachAssignDetails) => (
+                <CoachCard
+                  coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
+                  coachImage={coach.coach.user.user_image}
+                  short_description={coach.description}
+                  date={coach.assigned_date}
+                  rate={coach.coach.rate}
+                />
+              ))}
             </Col>
           </Row>
         </div>

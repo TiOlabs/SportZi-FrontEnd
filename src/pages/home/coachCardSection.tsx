@@ -8,9 +8,7 @@ import { Pagination } from "antd";
 import axios from "axios";
 
 const CoachCardSection = () => {
-  const [coachAssignDetails, setCoachAssignDetails] = useState<
-    Coach[]
-  >([]);
+  const [coachAssignDetails, setCoachAssignDetails] = useState<Coach[]>([]);
   const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -23,9 +21,8 @@ const CoachCardSection = () => {
   const currentItems = coachAssignDetails.slice(startIndex, endIndex);
 
   useEffect(() => {
-
     const fetchData = async () => {
-        try {
+      try {
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}api/getcoach`
         );
@@ -36,7 +33,6 @@ const CoachCardSection = () => {
           (coach: { status: string }) => coach.status === "active"
         );
         setCoachAssignDetails(successCoaches);
-
       } catch (error) {
         console.log(error);
       }
@@ -120,30 +116,23 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-                {coachAssignDetails?.map(
-                  (coach: Coach ) => (
-                    <Col
-                      lg={{ span: 5 }}
-                      md={{ span: 8 }}
-                      sm={{ span: 12 }}
-                      xs={{ span: 24 }}
-                    >
-                      <CoachCard
-                        coach_first_name={coach.user.firstname
-                          
-                        }
-                        coach_last_name={coach.user.lastname}
-                        short_description={
-                          coach.short_desctiption
-                        }
-                        rate={coach.rate}
-                        // duration={coachAssignDetail.duration}
-                        coach_image={coach.user.user_image}
-                      />
-                    </Col>
-                  )
-                )}
-
+                {coachAssignDetails?.map((coach: Coach) => (
+                  <Col
+                    lg={{ span: 5 }}
+                    md={{ span: 8 }}
+                    sm={{ span: 12 }}
+                    xs={{ span: 24 }}
+                  >
+                    <CoachCard
+                      coachName={`${coach.user.firstname} ${coach.user.lastname}`}
+                      coach_last_name={coach.user.lastname}
+                      short_description={coach.short_desctiption}
+                      rate={coach.rate}
+                      // duration={coachAssignDetail.duration}
+                      coach_image={coach.user.user_image}
+                    />
+                  </Col>
+                ))}
               </Row>
               <Pagination
                 style={{ marginTop: "-30px" }}

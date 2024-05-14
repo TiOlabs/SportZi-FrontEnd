@@ -59,7 +59,7 @@ const CoachProvider = ({ children }: any) => {
       // Handle error responses here if needed
     }
   }, [t]);
-
+  console.log("coachDetails", coachDetails);
   // console.log("t", t);
   return (
     <CoachContext.Provider value={{ coachDetails }}>
