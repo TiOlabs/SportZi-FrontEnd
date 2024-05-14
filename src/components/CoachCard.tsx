@@ -25,7 +25,7 @@ const CoachCard = (props: any) => {
         <div className="mainCardsec2">
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
-              <p>{props.coach_first_name}</p>
+              <p>{props.coachName}</p>
               <p className="coachPosition">level one Rugby Coach</p>
             </div>
 

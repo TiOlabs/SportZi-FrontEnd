@@ -3,8 +3,12 @@ import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
-const CoachReqestForArcade = () => {
+const CoachReqestForArcade = (props: any) => {
+  console.log("props", props);
+  const { ArcadeId } = useParams();
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -20,6 +24,25 @@ const CoachReqestForArcade = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+  const handleAccept = () => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.put(
+          `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
+          {
+            coach_id: props.coach_id,
+            arcade_id: ArcadeId,
+            status: "success",
+          }
+        );
+        console.log(res.data);
+      };
+      fetchData();
+      alert("Accepted");
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -68,7 +91,7 @@ const CoachReqestForArcade = () => {
               lg={12}
               xl={12}
             >
-              kanishka jj
+              {props.coachName}
             </Col>
           </Row>
         </Col>
@@ -88,7 +111,7 @@ const CoachReqestForArcade = () => {
           lg={6}
           xl={6}
         >
-          Date
+          {props.date}
         </Col>
         <Col
           style={{
@@ -115,7 +138,7 @@ const CoachReqestForArcade = () => {
             }}
             key="submit"
             type="primary"
-            onClick={handleOk}
+            onClick={handleAccept}
           >
             Accept
           </Button>
