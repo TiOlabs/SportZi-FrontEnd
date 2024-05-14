@@ -27,7 +27,13 @@ import reviewBacground from "../../assents/ReviewBackground.png";
 import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
 import React from "react";
-import { Arcade, Package, Zone, ZoneBookingDetails } from "../../types";
+import {
+  Arcade,
+  CoachAssignDetails,
+  Package,
+  Zone,
+  ZoneBookingDetails,
+} from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
 import type { RadioChangeEvent } from "antd";
@@ -45,6 +51,10 @@ const ArcadeProfileArcade = () => {
   const { managerDetails } = useArcade();
   const [arcade, setArcade] = useState<Arcade>();
   const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
+  const [coachAssignRequest, setCoachAssignRequest] = useState<
+    CoachAssignDetails[]
+  >([]);
+  const [arcadeCoaches, setArcadeCoaches] = useState<CoachAssignDetails[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -127,6 +137,28 @@ const ArcadeProfileArcade = () => {
       });
   }, [ArcadeId, value]);
 
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${ArcadeId}`,
+        {}
+      )
+      .then((res) => {
+        // Filter data where status is "success"
+        const filteredData = res.data.filter(
+          (item: { status: string }) => item.status === "pending"
+        );
+        const filteredAssignedCoaches = res.data.filter(
+          (item: { status: string }) => item.status === "success"
+        );
+        setArcadeCoaches(filteredAssignedCoaches);
+        setCoachAssignRequest(filteredData);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [ArcadeId]);
+
   const { useBreakpoint } = Grid;
   const { lg, md } = useBreakpoint();
   const [showMore, setShowMore] = useState(true);
@@ -148,10 +180,15 @@ const ArcadeProfileArcade = () => {
   ];
 
   const CoachReqestToArchade = [
-    <CoachReqestForArcade />,
-    <CoachReqestForArcade />,
-    <CoachReqestForArcade />,
-    <CoachReqestForArcade />,
+    (coachAssignRequest || []).map((coachAssign: CoachAssignDetails) => (
+      <CoachReqestForArcade
+        coach_id={coachAssign.coach_id}
+        coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
+        coach_image={coachAssign.coach.user.user_image}
+        coach_discription={coachAssign.description}
+        date={coachAssign.assigned_date}
+      />
+    )),
   ];
   const toggleItems = () => {
     setShowMore(!showMore);
@@ -162,9 +199,7 @@ const ArcadeProfileArcade = () => {
     }
   };
 
-
   console.log("in the arcade", ArcadeId);
-
 
   const [arcadeDetails, setArcadeDetails] = useState<any>(null);
   useEffect(() => {
@@ -181,7 +216,7 @@ const ArcadeProfileArcade = () => {
         console.log(err);
       });
   }, []);
-console.log("arcadeDetails", packageDetail);
+  console.log("arcadeDetails", packageDetail);
   return (
     <>
       <style>
@@ -770,46 +805,15 @@ console.log("arcadeDetails", packageDetail);
                 justifyContent: "center",
               }}
             >
-              <CoachCard />
-            </Col>
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <CoachCard />
-            </Col>
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <CoachCard />
-            </Col>
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <CoachCard />
+              {arcadeCoaches.map((coach: CoachAssignDetails) => (
+                <CoachCard
+                  coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
+                  coachImage={coach.coach.user.user_image}
+                  short_description={coach.description}
+                  date={coach.assigned_date}
+                  rate={coach.coach.rate}
+                />
+              ))}
             </Col>
           </Row>
         </div>
@@ -1015,33 +1019,33 @@ console.log("arcadeDetails", packageDetail);
             flexDirection: "row",
           }}
         >
-          {packageDetail?.package.map((pkg : Package) => (
-              <Col
-                key={pkg.package_id.toString()}
-                xs={24}
-                sm={12}
-                md={12}
-                lg={8}
-                xl={8}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: "20px",
-                }}
-              >
-                <ArcadePackages
-                  packageName={pkg.package_name}
-                  packageDescription={pkg.description}
-                  rate={pkg.rate_per_person}
-                  package_id={pkg.package_id}
-                  ArcadeName={pkg.arcade.arcade_name}
-                  packageImage={pkg.package_image}
-                  CoachPrecentage={pkg.percentageForCoach}
-                />
-              </Col>
-            ))}
+          {packageDetail?.package.map((pkg: Package) => (
+            <Col
+              key={pkg.package_id.toString()}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              <ArcadePackages
+                packageName={pkg.package_name}
+                packageDescription={pkg.description}
+                rate={pkg.rate_per_person}
+                package_id={pkg.package_id}
+                ArcadeName={pkg.arcade.arcade_name}
+                packageImage={pkg.package_image}
+                CoachPrecentage={pkg.percentageForCoach}
+              />
+            </Col>
+          ))}
         </Row>
       </Row>
 
