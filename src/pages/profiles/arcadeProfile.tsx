@@ -38,6 +38,7 @@ import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
 import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
+import NavbarProfile from "../../components/NavBarProfile";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -219,6 +220,7 @@ const ArcadeProfileArcade = () => {
   console.log("arcadeDetails", packageDetail);
   return (
     <>
+    <NavbarProfile />
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')

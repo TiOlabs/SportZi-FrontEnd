@@ -17,7 +17,9 @@ const PlayerCanceled = () => {
   const [playerCanceled, setPlayerCanceled] = useState<ZoneBookingDetails[]>(
     []
   );
-  const[canceledByPlayer, setCanceledByPlayer] = useState<ZoneBookingDetails[]>([]);
+  const [canceledByPlayer, setCanceledByPlayer] = useState<
+    ZoneBookingDetails[]
+  >([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -32,10 +34,11 @@ const PlayerCanceled = () => {
 
         const playerCanceledBookings = data.filter(
           (arcadeBooking: ZoneBookingDetails) =>
-            arcadeBooking.status === "canceled_By_Player"
+            arcadeBooking.status === "canceled_By_Player" &&
+            arcadeBooking.booking_type === "zone"
         );
         console.log(playerCanceledBookings);
-        
+
         setCanceledByPlayer(playerCanceledBookings);
         setPlayerCanceled(playerCanceledBookings);
         console.log(playerCanceled);
@@ -92,7 +95,7 @@ const PlayerCanceled = () => {
         <Row>NAV</Row>
         <Row>
           <Col style={{ color: "#0E458E" }}>
-            <h2>Cancelled By Player</h2>
+            <h2>Cancelled By Player - Arena Bookings</h2>
           </Col>
         </Row>
         <Row>
@@ -135,6 +138,7 @@ const PlayerCanceled = () => {
               created_at={ZoneBookingDetails.created_at}
               canceled_at={ZoneBookingDetails.canceled_at}
               image={ZoneBookingDetails.user.user_image}
+              zone_image={ZoneBookingDetails.zone.zone_image}
             />
           ))}
         </Col>
@@ -172,18 +176,19 @@ function DataRow(props: any) {
       }}
     >
       <Col span={8} style={{}}>
-        <div
+        <AdvancedImage
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(props?.zone_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",

@@ -1,15 +1,13 @@
-import { Col, Row,Modal, Button, Empty } from "antd";
-import axios from "axios";
+import { Col, Row, Button, Modal, Empty } from "antd";
 import { useEffect, useState } from "react";
 import { ZoneBookingDetails } from "../../../types";
-import { Link } from "react-router-dom";
-import { AdvancedImage } from "@cloudinary/react";
-import { Cloudinary } from "@cloudinary/url-gen";
-const CoachCancelCoachBookins = () => {
-  const[ArcadeBookingDetails, setArcadeBookingDetails] = useState<ZoneBookingDetails[]>([]);
+import axios from "axios";
+import { Spin } from "antd";
+
+const AdminCanceledPackageEnrollment = (props: any) => {
   const [loading, setLoading] = useState(true);
-  const [canceledByArcade, setCanceledByArcade] = useState<ZoneBookingDetails[]>([]);
-  const [arcadeCanceled, setArcadeCanceled] = useState<ZoneBookingDetails[]>([]);
+  const [zoneBookingDetails, setZoneBookingDetails] = useState([]);
+  const [adminCanceled, setAdminCanceled] = useState<ZoneBookingDetails[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -17,48 +15,101 @@ const CoachCancelCoachBookins = () => {
           "http://localhost:8000/api/getarcadebookings"
         );
         const data = await res.data;
-        setArcadeBookingDetails(data);
+        setZoneBookingDetails(data);
         console.log(data);
 
         // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
 
-        const playerCanceledBookings = data.filter(
+        const adminCanceled = data.filter(
           (arcadeBooking: ZoneBookingDetails) =>
-            arcadeBooking.status === "canceled_By_Arcade"
+            arcadeBooking.status === "canceled_By_Admin"
         );
-        console.log(playerCanceledBookings);
-        
-        setCanceledByArcade(playerCanceledBookings);
-        setArcadeCanceled(playerCanceledBookings);
-        setLoading(false);
+        console.log(adminCanceled);
+
+        setAdminCanceled(adminCanceled);
+        console.log(adminCanceled);
       };
       fetchData();
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  });
+
+  const handleRefresh = async () => {
+    setLoading(true);
+
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          "http://localhost:8000/api/getarcadebookings"
+        );
+        const data = await res.data;
+        setZoneBookingDetails(data);
+        console.log(data);
+
+        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
+
+        const adminCanceled = data.filter(
+          (arcadeBooking: ZoneBookingDetails) =>
+            arcadeBooking.status === "canceled_By_Admin"
+        );
+        console.log(adminCanceled);
+
+        setAdminCanceled(adminCanceled);
+        console.log(adminCanceled);
+      };
+      fetchData();
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+ 
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Coach - Coach Bookings</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-      <Col
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Cancelled By Admin - Package Enrollment</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+            />
+          </Col>
+        </Row>
+        <Row style={{}}>
+          <Col span={21}></Col>
+          <Col span={2}>
+            <Button
+              type="primary"
+              onClick={handleRefresh}
+              loading={loading}
+              style={{
+                backgroundColor: "#0E458E",
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "5px",
+              }}
+            >
+              Refresh
+            </Button>
+          </Col>
+        </Row>
+        <Col
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
-        >
-          {arcadeCanceled.length === 0 ? <Empty /> : null}
-          {arcadeCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
+        >{adminCanceled.length === 0 ? <Empty /> : null}
+          {adminCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
               booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
               booked_Arena={ZoneBookingDetails.zone.zone_name}
@@ -74,16 +125,15 @@ const CoachCancelCoachBookins = () => {
               booking_time={ZoneBookingDetails.time}
               participant_count={ZoneBookingDetails.participant_count}
               created_at={ZoneBookingDetails.created_at}
-              canceled_at={ZoneBookingDetails.canceled_at}
-              image={ZoneBookingDetails.user.user_image}
             />
           ))}
         </Col>
+      </Spin>
     </Col>
   );
 };
 
-export default CoachCancelCoachBookins;
+export default AdminCanceledPackageEnrollment;
 
 function DataRow(props: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,12 +147,7 @@ function DataRow(props: any) {
     setIsModalOpen(false);
   };
   console.log(props);
-  const [cloudName] = useState("dle0txcgt");
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName,
-    },
-  });
+
   return (
     <Row
       style={{
@@ -153,21 +198,15 @@ function DataRow(props: any) {
         </div>
       </Col>
       <Col span={8}>
-        <Link to={`/profile/`}>
-          <AdvancedImage
-            style={{
-              borderRadius: "50%",
-              position: "absolute",
-              width: "80px",
-              height: "80px",
-            }}
-            cldImg={
-              cld.image(props?.image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
-          />
-        </Link>
+        <div
+          style={{
+            borderRadius: "50%",
+            position: "absolute",
+            width: "80px",
+            height: "80px",
+            backgroundColor: "#000",
+          }}
+        ></div>
         <div
           style={{
             display: "flex",
@@ -258,9 +297,6 @@ function DataRow(props: any) {
                 </Col>
                 <Col span={24}>
                   <b>Created at :</b> {props.created_at}
-                </Col>
-                <Col span={24}>
-                  <b>Canceled at :</b> {props.canceled_at}
                 </Col>
               </Row>
             </div>

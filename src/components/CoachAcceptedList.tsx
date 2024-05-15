@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import Typography from "antd/es/typography/Typography";
 
-const CoachAccepteLst = () => {
+const CoachAccepteLst = (props:any) => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 

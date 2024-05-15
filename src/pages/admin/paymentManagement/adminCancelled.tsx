@@ -76,7 +76,7 @@ const AdminCanceled = (props: any) => {
         <Row>NAV</Row>
         <Row>
           <Col style={{ color: "#0E458E" }}>
-            <h2>Cancelled By Coach & Arcade</h2>
+            <h2>Cancelled By Admin - Arena Bookings</h2>
           </Col>
         </Row>
         <Row>

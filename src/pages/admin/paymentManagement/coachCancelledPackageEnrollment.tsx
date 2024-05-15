@@ -5,7 +5,7 @@ import { ZoneBookingDetails } from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-const CoachCancelCoachBookins = () => {
+const CoachCancelledPackageEnrollment = () => {
   const[ArcadeBookingDetails, setArcadeBookingDetails] = useState<ZoneBookingDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [canceledByArcade, setCanceledByArcade] = useState<ZoneBookingDetails[]>([]);
@@ -42,7 +42,7 @@ const CoachCancelCoachBookins = () => {
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Coach - Coach Bookings</h2>
+          <h2>Cancelled By Coach - Package Enrollment</h2>
         </Col>
       </Row>
       <Row>
@@ -83,7 +83,7 @@ const CoachCancelCoachBookins = () => {
   );
 };
 
-export default CoachCancelCoachBookins;
+export default CoachCancelledPackageEnrollment;
 
 function DataRow(props: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);

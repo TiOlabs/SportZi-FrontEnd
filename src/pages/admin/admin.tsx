@@ -20,6 +20,14 @@ import AdminCanceled from "./paymentManagement/adminCancelled";
 import { ArcadeBookings } from "../../types";
 import axios from "axios";
 import { get } from "http";
+import PlayerCanceledCoachBookings from "./paymentManagement/playerCancelledCoachBookings";
+import PlayerCanceledPackageEnrollment from "./paymentManagement/playerCancelledPackageEnrollment";
+import ArcadeCancelledCoachBookings from "./paymentManagement/arcadeCancelledCoachBookings";
+import ArcadeCancelledPackageEnrollement from "./paymentManagement/arcadeCancelledPackageEnrollement";
+import CoachCancelCoachBookins from "./paymentManagement/coachCancel";
+import CoachCancelledPackageEnrollment from "./paymentManagement/coachCancelledPackageEnrollment";
+import AdminCanceledCoachBookings from "./paymentManagement/adminCncelledCoachBookings";
+import AdminCanceledPackageEnrollment from "./paymentManagement/adminCancelledPackageEnrollment";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -46,10 +54,26 @@ const items: MenuProps["items"] = [
   ]),
   getItem("Payment Manegement", "sub5", <DollarOutlined />, [
     getItem("completed Booking", "12"),
-    getItem("Player Canceled", "13"),
-    getItem("Arcade Canceled", "14"),
-    getItem("Coach Canceled", "15"),
-    getItem("Admin Canceled", "16"),
+    getItem("Player Canceled", "13", null, [
+      getItem("Arena Bookings", "20"),
+      getItem("Coach Bookings", "21"),
+      getItem("Package Enrolled", "22"),
+    ]),
+    getItem("Arcade Canceled", "14", null, [
+      getItem("Arena Bookings", "23"),
+      getItem("Coach Bookings", "24"),
+      getItem("Package Enrolled", "25"),
+    ]),
+
+    getItem("Coach Canceled", "15", null, [
+      getItem("Coach Bookings", "27"),
+      getItem("Package Enrolled", "28"),
+    ]),
+    getItem("Admin Canceled", "16", null, [
+      getItem("Arena Bookings", "29"),
+      getItem("Coach Bookings", "30"),
+      getItem("Package Enrolled", "31"),
+    ]),
   ]),
   getItem("Booking Management", "sub6", <AuditOutlined />, [
     getItem("Booked Arena", "17"),
@@ -110,8 +134,30 @@ const SideBarAdminPage = () => {
       setstts("bookedArena");
     } else if (e.key === "18") {
       setstts("bookedcoach");
-    }else if (e.key === "19") {
+    } else if (e.key === "19") {
       setstts("packageEnrolled");
+    } else if (e.key === "20") {
+      setstts("PlayerCanceledArena");
+    } else if (e.key === "21") {
+      setstts("PlayerCanceledCoach");
+    } else if (e.key === "22") {
+      setstts("PlayerCanceledPackage");
+    } else if (e.key === "23") {
+      setstts("ArcadeCanceledArena");
+    } else if (e.key === "24") {
+      setstts("ArcadeCanceledCoach");
+    } else if (e.key === "25") {
+      setstts("ArcadeCanceledPackage");
+    } else if (e.key === "27") {
+      setstts("CoachCanceledCoach");
+    } else if (e.key === "28") {
+      setstts("CoachCanceledPackage");
+    } else if (e.key === "29") {
+      setstts("AdminCanceledArena");
+    } else if (e.key === "30") {
+      setstts("AdminCanceledCoach");
+    } else if (e.key === "31") {
+      setstts("AdminCanceledPackage");
     }
   };
   return (
@@ -151,7 +197,7 @@ const SideBarAdminPage = () => {
           arcadeBookings={arcadeBookings}
         />
       )}
-      {stts === "adminCanceled" && (
+      {stts === "AdminCanceledArena" && (
         <AdminCanceled
           setAdminCanceled={setAdminCanceled}
           adminCanceled={adminCanceled}
@@ -178,8 +224,18 @@ const SideBarAdminPage = () => {
       {stts === "PlayerManagement" && <PlayerManagement />}
       {stts === "CoachManagement" && <CoachManagement />}
       {stts === "ArcadeManagement" && <ArcadeManagement />}
-      {stts === "ArcadeCanceled" && <CoachArcadeCancel />}
-      {stts === "playerCanceled" && <PlayerCanceled />}
+      {stts === "ArcadeCanceledArena" && <CoachArcadeCancel />}
+      {stts === "ArcadeCanceledCoach" && <ArcadeCancelledCoachBookings />}
+      {stts === "ArcadeCanceledPackage" && (
+        <ArcadeCancelledPackageEnrollement />
+      )}
+      {stts === "PlayerCanceledArena" && <PlayerCanceled />}
+      {stts === "PlayerCanceledCoach" && <PlayerCanceledCoachBookings />}
+      {stts === "PlayerCanceledPackage" && <PlayerCanceledPackageEnrollment />}
+      {stts === "CoachCanceledCoach" && <CoachCancelCoachBookins />}
+      {stts === "CoachCanceledPackage" && <CoachCancelledPackageEnrollment />}
+      {stts === "AdminCanceledCoach" && <AdminCanceledCoachBookings />}
+      {stts === "AdminCanceledPackage" && <AdminCanceledPackageEnrollment />}
       {stts === "completedBooking" && <ComplitedBookings />}
     </Row>
   );
