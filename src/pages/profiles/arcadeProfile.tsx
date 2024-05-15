@@ -38,7 +38,7 @@ import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
 import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
-import AvailableCoachBookingsArcade from "../../components/availiableCoachBookingsArcade";
+import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
 
 
