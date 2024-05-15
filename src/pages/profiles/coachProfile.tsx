@@ -7,52 +7,38 @@ import { Image } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachAccepteLst from "../../components/CoachAcceptedList";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CoachReqestList from "../../components/CoachRequestList";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
-const acceptedMeetings = [
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-  <CoachAccepteLst />,
-];
+import { CoachContext } from "../../context/coach.context";
+import { Arcade, CoachBookingDetails, Zone } from "../../types";
+import axios from "axios";
+const acceptedMeetings = [<CoachAccepteLst />];
 
-const RequestedMeetings = [
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-  <CoachReqestList />,
-];
+const RequestedMeetings = [<CoachReqestList />];
 
 const CoachProfile = () => {
+  const [value, setValue] = useState(1);
+  const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
+  const { coachDetails } = useContext(CoachContext);
+  console.log("coachDetails", coachDetails);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
   const [showMore, setShowMore] = useState(true);
 
-  const toggleItems = () => {
-    setShowMore(!showMore);
-    if (showMore) {
-      setNumberOfItemsShown(acceptedMeetings.length); // Show all items
-    } else {
-      setNumberOfItemsShown(4); // Show only the first 5 items
-    }
-  };
   const [Details, setDetails] = useState<any>(null);
   useEffect(() => {
     axiosInstance
-      .get("api/auth/getcoachDetailsForCoach")
+      .get(
+        process.env.REACT_APP_API_URL +
+          `api/auth/getcoachDetailsForCoach/${coachDetails?.id}`
+      )
       .then((res) => {
         setDetails(res.data);
         console.log("responsedataaaa", res.data);
@@ -61,10 +47,69 @@ const CoachProfile = () => {
       .catch((err) => {
         console.log("errorrrrrrrrrrrrrrrr", err);
       });
-  }, []);
+  }, [coachDetails?.id]);
   useEffect(() => {
     console.log("coach detailsssss", Details);
   }, [Details]);
+
+  useEffect(() => {
+    axios
+      .get<Arcade>(
+        process.env.REACT_APP_API_URL +
+          `api/getCoachBookingForCoach/${coachDetails?.id}`
+      )
+      .then((res) => {
+        console.log("Response data:", res.data);
+
+        // Get the current date in the format YYYY-MM-DD
+        const currentDate = new Date();
+        const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+
+        // Filter bookings with status "success" and booking dates based on value
+        const filteredBookings: Zone[] = res.data.zone.reduce(
+          (accumulator: Zone[], zone: Zone) => {
+            console.log("Zone:", zone);
+            const targetBookings = zone.zoneBookingDetails.filter((booking) => {
+              if (value === 1) {
+                return (
+                  booking.status === "success" &&
+                  booking.date > formattedCurrentDate
+                );
+              } else if (value === 2) {
+                return (
+                  booking.status === "success" &&
+                  booking.date < formattedCurrentDate
+                );
+              } else if (value === 3) {
+                return booking.status === "canceled_By_Arcade";
+              }
+            });
+            if (targetBookings.length > 0) {
+              accumulator.push({
+                ...zone,
+                zoneBookingDetails: targetBookings,
+              });
+            }
+            return accumulator;
+          },
+          []
+        );
+
+        setArcadeBookings(filteredBookings);
+        console.log("Filtered bookings:", filteredBookings);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [coachDetails, value]);
+  const toggleItems = () => {
+    setShowMore(!showMore);
+    if (showMore) {
+      setNumberOfItemsShown(arcadeBookings.length); // Show all items
+    } else {
+      setNumberOfItemsShown(4); // Show only the first 5 items
+    }
+  };
   return (
     <>
       <NavbarProfile />
