@@ -1,6 +1,6 @@
-import { Col, Row, Button, Modal, Spin, Empty } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty, Checkbox } from "antd";
 import React, { useEffect, useState } from "react";
-import type { RadioChangeEvent } from "antd";
+import type { GetProp, RadioChangeEvent } from "antd";
 import { Radio } from "antd";
 import axios from "axios";
 import { ZoneBookingDetails } from "../../../types";
@@ -8,7 +8,12 @@ import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { any } from "prop-types";
+import { CheckboxValueType } from "antd/lib/checkbox/Group";
 const PlayerCanceled = () => {
+  const onChange = (e: RadioChangeEvent) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+  };
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState(1);
   const [playerBookingDetails, setPlayerBookingDetails] = useState<
@@ -48,14 +53,13 @@ const PlayerCanceled = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
-  const onChange = (e: RadioChangeEvent) => {
-    const newValue = e.target.value;
-    setValue(newValue);
-
-    if (newValue === 1) {
+    if (value === 1) {
       const below24Hours = canceledByPlayer.filter(
         (arcadeBooking: ZoneBookingDetails) => {
+          const bookedDay = arcadeBooking.date;
+          const bookedTime = arcadeBooking.time;
+          const bookedDateTime = new Date(`${bookedDay} ${bookedTime}`);
+          console.log(bookedDateTime);
           const canceledTime = new Date(
             arcadeBooking.canceled_at as string
           ).getTime();
@@ -64,14 +68,25 @@ const PlayerCanceled = () => {
           ).getTime();
           const timeDifference = canceledTime - createdTime;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-          return timeDifference < twentyFourHoursInMillis;
+          console.log(canceledTime);
+          console.log(bookedDateTime.getTime());
+
+          // Filter by both conditions: newValue === 1 and checkedValues includes "zoneBookings"
+          return (
+            timeDifference < twentyFourHoursInMillis &&
+            checkedValues.includes("zoneBookings") &&
+            arcadeBooking.booking_type === "zone"
+          );
         }
       );
       console.log(below24Hours);
       setPlayerCanceled(below24Hours);
-    } else if (newValue === 2) {
+    } else if (value === 2) {
       const above24Hours = canceledByPlayer.filter(
         (arcadeBooking: ZoneBookingDetails) => {
+          const bookedDay = arcadeBooking.date;
+          const bookedTime = arcadeBooking.time;
+          const bookedDateTime = new Date(`${bookedDay} ${bookedTime}`);
           const canceledTime = new Date(
             arcadeBooking.canceled_at as string
           ).getTime();
@@ -81,13 +96,29 @@ const PlayerCanceled = () => {
           const timeDifference = canceledTime - createdTime;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
 
-          return timeDifference >= twentyFourHoursInMillis;
+          // Filter by both conditions: newValue === 2 and checkedValues includes "zoneBookings"
+          return (
+            timeDifference >= twentyFourHoursInMillis &&
+            checkedValues.includes("zoneBookings") &&
+            arcadeBooking.booking_type === "zone"
+          );
         }
       );
       console.log(above24Hours);
       setPlayerCanceled(above24Hours);
     }
+  }, [value]);
+  let checkedValues: CheckboxValueType[] = [""]; // Initialize checkedValues outside of the function
+
+  const onChangeCheckBox: GetProp<typeof Checkbox.Group, "onChange"> = (
+    values
+  ) => {
+    checkedValues = values; // Convert values to strings before assigning them to checkedValues
+    console.log("checked = ", checkedValues);
   };
+
+  // Later in your code...
+  console.log("checkedValues = ", checkedValues);
 
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
@@ -108,12 +139,29 @@ const PlayerCanceled = () => {
           </Col>
         </Row>
         <Row style={{ marginTop: "20px" }}>
-          <Col>
+          <Col span={12}>
             {" "}
             <Radio.Group onChange={onChange} value={value}>
               <Radio value={1}>Before 24 hours</Radio>
               <Radio value={2}>After 24 hours</Radio>
             </Radio.Group>
+          </Col>
+          <Col span={12}>
+            <Checkbox.Group
+              style={{ width: "100%" }}
+              onChange={onChangeCheckBox}
+              defaultValue={["zoneBookings"]}
+            >
+              <Col span={6}>
+                <Checkbox value="zoneBookings">Zone Bookings</Checkbox>
+              </Col>
+              <Col span={6}>
+                <Checkbox value="coachBookings">Coach Bookings</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="packageEnrolled">Package Enrollment</Checkbox>
+              </Col>
+            </Checkbox.Group>
           </Col>
         </Row>
         <Col

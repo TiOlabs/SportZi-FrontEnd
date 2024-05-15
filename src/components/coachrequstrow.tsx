@@ -16,12 +16,12 @@ const CoachRequstRow = (props: any) => {
   console.log(props);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
-  const[zoneBookingDetalsByCreateTime,setZoneBookingDetailsByCreateTime]=useState<ZoneBookingDetails[]>([])
-  console.log(props.created_at)
-  console.log(props.user_id)
-let id;
-  useEffect(()=>{
-    
+  const [zoneBookingDetalsByCreateTime, setZoneBookingDetailsByCreateTime] =
+    useState<ZoneBookingDetails[]>([]);
+  console.log(props.created_at);
+  console.log(props.user_id);
+  let id;
+  useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await fetch(
@@ -30,24 +30,18 @@ let id;
 
         const data = await res.json();
         console.log(data);
-        console.log(data[0]?.zone_booking_id)
-        id=data[0]?.zone_booking_id;
+        console.log(data[0]?.zone_booking_id);
+        id = data[0]?.zone_booking_id;
         setZoneBookingDetailsByCreateTime(data);
       };
       fetchData();
     } catch (e) {
       console.log(e);
     }
-  
-   
-  }
-  ,[props])
+  }, [props]);
 
- console.log(id)
- console.log(zoneBookingDetalsByCreateTime[0]?.zone_booking_id)
-
- 
-
+  console.log(id);
+  console.log(zoneBookingDetalsByCreateTime[0]?.zone_booking_id);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -70,19 +64,44 @@ let id;
       cancelText: "No",
 
       async onOk() {
+        let created_at, player_id;
+        try {
+          const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getCoachBookinByBookingId/${props.booking_id}`
+          );
+          created_at = res.data.created_at;
+          player_id = res.data.player_id;
+          console.log(created_at);
+          console.log(player_id);
+        } catch (e) {
+          console.log(e);
+        }
         try {
           const response = await axios.put(
             `http://localhost:8000/api/updatecoachBooking/${props.booking_id}`,
             {
               booking_id: props.booking_id,
-              status: "canceled_By_player",
+              status: "canceled_By_Player",
             }
           );
+          try {
+            const res = await axios.put(
+              `${process.env.REACT_APP_API_URL}api/updateArcadeBookingByCreatedTime/${created_at}/${player_id}`,
+              {
+                status: "canceled_By_Player",
+              }
+            );
+
+            console.log(res.data);
+          } catch (error) {
+            console.log(error);
+          }
           const res = await axios.put(
             `http://localhost:8000/api/updatearcadebooking/${zoneBookingDetalsByCreateTime[0]?.zone_booking_id}`,
             {
-              zone_booking_id:zoneBookingDetalsByCreateTime[0]?.zone_booking_id ,
-              status: "canceled_By_player",
+              zone_booking_id:
+                zoneBookingDetalsByCreateTime[0]?.zone_booking_id,
+              status: "canceled_By_Player",
             }
           );
 
