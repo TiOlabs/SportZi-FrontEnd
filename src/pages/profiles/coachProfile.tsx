@@ -1,5 +1,16 @@
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
-import { Button, Col, Grid, List, Row, Typography } from "antd";
+import {
+  Button,
+  Col,
+  ConfigProvider,
+  Empty,
+  Grid,
+  List,
+  Radio,
+  RadioChangeEvent,
+  Row,
+  Typography,
+} from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
@@ -15,15 +26,31 @@ import AppFooter from "../../components/footer";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
 import { CoachContext } from "../../context/coach.context";
-import { Arcade, CoachBookingDetails, Zone } from "../../types";
+import {
+  Arcade,
+  CoachAssignDetails,
+  CoachBookingDetails,
+  Zone,
+} from "../../types";
 import axios from "axios";
-const acceptedMeetings = [<CoachAccepteLst />];
 
 const RequestedMeetings = [<CoachReqestList />];
 
 const CoachProfile = () => {
+  const onChange = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValue(e.target.value);
+  };
+  const onChange2 = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValue2(e.target.value);
+  };
   const [value, setValue] = useState(1);
-  const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
+  const [value2, setValue2] = useState(4);
+  const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
+  const [coachAssignDetails, setCoachAssignDetails] = useState<
+    CoachAssignDetails[]
+  >([]);
   const { coachDetails } = useContext(CoachContext);
   console.log("coachDetails", coachDetails);
   const { useBreakpoint } = Grid;
@@ -52,64 +79,134 @@ const CoachProfile = () => {
     console.log("coach detailsssss", Details);
   }, [Details]);
 
+  // useEffect(() => {
+  //   axios
+  //     .get<Arcade>(
+  //       process.env.REACT_APP_API_URL +
+  //         `api/getCoachBookingForCoach/${coachDetails?.id}`
+  //     )
+  //     .then((res) => {
+  //       console.log("Response data:", res.data);
+
+  //       // Get the current date in the format YYYY-MM-DD
+  //       const currentDate = new Date();
+  //       const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+
+  //       // Filter bookings with status "success" and booking dates based on value
+  //       const filteredBookings: CoachBookingDetails[] = (
+  //         booking: CoachBookingDetails
+  //       ) => {
+  //         if (value === 1) {
+  //           return (
+  //             booking.status === "success" &&
+  //             booking.date > formattedCurrentDate
+  //           );
+  //         } else if (value === 2) {
+  //           return (
+  //             booking.status === "success" &&
+  //             booking.date < formattedCurrentDate
+  //           );
+  //         } else if (value === 3) {
+  //           return booking.status === "canceled_By_Arcade";
+  //         }
+  //         return false;
+  //       };
+
+  //       setCoachBookings(filteredBookings);
+  //       console.log("Filtered bookings:", filteredBookings);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, [coachDetails, value]);
+  const currentDate = new Date();
+  const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+
   useEffect(() => {
     axios
-      .get<Arcade>(
+      .get(
         process.env.REACT_APP_API_URL +
           `api/getCoachBookingForCoach/${coachDetails?.id}`
       )
       .then((res) => {
         console.log("Response data:", res.data);
-
-        // Get the current date in the format YYYY-MM-DD
-        const currentDate = new Date();
-        const formattedCurrentDate = currentDate.toISOString().split("T")[0];
-
-        // Filter bookings with status "success" and booking dates based on value
-        const filteredBookings: Zone[] = res.data.zone.reduce(
-          (accumulator: Zone[], zone: Zone) => {
-            console.log("Zone:", zone);
-            const targetBookings = zone.zoneBookingDetails.filter((booking) => {
-              if (value === 1) {
-                return (
-                  booking.status === "success" &&
-                  booking.date > formattedCurrentDate
-                );
-              } else if (value === 2) {
-                return (
-                  booking.status === "success" &&
-                  booking.date < formattedCurrentDate
-                );
-              } else if (value === 3) {
-                return booking.status === "canceled_By_Arcade";
-              }
-            });
-            if (targetBookings.length > 0) {
-              accumulator.push({
-                ...zone,
-                zoneBookingDetails: targetBookings,
-              });
+        let filteredBookings = [];
+        if (value === 1) {
+          // Filter for status = "success"
+          filteredBookings = res.data.filter(
+            (booking: { status: string; date: string }) => {
+              const bookingDate = new Date(booking.date);
+              return booking.status === "success" && bookingDate > currentDate;
             }
-            return accumulator;
-          },
-          []
-        );
-
-        setArcadeBookings(filteredBookings);
-        console.log("Filtered bookings:", filteredBookings);
+          );
+        } else if (value === 2) {
+          // Filter for status = "success" and date < current date
+          filteredBookings = res.data.filter(
+            (booking: { status: string; date: string }) => {
+              const bookingDate = new Date(booking.date);
+              return booking.status === "success" && bookingDate < currentDate;
+            }
+          );
+        } else if (value === 3) {
+          // Filter for status = "canceled_By_Coach"
+          filteredBookings = res.data.filter(
+            (booking: { status: string; date: string }) => {
+              const bookingDate = new Date(booking.date);
+              return (
+                booking.status === "canceled_By_Coach" &&
+                bookingDate > currentDate
+              );
+            }
+          );
+        }
+        setCoachBookings(filteredBookings);
       })
       .catch((error) => {
         console.log(error);
       });
   }, [coachDetails, value]);
+
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
-      setNumberOfItemsShown(arcadeBookings.length); // Show all items
+      setNumberOfItemsShown(coachBookings.length); // Show all items
     } else {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
+  const acceptedMeetings = [<CoachAccepteLst />];
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachDetails?.id}`
+        );
+        const data = res.data;
+
+        if (value2 === 4) {
+          // Filter for status = "success"
+          const successData = data.filter(
+            (item: { status: string }) => item.status === "pending"
+          );
+          setCoachAssignDetails(successData);
+        } else if (value2 === 5) {
+          // Filter for status = "pending"
+          const pendingData = data.filter(
+            (item: { status: string }) => item.status === "success"
+          );
+          setCoachAssignDetails(pendingData);
+        }
+
+        console.log(data);
+      };
+
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [coachDetails, value2]);
+
   return (
     <>
       <NavbarProfile />
@@ -653,7 +750,161 @@ const CoachProfile = () => {
           Available Meetings For You
         </Typography>
       </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={1}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
 
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={2}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={3}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
       <Row
         style={{
           width: "100%",
@@ -689,7 +940,7 @@ const CoachProfile = () => {
             lg={6}
             xl={6}
           >
-            Coach
+            Athlete
           </Col>
           <Col
             style={{
@@ -748,20 +999,22 @@ const CoachProfile = () => {
             </Col>
           )}
         </Row>
-        {acceptedMeetings.slice(0, numberOfItemsShown).map((request, index) => (
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-            key={index}
-          >
-            {request}
-          </div>
-        ))}
+        {coachBookings.length > 0 ? (
+          coachBookings.map((booking: CoachBookingDetails) => (
+            <CoachAccepteLst
+              booking_id={booking.booking_id}
+              booked_by={booking.player.user.firstname}
+              image={booking.player.user.user_image}
+              date={booking.date}
+              time={booking.time}
+              venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
+            />
+          ))
+        ) : (
+          <Empty />
+        )}
 
-        {showMore ? (
+        {/* {showMore ? (
           <Button
             style={{
               alignItems: "center",
@@ -789,7 +1042,7 @@ const CoachProfile = () => {
           >
             See Less
           </Button>
-        )}
+        )} */}
       </Row>
 
       <Row
@@ -816,7 +1069,115 @@ const CoachProfile = () => {
           Requests For Coaching
         </Typography>
       </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange2} value={value2}>
+              <Radio value={4}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
 
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange2} value={value2}>
+              <Radio value={5}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Assigned
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
       <Row
         style={{
           width: "100%",
@@ -852,7 +1213,7 @@ const CoachProfile = () => {
             lg={6}
             xl={6}
           >
-            Coach
+            Arena
           </Col>
           <Col
             style={{
@@ -909,49 +1270,19 @@ const CoachProfile = () => {
             ></Col>
           )}
         </Row>
-        {RequestedMeetings.slice(0, numberOfItemsShown).map(
-          (request, index) => (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-              key={index}
-            >
-              {request}
-            </div>
-          )
-        )}
-
-        {showMore ? (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See More
-          </Button>
+        {coachAssignDetails.length > 0 ? (
+          coachAssignDetails.map((booking: CoachAssignDetails) => (
+            <CoachReqestList
+              coach_id={coachDetails?.id}
+              arcade_id={booking.arcade_id}
+              arcade={booking.arcade.arcade_name}
+              image={booking.arcade.arcade_image}
+              date={booking.assigned_date}
+              time={booking.created_at}
+            />
+          ))
         ) : (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See Less
-          </Button>
+          <Empty />
         )}
       </Row>
 

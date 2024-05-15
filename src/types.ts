@@ -22,6 +22,7 @@ export interface Zone {
   sport_id: String;
   sport: Sport;
   zoneBookingDetails: ZoneBookingDetails[]; 
+  coachBookingDetails: CoachBookingDetails[];
 }
 export interface Package {
   package_id: String;
@@ -136,6 +137,7 @@ export interface ArcadeBookings {
 }
 
 export interface Arcade {
+  map(arg0: (booking: any) => any): unknown;
   arcade_id: String;
   arcade_name: String;
   arcade_email: String;

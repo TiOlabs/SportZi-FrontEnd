@@ -1,20 +1,20 @@
 import { Col, Row,Modal, Button, Empty } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ZoneBookingDetails } from "../../../types";
+import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 const CoachCancelCoachBookins = () => {
-  const[ArcadeBookingDetails, setArcadeBookingDetails] = useState<ZoneBookingDetails[]>([]);
+  const[ArcadeBookingDetails, setArcadeBookingDetails] = useState<CoachBookingDetails[]>([]);
   const [loading, setLoading] = useState(true);
-  const [canceledByArcade, setCanceledByArcade] = useState<ZoneBookingDetails[]>([]);
-  const [arcadeCanceled, setArcadeCanceled] = useState<ZoneBookingDetails[]>([]);
+  const [canceledByArcade, setCanceledByArcade] = useState<CoachBookingDetails[]>([]);
+  const [arcadeCanceled, setArcadeCanceled] = useState<CoachBookingDetails[]>([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          "http://localhost:8000/api/getCoachBookings"
         );
         const data = await res.data;
         setArcadeBookingDetails(data);
@@ -23,8 +23,8 @@ const CoachCancelCoachBookins = () => {
         // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
 
         const playerCanceledBookings = data.filter(
-          (arcadeBooking: ZoneBookingDetails) =>
-            arcadeBooking.status === "canceled_By_Arcade"
+          (arcadeBooking: CoachBookingDetails) =>
+            arcadeBooking.status === "canceled_By_Coach"
         );
         console.log(playerCanceledBookings);
         
@@ -58,24 +58,26 @@ const CoachCancelCoachBookins = () => {
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
         >
           {arcadeCanceled.length === 0 ? <Empty /> : null}
-          {arcadeCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
+          {arcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
             <DataRow
-              booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-              booked_Arena={ZoneBookingDetails.zone.zone_name}
-              booked_by={ZoneBookingDetails.user.firstname}
+              booking_id={CoachBookingDetails.booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+              booked_Arena={CoachBookingDetails.zone.zone_name}
+              booked_by={CoachBookingDetails.player.user.firstname}
               rate={
-                Number(ZoneBookingDetails.zone.rate) *
-                Number(ZoneBookingDetails.participant_count)
+                (Number(CoachBookingDetails.zone.rate) *
+                Number(CoachBookingDetails.participant_count)) +
+                (Number(CoachBookingDetails.zone.rate) *
+                Number(CoachBookingDetails.participant_count) )
               }
-              user_id={ZoneBookingDetails.user.user_id}
-              zone_id={ZoneBookingDetails.zone.zone_id}
-              zone={ZoneBookingDetails.zone.zone_name}
-              booking_date={ZoneBookingDetails.date}
-              booking_time={ZoneBookingDetails.time}
-              participant_count={ZoneBookingDetails.participant_count}
-              created_at={ZoneBookingDetails.created_at}
-              canceled_at={ZoneBookingDetails.canceled_at}
-              image={ZoneBookingDetails.user.user_image}
+              user_id={CoachBookingDetails.player.player_id}
+              zone_id={CoachBookingDetails.zone.zone_id}
+              zone={CoachBookingDetails.zone.zone_name}
+              booking_date={CoachBookingDetails.date}
+              booking_time={CoachBookingDetails.time}
+              participant_count={CoachBookingDetails.participant_count}
+              created_at={CoachBookingDetails.created_at}
+              canceled_at={CoachBookingDetails.canceled_at}
+              image={CoachBookingDetails.player.user.user_image}
             />
           ))}
         </Col>
