@@ -41,7 +41,6 @@ import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
 
-
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
@@ -289,7 +288,7 @@ const ArcadeProfileArcade = () => {
   console.log("arcadeDetails", packageDetail);
   return (
     <>
-    <NavbarProfile />
+      <NavbarProfile />
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
@@ -855,26 +854,26 @@ const ArcadeProfileArcade = () => {
         >
           <Row
             style={{
-              marginLeft: "5%",
+              overflowX: "hidden",
               width: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              marginBottom: "30px",
+              height: "450px",
+              overflowY: "scroll",
+              flexWrap: "nowrap",
             }}
           >
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              {arcadeCoaches.map((coach: CoachAssignDetails) => (
+            {arcadeCoaches.map((coach: CoachAssignDetails) => (
+              <Col
+                lg={{ span: 5 }}
+                md={{ span: 8 }}
+                sm={{ span: 12 }}
+                xs={{ span: 24 }}
+                style={{
+                  display: "flex",
+                }}
+              >
                 <CoachCard
                   coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
                   coachImage={coach.coach.user.user_image}
@@ -882,8 +881,8 @@ const ArcadeProfileArcade = () => {
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
                 />
-              ))}
-            </Col>
+              </Col>
+            ))}
           </Row>
         </div>
         <Button
