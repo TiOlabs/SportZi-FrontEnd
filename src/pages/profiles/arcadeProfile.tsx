@@ -38,19 +38,26 @@ import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
 import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
+import AvailableCoachBookingsArcade from "../../components/availiableCoachBookingsArcade";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
+  const [value2, setValue2] = useState(4);
   const [packageDetail, setPackageDetail] = useState<Arcade>();
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
+  };
+  const onChangeCoachBookings = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValue2(e.target.value);
   };
   console.log("value", value);
   const { ArcadeId } = useParams();
   const { managerDetails } = useArcade();
   const [arcade, setArcade] = useState<Arcade>();
   const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
+  const [coachBookings, setCoachBookings] = useState<Zone[]>([]);
   const [coachAssignRequest, setCoachAssignRequest] = useState<
     CoachAssignDetails[]
   >([]);
@@ -107,15 +114,20 @@ const ArcadeProfileArcade = () => {
               if (value === 1) {
                 return (
                   booking.status === "success" &&
-                  booking.date > formattedCurrentDate
+                  booking.date > formattedCurrentDate &&
+                  booking.booking_type === "zone"
                 );
               } else if (value === 2) {
                 return (
                   booking.status === "success" &&
-                  booking.date < formattedCurrentDate
+                  booking.date < formattedCurrentDate &&
+                  booking.booking_type === "zone"
                 );
               } else if (value === 3) {
-                return booking.status === "canceled_By_Arcade";
+                return (
+                  booking.status === "canceled_By_Arcade" &&
+                  booking.booking_type === "zone"
+                );
               }
             });
             if (targetBookings.length > 0) {
@@ -136,6 +148,62 @@ const ArcadeProfileArcade = () => {
         console.log(error);
       });
   }, [ArcadeId, value]);
+
+  useEffect(() => {
+    axios
+      .get<Arcade>(
+        process.env.REACT_APP_API_URL +
+          `api/getarcadebookingForArcade/${ArcadeId}`
+      )
+      .then((res) => {
+        console.log("Response data:", res.data);
+
+        // Get the current date in the format YYYY-MM-DD
+        const currentDate = new Date();
+        const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+
+        // Filter bookings with status "success" and booking dates based on value
+        const filteredBookings: Zone[] = res.data.zone.reduce(
+          (accumulator: Zone[], zone: Zone) => {
+            console.log("Zone:", zone);
+            const targetBookings = zone.zoneBookingDetails.filter((booking) => {
+              if (value2 === 4) {
+                return (
+                  booking.status === "success" &&
+                  booking.date > formattedCurrentDate &&
+                  booking.booking_type === "coach"
+                );
+              } else if (value2 === 5) {
+                return (
+                  booking.status === "success" &&
+                  booking.date < formattedCurrentDate &&
+                  booking.booking_type === "coach"
+                );
+              } else if (value2 === 6) {
+                return (
+                  booking.status === "canceled_By_Arcade" &&
+                  booking.booking_type === "coach"
+                );
+              }
+            });
+            if (targetBookings.length > 0) {
+              accumulator.push({
+                ...zone,
+                zoneBookingDetails: targetBookings,
+              });
+            }
+            return accumulator;
+          },
+          []
+        );
+
+        setCoachBookings(filteredBookings);
+        console.log("Filtered bookings:", filteredBookings);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [ArcadeId, value2]);
 
   useEffect(() => {
     axios
@@ -223,7 +291,6 @@ const ArcadeProfileArcade = () => {
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
-
       <Row>
         <Col
           xs={24}
@@ -739,7 +806,6 @@ const ArcadeProfileArcade = () => {
           </div>
         </Col>
       </Row>
-
       <Row
         style={{
           marginTop: "40px",
@@ -830,7 +896,6 @@ const ArcadeProfileArcade = () => {
           See More
         </Button>
       </Row>
-
       <div
         style={{
           width: "100%",
@@ -865,7 +930,6 @@ const ArcadeProfileArcade = () => {
         <AddPhotoButton />
       </div>
       <PhotoCollageForArcade />
-
       <Row
         style={{
           paddingTop: "100px",
@@ -970,7 +1034,6 @@ const ArcadeProfileArcade = () => {
           </Col>
         </Row>
       </Row>
-
       <Row
         style={{
           paddingTop: "100px",
@@ -1048,7 +1111,6 @@ const ArcadeProfileArcade = () => {
           ))}
         </Row>
       </Row>
-
       <Row
         style={{
           width: "100%",
@@ -1387,6 +1449,304 @@ const ArcadeProfileArcade = () => {
           marginTop: "60px",
         }}
       >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            {" "}
+            Availale Coach bookings for your complex
+          </Typography>
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+              <Radio value={4}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+              <Radio value={5}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+              <Radio value={6}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Athelte
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Time
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            >
+              Venue
+            </Col>
+          )}
+        </Row>
+        {coachBookings.length > 0 ? (
+          <>
+            {(coachBookings || []).map((zone: Zone) =>
+              (zone.zoneBookingDetails || []).map(
+                (booking: ZoneBookingDetails) => (
+                  <AvailableCoachBookingsArcade
+                    user_image={booking.user.user_image}
+                    booking_id={booking.zone_booking_id}
+                    booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                    zoneName={zone.zone_name}
+                    time={booking.time}
+                    date={booking.date}
+                    rate={zone.rate}
+                    zoneImage={zone.zone_image}
+                  />
+                )
+              )
+            )}
+          </>
+        ) : (
+          <Empty />
+        )}
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
         <Typography
           style={{
             alignItems: "center",
@@ -1402,7 +1762,6 @@ const ArcadeProfileArcade = () => {
           Coach Request For Join Arcade
         </Typography>
       </Row>
-
       <Row
         style={{
           width: "100%",
@@ -1457,7 +1816,6 @@ const ArcadeProfileArcade = () => {
           </Button>
         )}
       </Row>
-
       <Row
         style={{
           minWidth: "100%",

@@ -12,6 +12,7 @@ const BookedCoaches = (props: any) => {
   const [coachBookingDetails, setCoachBookingDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredDataa, setFilteredData] = useState<CoachBookingDetails[]>([]);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -64,7 +65,7 @@ const BookedCoaches = (props: any) => {
                 booked_Coach={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
                 booked_by={`${CoachBookingDetails.player.user.firstname} ${CoachBookingDetails.player.user.lastname}`}
                 rate={
-                  Number(CoachBookingDetails.zone.rate) *
+                  Number(CoachBookingDetails.coach.rate) *
                   Number(CoachBookingDetails.participant_count)
                 }
                 user_id={CoachBookingDetails.player.user.user_id}
@@ -105,6 +106,8 @@ export default BookedCoaches;
 function DataRow(props: any) {
   console.log(props);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [coachBookingCreateTime, setCoachBookingCreateTime] =
+    useState<CoachBookingDetails>();
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -123,6 +126,34 @@ function DataRow(props: any) {
       okType: "danger",
       cancelText: "No",
       async onOk() {
+        let created_at, player_id;
+        try {
+          const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getCoachBookinByBookingId/${props.booking_id}`
+          );
+          setCoachBookingCreateTime(res.data);
+          console.log(res.data);
+          created_at = res.data.created_at;
+          player_id = res.data.player_id;
+          console.log(created_at);
+          console.log(player_id);
+          console.log(coachBookingCreateTime);
+        } catch (error) {
+          console.log(error);
+        }
+
+        try {
+          const res = await axios.put(
+            `${process.env.REACT_APP_API_URL}api/updateArcadeBookingByCreatedTime/${created_at}/${player_id}`,
+            {
+              status: "canceled_By_Admin",
+            }
+          );
+
+          console.log(res.data);
+        } catch (error) {
+          console.log(error);
+        }
         // try{
         //   const res = await axios.post(
         //     `http://localhost:8000/api/arcadebookingcancel/${props.booking_id}`,
