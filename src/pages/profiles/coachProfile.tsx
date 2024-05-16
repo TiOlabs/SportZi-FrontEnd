@@ -60,16 +60,15 @@ const CoachProfile = () => {
   const [showMore, setShowMore] = useState(true);
 
   const [Details, setDetails] = useState<any>(null);
+  console.log("coach detailsssss", coachDetails.id);
   useEffect(() => {
     axiosInstance
       .get(
-        process.env.REACT_APP_API_URL +
-          `api/auth/getcoachDetailsForCoach/${coachDetails?.id}`
+        `${process.env.REACT_APP_API_URL}api/auth/getcoachDetailsForCoach/${coachDetails?.id}`
       )
       .then((res) => {
         setDetails(res.data);
         console.log("responsedataaaa", res.data);
-        console.log("coach detailsssss", Details);
       })
       .catch((err) => {
         console.log("errorrrrrrrrrrrrrrrr", err);
@@ -125,8 +124,7 @@ const CoachProfile = () => {
   useEffect(() => {
     axios
       .get(
-        process.env.REACT_APP_API_URL +
-          `api/getCoachBookingForCoach/${coachDetails?.id}`
+        `${process.env.REACT_APP_API_URL}api/getcoachDetailsForCoachByCoachId/${coachDetails?.id}`
       )
       .then((res) => {
         console.log("Response data:", res.data);
