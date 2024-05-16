@@ -4,8 +4,12 @@ import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import Typography from "antd/es/typography/Typography";
+import axios from "axios";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
-const CoachAccepteLst = (props:any) => {
+const CoachAccepteLst = (props: any) => {
+  console.log(props);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -29,7 +33,41 @@ const CoachAccepteLst = (props:any) => {
     setIsModalOpenWarning(true);
   };
 
-  const handleOkWarning = () => {
+  const handleOkWarning = async () => {
+    let created_at, user_id;
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/getCoachBookinByBookingId/${props.booking_id}`
+      );
+      created_at = res.data.created_at;
+      user_id = res.data.player_id;
+      console.log(created_at);
+      console.log(user_id);
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}api/updateArcadeBookingByCreatedTime/${created_at}/${user_id}`,
+        {
+          status: "canceled_By_Coach",
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
+        {
+          status: "canceled_By_Coach",
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
     setIsModalOpen(false);
     setIsModalOpenWarning(false);
     // Close the first modal as well
@@ -38,6 +76,12 @@ const CoachAccepteLst = (props:any) => {
   const handleCancelWarning = () => {
     setIsModalOpenWarning(false);
   };
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <Row
@@ -56,17 +100,21 @@ const CoachAccepteLst = (props:any) => {
         <Col xs={8} sm={8} md={8} lg={6} xl={6}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <div
+              <AdvancedImage
                 style={{
-                  backgroundColor: "#000",
                   width: "90px",
-                  height: "81px",
+                  height: "90px",
                   borderRadius: "50%",
                   marginRight: "10px",
                   backgroundImage: `url(${profilePic})`,
                   backgroundSize: "cover",
                 }}
-              ></div>
+                cldImg={
+                  cld.image(props?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
             </Col>
             <Col
               style={{
@@ -84,7 +132,7 @@ const CoachAccepteLst = (props:any) => {
               lg={12}
               xl={12}
             >
-              kanishka jj
+              {props.booked_by}
             </Col>
           </Row>
         </Col>
@@ -104,7 +152,7 @@ const CoachAccepteLst = (props:any) => {
           lg={6}
           xl={6}
         >
-          Date
+          {props.date}
         </Col>
         <Col
           style={{
@@ -122,7 +170,7 @@ const CoachAccepteLst = (props:any) => {
           lg={6}
           xl={6}
         >
-          Time
+          {props.time}
         </Col>
         {lg && (
           <Col
@@ -141,7 +189,7 @@ const CoachAccepteLst = (props:any) => {
             lg={6}
             xl={6}
           >
-            Venue
+            {props.venue}
           </Col>
         )}
       </Row>
@@ -198,17 +246,21 @@ const CoachAccepteLst = (props:any) => {
           <Col xs={12} sm={12} md={12} lg={12} xl={12}>
             <Row style={{ width: "100%" }}>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                <div
+                <AdvancedImage
                   style={{
-                    backgroundColor: "#000",
                     width: "90px",
-                    height: "81px",
+                    height: "90px",
                     borderRadius: "50%",
                     marginRight: "10px",
                     backgroundImage: `url(${profilePic})`,
                     backgroundSize: "cover",
                   }}
-                ></div>
+                  cldImg={
+                    cld.image(props?.image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
               </Col>
               <Col
                 style={{
@@ -226,7 +278,7 @@ const CoachAccepteLst = (props:any) => {
                 lg={12}
                 xl={12}
               >
-                kanishka jj
+                {props.booked_by}
               </Col>
             </Row>
           </Col>
@@ -246,7 +298,7 @@ const CoachAccepteLst = (props:any) => {
             lg={12}
             xl={12}
           >
-            Date
+            {props.date}
           </Col>
         </Row>
 
@@ -279,7 +331,7 @@ const CoachAccepteLst = (props:any) => {
             lg={12}
             xl={12}
           >
-            Time
+            {props.time}
           </Col>
 
           <Col
@@ -299,13 +351,13 @@ const CoachAccepteLst = (props:any) => {
             lg={12}
             xl={12}
           >
-            Venue
+            {props.venue}
           </Col>
         </Row>
       </Modal>
 
       <Modal
-        title="Are you Shure"
+        title="Are you Sure?"
         open={isModalOpenWarning}
         onOk={handleOkWarning}
         onCancel={handleCancelWarning}

@@ -1,8 +1,12 @@
 import { Button, Col, Grid, Modal, Row, Typography } from "antd";
 import { useState } from "react";
 import profilePic from "../assents/pro.png";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import axios from "axios";
 
-const CoachReqestList = () => {
+const CoachReqestList = (props: any) => {
+  console.log(props);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -27,10 +31,25 @@ const CoachReqestList = () => {
   };
 
   const handleOkWarning = () => {
-    // Close the first modal as well
+  
+    setIsModalOpenWarning(false);
+    setIsModalOpen(false);
   };
 
   const handleCancelWarning = () => {
+    console.log(props.coach_id, props.arcade_id);
+    try {
+      const res = axios.put(
+        `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
+        {
+          coach_id: props.coach_id,
+          arcade_id: props.arcade_id,
+          status: "canceled_By_Coach",
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
     setIsModalOpenWarning(false);
     setIsModalOpen(false);
   };
@@ -47,6 +66,12 @@ const CoachReqestList = () => {
     setIsModalOpenAccept(false);
     setIsModalOpen(false);
   };
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <Row
@@ -64,17 +89,21 @@ const CoachReqestList = () => {
         <Col xs={8} sm={8} md={8} lg={6} xl={6} onClick={showModal}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <div
+              <AdvancedImage
                 style={{
-                  backgroundColor: "#000",
                   width: "90px",
-                  height: "81px",
+                  height: "90px",
                   borderRadius: "50%",
                   marginRight: "10px",
                   backgroundImage: `url(${profilePic})`,
                   backgroundSize: "cover",
                 }}
-              ></div>
+                cldImg={
+                  cld.image(props?.image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+              />
             </Col>
             <Col
               style={{
@@ -92,7 +121,7 @@ const CoachReqestList = () => {
               lg={12}
               xl={12}
             >
-              kanishka jj
+              {props.arcade}
             </Col>
           </Row>
         </Col>
@@ -113,7 +142,7 @@ const CoachReqestList = () => {
           lg={6}
           xl={6}
         >
-          Date
+          {props.date}
         </Col>
         {lg && (
           <Col
@@ -172,7 +201,7 @@ const CoachReqestList = () => {
               type="primary"
               onClick={showModalAccept}
             >
-              Accept Meeting
+              Keep Meeting
             </Button>
           </Col>
         )}
@@ -194,7 +223,7 @@ const CoachReqestList = () => {
             key="back"
             onClick={showModalWarning}
           >
-            Reject Meeting
+            Deny Meeting
           </Button>,
           <Button
             style={{
