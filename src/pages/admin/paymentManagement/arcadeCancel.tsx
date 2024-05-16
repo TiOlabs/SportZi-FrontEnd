@@ -1,10 +1,11 @@
-import { Col, Row, Modal, Button, Empty } from "antd";
+import { Col, Row, Modal, Button, Empty, Radio, RadioChangeEvent } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ZoneBookingDetails } from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { SearchProps } from "antd/es/input";
 const CoachArcadeCancel = () => {
   const [ArcadeBookingDetails, setArcadeBookingDetails] = useState<
     ZoneBookingDetails[]
@@ -16,34 +17,123 @@ const CoachArcadeCancel = () => {
   const [arcadeCanceled, setArcadeCanceled] = useState<ZoneBookingDetails[]>(
     []
   );
+  const [value, setValue] = useState(1);
+  const [search, setSearch] = useState<string>("");
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const res = await axios.get(
+  //         "http://localhost:8000/api/getarcadebookings"
+  //       );
+  //       const data = await res.data;
+  //       setArcadeBookingDetails(data);
+  //       console.log(data);
+
+  //       // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
+
+  //       const playerCanceledBookings = data.filter(
+  //         (arcadeBooking: ZoneBookingDetails) =>
+  //           arcadeBooking.status === "canceled_By_Arcade" &&
+  //           arcadeBooking.booking_type === "zone"
+  //       );
+  //       console.log(playerCanceledBookings);
+
+  //       setCanceledByArcade(playerCanceledBookings);
+  //       setArcadeCanceled(playerCanceledBookings);
+  //       setLoading(false);
+  //     };
+  //     fetchData();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }, []);
+
   useEffect(() => {
-    try {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
         const res = await axios.get(
           "http://localhost:8000/api/getarcadebookings"
         );
         const data = await res.data;
         setArcadeBookingDetails(data);
-        console.log(data);
 
-        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
-
-        const playerCanceledBookings = data.filter(
-          (arcadeBooking: ZoneBookingDetails) =>
-            arcadeBooking.status === "canceled_By_Arcade" &&
+        let sortedBookings = data.filter(
+          (arcadeBooking: { booking_type: string; status: string }) =>
+            arcadeBooking.status === "canceled_By_Player" &&
             arcadeBooking.booking_type === "zone"
         );
-        console.log(playerCanceledBookings);
 
-        setCanceledByArcade(playerCanceledBookings);
-        setArcadeCanceled(playerCanceledBookings);
+        // Filter based on search string and status
+        sortedBookings = sortedBookings.filter(
+          (arcadeBooking: ZoneBookingDetails) =>
+            (search === "" || arcadeBooking.status === "canceled_By_Player") &&
+            (arcadeBooking.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              arcadeBooking.user.firstname
+                .toLowerCase()
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              arcadeBooking.date.includes(search) ||
+              (
+                Number(arcadeBooking.zone.rate) *
+                Number(arcadeBooking.participant_count)
+              )
+                .toString()
+                .includes(search))
+        );
+
+        setArcadeCanceled(sortedBookings);
+        setArcadeCanceled(sortedBookings);
         setLoading(false);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [search]);
+
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
+
+  const onChange = (e: RadioChangeEvent) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (newValue === 1) {
+      const below24Hours = arcadeCanceled.filter(
+        (coachBooking: ZoneBookingDetails) => {
+          const canceledTime = new Date(
+            coachBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            coachBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference < twentyFourHoursInMillis;
+        }
+      );
+      setArcadeCanceled(below24Hours);
+    } else if (newValue === 2) {
+      const above24Hours = arcadeCanceled.filter(
+        (coachBooking: ZoneBookingDetails) => {
+          const canceledTime = new Date(
+            coachBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            coachBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference >= twentyFourHoursInMillis;
+        }
+      );
+      setArcadeCanceled(above24Hours);
     }
-  }, []);
+  };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -58,7 +148,17 @@ const CoachArcadeCancel = () => {
             style={{ width: "100%", height: "40px" }}
             type="search"
             placeholder="Search here"
+            onChange={(e) => onSearch(e.target.value)}
           />
+        </Col>
+      </Row>
+      <Row style={{ marginTop: "20px" }}>
+        <Col>
+          {" "}
+          <Radio.Group onChange={onChange} value={value}>
+            <Radio value={1}>Before 24 hours</Radio>
+            <Radio value={2}>After 24 hours</Radio>
+          </Radio.Group>
         </Col>
       </Row>
       <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
@@ -118,19 +218,19 @@ function DataRow(props: any) {
       }}
     >
       <Col span={8} style={{}}>
-      <AdvancedImage
-            style={{
-              borderRadius: "50%",
-              position: "absolute",
-              width: "80px",
-              height: "80px",
-            }}
-            cldImg={
-              cld.image(props?.zone_image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
-          />
+        <AdvancedImage
+          style={{
+            borderRadius: "50%",
+            position: "absolute",
+            width: "80px",
+            height: "80px",
+          }}
+          cldImg={
+            cld.image(props?.zone_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",

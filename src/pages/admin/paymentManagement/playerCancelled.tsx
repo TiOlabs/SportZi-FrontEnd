@@ -1,6 +1,17 @@
-import { Col, Row, Button, Modal, Spin, Empty, Checkbox } from "antd";
+import {
+  Col,
+  Row,
+  Button,
+  Modal,
+  Spin,
+  Empty,
+  Checkbox,
+  Dropdown,
+  Space,
+  message,
+} from "antd";
 import React, { useEffect, useState } from "react";
-import type { GetProp, RadioChangeEvent } from "antd";
+import type { GetProp, MenuProps, RadioChangeEvent } from "antd";
 import { Radio } from "antd";
 import axios from "axios";
 import { ZoneBookingDetails } from "../../../types";
@@ -9,6 +20,13 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { any } from "prop-types";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
+import {
+  DollarOutlined,
+  DownOutlined,
+  SortAscendingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { SearchProps } from "antd/es/input";
 const PlayerCanceled = () => {
   const onChange = (e: RadioChangeEvent) => {
     const newValue = e.target.value;
@@ -25,7 +43,8 @@ const PlayerCanceled = () => {
   const [canceledByPlayer, setCanceledByPlayer] = useState<
     ZoneBookingDetails[]
   >([]);
-  useEffect(() => {
+  const [search, setSearch] = useState<string>("");
+  const fetchData = async () => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
@@ -40,7 +59,20 @@ const PlayerCanceled = () => {
         const playerCanceledBookings = data.filter(
           (arcadeBooking: ZoneBookingDetails) =>
             arcadeBooking.status === "canceled_By_Player" &&
-            arcadeBooking.booking_type === "zone"
+            arcadeBooking.booking_type === "zone" &&
+            (arcadeBooking.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              arcadeBooking.user.firstname
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              arcadeBooking.date.includes(search) ||
+              (
+                Number(arcadeBooking.zone.rate) *
+                Number(arcadeBooking.participant_count)
+              )
+                .toString()
+                .includes(search))
         );
         console.log(playerCanceledBookings);
 
@@ -53,61 +85,50 @@ const PlayerCanceled = () => {
     } catch (e) {
       console.log(e);
     }
+    console.log(canceledByPlayer);
+    console.log(value);
     if (value === 1) {
       const below24Hours = canceledByPlayer.filter(
         (arcadeBooking: ZoneBookingDetails) => {
-          const bookedDay = arcadeBooking.date;
-          const bookedTime = arcadeBooking.time;
-          const bookedDateTime = new Date(`${bookedDay} ${bookedTime}`);
-          console.log(bookedDateTime);
+          const createdAt = new Date(
+            arcadeBooking.created_at as string
+          ).getTime();
           const canceledTime = new Date(
             arcadeBooking.canceled_at as string
           ).getTime();
-          const createdTime = new Date(
-            arcadeBooking.created_at as string
-          ).getTime();
-          const timeDifference = canceledTime - createdTime;
+          const timeDifference = canceledTime - createdAt;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-          console.log(canceledTime);
-          console.log(bookedDateTime.getTime());
+          console.log("timeDifference", timeDifference);
+          console.log("twentyFourHoursInMillis", twentyFourHoursInMillis);
 
-          // Filter by both conditions: newValue === 1 and checkedValues includes "zoneBookings"
           return (
             timeDifference < twentyFourHoursInMillis &&
-            checkedValues.includes("zoneBookings") &&
             arcadeBooking.booking_type === "zone"
           );
         }
       );
-      console.log(below24Hours);
       setPlayerCanceled(below24Hours);
     } else if (value === 2) {
       const above24Hours = canceledByPlayer.filter(
         (arcadeBooking: ZoneBookingDetails) => {
-          const bookedDay = arcadeBooking.date;
-          const bookedTime = arcadeBooking.time;
-          const bookedDateTime = new Date(`${bookedDay} ${bookedTime}`);
+          const createdAt = new Date(
+            arcadeBooking.created_at as string
+          ).getTime();
           const canceledTime = new Date(
             arcadeBooking.canceled_at as string
           ).getTime();
-          const createdTime = new Date(
-            arcadeBooking.created_at as string
-          ).getTime();
-          const timeDifference = canceledTime - createdTime;
+          const timeDifference = canceledTime - createdAt;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
 
-          // Filter by both conditions: newValue === 2 and checkedValues includes "zoneBookings"
           return (
             timeDifference >= twentyFourHoursInMillis &&
-            checkedValues.includes("zoneBookings") &&
             arcadeBooking.booking_type === "zone"
           );
         }
       );
-      console.log(above24Hours);
       setPlayerCanceled(above24Hours);
     }
-  }, [value]);
+  };
   let checkedValues: CheckboxValueType[] = [""]; // Initialize checkedValues outside of the function
 
   const onChangeCheckBox: GetProp<typeof Checkbox.Group, "onChange"> = (
@@ -119,7 +140,96 @@ const PlayerCanceled = () => {
 
   // Later in your code...
   console.log("checkedValues = ", checkedValues);
+  const handleMenuClick: MenuProps["onClick"] = async (e) => {
+    message.info("Click on menu item.");
+    console.log("click");
+    console.log("click", e);
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:8000/api/getarcadebookings");
+      const data = await res.json();
+      console.log("data", data);
+      setPlayerCanceled(data);
+      const filteredData2 = data.filter(
+        (zoneBookingDetails: ZoneBookingDetails) =>
+          zoneBookingDetails.status === "success"
+      );
+      console.log("filteredData2", filteredData2);
+      let sortedBookings = [...filteredData2];
 
+      switch (e.key) {
+        case "1":
+          sortedBookings.sort(
+            (a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+              console.log("a", a.zone.rate);
+              console.log("b", b.zone.rate);
+              const rateA = Number(a.zone.rate) * Number(a.participant_count);
+              const rateB = Number(b.zone.rate) * Number(b.participant_count);
+              console.log("rateA", rateA);
+              console.log("rateB", rateB);
+              return rateB - rateA; // Sort in descending order of rate
+            }
+          );
+          break;
+        // eslint-disable-next-line no-fallthrough
+        case "2":
+          sortedBookings.sort(
+            (a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+              const nameA = a.zone.arcade.arcade_name.toLowerCase();
+              const nameB = b.zone.arcade.arcade_name.toLowerCase();
+              if (nameA < nameB) return -1;
+              if (nameA > nameB) return 1;
+              return 0;
+            }
+          );
+          break;
+        // Add cases for other filters if needed
+        default:
+          break;
+      }
+      console.log("sortedBookings", sortedBookings);
+      setPlayerCanceled(sortedBookings);
+    } catch (error) {
+      console.error("Error fetching and sorting data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
+  const items: MenuProps["items"] = [
+    {
+      label: "Price High to Low",
+      key: "1",
+      icon: <DollarOutlined />,
+    },
+    {
+      label: "By Alperbertical order",
+      key: "2",
+      icon: <SortAscendingOutlined />,
+    },
+    {
+      label: "Coach-3",
+      key: "3",
+      icon: <UserOutlined />,
+      danger: true,
+    },
+    {
+      label: "Coach-4",
+      key: "4",
+      icon: <UserOutlined />,
+      danger: true,
+      disabled: true,
+    },
+  ];
+  const menuProps = {
+    items,
+    onClick: handleMenuClick,
+  };
+  useEffect(() => {
+    fetchData();
+  }, [search]);
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Spin spinning={loading}>
@@ -130,12 +240,23 @@ const PlayerCanceled = () => {
           </Col>
         </Row>
         <Row>
-          <Col span={24}>
+          <Col span={21}>
             <input
               style={{ width: "100%", height: "40px" }}
               type="search"
               placeholder="Search here"
+              onChange={(e) => onSearch(e.target.value)}
             />
+          </Col>
+          <Col span={3}>
+            <Dropdown menu={menuProps}>
+              <Button style={{ height: 40 }}>
+                <Space>
+                  Filter By
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
           </Col>
         </Row>
         <Row style={{ marginTop: "20px" }}>

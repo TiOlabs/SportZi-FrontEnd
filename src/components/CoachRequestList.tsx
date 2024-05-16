@@ -4,6 +4,7 @@ import profilePic from "../assents/pro.png";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import axios from "axios";
+import { CoachAssignDetails } from "../types";
 
 const CoachReqestList = (props: any) => {
   console.log(props);
@@ -13,6 +14,9 @@ const CoachReqestList = (props: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenWarning, setIsModalOpenWarning] = useState(false);
   const [isModalOpenAccept, setIsModalOpenAccept] = useState(false);
+  const [coachAssignArcadeValues, setCoachAssignArcadeValues] = useState<
+    CoachAssignDetails[]
+  >([]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -31,15 +35,14 @@ const CoachReqestList = (props: any) => {
   };
 
   const handleOkWarning = () => {
-  
     setIsModalOpenWarning(false);
     setIsModalOpen(false);
   };
 
-  const handleCancelWarning = () => {
+  const handleCancelWarning = async () => {
     console.log(props.coach_id, props.arcade_id);
     try {
-      const res = axios.put(
+      const res = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
         {
           coach_id: props.coach_id,
@@ -50,6 +53,34 @@ const CoachReqestList = (props: any) => {
     } catch (e) {
       console.log(e);
     }
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${props.coach_id}`
+      );
+
+      // Filter data with status "success"
+      const successData = res.data.filter(
+        (item: { status: string }) => item.status === "success"
+      );
+
+      // Set filtered data to setCoachAssignArcadeValues
+      setCoachAssignArcadeValues(successData);
+
+      console.log("successData", successData);
+      // Check if coachAssignArcadeValues is empty
+      if (successData.length === 0) {
+        // If empty, update status to "pending"
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}api/updateCoach/${props.coach_id}`,
+          {
+            status: "pending",
+          }
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
     setIsModalOpenWarning(false);
     setIsModalOpen(false);
   };

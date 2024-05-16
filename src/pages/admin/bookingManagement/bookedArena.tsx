@@ -1,38 +1,163 @@
-import { Col, Row, Button, Modal, Empty } from "antd";
+import {
+  Col,
+  Row,
+  Button,
+  Modal,
+  Empty,
+  Dropdown,
+  Space,
+  MenuProps,
+  message,
+} from "antd";
 import { useEffect, useState } from "react";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  DollarOutlined,
+  DownOutlined,
+  ExclamationCircleFilled,
+  SortAscendingOutlined,
+  StarOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import { ZoneBookingDetails } from "../../../types";
 import { Spin } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { Link } from "react-router-dom";
+import { SearchProps } from "antd/es/input";
+import { on } from "events";
 const { confirm } = Modal;
 
 const BookedArena = (props: any) => {
   const [zoneBookingDetails, setZoneBookingDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredDataa, setFilteredData] = useState<ZoneBookingDetails[]>([]);
-  useEffect(() => {
+  const [search, setSearch] = useState<string>("");
+  const fetchData = async () => {
     try {
-      const fetchData = async () => {
-        const res = await fetch(`http://localhost:8000/api/getarcadebookings`);
-        const data = await res.json();
-        setZoneBookingDetails(data);
-        const filteredData = zoneBookingDetails.filter(
+      const res = await fetch(`http://localhost:8000/api/getarcadebookings`);
+      const data = await res.json();
+      let sortedBookings = [...data];
+
+      // Filter based on search input and status "success"
+      if (search !== "") {
+        sortedBookings = sortedBookings.filter(
           (zoneBookingDetails: ZoneBookingDetails) =>
-            zoneBookingDetails.status === "success"
+            zoneBookingDetails.status === "success" &&
+            (zoneBookingDetails.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              zoneBookingDetails.user.firstname
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              zoneBookingDetails.date.includes(search) ||
+              (
+                Number(zoneBookingDetails.zone.rate) *
+                Number(zoneBookingDetails.participant_count)
+              )
+                .toString()
+                .includes(search))
         );
-        setFilteredData(filteredData);
-        setLoading(false);
-      };
-      fetchData();
+      }
+
+      setFilteredData(sortedBookings);
     } catch (e) {
       console.log(e);
+    } finally {
+      setLoading(false);
     }
-  }, [zoneBookingDetails]);
-
+  };
   console.log(props.arcadeBookings);
+  const handleMenuClick: MenuProps["onClick"] = async (e) => {
+    message.info("Click on menu item.");
+    console.log("click");
+    console.log("click", e);
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:8000/api/getarcadebookings");
+      const data = await res.json();
+      console.log("data", data);
+      setZoneBookingDetails(data);
+      const filteredData2 = data.filter(
+        (zoneBookingDetails: ZoneBookingDetails) =>
+          zoneBookingDetails.status === "success"
+      );
+      console.log("filteredData2", filteredData2);
+      let sortedBookings = [...filteredData2];
+
+      switch (e.key) {
+        case "1":
+          sortedBookings.sort(
+            (a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+              console.log("a", a.zone.rate);
+              console.log("b", b.zone.rate);
+              const rateA = Number(a.zone.rate) * Number(a.participant_count);
+              const rateB = Number(b.zone.rate) * Number(b.participant_count);
+              console.log("rateA", rateA);
+              console.log("rateB", rateB);
+              return rateB - rateA; // Sort in descending order of rate
+            }
+          );
+          break;
+        // eslint-disable-next-line no-fallthrough
+        case "2":
+          sortedBookings.sort(
+            (a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+              const nameA = a.zone.arcade.arcade_name.toLowerCase();
+              const nameB = b.zone.arcade.arcade_name.toLowerCase();
+              if (nameA < nameB) return -1;
+              if (nameA > nameB) return 1;
+              return 0;
+            }
+          );
+          break;
+        // Add cases for other filters if needed
+        default:
+          break;
+      }
+      console.log("sortedBookings", sortedBookings);
+      setFilteredData(sortedBookings);
+    } catch (error) {
+      console.error("Error fetching and sorting data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
+  const items: MenuProps["items"] = [
+    {
+      label: "Price High to Low",
+      key: "1",
+      icon: <DollarOutlined />,
+    },
+    {
+      label: "By Alperbertical order",
+      key: "2",
+      icon: <SortAscendingOutlined />,
+    },
+    {
+      label: "Coach-3",
+      key: "3",
+      icon: <UserOutlined />,
+      danger: true,
+    },
+    {
+      label: "Coach-4",
+      key: "4",
+      icon: <UserOutlined />,
+      danger: true,
+      disabled: true,
+    },
+  ];
+  const menuProps = {
+    items,
+    onClick: handleMenuClick,
+  };
+  useEffect(() => {
+    fetchData();
+  }, [search]);
 
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
@@ -44,12 +169,23 @@ const BookedArena = (props: any) => {
           </Col>
         </Row>
         <Row>
-          <Col span={24}>
+          <Col span={21}>
             <input
               style={{ width: "100%", height: "40px" }}
               type="search"
               placeholder="Search here"
+              onChange={(e) => onSearch(e.target.value)}
             />
+          </Col>
+          <Col span={3}>
+            <Dropdown menu={menuProps}>
+              <Button style={{ height: 40 }}>
+                <Space>
+                  Filter By
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
           </Col>
         </Row>
         <Col
@@ -73,6 +209,7 @@ const BookedArena = (props: any) => {
               participant_count={ZoneBookingDetails.participant_count}
               created_at={ZoneBookingDetails.created_at}
               image={ZoneBookingDetails.user.user_image}
+              zone_image={ZoneBookingDetails.zone.zone_image}
 
               // arcadeBookings={props.arcadeBookings}
               // setArcadeBookings={props.setArcadeBookings}
@@ -175,7 +312,7 @@ function DataRow(props: any) {
       cloudName,
     },
   });
- 
+
   return (
     <Row
       style={{
@@ -186,18 +323,19 @@ function DataRow(props: any) {
     >
       <Col></Col>
       <Col span={7} style={{}}>
-        <div
+        <AdvancedImage
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(props?.zone_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",
