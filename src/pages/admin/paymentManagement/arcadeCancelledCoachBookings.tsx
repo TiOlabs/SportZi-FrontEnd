@@ -1,10 +1,11 @@
-import { Col, Row, Modal, Button, Empty } from "antd";
+import { Col, Row, Modal, Button, Empty, Radio, RadioChangeEvent } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { SearchProps } from "antd/es/input";
 const ArcadeCancelledCoachBookings = () => {
   const [ArcadeBookingDetails, setArcadeBookingDetails] = useState<
     CoachBookingDetails[]
@@ -16,33 +17,122 @@ const ArcadeCancelledCoachBookings = () => {
   const [arcadeCanceled, setArcadeCanceled] = useState<CoachBookingDetails[]>(
     []
   );
+  const [value, setValue] = useState(1);
+  const [search, setSearch] = useState<string>("");
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const res = await axios.get(
+  //         "http://localhost:8000/api/getCoachBookings"
+  //       );
+  //       const data = await res.data;
+  //       setArcadeBookingDetails(data);
+  //       console.log(data);
+
+  //       // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
+
+  //       const playerCanceledBookings = data.filter(
+  //         (coachBooking: CoachBookingDetails) =>
+  //           coachBooking.status === "canceled_By_Arcade"
+  //       );
+  //       console.log(playerCanceledBookings);
+
+  //       setCanceledByArcade(playerCanceledBookings);
+  //       setArcadeCanceled(playerCanceledBookings);
+  //       setLoading(false);
+  //     };
+  //     fetchData();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }, []);
+
   useEffect(() => {
-    try {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
         const res = await axios.get(
           "http://localhost:8000/api/getCoachBookings"
         );
         const data = await res.data;
         setArcadeBookingDetails(data);
-        console.log(data);
 
-        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
-
-        const playerCanceledBookings = data.filter(
-          (coachBooking: CoachBookingDetails) =>
+        let sortedBookings = data.filter(
+          (coachBooking: { status: string }) =>
             coachBooking.status === "canceled_By_Arcade"
         );
-        console.log(playerCanceledBookings);
 
-        setCanceledByArcade(playerCanceledBookings);
-        setArcadeCanceled(playerCanceledBookings);
+        // Filter based on search string and status
+        sortedBookings = sortedBookings.filter(
+          (coachBooking: CoachBookingDetails) =>
+            (search === "" || coachBooking.status === "canceled_By_Player") &&
+            (coachBooking.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              coachBooking.player.user.firstname
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              coachBooking.date.includes(search) ||
+              (
+                Number(coachBooking.zone.rate) *
+                  Number(coachBooking.participant_count) +
+                Number(coachBooking.coach.rate) *
+                  Number(coachBooking.participant_count)
+              )
+                .toString()
+                .includes(search))
+        );
+
+        setArcadeCanceled(sortedBookings);
+        setArcadeCanceled(sortedBookings);
         setLoading(false);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [search]);
+
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
+
+  const onChange = (e: RadioChangeEvent) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (newValue === 1) {
+      const below24Hours = arcadeCanceled.filter(
+        (coachBooking: CoachBookingDetails) => {
+          const canceledTime = new Date(
+            coachBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            coachBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference < twentyFourHoursInMillis;
+        }
+      );
+      setArcadeCanceled(below24Hours);
+    } else if (newValue === 2) {
+      const above24Hours = arcadeCanceled.filter(
+        (coachBooking: CoachBookingDetails) => {
+          const canceledTime = new Date(
+            coachBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            coachBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference >= twentyFourHoursInMillis;
+        }
+      );
+      setArcadeCanceled(above24Hours);
     }
-  }, []);
+  };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -57,7 +147,17 @@ const ArcadeCancelledCoachBookings = () => {
             style={{ width: "100%", height: "40px" }}
             type="search"
             placeholder="Search here"
+            onChange={(e) => onSearch(e.target.value)}
           />
+        </Col>
+      </Row>
+      <Row style={{ marginTop: "20px" }}>
+        <Col>
+          {" "}
+          <Radio.Group onChange={onChange} value={value}>
+            <Radio value={1}>Before 24 hours</Radio>
+            <Radio value={2}>After 24 hours</Radio>
+          </Radio.Group>
         </Col>
       </Row>
       <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>

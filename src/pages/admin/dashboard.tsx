@@ -33,7 +33,7 @@ const items: MenuProps["items"] = [
   ]),
   getItem("Payment Manegement", "sub5", <DollarOutlined />, [
     getItem("completed Booking", "12"),
-    getItem("Player Canceled", "13",) ,
+    getItem("Player Canceled", "13"),
     getItem("Coach/Arcade Canceled", "14"),
     getItem("Admin Canceled", "15"),
   ]),

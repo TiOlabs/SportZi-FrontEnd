@@ -99,7 +99,10 @@ const PackageEnrolled = () => {
               alignItems: "center",
             }}
           >
-            <Button type="primary" style={{ width: "100px",backgroundColor:"#0E458E"  }}>
+            <Button
+              type="primary"
+              style={{ width: "100px", backgroundColor: "#0E458E" }}
+            >
               <div
                 style={{
                   fontSize: "16px",

@@ -1,42 +1,112 @@
-import { Col, Row,Modal, Button, Empty } from "antd";
+import { Col, Row, Modal, Button, Empty, RadioChangeEvent, Radio } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { SearchProps } from "antd/es/input";
 const CoachCancelCoachBookins = () => {
-  const[ArcadeBookingDetails, setArcadeBookingDetails] = useState<CoachBookingDetails[]>([]);
+  const [ArcadeBookingDetails, setArcadeBookingDetails] = useState<
+    CoachBookingDetails[]
+  >([]);
   const [loading, setLoading] = useState(true);
-  const [canceledByArcade, setCanceledByArcade] = useState<CoachBookingDetails[]>([]);
-  const [arcadeCanceled, setArcadeCanceled] = useState<CoachBookingDetails[]>([]);
+  const [canceledByArcade, setCanceledByArcade] = useState<
+    CoachBookingDetails[]
+  >([]);
+  const [arcadeCanceled, setArcadeCanceled] = useState<CoachBookingDetails[]>(
+    []
+  );
+  const [search, setSearch] = useState<string>("");
+  const [value, setValue] = useState(1);
+
   useEffect(() => {
-    try {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
         const res = await axios.get(
           "http://localhost:8000/api/getCoachBookings"
         );
         const data = await res.data;
-        setArcadeBookingDetails(data);
-        console.log(data);
+        setArcadeCanceled(data);
 
-        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
-
-        const playerCanceledBookings = data.filter(
-          (arcadeBooking: CoachBookingDetails) =>
-            arcadeBooking.status === "canceled_By_Coach"
+        let sortedBookings = data.filter(
+          (coachBooking: { status: string }) =>
+            coachBooking.status === "canceled_By_Coach"
         );
-        console.log(playerCanceledBookings);
-        
-        setCanceledByArcade(playerCanceledBookings);
-        setArcadeCanceled(playerCanceledBookings);
+
+        // Filter based on search string and status
+        sortedBookings = sortedBookings.filter(
+          (coachBooking: CoachBookingDetails) =>
+            (search === "" || coachBooking.status === "canceled_By_Coach") &&
+            (coachBooking.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              coachBooking.player.user.firstname
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              coachBooking.date.includes(search) ||
+              (
+                Number(coachBooking.zone.rate) *
+                Number(coachBooking.participant_count) +
+              Number(coachBooking.zone.rate) *
+                Number(coachBooking.participant_count)
+              )
+                .toString()
+                .includes(search))
+        );
+
+        setArcadeCanceled(sortedBookings);
+        setArcadeCanceled(sortedBookings);
         setLoading(false);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [search]);
+
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
+
+  const onChange = (e: RadioChangeEvent) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (newValue === 1) {
+      const below24Hours = arcadeCanceled.filter(
+        (coachBooking: CoachBookingDetails) => {
+          const canceledTime = new Date(
+            coachBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            coachBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference < twentyFourHoursInMillis;
+        }
+      );
+      setArcadeCanceled(below24Hours);
+    } else if (newValue === 2) {
+      const above24Hours = arcadeCanceled.filter(
+        (coachBooking: CoachBookingDetails) => {
+          const canceledTime = new Date(
+            coachBooking.canceled_at as string
+          ).getTime();
+          const createdTime = new Date(
+            coachBooking.created_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdTime;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference >= twentyFourHoursInMillis;
+        }
+      );
+      setArcadeCanceled(above24Hours);
     }
-  }, []);
+  };
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -51,36 +121,46 @@ const CoachCancelCoachBookins = () => {
             style={{ width: "100%", height: "40px" }}
             type="search"
             placeholder="Search here"
+            onChange={(e) => onSearch(e.target.value)}
           />
         </Col>
       </Row>
-      <Col
-          style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
-        >
-          {arcadeCanceled.length === 0 ? <Empty /> : null}
-          {arcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
-            <DataRow
-              booking_id={CoachBookingDetails.booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-              booked_Arena={CoachBookingDetails.zone.zone_name}
-              booked_by={CoachBookingDetails.player.user.firstname}
-              rate={
-                (Number(CoachBookingDetails.zone.rate) *
-                Number(CoachBookingDetails.participant_count)) +
-                (Number(CoachBookingDetails.zone.rate) *
-                Number(CoachBookingDetails.participant_count) )
-              }
-              user_id={CoachBookingDetails.player.player_id}
-              zone_id={CoachBookingDetails.zone.zone_id}
-              zone={CoachBookingDetails.zone.zone_name}
-              booking_date={CoachBookingDetails.date}
-              booking_time={CoachBookingDetails.time}
-              participant_count={CoachBookingDetails.participant_count}
-              created_at={CoachBookingDetails.created_at}
-              canceled_at={CoachBookingDetails.canceled_at}
-              image={CoachBookingDetails.player.user.user_image}
-            />
-          ))}
+      <Row style={{ marginTop: "20px" }}>
+        <Col>
+          {" "}
+          <Radio.Group onChange={onChange} value={value}>
+            <Radio value={1}>Before 24 hours</Radio>
+            <Radio value={2}>After 24 hours</Radio>
+          </Radio.Group>
         </Col>
+      </Row>
+      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
+        {arcadeCanceled.length === 0 ? <Empty /> : null}
+        {arcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
+          <DataRow
+            booking_id={CoachBookingDetails.booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+            booked_Arena={CoachBookingDetails.zone.zone_name}
+            booked_by={CoachBookingDetails.player.user.firstname}
+            rate={
+              Number(CoachBookingDetails.zone.rate) *
+                Number(CoachBookingDetails.participant_count) +
+              Number(CoachBookingDetails.zone.rate) *
+                Number(CoachBookingDetails.participant_count)
+            }
+            user_id={CoachBookingDetails.player.player_id}
+            zone_id={CoachBookingDetails.zone.zone_id}
+            zone={CoachBookingDetails.zone.zone_name}
+            booking_date={CoachBookingDetails.date}
+            booking_time={CoachBookingDetails.time}
+            participant_count={CoachBookingDetails.participant_count}
+            created_at={CoachBookingDetails.created_at}
+            canceled_at={CoachBookingDetails.canceled_at}
+            image={CoachBookingDetails.player.user.user_image}
+            coach_Image={CoachBookingDetails.coach.user.user_image}
+            coach_name={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
+          />
+        ))}
+      </Col>
     </Col>
   );
 };
@@ -114,18 +194,19 @@ function DataRow(props: any) {
       }}
     >
       <Col span={8} style={{}}>
-        <div
+        <AdvancedImage
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(props?.coach_Image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",
@@ -136,7 +217,7 @@ function DataRow(props: any) {
             fontSize: "16px",
           }}
         >
-          {props.booked_Arena}
+          {props.coach_name}
         </div>
       </Col>
       <Col span={2} style={{}}>

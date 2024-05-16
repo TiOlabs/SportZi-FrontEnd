@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { ZoneBookingDetails } from "../../../types";
 import axios from "axios";
 import { Spin } from "antd";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const AdminCanceled = (props: any) => {
   const [loading, setLoading] = useState(true);
@@ -69,7 +71,7 @@ const AdminCanceled = (props: any) => {
       console.log(e);
     }
   };
- 
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Spin spinning={loading}>
@@ -108,7 +110,8 @@ const AdminCanceled = (props: any) => {
         </Row>
         <Col
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
-        >{adminCanceled.length === 0 ? <Empty /> : null}
+        >
+          {adminCanceled.length === 0 ? <Empty /> : null}
           {adminCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
               booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
@@ -125,6 +128,8 @@ const AdminCanceled = (props: any) => {
               booking_time={ZoneBookingDetails.time}
               participant_count={ZoneBookingDetails.participant_count}
               created_at={ZoneBookingDetails.created_at}
+              zone_image={ZoneBookingDetails.zone.zone_image}
+              user_image={ZoneBookingDetails.user.user_image}
             />
           ))}
         </Col>
@@ -147,7 +152,12 @@ function DataRow(props: any) {
     setIsModalOpen(false);
   };
   console.log(props);
-
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <Row
       style={{
@@ -157,18 +167,19 @@ function DataRow(props: any) {
       }}
     >
       <Col span={8} style={{}}>
-        <div
+        <AdvancedImage
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(props?.zone_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",
@@ -198,15 +209,19 @@ function DataRow(props: any) {
         </div>
       </Col>
       <Col span={8}>
-        <div
+        <AdvancedImage
           style={{
             borderRadius: "50%",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(props?.user_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",

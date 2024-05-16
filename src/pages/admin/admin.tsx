@@ -168,7 +168,8 @@ const SideBarAdminPage = () => {
           backgroundColor: "#051F43",
           color: "white",
           padding: "2%",
-          height: "100vh",
+          height: "120vh",
+          overflowY: "hidden",
         }}
       >
         <Row>
