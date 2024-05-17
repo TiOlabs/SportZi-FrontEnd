@@ -5,40 +5,94 @@ import axios from "axios";
 import { Spin } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { SearchProps } from "antd/es/input";
 
 const AdminCanceled = (props: any) => {
   const [loading, setLoading] = useState(true);
   const [zoneBookingDetails, setZoneBookingDetails] = useState([]);
   const [adminCanceled, setAdminCanceled] = useState<ZoneBookingDetails[]>([]);
+  const [search, setSearch] = useState<string>("");
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const res = await axios.get(
+  //         "http://localhost:8000/api/getarcadebookings"
+  //       );
+  //       const data = await res.data;
+  //       setZoneBookingDetails(data);
+  //       console.log(data);
+
+  //       // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
+
+  //       const adminCanceled = data.filter(
+  //         (arcadeBooking: ZoneBookingDetails) =>
+  //           arcadeBooking.status === "canceled_By_Admin" &&
+  //           arcadeBooking.booking_type === "zone"
+  //       );
+  //       console.log(adminCanceled);
+
+  //       setAdminCanceled(adminCanceled);
+  //       console.log(adminCanceled);
+  //     };
+  //     fetchData();
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 2000);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // });
+
   useEffect(() => {
-    try {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
         const res = await axios.get(
           "http://localhost:8000/api/getarcadebookings"
         );
         const data = await res.data;
-        setZoneBookingDetails(data);
-        console.log(data);
+        setAdminCanceled(data);
 
-        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
-
-        const adminCanceled = data.filter(
-          (arcadeBooking: ZoneBookingDetails) =>
-            arcadeBooking.status === "canceled_By_Admin"
+        let sortedBookings = data.filter(
+          (arcadeBooking: { booking_type: string; status: string }) =>
+            arcadeBooking.status === "canceled_By_Admin" &&
+            arcadeBooking.booking_type === "zone"
         );
-        console.log(adminCanceled);
 
-        setAdminCanceled(adminCanceled);
-        console.log(adminCanceled);
-      };
-      fetchData();
-      setTimeout(() => {
+        // Filter based on search string and status
+        sortedBookings = sortedBookings.filter(
+          (coachBooking: ZoneBookingDetails) =>
+            (search === "" || coachBooking.status === "canceled_By_Coach") &&
+            (coachBooking.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              coachBooking.user.firstname
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              coachBooking.date.includes(search) ||
+              (
+                Number(coachBooking.zone.rate) *
+                  Number(coachBooking.participant_count) +
+                Number(coachBooking.zone.rate) *
+                  Number(coachBooking.participant_count)
+              )
+                .toString()
+                .includes(search))
+        );
+
+        setAdminCanceled(sortedBookings);
+        setAdminCanceled(sortedBookings);
         setLoading(false);
-      }, 2000);
-    } catch (e) {
-      console.log(e);
-    }
-  });
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [search]);
+
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
 
   const handleRefresh = async () => {
     setLoading(true);

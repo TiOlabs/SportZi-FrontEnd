@@ -37,7 +37,11 @@ const BookedArena = (props: any) => {
     try {
       const res = await fetch(`http://localhost:8000/api/getarcadebookings`);
       const data = await res.json();
-      let sortedBookings = [...data];
+      let sortedBookings = data.filter(
+        (zoneBooking: { booking_type: string; status: string }) =>
+          zoneBooking.status === "success" &&
+          zoneBooking.booking_type === "zone"
+      );
 
       // Filter based on search input and status "success"
       if (search !== "") {
