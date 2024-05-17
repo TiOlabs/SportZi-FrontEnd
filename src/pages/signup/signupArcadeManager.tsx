@@ -9,6 +9,7 @@ import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import { Dayjs } from "dayjs";
 import axiosInstance from "../../axiosInstance";
+import MapForSignUpForm from "../../components/mapForSignUpForm";
 
 //responsiveness
 const formItemLayout = {
@@ -46,8 +47,6 @@ const commonInputStyle = {
 
 const { Option } = Select;
 
-
-
 // function starting
 const SignupArcadeManager = () => {
   const [firstname, setFirstname] = useState("");
@@ -61,6 +60,13 @@ const SignupArcadeManager = () => {
   const [arcadeemail, setArcadeEmail] = useState("");
   const [opentime, setOpentime] = useState<string>("");
   const [closetime, setClosetime] = useState<string>("");
+  const [selectedLocation, setSelectedLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(() => {
+    const storedLocation = localStorage.getItem("selectedLocation");
+    return storedLocation ? JSON.parse(storedLocation) : null;
+  });
 
   const handleOpenTime = (
     time: Dayjs | null,
@@ -82,38 +88,40 @@ const SignupArcadeManager = () => {
 
   const [form] = Form.useForm();
 
-
   const onFinish = async () => {
+    console.log("selectedLocation", selectedLocation);
+    const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
     try {
-      const res = await axiosInstance.post("api/addarcadeManager",
-        {
+      const res = await axiosInstance
+        .post("api/addarcadeManager", {
           firstname: firstname,
           lastname: lastname,
           email: email,
           password: password,
           phone: phone,
-          gender:gender,
+          gender: gender,
           arcade_name: arcadename,
           arcade_email: arcadeemail,
           location: location,
           open_time: opentime,
           close_time: closetime,
-        }
-      ).then(res =>{
-        console.log(res);
-        alert("Form submitted successfully!");
-        form.resetFields();
-      }).catch(err =>{
-        console.log(err);
-        alert(err.response.data.message);
-      });
+        })
+        .then((res) => {
+          console.log(res);
+          alert("Form submitted successfully!");
+          form.resetFields();
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err.response.data.message);
+        });
     } catch (err) {
       console.log(err);
       alert(err);
     }
   };
 
-  const validateName =  (_: any, value: string) => {
+  const validateName = (_: any, value: string) => {
     const phoneRegex = /^[a-zA-Z]+$/;
     if (!value || phoneRegex.test(value)) {
       return Promise.resolve();
@@ -135,6 +143,7 @@ const SignupArcadeManager = () => {
     }
     return Promise.reject("Invalid phone number");
   };
+  console.log(selectedLocation);
 
   return (
     <>
@@ -265,8 +274,8 @@ const SignupArcadeManager = () => {
                     whitespace: true,
                   },
                   {
-                    validator:validateName,
-                  }
+                    validator: validateName,
+                  },
                 ]}
                 // style={{ ...commonLabelStyle }}
               >
@@ -276,7 +285,7 @@ const SignupArcadeManager = () => {
                   onChange={(e) => setFirstname(e.target.value)}
                 />
               </Form.Item>
-            
+
               {/* last name field */}
               <Form.Item
                 name="lastname"
@@ -288,8 +297,8 @@ const SignupArcadeManager = () => {
                     whitespace: true,
                   },
                   {
-                    validator:validateName,
-                  }
+                    validator: validateName,
+                  },
                 ]}
               >
                 <Input
@@ -469,17 +478,11 @@ const SignupArcadeManager = () => {
                 label="Location"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input the arcade location",
                     whitespace: true,
                   },
                 ]}
               >
-                <Input
-                  placeholder="Enter the arcade location"
-                  style={commonInputStyle}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
+                <MapForSignUpForm />
               </Form.Item>
 
               <Form.Item
@@ -565,7 +568,10 @@ const SignupArcadeManager = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <Link to={"/login"}><a href="">Sign in here</a> </Link> 
+                  Already have an account{" "}
+                  <Link to={"/login"}>
+                    <a href="">Sign in here</a>{" "}
+                  </Link>
                 </div>
               </Form.Item>
             </Form>
