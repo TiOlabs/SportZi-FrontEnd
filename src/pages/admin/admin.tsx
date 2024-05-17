@@ -28,6 +28,9 @@ import CoachCancelCoachBookins from "./paymentManagement/coachCancel";
 import CoachCancelledPackageEnrollment from "./paymentManagement/coachCancelledPackageEnrollment";
 import AdminCanceledCoachBookings from "./paymentManagement/adminCncelledCoachBookings";
 import AdminCanceledPackageEnrollment from "./paymentManagement/adminCancelledPackageEnrollment";
+import { Link } from "react-router-dom";
+import AdminDashboard from "./dashboard";
+import AdminPannel from "./adminDashBoard";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -47,6 +50,7 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuProps["items"] = [
+  getItem("Dashboard", "2"),
   getItem("User manegment", "sub4", <UserOutlined />, [
     getItem("Coaches Management", "9"),
     getItem("Player Management", "10"),
@@ -158,6 +162,8 @@ const SideBarAdminPage = () => {
       setstts("AdminCanceledCoach");
     } else if (e.key === "31") {
       setstts("AdminCanceledPackage");
+    } else if (e.key === "2") {
+      setstts("dashBoard");
     }
   };
   return (
@@ -177,7 +183,9 @@ const SideBarAdminPage = () => {
           <MenuOutlined />
         </Row>
         <Row style={{ marginTop: "5%" }}>
-          <h3>Dashboard</h3>
+         
+            <h3>Admin Pannel</h3>
+          
         </Row>
         <Row>
           {" "}
@@ -219,7 +227,7 @@ const SideBarAdminPage = () => {
             /> */}
       </>
       {/* ))} */}
-
+      {stts === "dashBoard" && <AdminPannel />}
       {stts === "bookedcoach" && <BookedCoaches />}
       {stts === "packageEnrolled" && <PackageEnrolled />}
       {stts === "PlayerManagement" && <PlayerManagement />}

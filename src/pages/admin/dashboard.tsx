@@ -26,6 +26,7 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuProps["items"] = [
+  getItem("Dashboard", "1"),  
   getItem("User manegment", "sub4", <UserOutlined />, [
     getItem("Coaches Management", "/coaches"),
     getItem("Player Management", "10"),
