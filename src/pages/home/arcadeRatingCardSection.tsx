@@ -1,41 +1,61 @@
-import { Col, Row } from 'antd';
-import * as styles from './home.module.css';
-import { ColorFactory } from 'antd/es/color-picker/color';
-import ButtonGroup from 'antd/es/button/button-group';
-import ArcadeRatingCard from '../../components/arcadeRatingCard';
-import { Route } from 'react-router-dom';
-import Column from 'antd/es/table/Column';
+import { Col, Row } from "antd";
+import ArcadeRatingCard from "../../components/arcadeRatingCard";
+import { useEffect, useState } from "react";
+import { ArcadeFeedbacks } from "../../types";
 const ArcadeRatingCardsSection = () => {
-    return ( 
-        <Row style={{justifyContent:"center", display:"flex", alignItems:"center", flexDirection:"column"}}>
-          
-                <h1 style={{color:"#0E458E" ,fontSize:"32px",fontStyle:"normal",fontWeight:"600",lineHeight:"normal", justifyContent:"center", display:"flex", alignItems:"center"}}>Arcade ratings</h1>
-                <Row>
-                    <Col xs={1} md={0} lg={0} xl={1}></Col>
-                    <Col xs={23} md={12} lg={8} xl={8}>
-                    <ArcadeRatingCard/>
-                    </Col>
-                    <Col xs={1} md={0} lg={0} xl={0}></Col>
-                    <Col xs={23} md={12} lg={8} xl={7}>
-                    <ArcadeRatingCard/>
-                    </Col>
-                    <Col xs={1} md={6} lg={0} xl={0}></Col>
-                    <Col xs={23} md={12} lg={8} xl={8}>
-                    <ArcadeRatingCard/>
-                    </Col>
-                    <Col xs={0} md={0} lg={0} xl={4}></Col>
-                    <Col xs={0} md={0} lg={0} xl={8}>
-                    <ArcadeRatingCard/>
-                    </Col>
-                    <Col xs={0} md={0} lg={0} xl={8}>
-                    <ArcadeRatingCard/>
-                    </Col>
-                </Row>
-                
-          
+    const [arcadeRatings, setArcadeRatings] = useState<ArcadeFeedbacks[]>([]);
+    useEffect(() => {   
+        try {
+            const fetchData = async () => {
+                const res = await fetch(
+                    "http://localhost:8000/api/getarcaderatings"
+                );
+                const data = await res.json();
+                setArcadeRatings(data);
+            };
+            fetchData();
+        } catch (e) {
+            console.log(e);
+        }
+    }, []);
+    console.log(arcadeRatings);
+  return (
+    <Row
+      style={{
+        justifyContent: "center",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
+      <h1
+        style={{
+          color: "#0E458E",
+          fontSize: "32px",
+          fontStyle: "normal",
+          fontWeight: "500",
+          lineHeight: "normal",
+          justifyContent: "center",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        Arcade ratings
+      </h1>
+      <Row>
+        {arcadeRatings?.map((arcadeRating: ArcadeFeedbacks) => (
+          <Col lg={8} md={12} sm={24}>
+            <ArcadeRatingCard
+              arcadeRating_id={arcadeRating.arcade_feedback_id}
+              arcadeRating={arcadeRating.rate}
+              // arcadeName={arcadeRating.arcade.arcade_name}
+            />
+            
+          </Col>
+        ))}
+      </Row>
+    </Row>
+  );
+};
 
-        </Row>
-     );
-}
- 
 export default ArcadeRatingCardsSection;

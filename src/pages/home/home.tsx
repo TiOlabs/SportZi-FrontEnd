@@ -5,30 +5,46 @@ import DiscoutCardsSection from "./discountCardSection";
 import HeroSection from "./heroSection";
 import MapSction from "./mapSection";
 import AppFooter from "../../components/footer";
+import NavbarLogin from "../../components/NavBarLogin";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { usePlayer } from "../../context/player.context";
+import { useLocation } from "react-router-dom";
+import { useArcade } from "../../context/Arcade.context";
+import { useCoach } from "../../context/coach.context";
+// Redirect or perform other logout operations if necessary
 
 const Home = () => {
+  const index = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [index]);
+  const [token, setToken] = useState<string | undefined>(undefined);
 
-    return (
-
-        <>
-
-       
-            
-
-       
-            <Navbar/>
-
-            <HeroSection/>
-            <CoachCardSection/>
-            <DiscoutCardsSection/>
-            <MapSction/>
-            <ArcadeRatingCardsSection/>
-            
-     
-        <AppFooter/>
-        </>
-    );
-}
-
+  useEffect(() => {
+    setToken(Cookies.get("token"));
+  }, []);
+  const { userDetails } = usePlayer();
+  const { managerDetails } = useArcade();
+  const{coachDetails}=useCoach();
+  console.log("userDetails", userDetails);
+  console.log("managerDetails", managerDetails);
+  console.log("coachDetails", coachDetails);
+  return (
+    <>
+      {userDetails.id !== "" || managerDetails.id !== "" || coachDetails.id!=="" ? (
+        <Navbar />
+      ) : (
+        <NavbarLogin />
+      )}
+      <HeroSection />
+      <CoachCardSection />
+      <DiscoutCardsSection />
+      <MapSction />
+      <ArcadeRatingCardsSection />
+      <AppFooter />
+    </>
+  );
+};
 
 export default Home;

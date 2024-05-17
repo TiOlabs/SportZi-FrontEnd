@@ -14,6 +14,7 @@ import { Cloudinary, CloudinaryImage } from "@cloudinary/url-gen";
 import CloudinaryUploadWidget from "../../components/cloudinaryUploadWidget";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
+import AppFooter from "../../components/footer";
 const DiscountCardForm = () => {
   const [discount, setDiscount] = useState("");
   const [description, setDescription] = useState("");
@@ -21,7 +22,24 @@ const DiscountCardForm = () => {
   const [publicId, setPublicId] = useState("");
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
+  const [messageApi, contextHolder] = message.useMessage();
+  const key = "updatable";
 
+  const openMessage = () => {
+    messageApi.open({
+      key,
+      type: "loading",
+      content: "Loading...",
+    });
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type: "success",
+        content: "Discount Added Successfully!",
+        duration: 2,
+      });
+    }, 1000);
+  };
   const [uwConfig] = useState({
     cloudName,
     uploadPreset,
@@ -61,6 +79,7 @@ const DiscountCardForm = () => {
   });
 
   const imgObject = cld.image(publicId);
+  console.log(imgObject);
 
   const handleFinish = async () => {
     const discountint = parseInt(discount);
@@ -69,7 +88,11 @@ const DiscountCardForm = () => {
     console.log(publicId);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/adddiscoutcardvalues",
+
+
+
+        `${process.env.REACT_APP_API_URL}api/adddiscountcardvalues`,
+
         {
           discount_percentage: discountint,
           description: description,
@@ -142,10 +165,12 @@ const DiscountCardForm = () => {
         />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        {contextHolder}
+        <Button type="primary" htmlType="submit" onClick={openMessage}>
           Create
         </Button>
       </Form.Item>
+      <AppFooter />
     </Form>
   );
 };

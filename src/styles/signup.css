@@ -1,0 +1,80 @@
+@import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+
+.signupContainer{
+  overflow-x: hidden;
+}
+
+.animated-button {
+  transition: all 0.3s ease-in-out;
+}
+
+.animated-button:hover {
+  transform: scale(1.03);
+  /* background-color: #4f5c6a;
+  color: #fff; */
+}
+
+.select-background {
+  background-color: #d2f0ef;
+}
+
+.button-shape {
+  width: "508";
+  height: "70";
+  color: "#fff";
+  font-family: "sans-serif";
+  font-weight: "bold";
+}
+
+.kanit-regular {
+  font-family: "Kanit", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.img1-div {
+  text-align: "center";
+  padding-top: 50;
+  padding-bottom: 50;
+  width: "100%";
+}
+
+.img1 {
+  width:"260";
+  height:"425"
+}
+
+
+.custom-label {
+  font-family: "Kanit";
+  font-weight: 400;
+  font-style: "normal";
+}
+
+/* Remove border radius of Ant Design Password Input */
+.ant-input-password {
+  border-radius: 0; /* Set border radius to 0 */
+}
+
+
+.ant-btn {
+  border-radius: 0; 
+  height: 45px;
+  font-size: 20px;
+
+}
+
+.ant-btn:hover {
+  /* color: white !important; */
+  background-color: #16ab36;  
+}
+
+
+.ant-input {
+  border-radius: 0; 
+}
+
+/* .ant-picker-input.ant-picker-input-focused {
+  border-radius: 0 !important;
+} */

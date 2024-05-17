@@ -2,8 +2,35 @@ import { Button, Col, Row } from "antd";
 import Background from "../../assets/HeroSectionBackgroundImg.png";
 import Man from "../../assets/HeroSectionMan.png";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
+import { Link } from "react-router-dom";
+
+// import axiosInstance from "../../axiosInstance";
+// import { useNavigate } from "react-router-dom";
+
 const HeroSection = () => {
   const { lg, md, sm, xs, xl } = useBreakpoint();
+  // const navigate = useNavigate();
+
+  // const handleDiscoverCoaches = async () => {
+  //   try {
+  //     const response = await axiosInstance.get("/api/coaches", {})
+  //     .then(res => {
+  //       navigate('/coaches'); 
+  //     }
+  //     ).catch(err => {
+  //       console.log(err.response.data.message);
+  //       alert(err.response.data.message);
+  //       if (window.confirm('Do you want login as a plyer?')) {
+  //         navigate('/login');
+  //       } else {
+  //         console.log('User clicked Cancel');
+  //       }
+  //     })
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
+
   return (
     <Row
       style={{
@@ -64,6 +91,7 @@ const HeroSection = () => {
       <Col span={14} xl={13}></Col>
       <Col span={1} xl={2}></Col>
       <Col span={2}>
+        <Link to={"/coaches"}>
         <Button
           type="primary"
           htmlType="submit"
@@ -79,9 +107,11 @@ const HeroSection = () => {
             marginTop: md ? (xl ? "-90px" : "-70px") : "-50px",
             fontSize: md ? "20px" : "16px",
           }}
+          // onClick={handleDiscoverCoaches}
         >
           Discover Coaches
         </Button>
+        </Link>
       </Col>
     </Row>
   );

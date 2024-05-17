@@ -1,11 +1,23 @@
-import { Col, Row, Button, Flex } from "antd";
-import "./CoachCard.css";
+import { Col, Row, Button, Flex, Skeleton } from "antd";
+import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
+import { useState } from "react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage } from "@cloudinary/react";
+import { Link } from "react-router-dom";
 
-const CoachCard = () => {
+const CoachCard = (props: any) => {
   setTwoToneColor("blue");
   getTwoToneColor();
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+
+  console.log("props", props);
   return (
     <>
       <div className="mainCard">
@@ -13,7 +25,7 @@ const CoachCard = () => {
         <div className="mainCardsec2">
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
-              <p>Sandun Malage</p>
+              <p>{props.coachName}</p>
               <p className="coachPosition">level one Rugby Coach</p>
             </div>
 
@@ -38,7 +50,7 @@ const CoachCard = () => {
               />
             </div>
             <div>
-              <p className="coachDiscription"> discription about coacoach </p>
+              <p className="coachDiscription"> {props.short_description} </p>
             </div>
           </div>
           <div
@@ -58,11 +70,12 @@ const CoachCard = () => {
                   fontWeight: "500",
                 }}
               >
-                100$
+                Rs.{props.rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
+            <Link to="/CoachBookingForm">
               <Button
                 type="primary"
                 size="small"
@@ -74,10 +87,23 @@ const CoachCard = () => {
               >
                 Book Coach
               </Button>
+              </Link>
             </div>
           </div>
         </div>
-        <div className="coachpicture"></div>
+        <div className="coachpicture">
+        
+          <AdvancedImage style={{width: "80px", height: "80px", borderRadius: "50%"}}
+            cldImg={
+              cld.image(props.coach_image)
+              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+              // .resize(Resize.scale().width(200).height(200))
+            } 
+            // border-radius: 50%;
+            // width: 80px;
+            // height: 80px;
+          />
+        </div>
       </div>
     </>
   );

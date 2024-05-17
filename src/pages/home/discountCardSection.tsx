@@ -1,22 +1,28 @@
+
 import { Col, Row } from "antd";
 import DiscountCard from "../../components/discountCard";
 import { useEffect, useState } from "react";
 import { Discount } from "../../types";
-
+import axios from "axios";
 
 const DiscoutCardsSection = () => {
-  const [discounts, setDiscounts] = useState<Discount[]>([]);
+  const [discounts, setDiscounts] = useState<Discount[]>();
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await fetch("http://localhost:8000/api/getdiscoutcardvalues");
-      const data = await res.json();
-      setDiscounts(data);
-
-      console.log(data);
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getdiscountcardvalues`
+        );
+        const data = await res.data;   //response data
+        setDiscounts(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
     }
-    fetchData();
   }, []);
+
   console.log(discounts);
   return (
     <Row
@@ -38,14 +44,22 @@ const DiscoutCardsSection = () => {
           justifyContent: "center",
           height: "450px",
           overflow: "auto",
+        
         }}
       >
-        {discounts.map((discount: Discount) => (
-          <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
-            <DiscountCard
-              discount_percentage={discount.discount_percentage}
-              description={discount.description}
-              discount_image={discount.discount_image}
+        {discounts?.map((discount: Discount) => (
+          <Col
+            lg={{ span: 8 }}
+            md={{ span: 12 }}
+            sm={{ span: 24 }}
+          
+          >
+            <DiscountCard // Also use the stringified discount ID as a key for the DiscountCard component
+              zoneId={discount.zone.zone_id} // Pass the discount ID as a prop to the DiscountCard component
+              zone_name={discount.zone.zone_name} 
+              discount_percentage={discount.discount_percentage} 
+              description={discount.description}  
+              discount_image={discount.zone.zone_image}
             />
           </Col>
         ))}
