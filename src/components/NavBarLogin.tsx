@@ -1,4 +1,9 @@
-import { EditOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
 import { Divider, Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useContext, useEffect, useState } from "react";
@@ -37,7 +42,6 @@ const NavbarLogin: React.FC = () => {
     setVisible(false);
   };
   const customItemStyle: React.CSSProperties = {
-    height: "200px",
     width: "241px",
     borderRadius: "0px",
     backgroundColor: "white",
@@ -269,49 +273,7 @@ const NavbarLogin: React.FC = () => {
                     height: "150px",
                   }}
                 >
-                  <div
-                    className="NavBarUserProfileImg"
-                    style={{ justifyContent: "center", display: "flex" }}
-                  >
-                    <Link to="/profile/:id">
-                      <img
-                        src="https://cdn2.momjunction.com/wp-content/uploads/2021/02/What-Is-A-Sigma-Male-And-Their-Common-Personality-Trait-624x702.jpg.webp"
-                        alt="Original Image"
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          marginLeft: "10px",
-                          marginTop: "32px",
-                          borderRadius: "50%",
-                          border: "1px solid black",
-                        }}
-                      />
-                    </Link>
-                  </div>
-                  <div
-                    className="NavBarUserProfileName"
-                    style={{
-                      color: "#1B5DB7",
-                      justifyContent: "center",
-                      display: "flex",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
-                    }}
-                  >
-                    Sasindu Dhanushka
-                  </div>
-                  <div
-                    className="NavBarUserProfileStatus"
-                    style={{
-                      color: "black",
-                      justifyContent: "center",
-                      display: "flex",
-                      fontSize: "15px",
-                    }}
-                  >
-                    student
-                  </div>
-                  <Divider style={{ color: "black" }} />
+                  {/* <Divider style={{ color: "black" }} /> */}
                 </div>
               </Menu.Item>
               <Menu.Item
@@ -438,7 +400,7 @@ const NavbarLogin: React.FC = () => {
               >
                 <Link to="/about">About Us</Link>
               </Menu.Item>
-              <Menu.Item
+              {/* <Menu.Item
                 key="contactUs"
                 style={{
                   fontFamily: "kanit",
@@ -468,49 +430,53 @@ const NavbarLogin: React.FC = () => {
                 onMouseLeave={() => setContactHovered(false)}
               >
                 <Link to="/contact">Contact Us</Link>
-              </Menu.Item>
-              <Menu.Item
-                key="PrfileButton"
-                style={{
-                  fontFamily: "kanit",
-                  fontSize: editProfileButtonHovered ? "18px" : "15px",
-                  fontWeight: editProfileButtonHovered ? "20px" : "normal",
-                  marginTop: "-2px",
-                  borderRadius: "10px",
-                  justifyContent: "center",
-                  display: "flex",
-                  backgroundColor: "#1B5DB7",
-                  color: "white",
-                }}
-                onMouseEnter={() => setEditProfileButtonHovered(true)}
-                onMouseLeave={() => setEditProfileButtonHovered(false)}
-              >
-                <EditOutlined
-                  style={{ fontSize: "20px", marginRight: "10px" }}
-                />
-                Edit Profile
-              </Menu.Item>
-              <Menu.Item
-                key="contactUs"
-                style={{
-                  fontFamily: "kanit",
-                  fontSize: logOutButtonHovered ? "18px" : "15px",
-                  fontWeight: logOutButtonHovered ? "20px" : "normal",
-                  marginTop: "-2px",
-                  borderRadius: "10px",
-                  justifyContent: "center",
-                  display: "flex",
-                  backgroundColor: "#1B5DB7",
-                  color: "white",
-                }}
-                onMouseEnter={() => setLogOutButtonHovered(true)}
-                onMouseLeave={() => setLogOutButtonHovered(false)}
-              >
-                <LogoutOutlined
-                  style={{ fontSize: "20px", marginRight: "10px" }}
-                />
-                Log Out
-              </Menu.Item>
+              </Menu.Item> */}
+              <Link to={"login"}>
+                <Menu.Item
+                  key="PrfileButton"
+                  style={{
+                    fontFamily: "kanit",
+                    fontSize: editProfileButtonHovered ? "18px" : "15px",
+                    fontWeight: editProfileButtonHovered ? "20px" : "normal",
+                    marginTop: "-2px",
+                    borderRadius: "10px",
+                    justifyContent: "center",
+                    display: "flex",
+                    backgroundColor: "#1B5DB7",
+                    color: "white",
+                  }}
+                  onMouseEnter={() => setEditProfileButtonHovered(true)}
+                  onMouseLeave={() => setEditProfileButtonHovered(false)}
+                >
+                  <EditOutlined
+                    style={{ fontSize: "20px", marginRight: "10px" }}
+                  />
+                  Login
+                </Menu.Item>
+              </Link>
+              <Link to={"signupPlayer"}>
+                <Menu.Item
+                  key="contactUs"
+                  style={{
+                    fontFamily: "kanit",
+                    fontSize: logOutButtonHovered ? "18px" : "15px",
+                    fontWeight: logOutButtonHovered ? "20px" : "normal",
+                    marginTop: "-2px",
+                    borderRadius: "10px",
+                    justifyContent: "center",
+                    display: "flex",
+                    backgroundColor: "#1B5DB7",
+                    color: "white",
+                  }}
+                  onMouseEnter={() => setLogOutButtonHovered(true)}
+                  onMouseLeave={() => setLogOutButtonHovered(false)}
+                >
+                  <UserAddOutlined
+                    style={{ fontSize: "20px", marginRight: "10px" }}
+                  />
+                  Sign Up
+                </Menu.Item>
+              </Link>
             </Menu>
           </div>
         </Col>
