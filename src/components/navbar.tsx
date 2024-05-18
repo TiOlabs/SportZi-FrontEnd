@@ -703,7 +703,8 @@ const Navbar: React.FC = () => {
                 onMouseLeave={() => setLogOutButtonHovered(false)}
                 onClick={() => {
                   logOut();
-                  window.location.reload();
+                  window.location.href = "/";
+                  // window.location.reload(); // This forces a reload from the server
                 }}
               >
                 <LogoutOutlined

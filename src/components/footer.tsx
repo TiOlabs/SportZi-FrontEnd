@@ -1,4 +1,4 @@
-import { Col, Row, Select, Input, Button, } from "antd";
+import { Col, Row, Select, Input, Button } from "antd";
 import FooterLogo from "../assents/FooterLogo.png";
 import type { SearchProps } from "antd/es/input/Search";
 import {
@@ -20,11 +20,11 @@ import { Space } from "antd";
 const { Option } = Select;
 
 const buttonStyle = {
-  backgroundColor: "red",
+  backgroundColor: " #9BBEED",
   borderRadius: 0,
   borderColor: "#9BBEED",
   color: "#666666",
-  width: "30px",
+  width: "120px",
 };
 
 const AppFooter = () => {

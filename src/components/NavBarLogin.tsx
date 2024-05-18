@@ -431,7 +431,7 @@ const NavbarLogin: React.FC = () => {
               >
                 <Link to="/contact">Contact Us</Link>
               </Menu.Item> */}
-              <Link to={"login"}>
+              <Link to={"/login"}>
                 <Menu.Item
                   key="PrfileButton"
                   style={{
@@ -454,7 +454,7 @@ const NavbarLogin: React.FC = () => {
                   Login
                 </Menu.Item>
               </Link>
-              <Link to={"signupPlayer"}>
+              <Link to={"/signupPlayer"}>
                 <Menu.Item
                   key="contactUs"
                   style={{
