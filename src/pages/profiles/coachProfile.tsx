@@ -42,7 +42,6 @@ const CoachProfile = () => {
       .then((res) => {
         setDetails(res.data);
         console.log("responsedataaaa", res.data);
-        console.log("coach detailsssss", Details);
       })
       .catch((err) => {
         console.log("errorrrrrrrrrrrrrrrr", err);
