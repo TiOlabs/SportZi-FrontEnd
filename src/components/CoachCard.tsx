@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CoachCard = (props: any) => {
   setTwoToneColor("blue");
@@ -17,6 +18,11 @@ const CoachCard = (props: any) => {
     },
   });
 
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`CoachUser/:${props.coach_id}`);
+  };
   console.log("props", props);
   return (
     <>
@@ -25,7 +31,7 @@ const CoachCard = (props: any) => {
         <div className="mainCardsec2">
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
-              <p>{props.coachName}</p>
+              <p onClick={handleClick}>{props.coachName}</p>
               <p className="coachPosition">level one Rugby Coach</p>
             </div>
 
@@ -75,30 +81,30 @@ const CoachCard = (props: any) => {
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
-            <Link to="/CoachBookingForm">
-              <Button
-                type="primary"
-                size="small"
-                style={{
-                  fontSize: "10px",
-                  background: "#5587CC",
-                  fontWeight: "400",
-                }}
-              >
-                Book Coach
-              </Button>
+              <Link to="/CoachBookingForm">
+                <Button
+                  type="primary"
+                  size="small"
+                  style={{
+                    fontSize: "10px",
+                    background: "#5587CC",
+                    fontWeight: "400",
+                  }}
+                >
+                  Book Coach
+                </Button>
               </Link>
             </div>
           </div>
         </div>
-        <div className="coachpicture">
-        
-          <AdvancedImage style={{width: "80px", height: "80px", borderRadius: "50%"}}
+        <div onClick={handleClick} className="coachpicture">
+          <AdvancedImage
+            style={{ width: "80px", height: "80px", borderRadius: "50%" }}
             cldImg={
               cld.image(props.coach_image)
               // .resize(Resize.crop().width(200).height(200).gravity('auto'))
               // .resize(Resize.scale().width(200).height(200))
-            } 
+            }
             // border-radius: 50%;
             // width: 80px;
             // height: 80px;

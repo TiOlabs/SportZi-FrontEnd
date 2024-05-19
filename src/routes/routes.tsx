@@ -67,7 +67,7 @@ const AppRoutes = () => {
             </Auth>
           }
         />
-        <Route path="CoachUser" element={<CoachProfileUser />} />
+        <Route path="CoachUser/:coachId" element={<CoachProfileUser />} />
         <Route
           path="ArcadeforArcade/:ArcadeId"
           element={<ArcadeProfileArcade />}
