@@ -22,7 +22,7 @@ const CoachProvider = ({ children }: any) => {
     const token = Cookies.get("token");
     const decoded = token ? jwtDecode(token) : undefined;
     setDecodedValues(decoded);
-  }, []);
+  }, [coachDetails]);
   console.log("decodedValues", decodedValues);
 
   console.log("decodedValues", decodedValues?.userId);
