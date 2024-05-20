@@ -1,6 +1,6 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
-import { Form, Input, Row, Col, Button } from "antd";
+import { Form, Input, Row, Col, Button, message } from "antd";
 // import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { useEffect, useState } from "react";
@@ -13,6 +13,7 @@ const commonInputStyle = {
 };
 
 const Login = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const login = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -34,6 +35,10 @@ const Login = () => {
         httpOnly: false,
         secure: true,
       });
+      messageApi.open({
+        type: "success",
+        content: "Successfully Login!",
+      });
 
       navigate("/", { replace: true, state: { loggedIn: true } });
     } catch (err) {
@@ -43,6 +48,7 @@ const Login = () => {
           : "Login failed"
       );
     }
+    
   };
 
   return (
