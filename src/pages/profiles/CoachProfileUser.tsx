@@ -19,11 +19,14 @@ import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
+import axiosInstance from "../../axiosInstance";
+import { useParams } from "react-router-dom";
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
+  const { coachId } = useParams();
   const { lg, md, sm, xs } = useBreakpoint();
   const { TextArea } = Input;
   const onChange = (
@@ -43,6 +46,22 @@ const CoachProfileUser = () => {
   const handleCancel = () => {
     setismodelopen(false);
   };
+  const [coachDetails, setCoachDetails] = useState({});
+  useEffect(() => {
+    axiosInstance
+      .get(`/api/auth/getcoachDetailsForUsers`, {
+        params: {
+          coachId: coachId,
+        },
+      })
+
+      .then((res) => {
+        setCoachDetails(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <>
@@ -140,12 +159,8 @@ const CoachProfileUser = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {coachDetails &&
+                  (coachDetails as { Discription: string }).Discription}
               </Typography>
               <Button
                 style={{
@@ -200,7 +215,10 @@ const CoachProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                Sandun Malage
+                {coachDetails &&
+                  (coachDetails as { firstname: string }).firstname}
+                {coachDetails &&
+                  (coachDetails as { lastname: string }).lastname}
               </h1>
               <p
                 style={{
@@ -443,12 +461,11 @@ const CoachProfileUser = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={["Physical"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
