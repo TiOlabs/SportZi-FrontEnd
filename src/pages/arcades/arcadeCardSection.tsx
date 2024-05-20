@@ -117,9 +117,7 @@ const ArcadeCardSection = () => {
             sortedArcades = sortedArcades.filter((arcade: Arcade) => {
               console.log(arcade.location);
               if (!arcade.location) return false;
-              const arcadeLocation = JSON.parse(
-                arcade.location as string
-              );  
+              const arcadeLocation = JSON.parse(arcade.location as string);
               console.log("arcadeLocation");
               console.log(arcadeLocation);
               const distance = haversineDistance(userLocation, arcadeLocation);
@@ -243,14 +241,22 @@ const ArcadeCardSection = () => {
               key={arcade.arcade_id.toString()}
             >
               <Spin spinning={loading}>
-                <ArcadeCard
-                  fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
-                  arcade_name={arcade.arcade_name}
-                  arcade_rate={arcade.arcadefeedbacks}
-                  arcade_image={arcade.arcade_image}
-                  arcade_description={arcade.distription}
-                  arcade_id={arcade.arcade_id}
-                />
+                <div
+                  style={{
+                    marginTop: "0vh",
+                    marginRight: "10vh",
+                    marginBottom: "20vh",
+                  }}
+                >
+                  <ArcadeCard
+                    fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
+                    arcade_name={arcade.arcade_name}
+                    arcade_rate={arcade.arcadefeedbacks}
+                    arcade_image={arcade.arcade_image}
+                    arcade_description={arcade.distription}
+                    arcade_id={arcade.arcade_id}
+                  />
+                </div>
               </Spin>
             </Col>
           ))

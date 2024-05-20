@@ -82,7 +82,7 @@ const MapSection: React.FC = () => {
         </h1>
         <p
           style={{
-            fontSize: lg ? "24px" : "14px",
+            fontSize: lg ? "18px" : "14px",
             justifyContent: "center",
             alignItems: "center",
             textAlign: "justify",

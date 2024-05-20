@@ -65,7 +65,7 @@ const SignupPlayer = () => {
 
   const onFinish = async () => {
     try {
-      const response = await axiosInstance.post("api/addplayer", {
+      const res = await axiosInstance.post("api/addplayer", {
         firstname: firstname,
         lastname: lastname,
         email: email,

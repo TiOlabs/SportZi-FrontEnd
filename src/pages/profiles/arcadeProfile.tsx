@@ -40,6 +40,7 @@ import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
+import PhotoCollage from "../../components/photoCollage";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -929,9 +930,13 @@ const ArcadeProfileArcade = () => {
           marginBottom: "10px",
         }}
       >
+        {/* <AddPhotoButton />
+      </div>
+      <PhotoCollageForArcade /> */}
+
         <AddPhotoButton />
       </div>
-      <PhotoCollageForArcade />
+      <PhotoCollage />
       <Row
         style={{
           paddingTop: "100px",

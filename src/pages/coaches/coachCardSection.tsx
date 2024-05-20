@@ -47,7 +47,7 @@ const CoachCardSection = () => {
       {loading ? (
         <Spin />
       ) : coaches.length === 0 ? (
-        <Empty />
+        <Empty  description={"No Coaches Availiable"} />
       ) : (
         coaches.map((coach: Coach) => (
           <Col
@@ -61,15 +61,23 @@ const CoachCardSection = () => {
             xs={24}
             md={12}
           >
-            <CoachCardCoachPage
-              coach_id={coach.coach_id}
-              coach_image={coach.user.user_image}
-              coach_name={`${coach.user.firstname} ${coach.user.lastname}`}
-              coach_sport={coach.sport.sport_name}
-              coach_rating={coach.coachFeedbacks.rate}
-              coach_short_description={coach.short_desctiption}
-              coach_rate={coach.rate}
-            />
+            <div
+              style={{
+                marginTop: "0vh",
+                marginRight: "10vh",
+                marginBottom: "10vh",
+              }}
+            >
+              <CoachCardCoachPage
+                coach_id={coach.coach_id}
+                coach_image={coach.user.user_image}
+                coach_name={`${coach.user.firstname} ${coach.user.lastname}`}
+                coach_sport={coach.sport.sport_name}
+                coach_rating={coach.coachFeedbacks.rate}
+                coach_short_description={coach.short_desctiption}
+                coach_rate={coach.rate}
+              />
+            </div>
           </Col>
         ))
       )}

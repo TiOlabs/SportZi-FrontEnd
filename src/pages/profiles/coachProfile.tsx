@@ -720,7 +720,7 @@ const CoachProfile = () => {
         }}
       >
         {" "}
-        <AddPhotoButton />{" "}
+        <AddPhotoButton />
       </div>
       <PhotoCollage />
 

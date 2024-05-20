@@ -1,5 +1,4 @@
-
-import { Col, Row } from "antd";
+import { Col, Empty, Row } from "antd";
 import DiscountCard from "../../components/discountCard";
 import { useEffect, useState } from "react";
 import { Discount } from "../../types";
@@ -14,7 +13,7 @@ const DiscoutCardsSection = () => {
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}api/getdiscountcardvalues`
         );
-        const data = await res.data;   //response data
+        const data = await res.data; //response data
         setDiscounts(data);
       };
       fetchData();
@@ -44,25 +43,24 @@ const DiscoutCardsSection = () => {
           justifyContent: "center",
           height: "450px",
           overflow: "auto",
-        
         }}
       >
-        {discounts?.map((discount: Discount) => (
-          <Col
-            lg={{ span: 8 }}
-            md={{ span: 12 }}
-            sm={{ span: 24 }}
-          
-          >
-            <DiscountCard // Also use the stringified discount ID as a key for the DiscountCard component
-              zoneId={discount.zone.zone_id} // Pass the discount ID as a prop to the DiscountCard component
-              zone_name={discount.zone.zone_name} 
-              discount_percentage={discount.discount_percentage} 
-              description={discount.description}  
-              discount_image={discount.zone.zone_image}
-            />
-          </Col>
-        ))}
+        {" "}
+        {discounts?.length === 0 ? (
+          <Empty description={"No Discounts Availiable"}/>
+        ) : (
+          discounts?.map((discount: Discount) => (
+            <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
+              <DiscountCard // Also use the stringified discount ID as a key for the DiscountCard component
+                zoneId={discount.zone.zone_id} // Pass the discount ID as a prop to the DiscountCard component
+                zone_name={discount.zone.zone_name}
+                discount_percentage={discount.discount_percentage}
+                description={discount.description}
+                discount_image={discount.zone.zone_image}
+              />
+            </Col>
+          ))
+        )}
       </Row>
     </Row>
   );
