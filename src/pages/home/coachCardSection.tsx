@@ -116,26 +116,7 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-<<<<<<< edit/profiles/kanishka
-                {coachAssignDetails?.map((coach: Coach) => (
-                  <Col
-                    lg={{ span: 5 }}
-                    md={{ span: 8 }}
-                    sm={{ span: 12 }}
-                    xs={{ span: 24 }}
-                  >
-                    <CoachCard
-                      coachName={`${coach.user.firstname} ${coach.user.lastname}`}
-                      coach_last_name={coach.user.lastname}
-                      short_description={coach.short_desctiption}
-                      rate={coach.rate}
-                      // duration={coachAssignDetail.duration}
-                      coach_image={coach.user.user_image}
-                      coach_id={coach.user.user_id}
-                    />
-                  </Col>
-                ))}
-=======
+
                 {" "}
                 {coachAssignDetails.length === 0 ? (
                   <Empty description={"No Coaches Availiable"} />
@@ -159,7 +140,6 @@ const CoachCardSection = () => {
                     </Col>
                   ))
                 )}
->>>>>>> Developing
               </Row>
               <Pagination
                 style={{ marginTop: "-30px" }}
