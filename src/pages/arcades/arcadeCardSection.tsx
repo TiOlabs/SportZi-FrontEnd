@@ -25,6 +25,25 @@ const ArcadeCardSection = () => {
   const [loading, setLoading] = useState(true);
   const [arcades, setArcades] = useState<Arcade[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.error("Error fetching user location:", error);
+      }
+    );
+  }, []);
+  console.log(userLocation);
 
   const fetchData = async () => {
     setLoading(true);
@@ -45,6 +64,27 @@ const ArcadeCardSection = () => {
     }
   };
 
+  const haversineDistance = (
+    coords1: { lat: number; lng: number },
+    coords2: { lat: number; lng: number }
+  ) => {
+    console.log("hey");
+    console.log(coords1, coords2);
+    const toRad = (x: number) => (x * Math.PI) / 180;
+
+    const R = 6371; // Radius of the Earth in km
+    const dLat = toRad(coords2.lat - coords1.lat);
+    const dLng = toRad(coords2.lng - coords1.lng);
+    const lat1 = toRad(coords1.lat);
+    const lat2 = toRad(coords2.lat);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
   const handleMenuClick: MenuProps["onClick"] = async (e) => {
     message.info("Click on menu item.");
     console.log("click", e);
@@ -56,12 +96,8 @@ const ArcadeCardSection = () => {
       switch (e.key) {
         case "1":
           sortedArcades.sort((a: Arcade, b: Arcade) => {
-            console.log("a", a.arcadefeedbacks);
-            console.log("b", b.arcadefeedbacks);
-            const rateA = Number(a.arcadefeedbacks[0].rate);
-            const rateB = Number(b.arcadefeedbacks[0].rate);
-            console.log("rateA", rateA);
-            console.log("rateB", rateB);
+            const rateA = Number(a.arcadefeedbacks[0]?.rate || 0);
+            const rateB = Number(b.arcadefeedbacks[0]?.rate || 0);
             return rateB - rateA; // Sort in descending order of rate
           });
           break;
@@ -73,6 +109,25 @@ const ArcadeCardSection = () => {
             if (nameA > nameB) return 1;
             return 0;
           });
+          break;
+        case "3":
+          console.log("Near Me");
+          console.log(userLocation);
+          if (userLocation) {
+            sortedArcades = sortedArcades.filter((arcade: Arcade) => {
+              console.log(arcade.location);
+              if (!arcade.location) return false;
+              const arcadeLocation = JSON.parse(arcade.location as string);
+              console.log("arcadeLocation");
+              console.log(arcadeLocation);
+              const distance = haversineDistance(userLocation, arcadeLocation);
+              console.log(distance);
+              return distance <= 10;
+            });
+          } else {
+            console.log("Unable to determine user location");
+            message.error("Unable to determine user location");
+          }
           break;
         // Add cases for other filters if needed
         default:
@@ -101,22 +156,15 @@ const ArcadeCardSection = () => {
       icon: <StarOutlined />,
     },
     {
-      label: "By Alperbertical order",
+      label: "By Alphabetical Order",
       key: "2",
       icon: <SortAscendingOutlined />,
     },
     {
-      label: "Coach-3",
+      label: "Near Me",
       key: "3",
       icon: <UserOutlined />,
       danger: true,
-    },
-    {
-      label: "Coach-4",
-      key: "4",
-      icon: <UserOutlined />,
-      danger: true,
-      disabled: true,
     },
   ];
 
@@ -176,7 +224,7 @@ const ArcadeCardSection = () => {
           marginTop: "2%",
         }}
       >
-        {loading ? ( // Display spin while loading
+        {loading ? (
           <Spin size="default" />
         ) : arcades.length > 0 ? (
           arcades.map((arcade: Arcade) => (
@@ -193,14 +241,22 @@ const ArcadeCardSection = () => {
               key={arcade.arcade_id.toString()}
             >
               <Spin spinning={loading}>
-                <ArcadeCard
-                  fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
-                  arcade_name={arcade.arcade_name}
-                  arcade_rate={arcade.arcadefeedbacks}
-                  arcade_image={arcade.arcade_image}
-                  arcade_description={arcade.distription}
-                  arcade_id={arcade.arcade_id}
-                />
+                <div
+                  style={{
+                    marginTop: "0vh",
+                    marginRight: "10vh",
+                    marginBottom: "20vh",
+                  }}
+                >
+                  <ArcadeCard
+                    fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
+                    arcade_name={arcade.arcade_name}
+                    arcade_rate={arcade.arcadefeedbacks}
+                    arcade_image={arcade.arcade_image}
+                    arcade_description={arcade.distription}
+                    arcade_id={arcade.arcade_id}
+                  />
+                </div>
               </Spin>
             </Col>
           ))

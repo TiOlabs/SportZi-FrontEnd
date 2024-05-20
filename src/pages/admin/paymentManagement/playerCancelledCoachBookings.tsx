@@ -8,9 +8,11 @@ import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { any } from "prop-types";
+import { SearchProps } from "antd/es/input";
 const PlayerCanceledCoachBookings = () => {
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState(1);
+  const [search, setSearch] = useState<string>("");
   const [playerBookingDetails, setPlayerBookingDetails] = useState<
     ZoneBookingDetails[]
   >([]);
@@ -20,34 +22,57 @@ const PlayerCanceledCoachBookings = () => {
   const [canceledByPlayer, setCanceledByPlayer] = useState<
     CoachBookingDetails[]
   >([]);
+
   useEffect(() => {
-    try {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
         const res = await axios.get(
           "http://localhost:8000/api/getCoachBookings"
         );
         const data = await res.data;
         setPlayerBookingDetails(data);
-        console.log(data);
 
-        // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
-
-        const playerCanceledBookings = data.filter(
-          (coachBooking: CoachBookingDetails) =>
+        let sortedBookings = data.filter(
+          (coachBooking: { status: string }) =>
             coachBooking.status === "canceled_By_Player"
         );
-        console.log(playerCanceledBookings);
 
-        setCanceledByPlayer(playerCanceledBookings);
-        setPlayerCanceled(playerCanceledBookings);
-        console.log(playerCanceled);
+        // Filter based on search string and status
+        sortedBookings = sortedBookings.filter(
+          (coachBooking: CoachBookingDetails) =>
+            (search === "" || coachBooking.status === "canceled_By_Player") &&
+            (coachBooking.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              coachBooking.player.user.firstname
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              coachBooking.date.includes(search) ||
+              (
+                Number(coachBooking.zone.rate) *
+                  Number(coachBooking.participant_count) +
+                Number(coachBooking.coach.rate) *
+                  Number(coachBooking.participant_count)
+              )
+                .toString()
+                .includes(search))
+        );
+
+        setCanceledByPlayer(sortedBookings);
+        setPlayerCanceled(sortedBookings);
         setLoading(false);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [search]);
+
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
+
   const onChange = (e: RadioChangeEvent) => {
     const newValue = e.target.value;
     setValue(newValue);
@@ -66,7 +91,6 @@ const PlayerCanceledCoachBookings = () => {
           return timeDifference < twentyFourHoursInMillis;
         }
       );
-      console.log(below24Hours);
       setPlayerCanceled(below24Hours);
     } else if (newValue === 2) {
       const above24Hours = canceledByPlayer.filter(
@@ -79,11 +103,9 @@ const PlayerCanceledCoachBookings = () => {
           ).getTime();
           const timeDifference = canceledTime - createdTime;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-
           return timeDifference >= twentyFourHoursInMillis;
         }
       );
-      console.log(above24Hours);
       setPlayerCanceled(above24Hours);
     }
   };
@@ -103,6 +125,7 @@ const PlayerCanceledCoachBookings = () => {
               style={{ width: "100%", height: "40px" }}
               type="search"
               placeholder="Search here"
+              onChange={(e) => onSearch(e.target.value)}
             />
           </Col>
         </Row>
@@ -179,19 +202,19 @@ function DataRow(props: any) {
       }}
     >
       <Col span={8} style={{}}>
-      <AdvancedImage
-            style={{
-              borderRadius: "50%",
-              position: "absolute",
-              width: "80px",
-              height: "80px",
-            }}
-            cldImg={
-              cld.image(props?.coach_Image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
-          />
+        <AdvancedImage
+          style={{
+            borderRadius: "50%",
+            position: "absolute",
+            width: "80px",
+            height: "80px",
+          }}
+          cldImg={
+            cld.image(props?.coach_Image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",

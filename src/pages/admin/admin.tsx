@@ -1,7 +1,10 @@
 import {
   AuditOutlined,
+  DashboardOutlined,
   DollarOutlined,
+  EyeOutlined,
   MenuOutlined,
+  ShoppingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Col, Row, Menu } from "antd";
@@ -28,6 +31,12 @@ import CoachCancelCoachBookins from "./paymentManagement/coachCancel";
 import CoachCancelledPackageEnrollment from "./paymentManagement/coachCancelledPackageEnrollment";
 import AdminCanceledCoachBookings from "./paymentManagement/adminCncelledCoachBookings";
 import AdminCanceledPackageEnrollment from "./paymentManagement/adminCancelledPackageEnrollment";
+import { Link } from "react-router-dom";
+import AdminDashboard from "./dashboard";
+import AdminPannel from "./adminDashBoard";
+import AllPackagers from "./packageManagement/allPackages";
+import CancelPackagers from "./packageManagement/cancelPackagers";
+import SportManagement from "./sportManagement/sportManagement";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -47,6 +56,7 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuProps["items"] = [
+  getItem("Dashboard", "2", <DashboardOutlined />),
   getItem("User manegment", "sub4", <UserOutlined />, [
     getItem("Coaches Management", "9"),
     getItem("Player Management", "10"),
@@ -80,7 +90,15 @@ const items: MenuProps["items"] = [
     getItem("Booked Coaches ", "18"),
     getItem("Package Enrolled", "19"),
   ]),
+  getItem("Package Management", "sub7", <ShoppingOutlined />, [
+    getItem("AllPackagers", "32"),
+    getItem("Cancel Packagers", "33"),
+  ]),
+  getItem("Sports Management", "sub8", <EyeOutlined />, [
+    getItem("Sport Management", "34"),
+  ]),
 ];
+
 const SideBarAdminPage = () => {
   const [stts, setstts] = useState("");
   const [arcadeBookings, setArcadeBookings] = useState<ArcadeBookings[]>([]);
@@ -158,6 +176,14 @@ const SideBarAdminPage = () => {
       setstts("AdminCanceledCoach");
     } else if (e.key === "31") {
       setstts("AdminCanceledPackage");
+    } else if (e.key === "2") {
+      setstts("dashBoard");
+    } else if (e.key === "32") {
+      setstts("AllPackagers");
+    } else if (e.key === "33") {
+      setstts("CancelPackagers");
+    } else if (e.key === "34") {
+      setstts("SportManagement");
     }
   };
   return (
@@ -168,7 +194,8 @@ const SideBarAdminPage = () => {
           backgroundColor: "#051F43",
           color: "white",
           padding: "2%",
-          height: "100vh",
+          height: "120vh",
+          overflowY: "hidden",
         }}
       >
         <Row>
@@ -176,7 +203,7 @@ const SideBarAdminPage = () => {
           <MenuOutlined />
         </Row>
         <Row style={{ marginTop: "5%" }}>
-          <h3>Dashboard</h3>
+          <h3>Admin Pannel</h3>
         </Row>
         <Row>
           {" "}
@@ -218,7 +245,7 @@ const SideBarAdminPage = () => {
             /> */}
       </>
       {/* ))} */}
-
+      {stts === "dashBoard" && <AdminPannel />}
       {stts === "bookedcoach" && <BookedCoaches />}
       {stts === "packageEnrolled" && <PackageEnrolled />}
       {stts === "PlayerManagement" && <PlayerManagement />}
@@ -237,6 +264,9 @@ const SideBarAdminPage = () => {
       {stts === "AdminCanceledCoach" && <AdminCanceledCoachBookings />}
       {stts === "AdminCanceledPackage" && <AdminCanceledPackageEnrollment />}
       {stts === "completedBooking" && <ComplitedBookings />}
+      {stts === "AllPackagers" && <AllPackagers />}
+      {stts === "CancelPackagers" && <CancelPackagers />}
+      {stts === "SportManagement" && <SportManagement />}
     </Row>
   );
 };

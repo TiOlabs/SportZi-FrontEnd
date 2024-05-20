@@ -7,34 +7,84 @@ import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import confirm from "antd/es/modal/confirm";
 import axios from "axios";
+import { SearchProps } from "antd/es/input";
 
 const BookedCoaches = (props: any) => {
   const [coachBookingDetails, setCoachBookingDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredDataa, setFilteredData] = useState<CoachBookingDetails[]>([]);
+  const [search, setSearch] = useState<string>("");
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const res = await fetch(`http://localhost:8000/api/getCoachBookings`);
+  //       const data = await res.json();
+  //       console.log(data);
+  //       setCoachBookingDetails(data);
+  //       console.log(coachBookingDetails);
+  //       const filteredData = coachBookingDetails.filter(
+  //         (coachBookingDetails: CoachBookingDetails) =>
+  //           coachBookingDetails.status === "success"
+  //       );
+  //       setFilteredData(filteredData);
+  //       console.log(filteredData);
+  //       setLoading(false);
+  //     };
+  //     fetchData();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }, [coachBookingDetails]);
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await fetch(`http://localhost:8000/api/getCoachBookings`);
-        const data = await res.json();
-        console.log(data);
-        setCoachBookingDetails(data);
-        console.log(coachBookingDetails);
-        const filteredData = coachBookingDetails.filter(
-          (coachBookingDetails: CoachBookingDetails) =>
-            coachBookingDetails.status === "success"
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8000/api/getCoachBookings"
         );
-        setFilteredData(filteredData);
-        console.log(filteredData);
-        setLoading(false);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, [coachBookingDetails]);
+        const data = await res.data;
+        setCoachBookingDetails(data);
 
+        let sortedBookings = data.filter(
+          (coachBooking: { status: string }) =>
+            coachBooking.status === "success"
+        );
+
+        // Filter based on search string and status
+        sortedBookings = sortedBookings.filter(
+          (coachBooking: CoachBookingDetails) =>
+            (search === "" || coachBooking.status === "success") &&
+            (coachBooking.zone.zone_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+              coachBooking.player.user.firstname
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              coachBooking.date.includes(search) ||
+              (
+                Number(coachBooking.zone.rate) *
+                  Number(coachBooking.participant_count) +
+                Number(coachBooking.zone.rate) *
+                  Number(coachBooking.participant_count)
+              )
+                .toString()
+                .includes(search))
+        );
+
+        setCoachBookingDetails(sortedBookings);
+        setCoachBookingDetails(sortedBookings);
+        setLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [search]);
+
+  const onSearch: SearchProps["onSearch"] = (value: string) => {
+    setSearch(value.trim());
+  };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Spin spinning={loading}>
@@ -50,51 +100,54 @@ const BookedCoaches = (props: any) => {
               style={{ width: "100%", height: "40px" }}
               type="search"
               placeholder="Search here"
+              onChange={(e) => onSearch(e.target.value)}
             />
           </Col>
         </Row>
         <Col
           style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}
         >
-          {filteredDataa.length === 0 ? <Empty /> : null}
-          {filteredDataa.map((CoachBookingDetails: CoachBookingDetails) => {
-            console.log(CoachBookingDetails); // Logging CoachBookingDetails
-            return (
-              <DataRow
-                booking_id={CoachBookingDetails.booking_id}
-                booked_Coach={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
-                booked_by={`${CoachBookingDetails.player.user.firstname} ${CoachBookingDetails.player.user.lastname}`}
-                rate={
-                  Number(CoachBookingDetails.coach.rate) *
-                  Number(CoachBookingDetails.participant_count)
-                }
-                user_id={CoachBookingDetails.player.user.user_id}
-                zone_id={CoachBookingDetails.zone.zone_id}
-                zone={CoachBookingDetails.zone.zone_name}
-                arcade={CoachBookingDetails.arcade.arcade_name}
-                arcade_id={CoachBookingDetails.arcade_id}
-                booking_date={CoachBookingDetails.date}
-                booking_time={CoachBookingDetails.time}
-                participant_count={CoachBookingDetails.participant_count}
-                created_at={CoachBookingDetails.created_at}
-                image={CoachBookingDetails.player.user.user_image}
-                coach_image={CoachBookingDetails.coach.user.user_image}
-                coach_id={CoachBookingDetails.coach.coach_id}
-                // arcadeBookings={props.arcadeBookings}
-                // setArcadeBookings={props.setArcadeBookings}
-                // key={arcadeBooking.id}
-                // zone={arcadeBooking.zone}
-                // booking_id={arcadeBooking.id}
-                // booking_date={arcadeBooking.booking_date}
-                // booking_time={arcadeBooking.booking_time}
-                // participant_count={arcadeBooking.participant_count}
-                // created_at={arcadeBooking.created_at}
-                // cancel_by_arcade={arcadeBooking.cancel_by_arcade}
-                // cancel_by_player={arcadeBooking.cancel_by_player}
-                // cancel_by_admin={arcadeBooking.cancel_by_admin}
-              />
-            );
-          })}
+          {coachBookingDetails.length === 0 ? <Empty /> : null}
+          {coachBookingDetails.map(
+            (CoachBookingDetails: CoachBookingDetails) => {
+              console.log(CoachBookingDetails); // Logging CoachBookingDetails
+              return (
+                <DataRow
+                  booking_id={CoachBookingDetails.booking_id}
+                  booked_Coach={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
+                  booked_by={`${CoachBookingDetails.player.user.firstname} ${CoachBookingDetails.player.user.lastname}`}
+                  rate={
+                    Number(CoachBookingDetails.coach.rate) *
+                    Number(CoachBookingDetails.participant_count)
+                  }
+                  user_id={CoachBookingDetails.player.user.user_id}
+                  zone_id={CoachBookingDetails.zone.zone_id}
+                  zone={CoachBookingDetails.zone.zone_name}
+                  arcade={CoachBookingDetails.arcade.arcade_name}
+                  arcade_id={CoachBookingDetails.arcade_id}
+                  booking_date={CoachBookingDetails.date}
+                  booking_time={CoachBookingDetails.time}
+                  participant_count={CoachBookingDetails.participant_count}
+                  created_at={CoachBookingDetails.created_at}
+                  image={CoachBookingDetails.player.user.user_image}
+                  coach_image={CoachBookingDetails.coach.user.user_image}
+                  coach_id={CoachBookingDetails.coach.coach_id}
+                  // arcadeBookings={props.arcadeBookings}
+                  // setArcadeBookings={props.setArcadeBookings}
+                  // key={arcadeBooking.id}
+                  // zone={arcadeBooking.zone}
+                  // booking_id={arcadeBooking.id}
+                  // booking_date={arcadeBooking.booking_date}
+                  // booking_time={arcadeBooking.booking_time}
+                  // participant_count={arcadeBooking.participant_count}
+                  // created_at={arcadeBooking.created_at}
+                  // cancel_by_arcade={arcadeBooking.cancel_by_arcade}
+                  // cancel_by_player={arcadeBooking.cancel_by_player}
+                  // cancel_by_admin={arcadeBooking.cancel_by_admin}
+                />
+              );
+            }
+          )}
         </Col>
       </Spin>
     </Col>

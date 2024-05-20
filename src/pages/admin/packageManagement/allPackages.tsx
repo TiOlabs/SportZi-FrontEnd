@@ -1,11 +1,11 @@
 import { Col, Row, Button } from "antd";
-const PackageEnrolled = () => {
+const AllPackagers = () => {
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
-          <h2>Package Enrolled</h2>
+          <h2>All Packages</h2>
         </Col>
       </Row>
       <Row>
@@ -86,7 +86,7 @@ const PackageEnrolled = () => {
               fontSize: "16px",
             }}
           >
-            Sasindu Daluwatta
+            SSC{" "}
           </div>
         </Col>
         <Col span={6} style={{}}>
@@ -139,4 +139,4 @@ const PackageEnrolled = () => {
   );
 };
 
-export default PackageEnrolled;
+export default AllPackagers;

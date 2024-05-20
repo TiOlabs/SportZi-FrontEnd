@@ -17,7 +17,9 @@ const PlayerCanceledPackageEnrollment = () => {
   const [playerCanceled, setPlayerCanceled] = useState<ZoneBookingDetails[]>(
     []
   );
-  const[canceledByPlayer, setCanceledByPlayer] = useState<ZoneBookingDetails[]>([]);
+  const [canceledByPlayer, setCanceledByPlayer] = useState<
+    ZoneBookingDetails[]
+  >([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -35,7 +37,7 @@ const PlayerCanceledPackageEnrollment = () => {
             arcadeBooking.status === "canceled_By_Player"
         );
         console.log(playerCanceledBookings);
-        
+
         setCanceledByPlayer(playerCanceledBookings);
         setPlayerCanceled(playerCanceledBookings);
         console.log(playerCanceled);
@@ -172,18 +174,19 @@ function DataRow(props: any) {
       }}
     >
       <Col span={8} style={{}}>
-        <div
+        <AdvancedImage
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(props?.zone_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",

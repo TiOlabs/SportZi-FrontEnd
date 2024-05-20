@@ -21,7 +21,8 @@ export interface Zone {
   way_of_booking: String;
   sport_id: String;
   sport: Sport;
-  zoneBookingDetails: ZoneBookingDetails[]; 
+  zoneBookingDetails: ZoneBookingDetails[];
+  coachBookingDetails: CoachBookingDetails[];
 }
 export interface Package {
   package_id: String;
@@ -29,16 +30,15 @@ export interface Package {
   description: String;
   package_image: String;
   rate_per_person: Number;
-  created_at : String;
-  canceled_at : String;
-  status : String ;
-  arcade_id : String ;
-  percentageForCoach : Number;
-  discount : Discount[];
-  arcade : Arcade;
-  coachApplyDetailsForPackage : String;
-  playerPackageEnrollDetails : String;
- 
+  created_at: String;
+  canceled_at: String;
+  status: String;
+  arcade_id: String;
+  percentageForCoach: Number;
+  discount: Discount[];
+  arcade: Arcade;
+  coachApplyDetailsForPackage: String;
+  playerPackageEnrollDetails: String;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
@@ -51,7 +51,7 @@ export interface ZoneBookingDetails {
   participant_count: Number;
   user: User;
   zone: Zone;
-  way_of_booking: String; 
+  way_of_booking: String;
   booking_type: String;
 }
 
@@ -73,12 +73,11 @@ export interface CoachBookingDetails {
   zone: Zone;
   arcade: Arcade;
   way_of_booking: String;
-
 }
-export interface Player{
-player_id: String;
-coachBookingDetails: CoachBookingDetails[];
-user: User;
+export interface Player {
+  player_id: String;
+  coachBookingDetails: CoachBookingDetails[];
+  user: User;
 }
 export interface Coach {
   coach_id: String;
@@ -104,7 +103,7 @@ export interface User {
   user_image: String;
   Phone: UserPhone;
   userPhotos: UserPhoto;
-  player:Player
+  player: Player;
 }
 export interface UserPhone {
   user_id: String;
@@ -136,10 +135,13 @@ export interface ArcadeBookings {
 }
 
 export interface Arcade {
+  lng: number | (() => number);
+  lat: number | (() => number);
+  map(arg0: (booking: any) => any): unknown;
   arcade_id: String;
   arcade_name: String;
   arcade_email: String;
-  arcade_location: String;
+  location: string;
   distription: String;
   manager_id: String;
   opening_time: String;

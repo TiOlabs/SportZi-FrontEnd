@@ -1,12 +1,18 @@
-import { Col, Row, Button, Empty, Modal } from "antd";
+import { Col, Row, Button, Empty, Modal, Dropdown, Space, message } from "antd";
 import React, { useEffect, useState } from "react";
-import type { RadioChangeEvent } from "antd";
+import type { MenuProps, RadioChangeEvent } from "antd";
 import { Radio } from "antd";
 import { ZoneBookingDetails } from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  ExclamationCircleOutlined,
+  SortAscendingOutlined,
+  StarOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 const CompletedBookings = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,6 +20,7 @@ const CompletedBookings = () => {
   const [completedBookings, setCompletedBookings] = useState<
     ZoneBookingDetails[]
   >([]);
+  const [loading, setLoading] = useState(true);
 
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
@@ -85,6 +92,75 @@ const CompletedBookings = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const handleMenuClick: MenuProps["onClick"] = async (e) => {
+    message.info("Click on menu item.");
+    console.log("click", e);
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:8000/api/getarcadeDetails");
+      const data = await res.json();
+      let sortedArcades = [...data];
+      switch (e.key) {
+        case "1":
+        // sortedArcades.sort((a: Arcade, b: Arcade) => {
+        //   console.log("a", a.arcadefeedbacks);
+        //   console.log("b", b.arcadefeedbacks);
+        //   const rateA = Number(a.arcadefeedbacks[0].rate);
+        //   const rateB = Number(b.arcadefeedbacks[0].rate);
+        //   console.log("rateA", rateA);
+        //   console.log("rateB", rateB);
+        //   return rateB - rateA; // Sort in descending order of rate
+        // });
+        // break;
+        case "2":
+        //   sortedArcades.sort((a: Arcade, b: Arcade) => {
+        //     const nameA = a.arcade_name.toLowerCase();
+        //     const nameB = b.arcade_name.toLowerCase();
+        //     if (nameA < nameB) return -1;
+        //     if (nameA > nameB) return 1;
+        //     return 0;
+        //   });
+        //   break;
+        // // Add cases for other filters if needed
+        // default:
+        //   break;
+      }
+      setCompletedBookings(sortedArcades);
+    } catch (error) {
+      console.error("Error fetching and sorting data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const items: MenuProps["items"] = [
+    {
+      label: "Rate",
+      key: "1",
+      icon: <StarOutlined />,
+    },
+    {
+      label: "By Alperbertical order",
+      key: "2",
+      icon: <SortAscendingOutlined />,
+    },
+    {
+      label: "Coach-3",
+      key: "3",
+      icon: <UserOutlined />,
+      danger: true,
+    },
+    {
+      label: "Coach-4",
+      key: "4",
+      icon: <UserOutlined />,
+      danger: true,
+      disabled: true,
+    },
+  ];
+  const menuProps = {
+    items,
+    onClick: handleMenuClick,
+  };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -94,12 +170,23 @@ const CompletedBookings = () => {
         </Col>
       </Row>
       <Row>
-        <Col span={24}>
+        <Col span={21}>
           <input
             style={{ width: "100%", height: "40px" }}
             type="search"
             placeholder="Search here"
           />
+        </Col>
+        {/* <Col span={1}></Col> */}
+        <Col span={3}>
+          <Dropdown menu={menuProps}>
+            <Button style={{ height: 40 }}>
+              <Space>
+                Filter By
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown>
         </Col>
       </Row>
       <Row style={{ marginTop: "20px" }}>
@@ -137,18 +224,19 @@ const CompletedBookings = () => {
             <>
               <Col></Col>
               <Col span={8} style={{}}>
-                <div
+                <AdvancedImage
                   style={{
                     borderRadius: "50%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
                     position: "absolute",
-                    width: "70px",
-                    height: "70px",
-                    backgroundColor: "#000",
+                    width: "80px",
+                    height: "80px",
                   }}
-                ></div>
+                  cldImg={
+                    cld.image("bbb")
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
                 <div
                   style={{
                     display: "flex",

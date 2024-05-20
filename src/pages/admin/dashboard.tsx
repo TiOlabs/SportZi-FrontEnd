@@ -26,6 +26,7 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuProps["items"] = [
+  getItem("Dashboard", "1"),  
   getItem("User manegment", "sub4", <UserOutlined />, [
     getItem("Coaches Management", "/coaches"),
     getItem("Player Management", "10"),
@@ -33,7 +34,7 @@ const items: MenuProps["items"] = [
   ]),
   getItem("Payment Manegement", "sub5", <DollarOutlined />, [
     getItem("completed Booking", "12"),
-    getItem("Player Canceled", "13",) ,
+    getItem("Player Canceled", "13"),
     getItem("Coach/Arcade Canceled", "14"),
     getItem("Admin Canceled", "15"),
   ]),

@@ -1,33 +1,71 @@
 import { Col, Row, Skeleton } from "antd";
-import { useJsApiLoader, GoogleMap, Marker, MarkerClusterer } from "@react-google-maps/api";
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  MarkerClusterer,
+} from "@react-google-maps/api";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
+import { Arcade } from "../../types";
 
 const center: google.maps.LatLngLiteral = { lat: 6.7969, lng: 79.9018 };
 
 const MapSection: React.FC = () => {
+  const [locationData, setLocationData] = useState<
+    { lat: number; lng: number }[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails`
+        );
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data: Arcade[] = await res.json();
+
+        console.log(data);
+
+        const parsedLocations = data.map((arcade) => {
+          const location = JSON.parse(arcade.location);
+          return { lat: location.lat, lng: location.lng };
+        });
+
+        setLocationData(parsedLocations);
+      } catch (error) {
+        setError(error as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
   const { lg } = useBreakpoint();
 
   const { isLoaded, loadError } = useJsApiLoader({
-
-
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY || "",
   });
-
-  const locations = [
-    { lat: 6.79219078406429, lng: 79.89792530231765 },
-    { lat: 6.790880397204962, lng: 79.89870850735 },
-    { lat: 6.792116209298174, lng: 79.89963118725112 }
-  ];
 
   if (loadError) {
     return <div>Error loading map</div>;
   }
 
-  if (!isLoaded) {
+  if (isLoading || !isLoaded) {
     return <Skeleton />;
   }
+
+  if (error) {
+    return <div>Error fetching arcade details: {error.message}</div>;
+  }
+
+  console.log(locationData);
 
   return (
     <Row style={{ backgroundColor: "#EFF4FA", marginTop: "2%" }}>
@@ -44,7 +82,7 @@ const MapSection: React.FC = () => {
         </h1>
         <p
           style={{
-            fontSize: lg ? "24px" : "14px",
+            fontSize: lg ? "18px" : "14px",
             justifyContent: "center",
             alignItems: "center",
             textAlign: "justify",
@@ -71,21 +109,24 @@ const MapSection: React.FC = () => {
             height: "50vh",
           }}
         >
-          <React.Fragment>
-            <MarkerClusterer>
-              {(clusterer) => (
-                <div> {/* Add a parent element */}
-                  {locations.map((location, index) => (
-                    <Marker
-                      key={index}
-                      position={location}
-                      clusterer={clusterer}
-                    />
-                  ))}
-                </div>
-              )}
-            </MarkerClusterer>
-          </React.Fragment>
+          <MarkerClusterer
+            options={{
+              imagePath:
+                "https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m",
+            }}
+          >
+            {(clusterer) => (
+              <React.Fragment>
+                {locationData.map((location, index) => (
+                  <Marker
+                    key={index}
+                    position={location}
+                    clusterer={clusterer}
+                  />
+                ))}
+              </React.Fragment>
+            )}
+          </MarkerClusterer>
         </GoogleMap>
       </Col>
     </Row>
