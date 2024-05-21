@@ -253,6 +253,7 @@ const ArcadeProfileArcade = () => {
     (coachAssignRequest || []).map((coachAssign: CoachAssignDetails) => (
       <CoachReqestForArcade
         coach_id={coachAssign.coach_id}
+        coach_Email={coachAssign.coach.user.email}
         coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
         coach_image={coachAssign.coach.user.user_image}
         coach_discription={coachAssign.description}
