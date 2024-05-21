@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -16,6 +16,7 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { useParams } from "react-router-dom";
+import { Sport } from "../types";
 
 const AddZone = () => {
   const { ArcadeId } = useParams();
@@ -41,7 +42,7 @@ const AddZone = () => {
 
   const [rate, setRate] = useState("");
   const [discount, setdiscount] = useState("");
-  const[discountDiscription, setdiscountDiscription] = useState("");
+  const [discountDiscription, setdiscountDiscription] = useState("");
   const [capacity, setCapacity] = useState("");
   const [way, setWay] = useState("");
   const [arcadeName, setArcadeName] = useState("");
@@ -52,6 +53,7 @@ const AddZone = () => {
   const [closedTime, setClosedTime] = useState<string | null>(null);
   const [discription, setDiscription] = useState("");
   const [sport, setSport] = useState("");
+  const [SportDetails, setSportDetails] = useState<Sport[]>([]);
   const handleTimeChangeStart = (time: any, timeString: string) => {
     setStartedTime(timeString);
     console.log("Selected time:", timeString);
@@ -141,6 +143,21 @@ const AddZone = () => {
     }
   };
   console.log(arcadeName);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getSportDetails`
+        );
+        const data = await res.data;
+        console.log(data);
+        setSportDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
   return (
     <>
       <Button
@@ -361,12 +378,11 @@ const AddZone = () => {
               placeholder="Select a sport"
               onChange={(value) => setSport(value)}
             >
-              <Select.Option value="S00001">Cricket</Select.Option>
-              <Select.Option value="S00003">Swimming</Select.Option>
-              <Select.Option value="S00002">FootBall</Select.Option>
-              <Select.Option value="S00004">Gym</Select.Option>
-              <Select.Option value="S00005">NetBall</Select.Option>
-              <Select.Option value="S00006">Batmintain</Select.Option>
+              {SportDetails.map((sport) => (
+                <Select.Option value={sport.sport_id}>
+                  {sport.sport_name}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item

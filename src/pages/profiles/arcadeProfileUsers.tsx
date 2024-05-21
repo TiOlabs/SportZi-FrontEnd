@@ -18,7 +18,7 @@ import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
-import { Arcade, CoachAssignDetails, Zone } from "../../types";
+import { Arcade, CoachAssignDetails, Package, Zone } from "../../types";
 import axios from "axios";
 import NavbarProfile from "../../components/NavBarProfile";
 import NavbarLogin from "../../components/NavBarLogin";
@@ -29,6 +29,7 @@ import ArcadeZoneCardUserView from "../../components/arcadeZoneCard(UserView)";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import CoachApplyForm from "../../components/coachApplyForArcade";
+import ArcadePackageUserView from "../../components/arcadePackageUserView";
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -41,6 +42,7 @@ const ArcadeProfileUser = () => {
   const [coachesInArcade, setCoachesInArcade] = useState<CoachAssignDetails[]>(
     []
   );
+  const [arcadePackages, setArcadePackages] = useState<Arcade>();
   console.log("userDetails", userDetails);
   console.log("coachDetails", coachDetails);
 
@@ -74,6 +76,23 @@ const ArcadeProfileUser = () => {
       console.log(e);
     }
   }, []);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${ArcadeId}`
+        );
+        const data = await res.data;
+        console.log(data);
+        setArcadePackages(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+  console.log(arcadePackages);
+
   useEffect(() => {
     axios
       .get(
@@ -895,43 +914,17 @@ const ArcadeProfileUser = () => {
               marginBottom: "20px",
             }}
           >
-            {" "}
-            <ArcadePackages />
+            {arcadePackages?.package.map((package1: Package) => (
+              <ArcadePackageUserView
+                packageName={package1.package_name}
+                packageDescription={package1.description}
+                ArcadeName={package1.arcade.arcade_name}
+                rate={package1.rate_per_person}
+                package_image={package1.package_image}
+              />
+            ))}
           </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadePackages />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadePackages />
-          </Col>
+
           <Col
             style={{
               width: "100%",
