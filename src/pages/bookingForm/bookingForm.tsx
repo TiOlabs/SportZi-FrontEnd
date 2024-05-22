@@ -15,7 +15,7 @@ import Calender from "../../components/calender";
 import { LeftOutlined } from "@ant-design/icons";
 import AppFooter from "../../components/footer";
 import PaymentModal from "../../components/paymentCheckout";
-import { User, Zone, ZoneBookingDetails } from "../../types";
+import { Arcade, User, Zone, ZoneBookingDetails } from "../../types";
 import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -53,6 +53,10 @@ const BookingForm = () => {
   const [timeParticipantCounts1, setTimeParticipantCounts1] = useState<
     TimeParticipantCount[]
   >([]);
+  const [packageDetails, setPackageDetails] = useState<Arcade>();
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+
   // payment_id: "",
   // oder_id: "",
   // items: "",
@@ -98,7 +102,7 @@ const BookingForm = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbydate/${date}/${zoneId}`
+          `http://localhost:8000/api/getarcadebookingbydate/${selectedDate}/${zoneId}`
         );
 
         const data = await res.json();
@@ -145,7 +149,7 @@ const BookingForm = () => {
           0
         );
         console.log(
-          `Total participant count for date ${date}:`,
+          `Total participant count for date ${selectedDate}:`,
           totalParticipantCountByDate
         );
         const timeParticipantCounts = Object.entries(groupedByTime).map(
@@ -162,7 +166,7 @@ const BookingForm = () => {
     };
 
     fetchData();
-  }, [date, zoneId]);
+  }, [selectedDate, zoneId]);
 
   console.log("Time Participant Counts:", timeParticipantCounts1);
   const participantCounts: number[] = bookingDate.map(
@@ -192,6 +196,24 @@ const BookingForm = () => {
       console.log(e);
     }
   }, []);
+
+  useEffect(() => {
+    console.log(zoneDetails);
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${zoneDetails?.arcade.arcade_id}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setPackageDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [zoneDetails]);
 
   console.log(paymentDetails);
 
@@ -252,7 +274,7 @@ const BookingForm = () => {
   // };
 
   const handleFinish = async () => {
-    console.log(date, time, zone, pcount);
+    console.log(selectedDay, time, zone, pcount);
     const pcountint = parseInt(pcount);
     if (parseInt(pcount) <= 0) {
       message.error("Participant count must be more than 0");
@@ -281,7 +303,7 @@ const BookingForm = () => {
 
         const currentDateTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
         setZoneBookings({
-          date: date,
+          date: selectedDate,
           time: time,
           participant_count: pcountint,
           user_id: userId,
@@ -373,7 +395,7 @@ const BookingForm = () => {
     }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
     formattedTime = formattedTime.replace(/\s/g, ""); // Remove any spaces
 
-    if (date === dayjs().format("YYYY-MM-DD")) {
+    if (selectedDate === dayjs().format("YYYY-MM-DD")) {
       // Split formattedTime into start and end times
       const [startTime, endTime] = formattedTime.split("-");
 
@@ -430,6 +452,54 @@ const BookingForm = () => {
   console.log("565");
   console.log(capacity);
   console.log(timeParticipantCounts1);
+  console.log(packageDetails);
+
+  const handleDateChange = (
+    date: React.SetStateAction<null>,
+    day: React.SetStateAction<null>
+    // Change the type to string
+  ) => {
+    setSelectedDate(date);
+    setDate(date as unknown as string);
+    setSelectedDay(day);
+    form.setFieldsValue({ date });
+    console.log("Selected Day:", day); // Log the selected day name
+  };
+  console.log(selectedDay);
+  console.log(selectedDate);
+  console.log(date);
+
+  const isWithinPackageTime = (buttonTime: string, packageTime: string) => {
+    const [start, end] = packageTime.split("-");
+    const [buttonStart, buttonEnd] = buttonTime.split("-");
+
+    // Convert times to minutes for easier comparison
+    const timeToMinutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    const buttonStartMinutes = timeToMinutes(buttonStart);
+    const buttonEndMinutes = timeToMinutes(buttonEnd);
+
+    return buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+  };
+  const isPackageDayAndTime = (buttonId: string) => {
+    if (!selectedDay || !packageDetails || !packageDetails.package || !buttonId)
+      return false;
+
+    return packageDetails.package.some(
+      (pkg) =>
+        pkg.packageDayAndTime &&
+        pkg.packageDayAndTime.some(
+          (pdt) =>
+            pdt.day === selectedDay && isWithinPackageTime(buttonId, pdt.time)
+        )
+    );
+  };
+
   return (
     <>
       <NavbarProfile />
@@ -470,13 +540,7 @@ const BookingForm = () => {
                   </Col>
                   <Col style={{}} xs={24} md={12} lg={24}>
                     <div style={{ display: "Flex", justifyContent: "center" }}>
-                      <Form.Item name="date" rules={[{ required: true }]}>
-                        <Calender
-                          onChange={(date: any) => {
-                            setDate(date);
-                          }}
-                        />
-                      </Form.Item>
+                      <Calender onSelect={handleDateChange} />
                     </div>
                   </Col>
                   <Form.Item
@@ -542,7 +606,7 @@ const BookingForm = () => {
                     }}
                   >
                     <InputNumber
-                      disabled={!date || !time}
+                      disabled={!selectedDate || !time}
                       style={{
                         height: "50px",
                         width: "100%",
@@ -605,7 +669,8 @@ const BookingForm = () => {
                         ) !== undefined ||
                         timeParticipantCounts1.find(
                           (item) => item.time === button.id
-                        )?.totalParticipantCount === capacity
+                        )?.totalParticipantCount === capacity ||
+                        isPackageDayAndTime(button.id) // Disable button if it is within the package time for the selected day
                       }
                       key={button.id}
                       id={button.id.toString()}
@@ -620,9 +685,11 @@ const BookingForm = () => {
                             booking.way_of_booking === "full" &&
                             booking.status === "success"
                         )
-                          ? "#0F70AE" // If fully booked, set background color to red
+                          ? "#0F70AE" // If fully booked, set background color to blue
                           : button.id === time // Otherwise, use the original logic for background color
                           ? "#1677FF"
+                          : isPackageDayAndTime(button.id) // Check if the button time is within package time
+                          ? "red" // If within package time, set background color to red
                           : "white",
                         // Adjusted background color to cover only half of the button when booked
                         backgroundImage: bookingDate.find(
@@ -635,7 +702,6 @@ const BookingForm = () => {
                               (booking) =>
                                 booking.time === button.id &&
                                 booking.status === "success"
-
                             )
                           ? `linear-gradient(to right, #0F70AE ${
                               ((timeParticipantCounts1.find(
@@ -655,21 +721,16 @@ const BookingForm = () => {
                       )
                         ? "Fully Booked"
                         : timeParticipantCounts1.find(
-                            (item) => item.time === button.id 
-                            
+                            (item) => item.time === button.id
                           )?.totalParticipantCount === capacity
                         ? "Fully Booked"
-                        : `${
-                            (timeParticipantCounts1.find(
-                              (item) => item.time === button.id
-                            )?.totalParticipantCount ?? 0) > 0
-                              ? button.time.toString()
-                              : button.time.toString()
-                          }`}
+                        : isPackageDayAndTime(button.id) // Check if the button time is within package time
+                        ? `${button.time.toString()} - Has Package` // Indicate that a package is available
+                        : button.time.toString()}
                     </button>
                   ))}
                 </Form.Item>
-                {/* ${button.time} */}
+                ; ;{/* ${button.time} */}
                 {/* </Form.Item> */}
               </div>
             </Col>
@@ -728,7 +789,7 @@ const BookingForm = () => {
                   address={paymentDetails?.address}
                   city={paymentDetails?.city}
                   country={paymentDetails?.country}
-                  date={date}
+                  date={selectedDate}
                   time={time}
                   pcount={pcount}
                   userId={userId}

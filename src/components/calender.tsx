@@ -4,7 +4,6 @@ import "dayjs/locale/zh-cn";
 import type { Dayjs } from "dayjs";
 import dayLocaleData from "dayjs/plugin/localeData";
 import { Calendar, Col, Radio, Row, Select, Typography, theme } from "antd";
-import type { CalendarProps } from "antd";
 
 const Calender = (props: any) => {
   dayjs.extend(dayLocaleData);
@@ -22,8 +21,10 @@ const Calender = (props: any) => {
     return current < dayjs().startOf("day");
   };
 
-  const onChange = (date: any) => {
-    props.onChange(date.format("YYYY-MM-DD"));
+  const onSelect = (date: Dayjs) => {
+    // Extract the day name and formatted date
+    const dayName = date.format("dddd"); // Full day name
+    props.onSelect(date.format("YYYY-MM-DD"), dayName);
   };
 
   return (
@@ -106,7 +107,7 @@ const Calender = (props: any) => {
           );
         }}
         disabledDate={disabledDate}
-        onChange={onChange}
+        onSelect={onSelect}  // Use onSelect to capture the clicked date
       />
     </div>
   );
