@@ -39,6 +39,12 @@ export interface Package {
   arcade: Arcade;
   coachApplyDetailsForPackage: String;
   playerPackageEnrollDetails: String;
+  packageDayAndTime: PackageDayAndTime[];
+}
+interface PackageDayAndTime {
+  package_id: string;
+  day: string;
+  time: string;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
@@ -135,6 +141,7 @@ export interface ArcadeBookings {
 }
 
 export interface Arcade {
+  packageDayAndTime: any;
   lng: number | (() => number);
   lat: number | (() => number);
   map(arg0: (booking: any) => any): unknown;
