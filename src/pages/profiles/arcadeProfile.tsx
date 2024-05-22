@@ -258,6 +258,7 @@ const ArcadeProfileArcade = () => {
         coach_image={coachAssign.coach.user.user_image}
         coach_discription={coachAssign.description}
         date={coachAssign.assigned_date}
+        arcade_name={arcade?.arcade_name}
       />
     )),
   ];

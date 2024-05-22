@@ -34,6 +34,9 @@ const CoachReqestForArcade = (props: any) => {
             coach_id: props.coach_id,
             arcade_id: ArcadeId,
             status: "success",
+            coach_name: props.coach_name,
+            email: props.coach_Email,
+            arcade_name: props.arcade_name,
           }
         );
         console.log(res.data);
