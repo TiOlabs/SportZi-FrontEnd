@@ -163,6 +163,7 @@ const NavbarProfile: React.FC = () => {
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
   };
+  const token = Cookies.get("token");
   function logOut() {
     // Remove the token cookie
     Cookies.remove("token");
@@ -278,7 +279,7 @@ const NavbarProfile: React.FC = () => {
           type="primary"
           onClick={() => {
             logOut();
-            window.location.reload();
+            window.location.href = "/";
           }}
           style={{
             width: "100%",
@@ -741,9 +742,11 @@ const NavbarProfile: React.FC = () => {
                     cldImg={
                       userDetails && userDetails.image
                         ? cld.image(userDetails.image)
-                        : // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                          // .resize(Resize.scale().width(200).height(200))
-                          cld.image(coachDetails.image)
+                        : coachDetails && coachDetails.image
+                        ? cld.image(coachDetails.image)
+                        : managerDetails && managerDetails.image
+                        ? cld.image(managerDetails.image)
+                        : cld.image("")
                     }
                   />
                 </a>

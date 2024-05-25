@@ -13,6 +13,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import { useArcade } from "../context/Arcade.context";
 import { useCoach } from "../context/coach.context";
+import { useUser } from "../context/userContext";
 
 const Navbar: React.FC = () => {
   const [cloudName] = useState("dle0txcgt");
@@ -24,6 +25,8 @@ const Navbar: React.FC = () => {
   const { userDetails } = usePlayer();
   const { managerDetails } = useArcade();
   const { coachDetails } = useCoach();
+  const { users } = useUser();
+  console.log(users);
   console.log(managerDetails);
   console.log(userDetails);
   console.log(coachDetails);
@@ -853,10 +856,11 @@ const Navbar: React.FC = () => {
                     cldImg={
                       userDetails && userDetails.image
                         ? cld.image(userDetails.image)
-                        : // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                          // .resize(Resize.scale().width(200).height(200))
-                          cld.image(coachDetails.image)
-                      // render coach's image if userDetails is empty
+                        : coachDetails && coachDetails.image
+                        ? cld.image(coachDetails.image)
+                        : managerDetails && managerDetails.image
+                        ? cld.image(managerDetails.image)
+                        : cld.image("") // Provide a fallback or default image if necessary
                     }
                   />
                 </a>

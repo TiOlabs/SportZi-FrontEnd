@@ -41,6 +41,7 @@ const Login = () => {
       });
 
       navigate("/", { replace: true, state: { loggedIn: true } });
+      window.location.href = "/";
     } catch (err) {
       alert(
         (err as any).response

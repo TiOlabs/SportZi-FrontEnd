@@ -492,6 +492,7 @@ const BookingForm = () => {
 
     return packageDetails.package.some(
       (pkg) =>
+        pkg.zone_id === zoneId &&
         pkg.packageDayAndTime &&
         pkg.packageDayAndTime.some(
           (pdt) =>

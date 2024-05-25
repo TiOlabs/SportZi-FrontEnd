@@ -23,6 +23,7 @@ export interface Zone {
   sport: Sport;
   zoneBookingDetails: ZoneBookingDetails[];
   coachBookingDetails: CoachBookingDetails[];
+  package: Package[]; 
 }
 export interface Package {
   package_id: String;
@@ -34,14 +35,27 @@ export interface Package {
   canceled_at: String;
   status: String;
   arcade_id: String;
+  zone_id: String;
   percentageForCoach: Number;
   discount: Discount[];
   arcade: Arcade;
+  zone: Zone;
   coachApplyDetailsForPackage: String;
   playerPackageEnrollDetails: String;
   packageDayAndTime: PackageDayAndTime[];
 }
-interface PackageDayAndTime {
+export interface PackageEnroolDetailsForPlayer {
+  player_id: String;
+  package_id: String;
+  status: String;
+  enrolled_date: String;
+  canceled_at: String;
+  rate: Number;
+  duration: Number;
+  player: Player;
+  package: Package;
+}
+export interface PackageDayAndTime {
   package_id: string;
   day: string;
   time: string;

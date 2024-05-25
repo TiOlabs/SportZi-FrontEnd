@@ -921,6 +921,11 @@ const ArcadeProfileUser = () => {
                 ArcadeName={package1.arcade.arcade_name}
                 rate={package1.rate_per_person}
                 package_image={package1.package_image}
+                package_id={package1.package_id}
+                player_id={userDetails.id}
+                zone_id={package1.zone_id}
+                arcade_id={ArcadeId}
+                
               />
             ))}
           </Col>

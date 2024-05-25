@@ -12,11 +12,16 @@ import axiosInstance from "../../axiosInstance";
 import { PlayerContext } from "../../context/player.context";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
-import { CoachBookingDetails, ZoneBookingDetails } from "../../types";
+import {
+  CoachBookingDetails,
+  PackageEnroolDetailsForPlayer,
+  ZoneBookingDetails,
+} from "../../types";
 import PlayerEdit from "../../components/playerEdit";
 import axios from "axios";
 import AppFooter from "../../components/footer";
 import NavbarLogin from "../../components/NavBarLogin";
+import PackageEnrollmentDetailsInPlayerProfile from "../../components/packageEnrollDetailsInPlayerProfile";
 
 const requestList = [
   <CoachRequstRow />,
@@ -31,6 +36,9 @@ const requestList = [
 
 const PlayerProfile = () => {
   const [playerBookingsData, setPlayerBookingsData] = useState([]);
+  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
+    PackageEnroolDetailsForPlayer[]
+  >([]);
   const [coachBookingData, setCoachBookingData] = useState([]);
   const { userDetails } = useContext(PlayerContext);
   const [numberOfItemsShown, setNumberOfItemsShown] = useState(4);
@@ -78,7 +86,27 @@ const PlayerProfile = () => {
         console.log(error);
       });
   }, [userDetails]);
-  console.log("userDetails", userDetails);  
+  useEffect(() => {
+    axios
+      .get(
+        process.env.REACT_APP_API_URL + `api/getPackageEnrollmentPlayerDetails`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setPackageEnrollmentForPlayer(res.data);
+        setPackageEnrollmentForPlayer((prev: any) => {
+          return prev.filter(
+            (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
+              playerEnrollDetails.status === "success" &&
+              playerEnrollDetails.player_id === userDetails?.id
+          );
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [userDetails]);
+  console.log("userDetails", userDetails);
   useEffect(() => {
     axios
       .get(
@@ -594,7 +622,9 @@ const PlayerProfile = () => {
             md={8}
             lg={6}
             xl={6}
-          >Venue</Col>
+          >
+            Venue
+          </Col>
         </Row>
 
         {coachBookingData && coachBookingData.length > 0 ? (
@@ -803,6 +833,194 @@ const PlayerProfile = () => {
             )
           ) : (
             <Empty description="No Bookings Available" />
+          )}
+        </div>
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </div>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <p
+          style={{
+            marginTop: "80px",
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "32px",
+            paddingBottom: "10px",
+          }}
+        >
+          Package Enrollments
+        </p>
+
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Package
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+           Rate
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Duration
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            >
+              Venue
+            </Col>
+          )}
+        </Row>
+
+        {/* {AvailableMeetingList.slice(0, numberOfItemsShown).map(
+          (request, index) => (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              key={index}
+            >
+              {request}
+            </div>
+          )
+        )} */}
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {packageEnrollmentForPlayer &&
+          packageEnrollmentForPlayer.length > 0 ? (
+            packageEnrollmentForPlayer.map(
+              (enroll: PackageEnroolDetailsForPlayer) => (
+                // Check if booking type is "zone"
+
+                <PackageEnrollmentDetailsInPlayerProfile
+                  key={enroll.enrolled_date} // Make sure to provide a unique key
+                  package_id={enroll.package_id}
+                  package_image={enroll.package.package_image}
+                  package_name={enroll.package.package_name}
+                  enroll_date={enroll.enrolled_date}
+                  venue={enroll.package.arcade.arcade_name}
+                  rate={enroll.rate}
+                  duration={enroll.duration}
+                  zone_name={enroll.package.zone.zone_name}
+                  // zone={enroll.package.}
+                />
+              )
+            ) // Return null for bookings that are not of type "zone"
+          ) : (
+            <Empty description="You not Enroll to any Package" />
           )}
         </div>
 

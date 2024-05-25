@@ -138,7 +138,7 @@ const ArcadePackages = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  {props.rate}$
+                  Rs.{props.rate}
                 </Typography>
                 <Typography
                   style={{

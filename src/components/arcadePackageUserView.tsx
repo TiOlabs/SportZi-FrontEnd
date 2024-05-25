@@ -1,13 +1,29 @@
-import { Button, Col, Grid, Modal, Row, Typography } from "antd";
-import { useState } from "react";
+import {
+  Button,
+  Col,
+  Form,
+  Grid,
+  InputNumber,
+  Modal,
+  Row,
+  Typography,
+  message,
+} from "antd";
+import { useEffect, useState } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import UpdatePackage from "./UpdatePackage";
 import axios from "axios";
 import { useUser } from "../context/userContext";
+import PaymentModal from "./paymentCheckout";
+import { User } from "../types";
+import DisabledContext from "antd/es/config-provider/DisabledContext";
 
 const ArcadePackageUserView = (props: any) => {
   const { userDetails } = useUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState<User>();
+  const [duration, setDuration] = useState("");
   console.log("lol ", props);
   console.log("lol ", props.packageImage);
   const { useBreakpoint } = Grid;
@@ -17,18 +33,52 @@ const ArcadePackageUserView = (props: any) => {
       cloudName,
     },
   });
-  const [open, setOpen] = useState(false);
   const handleCancel = () => {
-    setOpen(false);
+    setIsModalOpen(false);
   };
   const showModal = () => {
-    setOpen(true);
+    setIsModalOpen(true);
   };
   const handleConfirmDelete = () => {
     window.location.reload();
   };
   const { lg } = useBreakpoint();
   console.log(userDetails);
+  const fullAmount = props.rate * parseInt(duration);
+  const handleFinish = async () => {
+    // try {
+    //   const durationInt = parseInt(duration);
+    //   const res = await axios.post(
+    //     `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentPlayerDetails`,
+    //     {
+    //       package_id: props.package_id,
+    //       player_id: userDetails?.id,
+    //       duration: durationInt,
+    //       rate: fullAmount,
+    //     }
+    //   );
+    //   console.log("res", res);
+    //   setIsModalOpen(false);
+    // } catch (err) {
+    //   console.log("err", err);
+    // }
+  };
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getuser/${props.player_id}`
+        );
+        const data = await res.data;
+        console.log(data);
+        setPaymentDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+  const [messageApi, contextHolder] = message.useMessage();
   return (
     <>
       <Row
@@ -189,28 +239,200 @@ const ArcadePackageUserView = (props: any) => {
                     JOIN
                   </Button>
                 )}
-                <Modal
-                  visible={open}
-                  onOk={async (e) => {
-                    const url = `${process.env.REACT_APP_API_URL}api/deletePackageDetails/${props.package_id}`;
+                {userDetails?.role === "PLAYER" ||
+                userDetails?.role === "MANAGER" ? (
+                  <Modal
+                    visible={isModalOpen}
+                    // onOk={handleFinish}
+                    okButtonProps={{ disabled: true }}
+                    onCancel={handleCancel}
+                    width={800}
+                  >
+                    <Form
+                      layout="vertical"
+                      style={{ marginTop: "10%", margin: "2%" }}
+                      onFinish={handleFinish}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          color: "#0E458E",
+                        }}
+                      >
+                        <h1>Application Form - For Enroll to the Package</h1>
+                      </div>
+                      <Form.Item
+                        name="duration"
+                        label="Add duration (in months)"
+                        rules={[
+                          {
+                            type: "number",
+                            message: "Please enter a duration!",
+                          },
+                          {
+                            required: true,
+                            message: "Please input a duration!",
+                          },
+                          {
+                            validator: (_, value) => {
+                              if (value <= 0) {
+                                return Promise.reject(
+                                  "duration should be greater than 0"
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          placeholder="Duration in months"
+                          style={{ width: "100%" }}
+                          onChange={(value) =>
+                            setDuration(value?.toString() || "")
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item>
+                        <div
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "0%",
+                          }}
+                        >
+                          {contextHolder}
 
-                    axios
-                      .delete(url)
-                      .then((response) => {
-                        alert("Package Deleted Successfully");
-                        if (response.status === 200) {
-                          console.log("success");
-                        } else {
-                          console.log("error");
-                        }
-                      })
-                      .catch((e) => console.log(e));
-                    handleConfirmDelete();
-                  }}
-                  onCancel={handleCancel}
-                >
-                  <p>Are you sure you want to delete this arcade zone?</p>
-                </Modal>
+                          <PaymentModal
+                            htmlType="submit"
+                            item={"Zone Booking"}
+                            orderId={5}
+                            amount={fullAmount}
+                            currency={"LKR"}
+                            first_name={paymentDetails?.firstname}
+                            last_name={paymentDetails?.lastname}
+                            email={paymentDetails?.email}
+                            phone={paymentDetails?.Phone}
+                            address={paymentDetails?.address}
+                            city={paymentDetails?.city}
+                            country={paymentDetails?.country}
+                            // date={props.created_at}
+                            // time={time}
+                            duration={parseInt(duration)}
+                            pcount={1}
+                            userId={userDetails?.id}
+                            zoneId={props.zone_id}
+                            arcade_id={props.arcade_id}
+                            package_id={props.package_id}
+                            // reservation_type={zone}
+                            // avaiableParticipantCount={
+                            //   Number(capacity) -
+                            //   (timeParticipantCounts1.find((item) => item.time === time)
+                            //     ?.totalParticipantCount ?? 0)
+                            // }
+                          />
+                        </div>
+                      </Form.Item>
+                    </Form>
+                  </Modal>
+                ) : (
+                  <Modal
+                    visible={isModalOpen}
+                    onOk={handleFinish}
+                    onCancel={handleCancel}
+                    width={800}
+                  >
+                    <Form
+                      layout="vertical"
+                      style={{ marginTop: "10%", margin: "2%" }}
+                      onFinish={handleFinish}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          color: "#0E458E",
+                        }}
+                      >
+                        <h1>Application Form - For Enroll to the Package</h1>
+                      </div>
+                      <Form.Item
+                        name="duration"
+                        label="Add duration (in months)"
+                        rules={[
+                          {
+                            type: "number",
+                            message: "Please enter a duration!",
+                          },
+                          {
+                            required: true,
+                            message: "Please input a duration!",
+                          },
+                          {
+                            validator: (_, value) => {
+                              if (value <= 0) {
+                                return Promise.reject(
+                                  "duration should be greater than 0"
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          placeholder="Duration in months"
+                          style={{ width: "100%" }}
+                          onChange={(value) =>
+                            setDuration(value?.toString() || "")
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item>
+                        <div
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "0%",
+                          }}
+                        >
+                          {contextHolder}
+
+                          <PaymentModal
+                            htmlType="submit"
+                            item={"Zone Booking"}
+                            orderId={5}
+                            amount={fullAmount}
+                            currency={"LKR"}
+                            first_name={paymentDetails?.firstname}
+                            last_name={paymentDetails?.lastname}
+                            email={paymentDetails?.email}
+                            phone={paymentDetails?.Phone}
+                            address={paymentDetails?.address}
+                            city={paymentDetails?.city}
+                            country={paymentDetails?.country}
+                            // date={props.created_at}
+                            // time={time}
+                            duration={duration}
+                            pcount={1}
+                            userId={userDetails?.id}
+                            zoneId={props.zone_id}
+                            arcade_id={props.arcade_id}
+                            // reservation_type={zone}
+                            // avaiableParticipantCount={
+                            //   Number(capacity) -
+                            //   (timeParticipantCounts1.find((item) => item.time === time)
+                            //     ?.totalParticipantCount ?? 0)
+                            // }
+                          />
+                        </div>
+                      </Form.Item>
+                    </Form>
+                  </Modal>
+                )}
               </Col>
             </Row>
           </Col>
