@@ -8,7 +8,7 @@ import { ZoneBookingDetails } from "../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
-const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
+const PackageEnrollmentDetailsInArcadeProfile = (props: any) => {
   console.log(props);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -31,7 +31,7 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updatePackageEnrollmentPlayerDetails/${props.player_id}/${props.package_id}`,
         {
-          status: "canceled_By_Player",
+          status: "canceled_By_Arcade",
         }
       );
 
@@ -316,4 +316,4 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
     </>
   );
 };
-export default PackageEnrollmentDetailsInPlayerProfile;
+export default PackageEnrollmentDetailsInArcadeProfile;

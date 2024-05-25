@@ -1015,6 +1015,7 @@ const PlayerProfile = () => {
                   rate={enroll.rate}
                   duration={enroll.duration}
                   zone_name={enroll.package.zone.zone_name}
+                  player_id={userDetails.id}
                   // zone={enroll.package.}
                 />
               )
