@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { Radio } from "antd";
 import axios from "axios";
-import { ZoneBookingDetails } from "../../../types";
+import {
+  PackageEnroolDetailsForPlayer,
+  ZoneBookingDetails,
+} from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
@@ -12,19 +15,19 @@ const PlayerCanceledPackageEnrollment = () => {
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState(1);
   const [playerBookingDetails, setPlayerBookingDetails] = useState<
-    ZoneBookingDetails[]
+    PackageEnroolDetailsForPlayer[]
   >([]);
-  const [playerCanceled, setPlayerCanceled] = useState<ZoneBookingDetails[]>(
-    []
-  );
+  const [playerCanceled, setPlayerCanceled] = useState<
+    PackageEnroolDetailsForPlayer[]
+  >([]);
   const [canceledByPlayer, setCanceledByPlayer] = useState<
-    ZoneBookingDetails[]
+    PackageEnroolDetailsForPlayer[]
   >([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentPlayerDetails`
         );
         const data = await res.data;
         setPlayerBookingDetails(data);
@@ -33,7 +36,7 @@ const PlayerCanceledPackageEnrollment = () => {
         // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
 
         const playerCanceledBookings = data.filter(
-          (arcadeBooking: ZoneBookingDetails) =>
+          (arcadeBooking: PackageEnroolDetailsForPlayer) =>
             arcadeBooking.status === "canceled_By_Player"
         );
         console.log(playerCanceledBookings);
@@ -54,12 +57,12 @@ const PlayerCanceledPackageEnrollment = () => {
 
     if (newValue === 1) {
       const below24Hours = canceledByPlayer.filter(
-        (arcadeBooking: ZoneBookingDetails) => {
+        (arcadeBooking: PackageEnroolDetailsForPlayer) => {
           const canceledTime = new Date(
             arcadeBooking.canceled_at as string
           ).getTime();
           const createdTime = new Date(
-            arcadeBooking.created_at as string
+            arcadeBooking.enrolled_date as string
           ).getTime();
           const timeDifference = canceledTime - createdTime;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
@@ -70,12 +73,12 @@ const PlayerCanceledPackageEnrollment = () => {
       setPlayerCanceled(below24Hours);
     } else if (newValue === 2) {
       const above24Hours = canceledByPlayer.filter(
-        (arcadeBooking: ZoneBookingDetails) => {
+        (arcadeBooking: PackageEnroolDetailsForPlayer) => {
           const canceledTime = new Date(
             arcadeBooking.canceled_at as string
           ).getTime();
           const createdTime = new Date(
-            arcadeBooking.created_at as string
+            arcadeBooking.enrolled_date as string
           ).getTime();
           const timeDifference = canceledTime - createdTime;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
@@ -119,26 +122,32 @@ const PlayerCanceledPackageEnrollment = () => {
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
         >
           {playerCanceled.length === 0 ? <Empty /> : null}
-          {playerCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
-            <DataRow
-              booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-              booked_Arena={ZoneBookingDetails.zone.zone_name}
-              booked_by={ZoneBookingDetails.user.firstname}
-              rate={
-                Number(ZoneBookingDetails.zone.rate) *
-                Number(ZoneBookingDetails.participant_count)
-              }
-              user_id={ZoneBookingDetails.user.user_id}
-              zone_id={ZoneBookingDetails.zone.zone_id}
-              zone={ZoneBookingDetails.zone.zone_name}
-              booking_date={ZoneBookingDetails.date}
-              booking_time={ZoneBookingDetails.time}
-              participant_count={ZoneBookingDetails.participant_count}
-              created_at={ZoneBookingDetails.created_at}
-              canceled_at={ZoneBookingDetails.canceled_at}
-              image={ZoneBookingDetails.user.user_image}
-            />
-          ))}
+          {playerCanceled.map(
+            (packageEnrollmentForPlayer: PackageEnroolDetailsForPlayer) => (
+              <DataRow
+                package_id={packageEnrollmentForPlayer.package_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+                booked_Arena={
+                  packageEnrollmentForPlayer.package.arcade.arcade_name
+                }
+                booked_by={
+                  packageEnrollmentForPlayer.player.user.firstname +
+                  " " +
+                  packageEnrollmentForPlayer.player.user.lastname
+                }
+                rate={Number(packageEnrollmentForPlayer.rate)}
+                user_id={packageEnrollmentForPlayer.player_id}
+                zone_id={packageEnrollmentForPlayer.package.zone_id}
+                zone={packageEnrollmentForPlayer.package.zone.zone_name}
+                package_image={packageEnrollmentForPlayer.package.package_image}
+                // booking_date={packageEnrollmentForPlayer.date}
+                // booking_time={packageEnrollmentForPlayer.time}
+                // participant_count={packageEnrollmentForPlayer.participant_count}
+                created_at={packageEnrollmentForPlayer.enrolled_date}
+                canceled_at={packageEnrollmentForPlayer.canceled_at}
+                image={packageEnrollmentForPlayer.player.user.user_image}
+              />
+            )
+          )}
         </Col>
       </Spin>
     </Col>
@@ -182,7 +191,7 @@ function DataRow(props: any) {
             height: "80px",
           }}
           cldImg={
-            cld.image(props?.zone_image)
+            cld.image(props?.package_image)
             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
             // .resize(Resize.scale().width(200).height(200))
           }

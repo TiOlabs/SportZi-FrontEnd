@@ -31,6 +31,7 @@ import {
   Arcade,
   CoachAssignDetails,
   Package,
+  PackageEnroolDetailsForPlayer,
   Zone,
   ZoneBookingDetails,
 } from "../../types";
@@ -41,11 +42,15 @@ import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
 import PhotoCollage from "../../components/photoCollage";
+import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
   const [packageDetail, setPackageDetail] = useState<Arcade>();
+  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
+    PackageEnroolDetailsForPlayer[]
+  >([]);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -226,6 +231,27 @@ const ArcadeProfileArcade = () => {
       })
       .catch((err) => {
         console.log(err);
+      });
+  }, [ArcadeId]);
+
+  useEffect(() => {
+    axios
+      .get(
+        process.env.REACT_APP_API_URL + `api/getPackageEnrollmentPlayerDetails`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setPackageEnrollmentForPlayer(res.data);
+        setPackageEnrollmentForPlayer((prev: any) => {
+          return prev.filter(
+            (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
+              playerEnrollDetails.status === "success" &&
+              playerEnrollDetails.package.arcade_id === ArcadeId
+          );
+        });
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }, [ArcadeId]);
 
@@ -1747,6 +1773,307 @@ const ArcadeProfileArcade = () => {
           <Empty />
         )}
       </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            {" "}
+            Package Enrollments for your complex
+          </Typography>
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+              <Radio value={7}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+              <Radio value={8}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+              <Radio value={9}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Package Name
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Time
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            >
+              Venue
+            </Col>
+          )}
+        </Row>
+        {packageEnrollmentForPlayer && packageEnrollmentForPlayer.length > 0 ? (
+          packageEnrollmentForPlayer.map(
+            (enroll: PackageEnroolDetailsForPlayer) => (
+              // Check if booking type is "zone"
+
+              <PackageEnrollmentDetailsInArcadeProfile
+                key={enroll.enrolled_date} // Make sure to provide a unique key
+                package_id={enroll.package_id}
+                package_image={enroll.package.package_image}
+                package_name={enroll.package.package_name}
+                enroll_date={enroll.enrolled_date}
+                venue={enroll.package.arcade.arcade_name}
+                rate={enroll.rate}
+                duration={enroll.duration}
+                zone_name={enroll.package.zone.zone_name}
+                player_id={enroll.player_id}
+                // zone={enroll.package.}
+              />
+            )
+          ) // Return null for bookings that are not of type "zone"
+        ) : (
+          <Empty description="No Package Enrollments Yet" />
+        )}
+      </Row>
+
       <Row
         style={{
           width: "100%",
