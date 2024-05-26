@@ -63,6 +63,14 @@ const CoachAccepteLst = (props: any) => {
         `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
         {
           status: "canceled_By_Coach",
+          email: props.email,
+          arcade_email: props.arcade_email,
+          role: props.role,
+          coach_name: props.coach_name,
+          player_name: props.booked_by,
+          booking_date: props.date,
+          booking_time: props.time,
+          arcade_name: props.arcade_name,
         }
       );
     } catch (e) {

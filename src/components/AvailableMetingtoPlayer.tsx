@@ -33,6 +33,13 @@ const AvailableMetingstoPlayer = (props: any) => {
         {
           zone_booking_id: props.booking_id,
           status: "canceled_By_Player",
+          email: props.email,
+          role: props.role,
+          zone_name: props.zone_name,
+          player_name: props.player_name,
+          booking_date: props.booking_date,
+          booking_time: props.booking_time,
+          arcade_name: props.venue,
         }
       );
 

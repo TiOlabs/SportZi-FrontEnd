@@ -901,6 +901,13 @@ const PlayerProfile = () => {
               user_id={booking.player.user.user_id}
               created_at={booking.created_at}
               setZoneBookingDetails={setZoneBookingDetails1}
+              email={booking.coach.user.email}
+              role={booking.player.user.role}
+              player_name={
+                booking.player.user.firstname +
+                " " +
+                booking.player.user.lastname
+              }
             />
           ))
         ) : (
@@ -1261,6 +1268,11 @@ const PlayerProfile = () => {
                     booking_time={booking.time}
                     venue={booking.zone.arcade.arcade_name}
                     setZoneBookingDetails={setZoneBookingDetails1}
+                    email={booking.zone.arcade.arcade_email}
+                    role="PLAYER"
+                    player_name={
+                      userDetails.firstName + " " + userDetails.lastName
+                    }
                   />
                 ) : null // Return null for bookings that are not of type "zone"
             )

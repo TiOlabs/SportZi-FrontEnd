@@ -48,6 +48,11 @@ const CoachReqestList = (props: any) => {
           coach_id: props.coach_id,
           arcade_id: props.arcade_id,
           status: "canceled_By_Coach",
+          arcade_email: props.arcade_email,
+          role: props.role,
+          arcade_name: props.arcade,
+          coach_name: props.coach_name,
+          
         }
       );
     } catch (e) {

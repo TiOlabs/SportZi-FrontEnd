@@ -32,6 +32,10 @@ const PackageEnrollmentDetailsInArcadeProfile = (props: any) => {
         `${process.env.REACT_APP_API_URL}api/updatePackageEnrollmentPlayerDetails/${props.player_id}/${props.package_id}`,
         {
           status: "canceled_By_Arcade",
+          email: props.email,
+          arcade_name: props.venue,
+          package_name: props.package_name,
+          role: props.role,
         }
       );
 

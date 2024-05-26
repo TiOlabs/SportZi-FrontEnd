@@ -61,10 +61,11 @@ const CoachProfile = () => {
 
   const [Details, setDetails] = useState<any>(null);
   console.log("coach detailsssss", coachDetails.id);
+  const coachId = coachDetails?.id;
   useEffect(() => {
     axiosInstance
       .get(
-        `${process.env.REACT_APP_API_URL}api/auth/getcoachDetailsForCoach/${coachDetails?.id}`
+        `${process.env.REACT_APP_API_URL}api/auth/getcoachDetailsForCoach/${coachId}`
       )
       .then((res) => {
         setDetails(res.data);
@@ -1006,6 +1007,13 @@ const CoachProfile = () => {
               date={booking.date}
               time={booking.time}
               venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
+              coach_name={
+                booking.coach.user.firstname + " " + booking.coach.user.lastname
+              }
+              role="COACH"
+              email={booking.player.user.email}
+              arcade_email={booking.arcade.arcade_email}
+              arcade_name={booking.arcade.arcade_name}
             />
           ))
         ) : (
@@ -1277,6 +1285,10 @@ const CoachProfile = () => {
               image={booking.arcade.arcade_image}
               date={booking.assigned_date}
               time={booking.created_at}
+              coach_name={coachDetails.firstName + " " + coachDetails.lastName}
+              role="COACH"
+              arcade_email={booking.arcade.arcade_email}
+              arcade_name={booking.arcade.arcade_name}
             />
           ))
         ) : (

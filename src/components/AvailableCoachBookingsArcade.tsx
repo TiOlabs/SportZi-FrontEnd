@@ -72,6 +72,9 @@ const AvailableCoachBookingsArcade = (props: any) => {
         {
           zone_booking_id: props.booking_id,
           status: "canceled_By_Arcade",
+          // email: props.email,
+          // arcade_name: props.arcade_name,
+          // booked_by: props.booked_by,
         }
       );
       setIsConfirmModalOpen(false);
