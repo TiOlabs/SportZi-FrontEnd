@@ -29,15 +29,30 @@ const CompletedBookings = () => {
   useEffect(() => {
     const fetchCompletedBookings = async () => {
       try {
-        if (value === 2) {
-          // Fetch only when the value is 2 (Arcade Bookings)
-          const res = await fetch(
-            `${process.env.REACT_APP_API_URL}api/getCompleteArcadeBookings`
-          );
-          const data = await res.json();
-          console.log(data);
-          setCompletedBookings(data);
-        }
+        // Fetch only when the value is 2 (Arcade Bookings)
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getCompleteArcadeBookings`
+        );
+        const data = await res.json();
+        console.log(data);
+        setCompletedBookings(data);
+        setCompletedBookings((prev: any) => {
+          if (value === 1) {
+            return prev.filter(
+              (booking: ZoneBookingDetails) =>
+                booking.booking_type === "coach" && booking.status === "success"
+            );
+          } else if (value === 2) {
+            return prev.filter(
+              (booking: ZoneBookingDetails) =>
+                booking.booking_type === "zone" && booking.status === "success"
+            );
+          } else if (value === 4) {
+            return prev.filter(
+              (booking: ZoneBookingDetails) => booking.status === "success"
+            );
+          }
+        });
       } catch (err) {
         console.log(err);
       }
@@ -232,7 +247,7 @@ const CompletedBookings = () => {
                     height: "80px",
                   }}
                   cldImg={
-                    cld.image("bbb")
+                    cld.image(booking.zone.zone_image as string)
                     // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                     // .resize(Resize.scale().width(200).height(200))
                   }
@@ -407,6 +422,7 @@ const CompletedBookings = () => {
                   </Button>
                 </div>
               </Col>
+              <Col style={{ marginTop: "2%" }} span={24}></Col>
             </>
           ))
         )}

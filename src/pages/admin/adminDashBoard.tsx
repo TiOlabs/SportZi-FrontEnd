@@ -167,7 +167,9 @@ const AdminPannel = () => {
   useEffect(() => {
     const fetchCoachBookings = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/getCoachBookings`);
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getCoachBookings`
+        );
         const data = await res.json();
         setCoachBookings(data);
         console.log(data);
