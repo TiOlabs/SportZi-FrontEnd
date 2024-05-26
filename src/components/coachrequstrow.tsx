@@ -82,6 +82,12 @@ const CoachRequstRow = (props: any) => {
             {
               booking_id: props.booking_id,
               status: "canceled_By_Player",
+              email: props.email,
+              role: props.role,
+              coach_name: props.coach_name,
+              player_name: props.player_name,
+              booking_date: props.booking_date,
+              booking_time: props.booking_time,
             }
           );
           try {

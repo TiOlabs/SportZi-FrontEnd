@@ -1560,6 +1560,8 @@ const ArcadeProfileArcade = () => {
                   date={booking.date}
                   rate={zone.rate}
                   zoneImage={zone.zone_image}
+                  arcade_name={booking.zone.arcade.arcade_name}
+                  email={booking.user.email}
                 />
               ))
             )}
@@ -2209,6 +2211,8 @@ const ArcadeProfileArcade = () => {
                   duration={enroll.duration}
                   zone_name={enroll.package.zone.zone_name}
                   player_id={enroll.player_id}
+                  email={enroll.player.user.email}
+                  role={"ARCADE"}
                 />
               )
             )}
