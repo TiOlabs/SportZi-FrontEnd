@@ -36,6 +36,7 @@ const CoachProfileUser = () => {
   };
 
   const [ismodelopen, setismodelopen] = useState(false);
+  const [ismodelopenForReport, setismodelopenForReport] = useState(false);
 
   const showModal = () => {
     setismodelopen(true);
@@ -62,6 +63,16 @@ const CoachProfileUser = () => {
         console.log(err);
       });
   }, []);
+
+  const showModalForReport = () => {
+    setismodelopenForReport(true);
+  };
+  const handleOkForReport = () => {
+    setismodelopenForReport(false);
+  };
+  const handleCancelForReport = () => {
+    setismodelopenForReport(false);
+  };
 
   return (
     <>
@@ -173,6 +184,21 @@ const CoachProfileUser = () => {
                 {" "}
                 Request for Booking
               </Button>
+              <div>
+                <Button
+                  style={{
+                    backgroundColor: "#EFF4FA",
+                    color: "#0E458E",
+                    borderRadius: "3px",
+                    fontFamily: "kanit",
+                    borderColor: "#0E458E",
+                    marginTop: "20px",
+                  }}
+                  onClick={showModalForReport}
+                >
+                  Report User
+                </Button>
+              </div>
             </Col>
           </Row>
         </Col>
