@@ -23,7 +23,7 @@ export interface Zone {
   sport: Sport;
   zoneBookingDetails: ZoneBookingDetails[];
   coachBookingDetails: CoachBookingDetails[];
-  package: Package[]; 
+  package: Package[];
 }
 export interface Package {
   package_id: String;
@@ -192,4 +192,23 @@ export interface CoachFeedbacks {
 export interface UserPhoto {
   user_id: String;
   image: String;
+}
+export interface Report {
+  report_id: String;
+  description: String;
+  report_reason: String;
+  reporter_user_id: String;
+  victim_user_id: String;
+  reporter_user: User;
+  victim_user: User;
+}
+
+export interface ReportArcade {
+  report_id: String;
+  description: String;
+  report_reason: String;
+  reporter_user_id: String;
+  victim_arcade_id: String;
+  reporter_user: User;
+  victim_arcade: Arcade;
 }

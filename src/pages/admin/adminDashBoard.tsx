@@ -20,7 +20,9 @@ const PrintableContent = React.forwardRef<
   <div ref={ref} style={{ padding: "2%", backgroundColor: "#EFF4FA" }}>
     {/* Zone Bookings Section */}
     <div style={{ marginBottom: "2rem" }}>
+      <hr />
       <h3 style={{ color: "#0E458E", textAlign: "center" }}>Arena Bookings</h3>
+      <hr />
       <Row>
         <Col span={12}>
           <PieChart width={500} height={300}>
