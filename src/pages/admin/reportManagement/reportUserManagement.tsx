@@ -4,16 +4,18 @@ import { useEffect, useState } from "react";
 import { Report, ReportArcade } from "../../../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import confirm from "antd/es/modal/confirm";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 const ReportUserManagement = () => {
-  const [reportsArcade, setReportsArcade] = useState<ReportArcade[]>([]);
+  const [report, setReports] = useState<Report[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getreportarcades`
+          `${process.env.REACT_APP_API_URL}api/getreports`
         );
         console.log(res.data);
-        setReportsArcade(res.data);
+        setReports(res.data);
       } catch (e) {
         console.log(e);
       }
@@ -27,6 +29,8 @@ const ReportUserManagement = () => {
     },
   });
   const [isModalOpenForReport, setismodelopenForReport] = useState(false);
+  const [showConfirmModelForRemoveUser, setShowConfirmModelForRemoveUser] =
+    useState(false);
   const showModalForReport = () => {
     setismodelopenForReport(true);
   };
@@ -37,21 +41,59 @@ const ReportUserManagement = () => {
     setismodelopenForReport(false);
   };
   const handleRemoveForReport = async () => {
-    try {
-      const res = await axios.put(
-        `${process.env.REACT_APP_API_URL}api/removeReportArcade`
-      );
-      console.log(res);
-    } catch (e) {
-      console.log(e);
-    }
+    confirm({
+      title: "Are you sure Remove the Arcade?",
+      icon: <ExclamationCircleFilled />,
+      content: "This may affect to the user and the arcade.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      okCancel: true,
+      async onOk() {
+        try {
+          const response = await axios.delete(
+            `${process.env.REACT_APP_API_URL}api/removeReportArcade`
+          );
+        } catch (error) {
+          console.log("error");
+          console.log(error);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const showModalRejectConfirm = (id: String) => {
+    confirm({
+      title: "Are you sure Reject This Report?",
+      icon: <ExclamationCircleFilled />,
+      content: "This may affect to the user.",
+      okText: "Yes",
+      cancelText: "No",
+      okCancel: true,
+      async onOk() {
+        try {
+          const response = await axios.delete(
+            `${process.env.REACT_APP_API_URL}api/deletereport/${id}`
+          );
+        } catch (error) {
+          console.log("error");
+          console.log(error);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
-          <h2>Report Management - Reported Arcades</h2>
+          <h2>Report Management - Reported Users</h2>
         </Col>
       </Row>
       <Row>
@@ -63,12 +105,12 @@ const ReportUserManagement = () => {
           />
         </Col>
       </Row>
-      {reportsArcade.length === 0 ? (
+      {report.length === 0 ? (
         <div>
           <Empty description={"No Reports For Arcade"} />
         </div>
       ) : (
-        reportsArcade.map((reportArcade: ReportArcade) => (
+        report.map((report: Report) => (
           <Row
             style={{
               backgroundColor: "white",
@@ -86,7 +128,7 @@ const ReportUserManagement = () => {
                   height: "80px",
                 }}
                 cldImg={
-                  cld.image(reportArcade.reporter_user.user_image as string)
+                  cld.image(report.reporter_user.user_image as string)
                   // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                   // .resize(Resize.scale().width(200).height(200))
                 }
@@ -101,12 +143,12 @@ const ReportUserManagement = () => {
                   fontSize: "16px",
                 }}
               >
-                {reportArcade.reporter_user.firstname +
+                {report.reporter_user.firstname +
                   " " +
-                  reportArcade.reporter_user.lastname}
+                  report.reporter_user.lastname}
               </div>
             </Col>
-            <Col span={3} style={{}}>
+            <Col span={4} style={{}}>
               <div
                 style={{
                   display: "flex",
@@ -117,7 +159,7 @@ const ReportUserManagement = () => {
                   fontSize: "16px",
                 }}
               >
-                {reportArcade.report_reason}
+                {report.report_reason}
               </div>
             </Col>
             <Col span={7}>
@@ -129,7 +171,7 @@ const ReportUserManagement = () => {
                   height: "80px",
                 }}
                 cldImg={
-                  cld.image(reportArcade.victim_arcade.arcade_image as string)
+                  cld.image(report.victim_user.user_image as string)
                   // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                   // .resize(Resize.scale().width(200).height(200))
                 }
@@ -144,10 +186,12 @@ const ReportUserManagement = () => {
                   fontSize: "16px",
                 }}
               >
-                {reportArcade.victim_arcade.arcade_name}
+                {report.victim_user.firstname +
+                  " " +
+                  report.victim_user.lastname}
               </div>
             </Col>
-            <Col span={7} style={{}}>
+            <Col span={6} style={{}}>
               <div
                 style={{
                   height: "80px",
@@ -187,25 +231,11 @@ const ReportUserManagement = () => {
                       alignItems: "center",
                       textAlign: "center",
                     }}
+                    onClick={(event: React.MouseEvent<HTMLDivElement>) =>
+                      showModalRejectConfirm(report.report_id)
+                    }
                   >
-                    Cancel
-                  </div>
-                </Button>
-                <Button
-                  type="primary"
-                  ghost
-                  style={{ width: "100px", marginLeft: "20px" }}
-                >
-                  <div
-                    style={{
-                      fontSize: "16px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      textAlign: "center",
-                    }}
-                  >
-                    Remove
+                    Reject
                   </div>
                 </Button>
               </div>
@@ -215,7 +245,44 @@ const ReportUserManagement = () => {
               onCancel={handleCancelForReport}
               okText="Remove"
               onOk={handleRemoveForReport}
-            ></Modal>
+            >
+              <Row>
+                <Col span={12}>
+                  {" "}
+                  <b>Reporter</b> :{" "}
+                  {report.reporter_user.firstname +
+                    "" +
+                    report.reporter_user.lastname}
+                </Col>
+                <Col span={12}>
+                  <b>User ID</b> : {report.reporter_user.user_id}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  {" "}
+                  <b>Victim</b> :{" "}
+                  {report.victim_user.firstname +
+                    " " +
+                    report.victim_user.lastname}
+                </Col>
+                <Col span={12}>
+                  <b>User ID</b> : {report.victim_user.user_id}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  {" "}
+                  <b>Reason</b> : {report.report_reason}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  {" "}
+                  <b>Description</b> : {report.description}
+                </Col>
+              </Row>
+            </Modal>
           </Row>
         ))
       )}

@@ -2,15 +2,21 @@ import {
   Button,
   Col,
   Flex,
+  Form,
   Grid,
   Input,
   List,
   Modal,
   Row,
+  Select,
   Typography,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
-import { StarFilled, StarTwoTone } from "@ant-design/icons";
+import {
+  ExclamationCircleTwoTone,
+  StarFilled,
+  StarTwoTone,
+} from "@ant-design/icons";
 import profilePic from "../../assents/pro.png";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -19,10 +25,13 @@ import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import { Coach, User } from "../../types";
+import { UserContext } from "../../context/userContext";
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
@@ -34,9 +43,11 @@ const CoachProfileUser = () => {
   ) => {
     console.log("Change:", e.target.value);
   };
-
+  const { userDetails } = useContext(UserContext);
   const [ismodelopen, setismodelopen] = useState(false);
-  const [ismodelopenForReport, setismodelopenForReport] = useState(false);
+  const [isModalOpenForReport, setismodelopenForReport] = useState(false);
+  const [description, setDescription] = useState("");
+  const [reason, setReason] = useState("");
 
   const showModal = () => {
     setismodelopen(true);
@@ -47,7 +58,7 @@ const CoachProfileUser = () => {
   const handleCancel = () => {
     setismodelopen(false);
   };
-  const [coachDetails, setCoachDetails] = useState({});
+  const [coachDetails, setCoachDetails] = useState<Coach>();
   useEffect(() => {
     axiosInstance
       .get(`/api/auth/getcoachDetailsForUsers`, {
@@ -62,7 +73,7 @@ const CoachProfileUser = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [coachId]);
 
   const showModalForReport = () => {
     setismodelopenForReport(true);
@@ -73,7 +84,33 @@ const CoachProfileUser = () => {
   const handleCancelForReport = () => {
     setismodelopenForReport(false);
   };
+  console.log("coachDetails", coachDetails);
+  console.log("userDetails", userDetails);
+  const handleFinishForReport = async () => {
+    try {
+      console.log("userDetails", userDetails);
+      console.log(description, reason);
+      let id;
+      id = userDetails?.id;
 
+      console.log(id);
+
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addreport`,
+        {
+          reporter_user_id: id,
+          victim_user_id: coachDetails?.coach_id,
+          report_reason: reason,
+          description: description,
+        }
+      );
+      console.log(res.data);
+      alert("Reported Successfully");
+    } catch (e) {
+      console.log(e);
+    }
+    setismodelopenForReport(false);
+  };
   return (
     <>
       <style>
@@ -170,8 +207,7 @@ const CoachProfileUser = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {coachDetails &&
-                  (coachDetails as { Discription: string }).Discription}
+                {coachDetails?.short_desctiption}
               </Typography>
               <Button
                 style={{
@@ -198,6 +234,69 @@ const CoachProfileUser = () => {
                 >
                   Report User
                 </Button>
+                <Modal
+                  visible={isModalOpenForReport}
+                  onCancel={handleCancelForReport}
+                  okText="Report"
+                  onOk={handleFinishForReport}
+                >
+                  <Form
+                    layout="vertical"
+                    style={{ marginTop: "10%", margin: "2%" }}
+                    onFinish={handleFinishForReport}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        color: "#5587CC",
+                        height: "100px",
+                      }}
+                    >
+                      <ExclamationCircleTwoTone width={1000} /> Repot User
+                    </div>
+                    <Form.Item
+                      name="Chooose_Why"
+                      label="Choose Reason"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select a Reason!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Select a Reson"
+                        onChange={(value) => setReason(value)}
+                      >
+                        <Select.Option value="Fake Profile">
+                          Fake Profile
+                        </Select.Option>
+                        <Select.Option value="Cheating">Cheating</Select.Option>
+                        <Select.Option value="Misbehavior">
+                          Misbehavior
+                        </Select.Option>
+                        <Select.Option value="Other">Other</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      name="Report_reason"
+                      label="Tell Us More About Why"
+                      rules={[
+                        {
+                          type: "string",
+                          message: "Please enter a valid Reason!",
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={5}
+                        placeholder="Add a little more about why you are reporting this user"
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Modal>
               </div>
             </Col>
           </Row>
@@ -241,10 +340,7 @@ const CoachProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                {coachDetails &&
-                  (coachDetails as { firstname: string }).firstname}
-                {coachDetails &&
-                  (coachDetails as { lastname: string }).lastname}
+                {coachDetails?.user.firstname} {coachDetails?.user.lastname}
               </h1>
               <p
                 style={{
