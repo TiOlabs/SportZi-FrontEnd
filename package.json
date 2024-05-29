@@ -20,7 +20,7 @@
     "axios": "^1.6.7",
     "cloudinary": "^2.0.1",
     "crypto-js": "^4.2.0",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.11",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
