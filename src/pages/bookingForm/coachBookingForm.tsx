@@ -24,7 +24,7 @@ import {
   Zone,
   ZoneBookingDetails,
 } from "../../types";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { time } from "console";
 import PaymentModal from "../../components/paymentCheckout";
 import { jwtDecode } from "jwt-decode";
@@ -400,6 +400,11 @@ const CoachBookingForm: React.FC = () => {
       cloudName,
     },
   });
+  const disabledDate = (current: Dayjs | null): boolean => {
+    // Can not select days before today
+    const today = dayjs().startOf("day");
+    return current ? current.isBefore(today, "day") : false;
+  };
   return (
     <>
       <NavbarProfile />
@@ -446,13 +451,12 @@ const CoachBookingForm: React.FC = () => {
                   </Col>
                   <Col style={{}} xs={24} md={12} lg={24}>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                      <Form.Item name="datee" rules={[{ required: true }]}>
-                        <Calendar
-                          style={{ width: "94%", marginLeft: "3%" }}
-                          onChange={handleDateChange}
-                          onSelect={handleDateSelect}
-                        />
-                      </Form.Item>
+                      <Calendar
+                        style={{ width: "94%", marginLeft: "3%" }}
+                        onChange={handleDateChange}
+                        onSelect={handleDateSelect}
+                        disabledDate={disabledDate} // Add this line to disable past dates
+                      />
                     </div>
                   </Col>
                   <Form.Item
