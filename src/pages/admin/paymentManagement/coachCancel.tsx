@@ -2,7 +2,7 @@ import { Col, Row, Modal, Button, Empty, RadioChangeEvent, Radio } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { SearchProps } from "antd/es/input";
@@ -47,9 +47,9 @@ const CoachCancelCoachBookins = () => {
               coachBooking.date.includes(search) ||
               (
                 Number(coachBooking.zone.rate) *
-                Number(coachBooking.participant_count) +
-              Number(coachBooking.zone.rate) *
-                Number(coachBooking.participant_count)
+                  Number(coachBooking.participant_count) +
+                Number(coachBooking.zone.rate) *
+                  Number(coachBooking.participant_count)
               )
                 .toString()
                 .includes(search))
@@ -157,6 +157,7 @@ const CoachCancelCoachBookins = () => {
             canceled_at={CoachBookingDetails.canceled_at}
             image={CoachBookingDetails.player.user.user_image}
             coach_Image={CoachBookingDetails.coach.user.user_image}
+            coach_id={CoachBookingDetails.coach.coach_id}
             coach_name={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
           />
         ))}
@@ -185,6 +186,11 @@ function DataRow(props: any) {
       cloudName,
     },
   });
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <Row
       style={{
@@ -195,6 +201,7 @@ function DataRow(props: any) {
     >
       <Col span={8} style={{}}>
         <AdvancedImage
+          onClick={handleClick}
           style={{
             borderRadius: "50%",
             position: "absolute",

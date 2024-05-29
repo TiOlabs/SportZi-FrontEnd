@@ -21,7 +21,7 @@ const CoachCard = (props: any) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`CoachUser/:${props.coach_id}`);
+    navigate(`/CoachUser/:${props.coach_id}`);
   };
   console.log("props", props);
   return (

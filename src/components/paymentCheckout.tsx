@@ -158,7 +158,34 @@ const PaymentModal = (props: any): JSX.Element | null => {
     window.payhere.startPayment(payment);
     console.log("after");
   }
+  const isDay = props.date;
+  const isTime = props.time;
+  const isParticipantCount = props.pcount;
+  const isUserId = props.userId;
+  const isZoneId = props.zoneId;
+  const isReservationType = props.reservation_type;
 
+  const handlePayment = () => {
+    if (isDay === null) {
+      message.warning("Please select a Day.");
+    } else if (isTime === "") {
+      message.warning("Please select a Time Slot.");
+    } else if (isParticipantCount === "") {
+      message.warning("Please select Participant Count.");
+    } else if (isUserId === "") {
+      message.warning("Please Login First.");
+    } else if (isZoneId === "") {
+      message.warning("Please select a zone.");
+    } else if (isReservationType === "") {
+      message.warning("Please select Reservatin Type.");
+    } else if (props.pcount > props.avaiableParticipantCount) {
+      message.warning(
+        "Participant count is more than available participant count."
+      );
+    } else {
+      pay();
+    }
+  };
   return (
     <>
       <Button
@@ -171,24 +198,25 @@ const PaymentModal = (props: any): JSX.Element | null => {
           justifyContent: "center",
           alignItems: "center",
         }}
-        disabled={
-          props.sportId === ""
-            ? props.date === "" ||
-              props.time === "" ||
-              props.pcount === "" ||
-              props.userId === "" ||
-              props.zoneId === "" ||
-              props.pcount > props.avaiableParticipantCount ||
-              props.reservation_type === ""
-            : props.date === "" ||
-              props.time === "" ||
-              props.pcount === "" ||
-              props.userId === "" ||
-              props.zoneId === "" ||
-              props.pcount > props.avaiableParticipantCount ||
-              props.reservation_type === ""
-        }
-        onClick={pay}
+        // disabled={
+        //   props.sportId === ""
+        //     ? props.date === "" ||
+        //       props.time === "" ||
+        //       props.pcount === "" ||
+        //       props.userId === "" ||
+        //       props.zoneId === "" ||
+        //       props.pcount > props.avaiableParticipantCount ||
+        //       props.reservation_type === ""
+        //     : props.date === "" ||
+        //       props.time === "" ||
+        //       props.pcount === "" ||
+        //       props.userId === "" ||
+        //       props.zoneId === "" ||
+        //       props.pcount > props.avaiableParticipantCount ||
+        //       props.reservation_type === ""
+        // }
+        onClick={handlePayment}
+        // onClick={pay}
       >
         Pay with Payhere
       </Button>

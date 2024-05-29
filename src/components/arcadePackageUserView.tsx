@@ -16,7 +16,7 @@ import UpdatePackage from "./UpdatePackage";
 import axios from "axios";
 import { useUser } from "../context/userContext";
 import PaymentModal from "./paymentCheckout";
-import { User } from "../types";
+import { CoachAssignDetails, User } from "../types";
 import DisabledContext from "antd/es/config-provider/DisabledContext";
 
 const ArcadePackageUserView = (props: any) => {
@@ -24,6 +24,9 @@ const ArcadePackageUserView = (props: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState<User>();
   const [duration, setDuration] = useState("");
+  const [coachisInArcade, setcoachisInArcade] = useState<CoachAssignDetails[]>(
+    []
+  );
   console.log("lol ", props);
   console.log("lol ", props.packageImage);
   const { useBreakpoint } = Grid;
@@ -63,6 +66,21 @@ const ArcadePackageUserView = (props: any) => {
     //   console.log("err", err);
     // }
   };
+  if (userDetails?.role === "COACH") {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${userDetails?.id}`
+        );
+        const data = await res.data;
+        console.log(data);
+        setcoachisInArcade(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -79,6 +97,18 @@ const ArcadePackageUserView = (props: any) => {
     }
   }, []);
   const [messageApi, contextHolder] = message.useMessage();
+  const isCoachInArcade = coachisInArcade.some(
+    (entry) => entry.arcade.arcade_id === props.arcade_id
+  );
+  const handleJoinClick = () => {
+    if (isCoachInArcade) {
+      // If the coach is in the arcade, show the modal
+      showModal();
+    } else {
+      // If the coach is not in the arcade, show the message
+      message.warning("You have to apply to the arcade first.");
+    }
+  };
   return (
     <>
       <Row
@@ -211,8 +241,21 @@ const ArcadePackageUserView = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                {userDetails?.role === "PLAYER" ||
-                userDetails?.role === "MANAGER" ? (
+                {userDetails?.role === "COACH" ? (
+                  <Button
+                    style={{
+                      backgroundColor: "#EFF4FA",
+                      color: "#0E458E",
+                      borderRadius: "3px",
+                      fontFamily: "kanit",
+                      borderColor: "#0E458E",
+                    }}
+                    onClick={handleJoinClick}
+                  >
+                    JOIN
+                  </Button>
+                ) : userDetails?.role === "PLAYER" ||
+                  userDetails?.role === "MANAGER" ? (
                   <Button
                     style={{
                       backgroundColor: "#EFF4FA",
@@ -225,20 +268,7 @@ const ArcadePackageUserView = (props: any) => {
                   >
                     Enroll
                   </Button>
-                ) : (
-                  <Button
-                    style={{
-                      backgroundColor: "#EFF4FA",
-                      color: "#0E458E",
-                      borderRadius: "3px",
-                      fontFamily: "kanit",
-                      borderColor: "#0E458E",
-                    }}
-                    onClick={showModal}
-                  >
-                    JOIN
-                  </Button>
-                )}
+                ) : null}
                 {userDetails?.role === "PLAYER" ||
                 userDetails?.role === "MANAGER" ? (
                   <Modal
