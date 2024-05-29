@@ -655,7 +655,7 @@ const ArcadeProfileUser = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Payment Types Types
+              Payment  Types
             </Typography>
             <List
               style={{

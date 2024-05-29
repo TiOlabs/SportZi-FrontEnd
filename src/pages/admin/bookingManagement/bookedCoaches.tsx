@@ -2,7 +2,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { Col, Row, Button, Modal, Empty, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import confirm from "antd/es/modal/confirm";
@@ -283,6 +283,10 @@ function DataRow(props: any) {
     },
   });
 
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <Row
       style={{
@@ -294,6 +298,7 @@ function DataRow(props: any) {
       <Col></Col>
       <Col span={7} style={{}}>
         <AdvancedImage
+          onClick={handleClick}
           style={{
             borderRadius: "50%",
             position: "absolute",
@@ -301,7 +306,7 @@ function DataRow(props: any) {
             height: "80px",
           }}
           cldImg={
-            cld.image(props?.image)
+            cld.image(props?.coach_image)
             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
             // .resize(Resize.scale().width(200).height(200))
           }

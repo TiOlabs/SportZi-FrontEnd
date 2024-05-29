@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, InputNumber, Modal, Select, message } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  TimePicker,
+  message,
+  Space,
+} from "antd";
 import { Cloudinary } from "@cloudinary/url-gen";
 import axios from "axios";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
@@ -8,6 +18,7 @@ import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { useParams } from "react-router-dom";
 import { Arcade, Zone } from "../types";
 import { Option } from "antd/es/mentions";
+import { Dayjs } from "dayjs";
 
 const AddPackage = () => {
   const { ArcadeId } = useParams();
@@ -30,6 +41,17 @@ const AddPackage = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
   const [rate, setRate] = useState("");
   const [description, setDescription] = useState("");
   const [publicId, setPublicId] = useState("");
@@ -50,6 +72,9 @@ const AddPackage = () => {
     resize: "fill",
   });
   const [messageApi, contextHolder] = message.useMessage();
+  const [timeSlots, setTimeSlots] = useState([
+    { day: "", startTime: "", endTime: "" },
+  ]);
   const key = "updatable";
 
   const openMessage = () => {
@@ -67,19 +92,51 @@ const AddPackage = () => {
       });
     }, 1000);
   };
+
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
+
   const imgObject = cld.image(publicId);
 
+  const handleDayChange = (index: number, value: string) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].day = value;
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleStartTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].startTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleEndTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].endTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleAddTimeSlot = () => {
+    setTimeSlots([...timeSlots, { day: "", startTime: "", endTime: "" }]);
+  };
+
+  const handleRemoveTimeSlot = (index: number) => {
+    const newTimeSlots = timeSlots.filter((_, i) => i !== index);
+    setTimeSlots(newTimeSlots);
+  };
+
   const handleFinish = async () => {
-    console.log("rate", rate);
-    console.log("description", description);
-    console.log("CoachPrecentage", CoachPrecentage);
+    const combinedTimeslot = timeSlots.map((slot) => ({
+      day: slot.day,
+      timeslot: `${slot.startTime}-${slot.endTime}`,
+    }));
+
     const rateInt = parseInt(rate);
     const CoachPrecentageInt = parseInt(CoachPrecentage);
+
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}api/addPackageDetails`,
@@ -91,6 +148,7 @@ const AddPackage = () => {
           package_image: publicId,
           arcade_id: ArcadeId,
           zone_id: ZoneId,
+          combinedTimeslot: combinedTimeslot,
         }
       );
       console.log(res);
@@ -99,6 +157,7 @@ const AddPackage = () => {
     }
     handleOk();
   };
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -113,7 +172,8 @@ const AddPackage = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
+
   return (
     <>
       <Button
@@ -184,7 +244,7 @@ const AddPackage = () => {
               allowClear
               onChange={(value) => setZoneId(value)}
             >
-              {zone?.zone.map((zone) => (
+              {zone?.zone.map((zone: any) => (
                 <Option
                   key={zone.zone_id.toString()}
                   value={zone.zone_id.toString()}
@@ -194,7 +254,6 @@ const AddPackage = () => {
               ))}
             </Select>
           </Form.Item>
-
           <Form.Item
             name="rate"
             label="Add your rate per person"
@@ -214,6 +273,7 @@ const AddPackage = () => {
                       new Error("Rate must be greater than 0")
                     );
                   }
+                  return Promise.resolve();
                 },
               },
             ]}
@@ -226,11 +286,11 @@ const AddPackage = () => {
           </Form.Item>
           <Form.Item
             name="description"
-            label="Add Discription About Package"
+            label="Add Description About Package"
             rules={[
               {
                 required: true,
-                message: "Please Add Discription!",
+                message: "Please Add Description!",
               },
             ]}
           >
@@ -241,16 +301,16 @@ const AddPackage = () => {
             />
           </Form.Item>
           <Form.Item
-            name="CoachPrecentage"
-            label="Add your Coach Precentage"
+            name="CoachPercentage"
+            label="Add your Coach Percentage"
             rules={[
               {
                 type: "number",
-                message: "Please enter coach precentage!",
+                message: "Please enter coach percentage!",
               },
               {
                 required: true,
-                message: "Please input coach precentage!",
+                message: "Please input coach percentage!",
               },
               {
                 validator: (_, value) => {
@@ -263,31 +323,106 @@ const AddPackage = () => {
                       new Error("Rate must be less than 100")
                     );
                   }
+                  return Promise.resolve();
                 },
               },
             ]}
           >
             <InputNumber
-              placeholder="Coach Precentage"
+              placeholder="Coach Percentage"
               style={{ width: "100%" }}
               onChange={(value) => setCoachPrecentage(value?.toString() || "")}
             />
           </Form.Item>
 
-          {/* .................. picture upload........................  */}
+          {/* Day and Time Slot Selection */}
+          {timeSlots.map((slot, index) => (
+            <Space key={index} direction="vertical" style={{ width: "100%" }}>
+              <Form.Item
+                name={`day-${index}`}
+                label={`Select Day ${index + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a day!",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Day"
+                  style={{ width: "100%" }}
+                  onChange={(value) => handleDayChange(index, value)}
+                >
+                  {daysOfWeek.map((day) => (
+                    <Option key={day} value={day}>
+                      {day}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name={`startTime-${index}`}
+                label={`Select Start Time ${index + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a start time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  format="HH:mm"
+                  onChange={(time) => handleStartTimeChange(index, time)}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+              <Form.Item
+                name={`endTime-${index}`}
+                label={`Select End Time ${index + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an end time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  format="HH:mm"
+                  onChange={(time) => handleEndTimeChange(index, time)}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+              {index > 0 && (
+                <Button
+                  style={{ width: "40%" }}
+                  onClick={() => handleRemoveTimeSlot(index)}
+                >
+                  <div style={{ fontSize: "15px" }}> Remove Time Slot</div>
+                </Button>
+              )}
+            </Space>
+          ))}
+          <Button
+            type="dashed"
+            onClick={handleAddTimeSlot}
+            style={{ width: "40%" }}
+          >
+            <div style={{ fontSize: "15px" }}>Add Another Time Slot</div>
+          </Button>
 
+          {/* Picture Upload */}
           <Form.Item label="Upload Package Info Image">
             <CloudinaryUploadWidget
               uwConfig={uwConfig}
               setPublicId={setPublicId}
             />
-
             <AdvancedImage
               style={{ maxWidth: "100px" }}
               cldImg={imgObject}
               plugins={[responsive(), placeholder()]}
             />
           </Form.Item>
+
           <Form.Item>{contextHolder}</Form.Item>
         </Form>
       </Modal>

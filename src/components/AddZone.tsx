@@ -17,6 +17,7 @@ import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { useParams } from "react-router-dom";
 import { Sport } from "../types";
+import { tif } from "@cloudinary/url-gen/qualifiers/format";
 
 const AddZone = () => {
   const { ArcadeId } = useParams();
@@ -54,6 +55,7 @@ const AddZone = () => {
   const [discription, setDiscription] = useState("");
   const [sport, setSport] = useState("");
   const [SportDetails, setSportDetails] = useState<Sport[]>([]);
+  const [timeStep, setTimeStep] = useState("");
   const handleTimeChangeStart = (time: any, timeString: string) => {
     setStartedTime(timeString);
     console.log("Selected time:", timeString);
@@ -100,12 +102,15 @@ const AddZone = () => {
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
+    const timeStepInt = parseFloat(timeStep);
+    console.log(timeStepInt);
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}api/addZoneDetails`,
         {
           zone_name: arcadeName,
           capacity: capacityint,
+          time_Step: timeStepInt,
           rate: rateint,
           description: discription,
           way_of_booking: way,
@@ -235,10 +240,31 @@ const AddZone = () => {
               onChange={(value) => setCapacity(value?.toString() || "")}
             />
           </Form.Item>
+          <Form.Item
+            name="timeStep"
+            label="Add zone time step for one time slot"
+            rules={[
+              {
+                type: "number",
+                message: "Please enter time step!",
+              },
+              {
+                required: true,
+                message: "Please input time step!",
+              },
+            ]}
+          >
+            <Select onChange={(value) => setTimeStep(value?.toString() || "")}>
+              <Select.Option value={0.5}>Half hour</Select.Option>
+              <Select.Option value={1}>Hour</Select.Option>
+              <Select.Option value={1.5}>One and half hour</Select.Option>
+              <Select.Option value={2}>Two hour</Select.Option>
+            </Select>
+          </Form.Item>
 
           <Form.Item
             name="rate"
-            label="Add your rate (per hour)"
+            label="Add your rate (per time slot )"
             rules={[
               {
                 type: "number",

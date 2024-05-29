@@ -33,6 +33,7 @@ import React from "react";
 import {
   Arcade,
   CoachAssignDetails,
+  CoachBookingDetails,
   Package,
   PackageEnroolDetailsForPlayer,
   Zone,
@@ -68,7 +69,7 @@ const ArcadeProfileArcade = () => {
   const { managerDetails } = useArcade();
   const [arcade, setArcade] = useState<Arcade>();
   const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
-  const [coachBookings, setCoachBookings] = useState<Zone[]>([]);
+  const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
   const [coachAssignRequest, setCoachAssignRequest] = useState<
     CoachAssignDetails[]
   >([]);
@@ -87,7 +88,7 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -162,9 +163,8 @@ const ArcadeProfileArcade = () => {
 
   useEffect(() => {
     axios
-      .get<Arcade>(
-        process.env.REACT_APP_API_URL +
-          `api/getarcadebookingForArcade/${ArcadeId}`
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getCoachBookingByArcadeId/${ArcadeId}`
       )
       .then((res) => {
         console.log("Response data:", res.data);
@@ -172,40 +172,26 @@ const ArcadeProfileArcade = () => {
         // Get the current date in the format YYYY-MM-DD
         const currentDate = new Date();
         const formattedCurrentDate = currentDate.toISOString().split("T")[0];
-
-        // Filter bookings with status "success" and booking dates based on value
-        const filteredBookings: Zone[] = res.data.zone.reduce(
-          (accumulator: Zone[], zone: Zone) => {
-            console.log("Zone:", zone);
-            const targetBookings = zone.zoneBookingDetails.filter((booking) => {
-              if (value2 === 4) {
-                return (
-                  booking.status === "success" &&
-                  booking.date > formattedCurrentDate &&
-                  booking.booking_type === "coach"
-                );
-              } else if (value2 === 5) {
-                return (
-                  booking.status === "success" &&
-                  booking.date < formattedCurrentDate &&
-                  booking.booking_type === "coach"
-                );
-              } else if (value2 === 6) {
-                return (
-                  booking.status === "canceled_By_Arcade" &&
-                  booking.booking_type === "coach"
-                );
-              }
-            });
-            if (targetBookings.length > 0) {
-              accumulator.push({
-                ...zone,
-                zoneBookingDetails: targetBookings,
-              });
+        console.log("Current date:", formattedCurrentDate);
+        console.log(value2);
+        // Filter bookings based on value2
+        const filteredBookings = res.data.filter(
+          (booking: { status: string; date: string }) => {
+            if (value2 === 4) {
+              return (
+                booking.status === "success" &&
+                booking.date > formattedCurrentDate
+              );
+            } else if (value2 === 5) {
+              return (
+                booking.status === "success" &&
+                booking.date < formattedCurrentDate
+              );
+            } else if (value2 === 6) {
+              return booking.status === "canceled_By_Arcade";
             }
-            return accumulator;
-          },
-          []
+            return false;
+          }
         );
 
         setCoachBookings(filteredBookings);
@@ -215,6 +201,15 @@ const ArcadeProfileArcade = () => {
         console.log(error);
       });
   }, [ArcadeId, value2]);
+
+  const handleFilterChange = (value: React.SetStateAction<string>) => {
+    setFilterValue(value);
+  };
+
+  // const onChangeCoachBookings = (e) => {
+  //   setCoachBookings([]);
+  //   // Logic to change value2
+  // };
 
   useEffect(() => {
     axios
@@ -317,7 +312,7 @@ const ArcadeProfileArcade = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [ArcadeId]);
   console.log("arcadeDetails", packageDetail);
   const [filterBy, setFilterBy] = useState("date");
   const [filterValue, setFilterValue] = useState("");
@@ -325,9 +320,9 @@ const ArcadeProfileArcade = () => {
   const [filterByPackage, setFilterByPackage] = useState("enroll_date");
   const [filterValuePackage, setFilterValuePackage] = useState("");
 
-  const handleFilterChange = (value: React.SetStateAction<string>) => {
-    setFilterValue(value);
-  };
+  // const handleFilterChange = (value: React.SetStateAction<string>) => {
+  //   setFilterValue(value);
+  // };
 
   const handleFilterChange2 = (value: React.SetStateAction<string>) => {
     setFilterValue2(value);
@@ -361,30 +356,30 @@ const ArcadeProfileArcade = () => {
     })
   );
 
-  const filteredBookings = coachBookings.filter((zone) =>
-    zone.zoneBookingDetails.some((booking) => {
-      const { user, time, date, zone_booking_id } = booking;
-      const { rate, zone_name } = zone;
-      const fullName = `${user.firstname} ${user.lastname}`.toLowerCase();
+  // const filteredBookings = coachBookings.filter((zone) =>
+  //   zone.zoneBookingDetails.some((booking: { user: any; time: any; date: any; zone_booking_id: any; }) => {
+  //     const { user, time, date, zone_booking_id } = booking;
+  //     const { rate, zone_name } = zone;
+  //     const fullName = `${user.firstname} ${user.lastname}`.toLowerCase();
 
-      switch (filterBy) {
-        case "date":
-          return date.includes(filterValue);
-        case "time":
-          return time.includes(filterValue);
-        case "rate":
-          return rate.toString().includes(filterValue);
-        case "zoneName":
-          return zone_name.toLowerCase().includes(filterValue.toLowerCase());
-        case "booked_by":
-          return fullName.includes(filterValue.toLowerCase());
-        case "booking_id":
-          return zone_booking_id.includes(filterValue);
-        default:
-          return true;
-      }
-    })
-  );
+  //     switch (filterBy) {
+  //       case "date":
+  //         return date.includes(filterValue);
+  //       case "time":
+  //         return time.includes(filterValue);
+  //       case "rate":
+  //         return rate.toString().includes(filterValue);
+  //       case "zoneName":
+  //         return zone_name.toLowerCase().includes(filterValue.toLowerCase());
+  //       case "booked_by":
+  //         return fullName.includes(filterValue.toLowerCase());
+  //       case "booking_id":
+  //         return zone_booking_id.includes(filterValue);
+  //       default:
+  //         return true;
+  //     }
+  //   })
+  // );
 
   const filteredPackageEnrollments = packageEnrollmentForPlayer.filter(
     (enroll) => {
@@ -1005,6 +1000,7 @@ const ArcadeProfileArcade = () => {
                   short_description={coach.description}
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
+                  coach_id={coach.coach_id}
                 />
               </Col>
             ))}
@@ -1586,7 +1582,7 @@ const ArcadeProfileArcade = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "500",
-              fontSize: lg ? "32px" : "24px",
+              fontSize: "32px",
               paddingBottom: "10px",
               marginBottom: "0px",
             }}
@@ -1716,7 +1712,7 @@ const ArcadeProfileArcade = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
+              fontSize: "16px",
               paddingBottom: "10px",
               marginBottom: "0px",
               display: "flex",
@@ -1739,7 +1735,7 @@ const ArcadeProfileArcade = () => {
               color: "#05a30a",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
+              fontSize: "16px",
               paddingBottom: "10px",
               marginBottom: "0px",
               display: "flex",
@@ -1762,7 +1758,7 @@ const ArcadeProfileArcade = () => {
               color: "#ad0508",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
+              fontSize: "16px",
               paddingBottom: "10px",
               marginBottom: "0px",
               display: "flex",
@@ -1847,51 +1843,67 @@ const ArcadeProfileArcade = () => {
           >
             Time
           </Col>
-          {lg && (
-            <Col
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontWeight: "400",
-                fontSize: "28px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              xs={8}
-              sm={8}
-              md={8}
-              lg={6}
-              xl={6}
-            >
-              Coach
-            </Col>
-          )}
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Coach
+          </Col>
         </Row>
-        {filteredBookings.length > 0 ? (
-          <>
-            {filteredBookings.map((zone) =>
-              zone.zoneBookingDetails.map((booking) => (
-                <AvailableCoachBookingsArcade
-                  key={booking.zone_booking_id}
-                  user_image={booking.user.user_image}
-                  booking_id={booking.zone_booking_id}
-                  booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                  zoneName={zone.zone_name}
-                  time={booking.time}
-                  date={booking.date}
-                  rate={zone.rate}
-                  zoneImage={zone.zone_image}
-                  // coach_name={{`${booking.} ${booking.coach.user.lastname}`}}
-                />
-              ))
-            )}
-          </>
+        {coachBookings.length > 0 ? (
+          coachBookings
+            .filter((booking) => {
+              if (filterBy === "date") {
+                return booking.date.includes(filterValue);
+              } else if (filterBy === "time") {
+                return booking.time.includes(filterValue);
+              } else if (filterBy === "rate") {
+                return booking.zone.rate.toString().includes(filterValue);
+              } else if (filterBy === "zoneName") {
+                return booking.zone.zone_name.includes(filterValue);
+              } else if (filterBy === "booked_by") {
+                return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
+                  filterValue
+                );
+              } else if (filterBy === "booking_id") {
+                return booking.booking_id.includes(filterValue);
+              }
+              return true;
+            })
+            .map((booking) => (
+              <AvailableCoachBookingsArcade
+                key={booking.booking_id}
+                user_image={booking.player.user.user_image}
+                booking_id={booking.booking_id}
+                booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
+                zoneName={booking.zone.zone_name}
+                time={booking.time}
+                date={booking.date}
+                rate={booking.zone.rate}
+                zoneImage={booking.zone.zone_image}
+                booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                player_email={booking.player.user.email}
+                coach_email={booking.coach.user.email}
+                coach_image={booking.coach.user.user_image}
+                coach_id={booking.coach_id}
+              />
+            ))
         ) : (
           <Empty />
         )}
       </Row>
-
       {/* Package Enrollments Section */}
       <Row
         style={{

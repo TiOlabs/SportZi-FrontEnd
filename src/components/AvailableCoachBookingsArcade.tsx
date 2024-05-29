@@ -6,6 +6,7 @@ import { Button, Modal } from "antd";
 import axios from "axios";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { useNavigate } from "react-router-dom";
 const AvailableCoachBookingsArcade = (props: any) => {
   console.log(props);
   const { useBreakpoint } = Grid;
@@ -89,6 +90,11 @@ const AvailableCoachBookingsArcade = (props: any) => {
       cloudName,
     },
   });
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <>
       <Row
@@ -181,6 +187,7 @@ const AvailableCoachBookingsArcade = (props: any) => {
         </Col>
         {lg && (
           <Col
+            onClick={handleClick}
             style={{
               color: "#000",
               fontFamily: "kanit",
@@ -196,7 +203,7 @@ const AvailableCoachBookingsArcade = (props: any) => {
             lg={6}
             xl={6}
           >
-            {props.zoneName}
+            <u>{props.booked_coach}</u>
           </Col>
         )}
       </Row>

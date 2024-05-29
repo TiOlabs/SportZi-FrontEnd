@@ -115,7 +115,10 @@ const CoachBookingForm: React.FC = () => {
         );
         const data = await res.json();
         console.log(data);
-        setCoachAssignDetails(data);
+        const filteredData = data.filter(
+          (item: any) => item.status === "success"
+        );
+        setCoachAssignDetails(filteredData);
       } catch (err) {
         console.log(err);
       }

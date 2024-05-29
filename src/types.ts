@@ -17,6 +17,7 @@ export interface Zone {
   zone_image: String;
   arcade: Arcade;
   capacity: Number;
+  time_Step: Number;
   description: String;
   way_of_booking: String;
   sport_id: String;
