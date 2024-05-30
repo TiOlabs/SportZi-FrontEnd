@@ -166,6 +166,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
   const isReservationType = props.reservation_type;
 
   const handlePayment = () => {
+    if(props.item==="Zone Booking"){
     if (isDay === null) {
       message.warning("Please select a Day.");
     } else if (isTime === "") {
@@ -185,7 +186,28 @@ const PaymentModal = (props: any): JSX.Element | null => {
     } else {
       pay();
     }
+  }else if(props.item==="Coach Booking"){
+    if (isDay === null) {
+      message.warning("Please select a Day.");
+    } else if (isUserId === "") {
+      message.warning("Please Login First.");
+    } else if (isParticipantCount === "") {
+      message.warning("Please select Participant Count.");
+    } else if (isZoneId === "") {
+      message.warning("Please select a zone.");
+    } else if (isTime === "") {
+      message.warning("Please select a Time Slot.");
+    } else if (isReservationType === "") {
+      message.warning("Please select Reservatin Type.");
+    } else if (props.pcount > props.avaiableParticipantCount) {
+      message.warning(
+        "Participant count is more than available participant count."
+      );
+    } else {
+      pay();
+    }
   };
+};
   return (
     <>
       <Button
