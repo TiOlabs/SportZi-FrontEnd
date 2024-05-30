@@ -7,12 +7,15 @@ import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { PlayerContext } from "../context/player.context";
 import { ArcadeContext } from "../context/Arcade.context";
 import { CoachContext } from "../context/coach.context";
+import { UserContext } from "../context/userContext";
+import { useParams } from "react-router-dom";
 
 const PhotoCollage = () => {
-  const { userDetails } = useContext(PlayerContext);
+  const { ArcadeId } = useParams();
+  const { userDetails } = useContext(UserContext);
   const [userPhotos, setUserPhotos] = useState([]);
-  const { managerDetails } = useContext(ArcadeContext);
-  const { coachDetails } = useContext(CoachContext);
+  // const { managerDetails } = useContext(ArcadeContext);
+  // const { coachDetails } = useContext(CoachContext);
   // useEffect(() => {
   //   try {
   //     const fetchData = async () => {
@@ -34,31 +37,40 @@ const PhotoCollage = () => {
   //   }
   // }, [userDetails]);
   useEffect(() => {
+    console.log(userDetails);
+    console.log(ArcadeId);
     const fetchData = async () => {
       try {
         let res;
 
-        if (userDetails) {
+        if (userDetails.role === "PLAYER") {
           console.log("Fetching user details...");
           res = await axios.get(
             `${process.env.REACT_APP_API_URL}api/getuser/${userDetails.id}`
           );
-        } else if (coachDetails) {
+        } else if (userDetails.role === "COACH") {
           console.log("Fetching coach details...");
           res = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/getcoach/${coachDetails.id}`
+            `${process.env.REACT_APP_API_URL}api/getcoache/${userDetails.id}`
           );
-        } else if (managerDetails) {
-          console.log("Fetching manager details...");
+        } else {
+          console.log("Fetching Arcade details...");
           res = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/getmanager/${managerDetails.id}`
+            `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`
           );
+          console.log(res);
         }
-
+        // else if (managerDetails) {
+        //   console.log("Fetching manager details...");
+        //   res = await axios.get(
+        //     `${process.env.REACT_APP_API_URL}api/getmanager/${managerDetails.id}`
+        //   );
+        // }
+        console.log(res);
         if (res) {
           const data = res.data;
-          console.log(data.userphoto || data.coachphoto || data.managerphoto);
-          setUserPhotos(data.userphoto || data.coachphoto || data.managerphoto);
+          console.log(data.arcadephoto);
+          setUserPhotos(data.arcadephoto);
         }
       } catch (e) {
         console.log(e);
@@ -66,7 +78,7 @@ const PhotoCollage = () => {
     };
 
     fetchData();
-  }, [userDetails, coachDetails, managerDetails]);
+  }, [userDetails]);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {

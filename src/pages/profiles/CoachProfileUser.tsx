@@ -32,10 +32,12 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Coach, User } from "../../types";
 import { UserContext } from "../../context/userContext";
+import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { coachId } = useParams();
+  console.log(coachId);
   const { lg, md, sm, xs } = useBreakpoint();
   const { TextArea } = Input;
   const onChange = (
@@ -717,7 +719,7 @@ const CoachProfileUser = () => {
       >
         {" "}
       </div>
-      <PhotoCollage />
+      <PhotoCollageForUsers id={coachId} role={"COACH"} />
 
       <Row
         style={{
