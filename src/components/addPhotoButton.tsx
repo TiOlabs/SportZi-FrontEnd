@@ -10,6 +10,8 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import axios from "axios";
 import { PlayerContext } from "../context/player.context";
 import { useArcade } from "../context/Arcade.context";
+import { UserContext } from "../context/userContext";
+import { useParams } from "react-router-dom";
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -20,8 +22,9 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 
 const AddPhotoButton = () => {
-  const { managerDetails } = useArcade();
-  const { userDetails } = useContext(PlayerContext);
+  const { ArcadeId } = useParams();
+  console.log(ArcadeId);
+  const { userDetails } = useContext(UserContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -92,21 +95,15 @@ const AddPhotoButton = () => {
     },
   });
   const imgObject = cld.image(publicId);
-  let userId = "";
+
   useEffect(() => {
-    let userId = "";
-    if (userDetails?.id === "") {
-      userId = managerDetails?.id;
-    } else {
-      userId = userDetails?.id;
-    }
     async function fetchData() {
       try {
         const res = await axios.post(
           `${process.env.REACT_APP_API_URL}api/addUserPhoto`,
           {
             image: publicId,
-            user_id: userId,
+            user_id: userDetails.id,
           }
         );
       } catch (e) {
@@ -114,7 +111,23 @@ const AddPhotoButton = () => {
       }
     }
     fetchData();
-  }, [publicId, userDetails, managerDetails.id]);
+  }, [publicId]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await axios.post(
+          `${process.env.REACT_APP_API_URL}api/addArcadePhoto`,
+          {
+            image: publicId,
+            arcade_id: ArcadeId,
+          }
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    fetchData();
+  }, [publicId]);
   return (
     <>
       {/* <Button

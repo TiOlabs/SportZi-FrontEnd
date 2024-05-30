@@ -45,6 +45,8 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import CoachApplyForm from "../../components/coachApplyForArcade";
 import ArcadePackageUserView from "../../components/arcadePackageUserView";
 import TextArea from "antd/es/input/TextArea";
+import PhotoCollageForUsers from "../../components/photoCollageForUsers";
+import PhotoCollageForArcadeUsers from "../../components/photoCollageForArcadeUserViee";
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -655,7 +657,7 @@ const ArcadeProfileUser = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Payment  Types
+              Payment Types
             </Typography>
             <List
               style={{
@@ -886,7 +888,7 @@ const ArcadeProfileUser = () => {
         </p>
       </div>
 
-      <PhotoCollage />
+      <PhotoCollageForArcadeUsers />
 
       <Row
         style={{

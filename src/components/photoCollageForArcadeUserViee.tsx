@@ -8,8 +8,11 @@ import { PlayerContext } from "../context/player.context";
 import { ArcadeContext } from "../context/Arcade.context";
 import { CoachContext } from "../context/coach.context";
 import { UserContext } from "../context/userContext";
+import { useParams } from "react-router-dom";
 
-const PhotoCollageForArcade = (props: any) => {
+const PhotoCollageForArcadeUsers = () => {
+  const { ArcadeId } = useParams();
+  const { userDetails } = useContext(UserContext);
   const [userPhotos, setUserPhotos] = useState([]);
   // const { managerDetails } = useContext(ArcadeContext);
   // const { coachDetails } = useContext(CoachContext);
@@ -34,24 +37,15 @@ const PhotoCollageForArcade = (props: any) => {
   //   }
   // }, [userDetails]);
   useEffect(() => {
-    console.log(props);
-   
+    console.log(userDetails);
     const fetchData = async () => {
       try {
         let res;
 
-        if (props.role === "PLAYER") {
-          console.log("Fetching user details...");
-          res = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/getuser/${props.id}`
-          );
-        } else if (props.role === "COACH") {
-          let idWithoutColon = props.id.replace(":", "");
-          console.log("Fetching coach details...");
-          res = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/getcoache/${idWithoutColon}`
-          );
-        }
+        res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`
+        );
+
         // else if (managerDetails) {
         //   console.log("Fetching manager details...");
         //   res = await axios.get(
@@ -61,8 +55,8 @@ const PhotoCollageForArcade = (props: any) => {
         console.log(res);
         if (res) {
           const data = res.data;
-          console.log(data.user.userphoto);
-          setUserPhotos(data.user.userphoto);
+          console.log(data.arcadephoto);
+          setUserPhotos(data.arcadephoto);
         }
       } catch (e) {
         console.log(e);
@@ -70,7 +64,7 @@ const PhotoCollageForArcade = (props: any) => {
     };
 
     fetchData();
-  }, [props]);
+  }, [ArcadeId]);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -178,4 +172,4 @@ const PhotoCollageForArcade = (props: any) => {
   );
 };
 
-export default PhotoCollageForArcade;
+export default PhotoCollageForArcadeUsers;
