@@ -42,6 +42,7 @@ const AddZone = () => {
   };
 
   const [rate, setRate] = useState("");
+  const [fullRate, setFullRate] = useState("");
   const [discount, setdiscount] = useState("");
   const [discountDiscription, setdiscountDiscription] = useState("");
   const [capacity, setCapacity] = useState("");
@@ -102,8 +103,10 @@ const AddZone = () => {
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
+    const fullRateint = parseInt(fullRate);
     const timeStepInt = parseFloat(timeStep);
     console.log(timeStepInt);
+
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}api/addZoneDetails`,
@@ -112,6 +115,7 @@ const AddZone = () => {
           capacity: capacityint,
           time_Step: timeStepInt,
           rate: rateint,
+          full_zone_rate: fullRateint,
           description: discription,
           way_of_booking: way,
           zone_image: publicId,
@@ -288,6 +292,36 @@ const AddZone = () => {
               placeholder="rate"
               style={{ width: "100%" }}
               onChange={(value) => setRate(value?.toString() || "")}
+            />
+          </Form.Item>
+          <Form.Item
+            name="ful_rate"
+            label="Add your full Zone rate for a time slot (if you don't have full zone rate please enter 0, after we will calculate the rate for full zone as rate for one time slot * capacity)"
+            rules={[
+              {
+                type: "number",
+                message: "Please enter a valid number!",
+              },
+              {
+                required: true,
+                message: "Please input your number!",
+              },
+              {
+                validator: (_, value) => {
+                  if (value < 0) {
+                    return Promise.reject(
+                      "Rate should be greater than or equal to 0"
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <InputNumber
+              placeholder="full zone rate"
+              style={{ width: "100%" }}
+              onChange={(value) => setFullRate(value?.toString() || "")}
             />
           </Form.Item>
           <Checkbox

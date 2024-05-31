@@ -298,7 +298,7 @@ const ArcadeProfileArcade = () => {
 
   console.log("in the arcade", ArcadeId);
 
-  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
+  const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
     axiosInstance
       .get("/api/auth/getarchadedetails", {
@@ -405,7 +405,8 @@ const ArcadeProfileArcade = () => {
       }
     }
   );
-
+  console.log(arcadeDetails?.arcade_name);
+  const arcadeName = arcadeDetails?.arcade_name;
   return (
     <>
       <NavbarProfile />
@@ -571,8 +572,8 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                {arcadeDetails?.address &&
-                  arcadeDetails.address
+                {arcadeDetails?.arcade_address &&
+                  arcadeDetails.arcade_address
                     .split(",")
                     .map(
                       (
@@ -1543,25 +1544,28 @@ const ArcadeProfileArcade = () => {
           )}
         </Row>
         {filteredArcadeBookings.length > 0 ? (
-          <>
-            {filteredArcadeBookings.map((zone) =>
-              (zone.zoneBookingDetails || []).map((booking) => (
-                <AvailableBookingsArcade
-                  key={booking.zone_booking_id}
-                  user_image={booking.user.user_image}
-                  booking_id={booking.zone_booking_id}
-                  booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                  zoneName={zone.zone_name}
-                  time={booking.time}
-                  date={booking.date}
-                  rate={zone.rate}
-                  zoneImage={zone.zone_image}
-                  arcade_name={booking.zone.arcade.arcade_name}
-                  email={booking.user.email}
-                />
-              ))
-            )}
-          </>
+          (console.log(filteredArcadeBookings),
+          (
+            <>
+              {filteredArcadeBookings.map((zone) =>
+                (zone.zoneBookingDetails || []).map((booking) => (
+                  <AvailableBookingsArcade
+                    key={booking.zone_booking_id}
+                    user_image={booking.user.user_image}
+                    booking_id={booking.zone_booking_id}
+                    booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                    zoneName={zone.zone_name}
+                    time={booking.time}
+                    date={booking.date}
+                    rate={zone.rate}
+                    zoneImage={zone.zone_image}
+                    arcade_name={arcadeName}
+                    email={booking.user.email}
+                  />
+                ))
+              )}
+            </>
+          ))
         ) : (
           <Empty />
         )}
@@ -2262,6 +2266,7 @@ const ArcadeProfileArcade = () => {
         style={{
           width: "100%",
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -2273,7 +2278,9 @@ const ArcadeProfileArcade = () => {
                 style={{
                   width: "100%",
                   display: "flex",
+                  flexDirection: "column",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
                 key={index}
               >

@@ -339,24 +339,35 @@ const CoachBookingForm: React.FC = () => {
   };
 
   // eslint-disable-next-line no-octal
-  const openTime = 8.0;
-  const closeTime = 23.0;
-  const timeStep = 1;
+  const openTimeStr = zoneDetails?.open_time ?? "";
+  const closeTimeStr = zoneDetails?.close_time ?? "";
+  console.log(openTimeStr);
+
+  // Split the time string to get hours and minutes
+  const [openHour, openMinute] = openTimeStr.split(":").map(Number);
+  const [closeHour, closeMinute] = closeTimeStr.split(":").map(Number);
+
+  // Concatenate hours and minutes with a period
+  const openTime = openHour + openMinute / 60;
+  const closeTime = closeHour + closeMinute / 60;
+  const timeStep = zoneDetails?.time_Step as number;
+  console.log(timeStep);
   let buttonData = [];
+
   for (let i = openTime; i < closeTime; i += timeStep) {
     let nextTime = i + timeStep;
     let hour = Math.floor(i);
-    let minute = (i - hour) * 60;
+    let minute = Math.round((i - hour) * 60);
     let nextHour = Math.floor(nextTime);
-    let nextMinute = (nextTime - nextHour) * 60;
+    let nextMinute = Math.round((nextTime - nextHour) * 60);
 
     let formattedTime = `${hour}:${
       minute < 10 ? "0" : ""
-    }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+    }${minute} - ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
 
     if (date === dayjs().format("YYYY-MM-DD")) {
       // Split formattedTime into start and end times
-      const [startTime, endTime] = formattedTime.split("-");
+      const [startTime, endTime] = formattedTime.split(" - ");
 
       // Parse start and end times into time objects
       const formattedStartTime = dayjs(startTime, "HH:mm");
@@ -384,11 +395,17 @@ const CoachBookingForm: React.FC = () => {
 
     console.log(buttonData);
   }
+
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
   let coachAmount = Number(coachData?.rate) * Number(pcount);
   let zonerate = Number(zoneDetails?.rate);
-  let fullAmount = coachAmount + zonerate * Number(pcount);
+  let fullAmount;
+  if (zoneDetails?.full_zone_rate === 0) {
+    fullAmount = coachAmount + zonerate * Number(pcount);
+  } else {
+    fullAmount = coachAmount + Number(zoneDetails?.full_zone_rate);
+  }
   let zoneAmount = fullAmount - coachAmount;
   console.log(fullAmount);
   console.log(avaliability);
@@ -570,6 +587,7 @@ const CoachBookingForm: React.FC = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     alignSelf: "center",
+                    overflowY: "auto",
                   }}
                 >
                   {dayOfWeek &&
@@ -590,7 +608,7 @@ const CoachBookingForm: React.FC = () => {
                           const endHour = parseFloat(
                             timeRange[1].split(":")[0]
                           ); // Get the end hour
-                          const timeIncrement = 1; // Set the time increment to one hour
+                          const timeIncrement = timeStep; // Set the time increment
 
                           const openTime = parseFloat(
                             (zoneDetails.open_time ?? "00:00").split(":")[0]
@@ -601,16 +619,20 @@ const CoachBookingForm: React.FC = () => {
 
                           const timeSlots: any[] = [];
 
-                          // Generate time slots within zoneDetails' open and close times
+                          // Generate time slots within both the coach's available time and the zone's open and close times
+                          const effectiveStartHour = Math.max(
+                            startHour,
+                            openTime
+                          );
+                          const effectiveEndHour = Math.min(endHour, closeTime);
+
                           for (
-                            let i = startHour;
-                            i < endHour;
+                            let i = effectiveStartHour;
+                            i < effectiveEndHour;
                             i += timeIncrement
                           ) {
-                            if (
-                              i >= openTime &&
-                              i + timeIncrement <= closeTime
-                            ) {
+                            if (i + timeIncrement <= effectiveEndHour) {
+                              // Ensure the end time is within the effective end time
                               const startTimeHour = Math.floor(i);
                               const startTimeMinutes =
                                 i % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
@@ -792,6 +814,7 @@ const CoachBookingForm: React.FC = () => {
                     />
                   )}
                 </Form.Item>
+
                 <Form.Item
                   name="way_of_booking"
                   label="Reservation Type"
