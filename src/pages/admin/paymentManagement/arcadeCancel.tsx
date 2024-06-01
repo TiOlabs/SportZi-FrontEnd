@@ -59,7 +59,7 @@ const CoachArcadeCancel = () => {
 
         let sortedBookings = data.filter(
           (arcadeBooking: { booking_type: string; status: string }) =>
-            arcadeBooking.status === "canceled_By_Player" &&
+            arcadeBooking.status === "canceled_By_Arcade" &&
             arcadeBooking.booking_type === "zone"
         );
 

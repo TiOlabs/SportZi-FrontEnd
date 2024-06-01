@@ -33,7 +33,7 @@ const CoachCard = (props: any) => {
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
               <p onClick={handleClick}>{props.coachName}</p>
-              <p className="coachPosition">level one Rugby Coach</p>
+              <p className="coachPosition">level one {props.sport} Coach</p>
             </div>
 
             <div className="ratings">

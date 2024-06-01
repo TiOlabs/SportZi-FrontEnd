@@ -166,48 +166,50 @@ const PaymentModal = (props: any): JSX.Element | null => {
   const isReservationType = props.reservation_type;
 
   const handlePayment = () => {
-    if(props.item==="Zone Booking"){
-    if (isDay === null) {
-      message.warning("Please select a Day.");
-    } else if (isTime === "") {
-      message.warning("Please select a Time Slot.");
-    } else if (isParticipantCount === "") {
-      message.warning("Please select Participant Count.");
-    } else if (isUserId === "") {
-      message.warning("Please Login First.");
-    } else if (isZoneId === "") {
-      message.warning("Please select a zone.");
-    } else if (isReservationType === "") {
-      message.warning("Please select Reservatin Type.");
-    } else if (props.pcount > props.avaiableParticipantCount) {
-      message.warning(
-        "Participant count is more than available participant count."
-      );
-    } else {
-      pay();
-    }
-  }else if(props.item==="Coach Booking"){
-    if (isDay === null) {
-      message.warning("Please select a Day.");
-    } else if (isUserId === "") {
-      message.warning("Please Login First.");
-    } else if (isParticipantCount === "") {
-      message.warning("Please select Participant Count.");
-    } else if (isZoneId === "") {
-      message.warning("Please select a zone.");
-    } else if (isTime === "") {
-      message.warning("Please select a Time Slot.");
-    } else if (isReservationType === "") {
-      message.warning("Please select Reservatin Type.");
-    } else if (props.pcount > props.avaiableParticipantCount) {
-      message.warning(
-        "Participant count is more than available participant count."
-      );
-    } else {
-      pay();
+    console.log(props.avaiableParticipantCount);
+    console.log(props.pcount);
+    if (props.item === "Zone Booking") {
+      if (isDay === null) {
+        message.warning("Please select a Day.");
+      } else if (isReservationType === "") {
+        message.warning("Please select Reservatin Type.");
+      } else if (isTime === "") {
+        message.warning("Please select a Time Slot.");
+      } else if (isParticipantCount === "") {
+        message.warning("Please select Participant Count.");
+      } else if (isUserId === "") {
+        message.warning("Please Login First.");
+      } else if (isZoneId === "") {
+        message.warning("Please select a zone.");
+      } else if (props.pcount > props.avaiableParticipantCount) {
+        message.warning(
+          "Participant count is more than available participant count."
+        );
+      } else {
+        pay();
+      }
+    } else if (props.item === "Coach Booking") {
+      if (isDay === null) {
+        message.warning("Please select a Day.");
+      } else if (isUserId === "") {
+        message.warning("Please Login First.");
+      } else if (isZoneId === "") {
+        message.warning("Please select a zone.");
+      } else if (isTime === "") {
+        message.warning("Please select a Time Slot.");
+      } else if (isParticipantCount === "") {
+        message.warning("Please select Participant Count.");
+      } else if (isReservationType === "") {
+        message.warning("Please select Reservatin Type.");
+      } else if (props.pcount > props.avaiableParticipantCount) {
+        message.warning(
+          "Participant count is more than available participant count."
+        );
+      } else {
+        pay();
+      }
     }
   };
-};
   return (
     <>
       <Button

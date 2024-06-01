@@ -125,6 +125,7 @@ const ArcadeProfileUser = () => {
         const filteredData = res.data.filter(
           (item: { status: string }) => item.status === "success"
         );
+        console.log("filteredData", filteredData);
         setCoachesInArcade(filteredData);
       })
       .catch((err) => {
@@ -819,35 +820,36 @@ const ArcadeProfileUser = () => {
         >
           <Row
             style={{
-              marginLeft: "5%",
+              overflowX: "hidden",
               width: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              marginBottom: "30px",
+              height: "450px",
+              overflowY: "scroll",
+              flexWrap: "nowrap",
             }}
           >
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              {coachesInArcade.map((coach: CoachAssignDetails) => (
+            {coachesInArcade.map((coach: CoachAssignDetails) => (
+              <Col
+                lg={{ span: 5 }}
+                md={{ span: 8 }}
+                sm={{ span: 12 }}
+                xs={{ span: 24 }}
+                style={{
+                  display: "flex",
+                }}
+              >
                 <CoachCard
                   coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
                   coachImage={coach.coach.user.user_image}
                   short_description={coach.description}
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
+                  sport={coach.coach.sport.sport_name}
                 />
-              ))}
-            </Col>
+              </Col>
+            ))}
           </Row>
         </div>
         <Button

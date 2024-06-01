@@ -293,6 +293,7 @@ const CoachBookingForm: React.FC = () => {
     console.log(date, time, pcount, zoneForCoachBookings);
     console.log(userDetails.user_id);
     const pcountInt = parseInt(pcount);
+
     if (parseInt(pcount) <= 0) {
       message.error("Participant count must be more than 0");
       return; // Stop further execution
@@ -339,24 +340,35 @@ const CoachBookingForm: React.FC = () => {
   };
 
   // eslint-disable-next-line no-octal
-  const openTime = 8.0;
-  const closeTime = 23.0;
-  const timeStep = 1;
+  const openTimeStr = zoneDetails?.open_time ?? "";
+  const closeTimeStr = zoneDetails?.close_time ?? "";
+  console.log(openTimeStr);
+
+  // Split the time string to get hours and minutes
+  const [openHour, openMinute] = openTimeStr.split(":").map(Number);
+  const [closeHour, closeMinute] = closeTimeStr.split(":").map(Number);
+
+  // Concatenate hours and minutes with a period
+  const openTime = openHour + openMinute / 60;
+  const closeTime = closeHour + closeMinute / 60;
+  const timeStep = zoneDetails?.time_Step as number;
+  console.log(timeStep);
   let buttonData = [];
+
   for (let i = openTime; i < closeTime; i += timeStep) {
     let nextTime = i + timeStep;
     let hour = Math.floor(i);
-    let minute = (i - hour) * 60;
+    let minute = Math.round((i - hour) * 60);
     let nextHour = Math.floor(nextTime);
-    let nextMinute = (nextTime - nextHour) * 60;
+    let nextMinute = Math.round((nextTime - nextHour) * 60);
 
     let formattedTime = `${hour}:${
       minute < 10 ? "0" : ""
-    }${minute}- ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
+    }${minute} - ${nextHour}:${nextMinute < 10 ? "0" : ""}${nextMinute}`;
 
     if (date === dayjs().format("YYYY-MM-DD")) {
       // Split formattedTime into start and end times
-      const [startTime, endTime] = formattedTime.split("-");
+      const [startTime, endTime] = formattedTime.split(" - ");
 
       // Parse start and end times into time objects
       const formattedStartTime = dayjs(startTime, "HH:mm");
@@ -384,12 +396,29 @@ const CoachBookingForm: React.FC = () => {
 
     console.log(buttonData);
   }
+
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
   let coachAmount = Number(coachData?.rate) * Number(pcount);
   let zonerate = Number(zoneDetails?.rate);
-  let fullAmount = coachAmount + zonerate * Number(pcount);
-  let zoneAmount = fullAmount - coachAmount;
+  let fullAmount;
+  if (
+    zoneDetails?.full_zone_rate === 0 &&
+    reservationType === "person_by_person"
+  ) {
+    fullAmount = Number(zonerate) * Number(pcount);
+  } else if (zoneDetails?.full_zone_rate === 0 && reservationType === "full") {
+    fullAmount = Number(zonerate) * Number(zoneDetails.capacity);
+  } else if (
+    zoneDetails?.full_zone_rate !== 0 &&
+    reservationType === "person_by_person"
+  ) {
+    fullAmount = Number(zonerate) * Number(pcount);
+  } else if (zoneDetails?.full_zone_rate !== 0 && reservationType === "full") {
+    fullAmount = Number(zoneDetails?.full_zone_rate);
+  }
+  console.log(fullAmount);
+
   console.log(fullAmount);
   console.log(avaliability);
   console.log(zoneDetails?.capacity);
@@ -461,25 +490,7 @@ const CoachBookingForm: React.FC = () => {
                       />
                     </div>
                   </Col>
-                  <Form.Item
-                    name="Participant Count"
-                    label="Participant Count"
-                    rules={[{ required: true, type: "number" }]}
-                    style={{
-                      width: "90%",
-                      marginLeft: "20px",
-                    }}
-                  >
-                    <InputNumber
-                      style={{
-                        height: "50px",
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                      onChange={(value) => setPcount(value?.toString() || "")}
-                    />
-                  </Form.Item>
+
                   <Form.Item
                     name="arcade"
                     label="Select Arcade"
@@ -570,6 +581,7 @@ const CoachBookingForm: React.FC = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     alignSelf: "center",
+                    overflowY: "auto",
                   }}
                 >
                   {dayOfWeek &&
@@ -583,40 +595,50 @@ const CoachBookingForm: React.FC = () => {
                           (item: any) => item.day === dayOfWeek && item.time
                         )
                         .flatMap((item: any) => {
-                          const timeRange = item.time.split("-"); // Split the time range
-                          const startHour = parseFloat(
-                            timeRange[0].split(":")[0]
-                          ); // Get the start hour
-                          const endHour = parseFloat(
-                            timeRange[1].split(":")[0]
-                          ); // Get the end hour
-                          const timeIncrement = 1; // Set the time increment to one hour
+                          const coachStartTime = parseFloat(
+                            item.time.split("-")[0].split(":")[0]
+                          ); // Get the coach's start hour
+                          const coachEndTime = parseFloat(
+                            item.time.split("-")[1].split(":")[0]
+                          ); // Get the coach's end hour
 
-                          const openTime = parseFloat(
+                          const zoneOpenTime = parseFloat(
                             (zoneDetails.open_time ?? "00:00").split(":")[0]
                           );
-                          const closeTime = parseFloat(
+                          const zoneCloseTime = parseFloat(
                             (zoneDetails.close_time ?? "24:00").split(":")[0]
                           );
 
-                          const timeSlots: any[] = [];
+                          const effectiveStartHour = Math.max(
+                            coachStartTime,
+                            zoneOpenTime
+                          );
+                          const effectiveEndHour = Math.min(
+                            coachEndTime,
+                            zoneCloseTime
+                          );
 
-                          // Generate time slots within zoneDetails' open and close times
+                          const timeSlots: any[] = [];
+                          const timeIncrement = zoneDetails.time_Step as number; // Get the time increment for the zone
+
                           for (
-                            let i = startHour;
-                            i < endHour;
+                            let i = zoneOpenTime;
+                            i + timeIncrement <= zoneCloseTime;
                             i += timeIncrement
                           ) {
+                            const slotStart = i;
+                            const slotEnd = i + timeIncrement;
+
                             if (
-                              i >= openTime &&
-                              i + timeIncrement <= closeTime
+                              slotStart >= effectiveStartHour &&
+                              slotEnd <= effectiveEndHour
                             ) {
-                              const startTimeHour = Math.floor(i);
+                              const startTimeHour = Math.floor(slotStart);
                               const startTimeMinutes =
-                                i % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
-                              const endTimeHour = Math.floor(i + timeIncrement);
+                                slotStart % 1 === 0 ? "00" : "30"; // Adjust minutes
+                              const endTimeHour = Math.floor(slotEnd);
                               const endTimeMinutes =
-                                (i + timeIncrement) % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
+                                slotEnd % 1 === 0 ? "00" : "30"; // Adjust minutes
 
                               const startTime = `${startTimeHour}:${startTimeMinutes}`;
                               const endTime = `${endTimeHour}:${endTimeMinutes}`;
@@ -669,8 +691,6 @@ const CoachBookingForm: React.FC = () => {
                                     item.status === "success"
                                 ) !== undefined ||
                                 bookingDate.find((item) => {
-                                  console.log(item.date);
-                                  console.log(item.time); // Logging item.date
                                   return (
                                     item.date === datee &&
                                     item.zone.zone_id === zone &&
@@ -683,7 +703,6 @@ const CoachBookingForm: React.FC = () => {
                                 !zone ||
                                 !arcade
                               }
-                              // Use the start and end times as the ID
                               style={{
                                 width: "100%",
                                 height: "60px",
@@ -698,9 +717,6 @@ const CoachBookingForm: React.FC = () => {
                                 )
                                   ? "none" // If fully booked, no gradient needed
                                   : bookingDate.find((item) => {
-                                      console.log("hhhhhhhh");
-                                      console.log(zoneDetails?.capacity);
-                                      console.log(timeParticipantCounts1);
                                       return (
                                         item.date === datee &&
                                         item.zone.zone_id === zone &&
@@ -740,9 +756,6 @@ const CoachBookingForm: React.FC = () => {
                                           item.status === "success"
                                       ) ||
                                       bookingDate.find((item) => {
-                                        console.log(item.date);
-                                        console.log(item.time);
-                                        console.log(item.way_of_booking);
                                         return (
                                           item.date === datee &&
                                           item.zone.zone_id === zone &&
@@ -769,8 +782,6 @@ const CoachBookingForm: React.FC = () => {
                                   item.status === "success"
                               ) ||
                               bookingDate.find((item) => {
-                                console.log(item.date);
-                                console.log(item.time); // Logging item.date
                                 return (
                                   item.date === datee &&
                                   item.zone.zone_id === zone &&
@@ -793,12 +804,43 @@ const CoachBookingForm: React.FC = () => {
                   )}
                 </Form.Item>
                 <Form.Item
+                  name="Participant Count"
+                  label={
+                    <span>
+                      Participant Count ( Available Participant Count is -{" "}
+                      <span style={{ color: "red", fontSize: "16px" }}>
+                        {Number(capacity) -
+                          (timeParticipantCounts1.find(
+                            (item) => item.time === time
+                          )?.totalParticipantCount || 0)}
+                      </span>{" "}
+                      )
+                    </span>
+                  }
+                  rules={[{ required: true, type: "number" }]}
+                  style={{
+                    width: "90%",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <InputNumber
+                    disabled={!time}
+                    style={{
+                      height: "50px",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    onChange={(value) => setPcount(value?.toString() || "")}
+                  />
+                </Form.Item>
+                <Form.Item
                   name="way_of_booking"
                   label="Reservation Type"
                   rules={[{ required: true }]}
                   style={{
                     width: "90%",
-                    marginTop: "2%",
+                    marginTop: "0%",
                     marginLeft: "15px",
                   }}
                 >
@@ -915,6 +957,11 @@ const CoachBookingForm: React.FC = () => {
                   sportId={coachSport}
                   coach_id={coachId}
                   reservation_type={reservationType}
+                  avaiableParticipantCount={
+                    Number(capacity) -
+                    (timeParticipantCounts1.find((item) => item.time === time)
+                      ?.totalParticipantCount || 0)
+                  }
                   //zoneId={zoneId}
                   //reservation_type={zone}
                   //avaiableParticipantCount={
