@@ -18,7 +18,7 @@ import {
   ExclamationCircleTwoTone,
   StarFilled,
   StarTwoTone,
-  StarOutlined
+  StarOutlined,
 } from "@ant-design/icons";
 import profilePic from "../../assents/pro.png";
 import backgroundImg from "../../assents/background2.png";
@@ -28,14 +28,6 @@ import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
-
-
-
-interface FeedbackData {
-  feedback: string;
-  rating: number;
-}
-
 import { useContext, useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
@@ -44,6 +36,11 @@ import axios from "axios";
 import { Coach, User } from "../../types";
 import { UserContext } from "../../context/userContext";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
+
+interface FeedbackData {
+  feedback: string;
+  rating: number;
+}
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
@@ -63,8 +60,7 @@ const CoachProfileUser = () => {
 
   const [averageRating, setAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
-
-  const coachId = "C00001"; // Replace with actual coach ID
+  // Replace with actual coach ID
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -93,7 +89,6 @@ const CoachProfileUser = () => {
   const [isModalOpenForReport, setismodelopenForReport] = useState(false);
   const [description, setDescription] = useState("");
   const [reason, setReason] = useState("");
-
 
   const showModal = () => {
     setismodelopen(true);
@@ -155,14 +150,15 @@ const CoachProfileUser = () => {
       console.log(e);
     }
     setismodelopenForReport(false);
+  };
 
-    const submitFeedback = async () => {
+  const submitFeedback = async () => {
     try {
-      const response = await axiosInstance.post("/api/addcoachfeedbacks", {
+      const response = await axiosInstance.post("api/addcoachfeedbacks", {
         comment,
         rating,
       });
-      console.log("Feedback data:", response.data); 
+      console.log("Feedback data:", response.data);
 
       setComment("");
       setRating(0);
@@ -172,7 +168,6 @@ const CoachProfileUser = () => {
       console.error("Error submitting feedback:", error);
       alert("Error submitting feedback");
     }
-
   };
   return (
     <>
@@ -489,11 +484,10 @@ const CoachProfileUser = () => {
                           scale: "0.7",
                           display: "flex",
                           flexDirection: "row",
-                          color:"#0E458E",
-                          fillOpacity:"0.8",
-                          borderBlockEnd:"dashed",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
                         }}
-                        
                       />
                     </div>
                     <p
@@ -840,16 +834,16 @@ const CoachProfileUser = () => {
             paddingBottom: "10px",
           }}
         >
-          <Rate 
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            // color:"#0E458E",
-            borderBlock:"dashed #0E458E",
-            opacity:"1",
-            
-          }} 
-          value={rating} onChange={(value) => setRating(value)}
+          <Rate
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              // color:"#0E458E",
+              borderBlock: "dashed #0E458E",
+              opacity: "1",
+            }}
+            value={rating}
+            onChange={(value) => setRating(value)}
           />
         </Col>
         <Col
@@ -1088,4 +1082,5 @@ const CoachProfileUser = () => {
     </>
   );
 };
+
 export default CoachProfileUser;
