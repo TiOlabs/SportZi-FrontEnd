@@ -137,8 +137,9 @@ const ArcadeProfileArcade = () => {
                 );
               } else if (value === 3) {
                 return (
-                  booking.status === "canceled_By_Arcade" &&
-                  booking.booking_type === "zone"
+                  booking.status === "canceled_By_Arcade" ||
+                  (booking.status === "canceled_By_Player" &&
+                    booking.booking_type === "zone")
                 );
               }
             });
@@ -188,7 +189,11 @@ const ArcadeProfileArcade = () => {
                 booking.date < formattedCurrentDate
               );
             } else if (value2 === 6) {
-              return booking.status === "canceled_By_Arcade";
+              return (
+                booking.status === "canceled_By_Arcade" ||
+                booking.status === "canceled_By_Player" ||
+                booking.status === "canceled_By_Coach"
+              );
             }
             return false;
           }
@@ -269,6 +274,7 @@ const ArcadeProfileArcade = () => {
           date={booking.date}
           rate={zone.rate}
           zoneImage={zone.zone_image}
+          booking_type={booking.booking_type}
         />
       ))
     ),
@@ -1002,6 +1008,7 @@ const ArcadeProfileArcade = () => {
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
                   coach_id={coach.coach_id}
+                  sport={coach.coach.sport.sport_name}
                 />
               </Col>
             ))}
@@ -1430,6 +1437,7 @@ const ArcadeProfileArcade = () => {
             <Option value="zoneName">Zone Name</Option>
             <Option value="booked_by">Booked By</Option>
             <Option value="booking_id">Booking ID</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
@@ -1548,21 +1556,24 @@ const ArcadeProfileArcade = () => {
           (
             <>
               {filteredArcadeBookings.map((zone) =>
-                (zone.zoneBookingDetails || []).map((booking) => (
-                  <AvailableBookingsArcade
-                    key={booking.zone_booking_id}
-                    user_image={booking.user.user_image}
-                    booking_id={booking.zone_booking_id}
-                    booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                    zoneName={zone.zone_name}
-                    time={booking.time}
-                    date={booking.date}
-                    rate={zone.rate}
-                    zoneImage={zone.zone_image}
-                    arcade_name={arcadeName}
-                    email={booking.user.email}
-                  />
-                ))
+                (zone.zoneBookingDetails || [])
+                  .filter((booking) => booking.booking_type === "zone")
+                  .map((booking) => (
+                    <AvailableBookingsArcade
+                      key={booking.zone_booking_id}
+                      user_image={booking.user.user_image}
+                      booking_id={booking.zone_booking_id}
+                      booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                      zoneName={zone.zone_name}
+                      time={booking.time}
+                      date={booking.date}
+                      rate={zone.rate}
+                      zoneImage={zone.zone_image}
+                      arcade_name={arcadeName}
+                      email={booking.user.email}
+                      status={booking.status}
+                    />
+                  ))
               )}
             </>
           ))
@@ -1883,6 +1894,8 @@ const ArcadeProfileArcade = () => {
                 );
               } else if (filterBy === "booking_id") {
                 return booking.booking_id.includes(filterValue);
+              } else if (filterBy === "status") {
+                return booking.status.includes(filterValue);
               }
               return true;
             })

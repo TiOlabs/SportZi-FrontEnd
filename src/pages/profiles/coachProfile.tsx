@@ -155,7 +155,9 @@ const CoachProfile = () => {
             (booking: { status: string; date: string }) => {
               const bookingDate = new Date(booking.date);
               return (
-                booking.status === "canceled_By_Coach" &&
+                (booking.status === "canceled_By_Coach" ||
+                  booking.status === "canceled_By_Player" ||
+                  booking.status === "canceled_By_Arcade") &&
                 bookingDate > currentDate
               );
             }
@@ -1065,6 +1067,7 @@ const CoachProfile = () => {
               email={booking.player.user.email}
               arcade_email={booking.arcade.arcade_email}
               arcade_name={booking.arcade.arcade_name}
+              status={booking.status}
             />
           ))
         ) : (

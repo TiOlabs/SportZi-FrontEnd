@@ -47,7 +47,7 @@ const CoachCardSection = () => {
       {loading ? (
         <Spin />
       ) : coaches.length === 0 ? (
-        <Empty  description={"No Coaches Availiable"} />
+        <Empty description={"No Coaches Availiable"} />
       ) : (
         coaches.map((coach: Coach) => (
           <Col
@@ -76,6 +76,7 @@ const CoachCardSection = () => {
                 coach_rating={coach.coachFeedbacks.rate}
                 coach_short_description={coach.short_desctiption}
                 coach_rate={coach.rate}
+                sport={coach.sport.sport_name}
               />
             </div>
           </Col>

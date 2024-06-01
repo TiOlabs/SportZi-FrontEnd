@@ -121,7 +121,9 @@ const PlayerProfile = () => {
           } else if (value2 === 6) {
             return prev.filter(
               (playerBookingDetails: ZoneBookingDetails) =>
-                playerBookingDetails.status === "canceled_By_Player"
+                playerBookingDetails.status === "canceled_By_Player" ||
+                playerBookingDetails.status === "canceled_By_Arcade" ||
+                playerBookingDetails.status === "canceled_By_Coach"
             );
           }
         });
@@ -178,7 +180,9 @@ const PlayerProfile = () => {
           } else if (value === 3) {
             return prev.filter(
               (coachBookingData: CoachBookingDetails) =>
-                coachBookingData.status === "canceled_By_Player"
+                coachBookingData.status === "canceled_By_Player" ||
+                coachBookingData.status === "canceled_By_Coach" ||
+                coachBookingData.status === "canceled_By_Arcade"
             );
           }
         });
@@ -938,6 +942,9 @@ const PlayerProfile = () => {
                 " " +
                 booking.player.user.lastname
               }
+              zone_name={booking.zone.zone_name}
+              arcade_email={booking.arcade.arcade_email}
+              status={booking.status}
             />
           ))
         ) : (
@@ -1292,6 +1299,7 @@ const PlayerProfile = () => {
                       player_name={
                         userDetails.firstName + " " + userDetails.lastName
                       }
+                      status={booking.status}
                     />
                   ) : null // Return null for bookings that are not of type "zone"
               )

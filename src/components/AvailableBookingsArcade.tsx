@@ -61,7 +61,7 @@ const AvailableBookingsArcade = (props: any) => {
           email: props.email,
           arcade_name: props.arcade_name,
           player_name: props.booked_by,
-          role:"ARCADE",
+          role: "ARCADE",
           booking_date: props.date,
           booking_time: props.time,
           zone_name: props.zoneName,
@@ -333,6 +333,24 @@ const AvailableBookingsArcade = (props: any) => {
             xl={8}
           >
             {props.zoneName}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+          >
+            {props.status}
           </Col>
         </Row>
       </Modal>

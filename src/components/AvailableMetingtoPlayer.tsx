@@ -319,6 +319,24 @@ const AvailableMetingstoPlayer = (props: any) => {
           >
             {props.venue}
           </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={6}
+          >
+            {props.status}
+          </Col>
         </Row>
       </Modal>
     </>

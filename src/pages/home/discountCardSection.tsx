@@ -47,7 +47,7 @@ const DiscoutCardsSection = () => {
       >
         {" "}
         {discounts?.length === 0 ? (
-          <Empty description={"No Discounts Availiable"}/>
+          <Empty description={"No Discounts Availiable"} />
         ) : (
           discounts?.map((discount: Discount) => (
             <Col lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }}>
@@ -57,6 +57,7 @@ const DiscoutCardsSection = () => {
                 discount_percentage={discount.discount_percentage}
                 description={discount.description}
                 discount_image={discount.zone.zone_image}
+                sport={discount.zone.sport.sport_name}
               />
             </Col>
           ))
