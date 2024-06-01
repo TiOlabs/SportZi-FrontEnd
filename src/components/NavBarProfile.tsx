@@ -163,6 +163,7 @@ const NavbarProfile: React.FC = () => {
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
   };
+  const token = Cookies.get("token");
   function logOut() {
     // Remove the token cookie
     Cookies.remove("token");
@@ -278,7 +279,7 @@ const NavbarProfile: React.FC = () => {
           type="primary"
           onClick={() => {
             logOut();
-            window.location.reload();
+            window.location.href = "/";
           }}
           style={{
             width: "100%",
@@ -371,18 +372,64 @@ const NavbarProfile: React.FC = () => {
                     className="NavBarUserProfileImg"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
-                    <img
-                      src={userDetails?.image}
-                      alt="Original Image"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        marginLeft: "10px",
-                        marginTop: "32px",
-                        borderRadius: "50%",
-                        border: "1px solid black",
-                      }}
-                    />
+                    {userDetails.role === "PLAYER" && (
+                      <Link to={`/profile/`}>
+                        <AdvancedImage
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginLeft: "10px",
+                            marginTop: "10px",
+                            borderRadius: "50%",
+                            border: "1px solid black",
+                          }}
+                          cldImg={
+                            cld.image(userDetails?.image)
+                            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                            // .resize(Resize.scale().width(200).height(200))
+                          }
+                        />
+                      </Link>
+                    )}
+                    {managerDetails.role === "MANAGER" && (
+                      <Link to={`/ChooseArchade/`}>
+                        <AdvancedImage
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginLeft: "10px",
+                            marginTop: "10px",
+                            borderRadius: "50%",
+                            border: "1px solid black",
+                          }}
+                          cldImg={
+                            cld.image(managerDetails?.image)
+                            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                            // .resize(Resize.scale().width(200).height(200))
+                          }
+                        />
+                      </Link>
+                    )}
+
+                    {coachDetails.role === "COACH" && (
+                      <Link to={`/coachProfile/`}>
+                        <AdvancedImage
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginLeft: "10px",
+                            marginTop: "10px",
+                            borderRadius: "50%",
+                            border: "1px solid black",
+                          }}
+                          cldImg={
+                            cld.image(coachDetails?.image)
+                            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                            // .resize(Resize.scale().width(200).height(200))
+                          }
+                        />
+                      </Link>
+                    )}
                   </div>
                   <div
                     className="NavBarUserProfileName"
@@ -397,6 +444,20 @@ const NavbarProfile: React.FC = () => {
                     {userDetails?.name}
                   </div>
                   <div
+                    className="NavBarUserProfileName"
+                    style={{
+                      color: "#1B5DB7",
+                      justifyContent: "center",
+                      display: "flex",
+                      fontSize: "20px",
+                      fontFamily: "kanit",
+                    }}
+                  >
+                    {userDetails.firstName && userDetails.lastName
+                      ? `${userDetails.firstName} ${userDetails.lastName}`
+                      : `${coachDetails.firstName} ${coachDetails.lastName}`}
+                  </div>
+                  <div
                     className="NavBarUserProfileStatus"
                     style={{
                       color: "black",
@@ -405,7 +466,7 @@ const NavbarProfile: React.FC = () => {
                       fontSize: "15px",
                     }}
                   >
-                    student
+                    {userDetails?.role ? userDetails?.role : coachDetails?.role}
                   </div>
                   <Divider style={{ color: "black" }} />
                 </div>
@@ -495,7 +556,7 @@ const NavbarProfile: React.FC = () => {
               >
                 <Link to="/contact">Contact Us</Link>
               </Menu.Item>
-              <Menu.Item
+              {/* <Menu.Item
                 key="PrfileButton"
                 style={{
                   fontFamily: "kanit",
@@ -515,7 +576,7 @@ const NavbarProfile: React.FC = () => {
                   style={{ fontSize: "20px", marginRight: "10px" }}
                 />
                 Edit Profile
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item
                 key="contactUs"
                 style={{
@@ -531,6 +592,11 @@ const NavbarProfile: React.FC = () => {
                 }}
                 onMouseEnter={() => setLogOutButtonHovered(true)}
                 onMouseLeave={() => setLogOutButtonHovered(false)}
+                onClick={() => {
+                  logOut();
+                  window.location.href = "/";
+                  // window.location.reload(); // This forces a reload from the server
+                }}
               >
                 <LogoutOutlined
                   style={{ fontSize: "20px", marginRight: "10px" }}
@@ -676,9 +742,11 @@ const NavbarProfile: React.FC = () => {
                     cldImg={
                       userDetails && userDetails.image
                         ? cld.image(userDetails.image)
-                        : // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                          // .resize(Resize.scale().width(200).height(200))
-                          cld.image(coachDetails.image)
+                        : coachDetails && coachDetails.image
+                        ? cld.image(coachDetails.image)
+                        : managerDetails && managerDetails.image
+                        ? cld.image(managerDetails.image)
+                        : cld.image("")
                     }
                   />
                 </a>

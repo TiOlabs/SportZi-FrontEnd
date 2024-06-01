@@ -2,17 +2,24 @@ import {
   Button,
   Col,
   Flex,
+  Form,
   Grid,
   Input,
   List,
   Modal,
   Row,
+  Select,
   Typography,
   Rate,
   ConfigProvider,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
-import { StarFilled, StarTwoTone,StarOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleTwoTone,
+  StarFilled,
+  StarTwoTone,
+  StarOutlined
+} from "@ant-design/icons";
 import profilePic from "../../assents/pro.png";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -21,10 +28,7 @@ import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
-import { useState, useEffect } from "react";
-import NavbarProfile from "../../components/NavBarProfile";
-import axios from "axios";
-import axiosInstance from "../../axiosInstance";
+
 
 
 interface FeedbackData {
@@ -32,8 +36,19 @@ interface FeedbackData {
   rating: number;
 }
 
+import { useContext, useEffect, useState } from "react";
+import NavbarProfile from "../../components/NavBarProfile";
+import axiosInstance from "../../axiosInstance";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { Coach, User } from "../../types";
+import { UserContext } from "../../context/userContext";
+import PhotoCollageForUsers from "../../components/photoCollageForUsers";
+
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
+  const { coachId } = useParams();
+  console.log(coachId);
   const { lg, md, sm, xs } = useBreakpoint();
   const { TextArea } = Input;
   const onChange = (
@@ -41,7 +56,7 @@ const CoachProfileUser = () => {
   ) => {
     console.log("Change:", e.target.value);
   };
-
+  const { userDetails } = useContext(UserContext);
   const [ismodelopen, setismodelopen] = useState(false);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0.0);
@@ -75,6 +90,11 @@ const CoachProfileUser = () => {
     fetchRatings();
   }, [coachId]);
 
+  const [isModalOpenForReport, setismodelopenForReport] = useState(false);
+  const [description, setDescription] = useState("");
+  const [reason, setReason] = useState("");
+
+
   const showModal = () => {
     setismodelopen(true);
   };
@@ -84,8 +104,59 @@ const CoachProfileUser = () => {
   const handleCancel = () => {
     setismodelopen(false);
   };
+  const [coachDetails, setCoachDetails] = useState<Coach>();
+  useEffect(() => {
+    axiosInstance
+      .get(`/api/auth/getcoachDetailsForUsers`, {
+        params: {
+          coachId: coachId,
+        },
+      })
 
-  const submitFeedback = async () => {
+      .then((res) => {
+        setCoachDetails(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [coachId]);
+
+  const showModalForReport = () => {
+    setismodelopenForReport(true);
+  };
+  const handleOkForReport = () => {
+    setismodelopenForReport(false);
+  };
+  const handleCancelForReport = () => {
+    setismodelopenForReport(false);
+  };
+  console.log("coachDetails", coachDetails);
+  console.log("userDetails", userDetails);
+  const handleFinishForReport = async () => {
+    try {
+      console.log("userDetails", userDetails);
+      console.log(description, reason);
+      let id;
+      id = userDetails?.id;
+
+      console.log(id);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addreport`,
+        {
+          reporter_user_id: id,
+          victim_user_id: coachDetails?.coach_id,
+          report_reason: reason,
+          description: description,
+        }
+      );
+      console.log(res.data);
+      alert("Reported Successfully");
+    } catch (e) {
+      console.log(e);
+    }
+    setismodelopenForReport(false);
+
+    const submitFeedback = async () => {
     try {
       const response = await axiosInstance.post("/api/addcoachfeedbacks", {
         comment,
@@ -103,7 +174,6 @@ const CoachProfileUser = () => {
     }
 
   };
-
   return (
     <>
       <style>
@@ -200,12 +270,7 @@ const CoachProfileUser = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {coachDetails?.short_desctiption}
               </Typography>
               <Button
                 style={{
@@ -218,6 +283,84 @@ const CoachProfileUser = () => {
                 {" "}
                 Request for Booking
               </Button>
+              <div>
+                <Button
+                  style={{
+                    backgroundColor: "#EFF4FA",
+                    color: "#0E458E",
+                    borderRadius: "3px",
+                    fontFamily: "kanit",
+                    borderColor: "#0E458E",
+                    marginTop: "20px",
+                  }}
+                  onClick={showModalForReport}
+                >
+                  Report User
+                </Button>
+                <Modal
+                  visible={isModalOpenForReport}
+                  onCancel={handleCancelForReport}
+                  okText="Report"
+                  onOk={handleFinishForReport}
+                >
+                  <Form
+                    layout="vertical"
+                    style={{ marginTop: "10%", margin: "2%" }}
+                    onFinish={handleFinishForReport}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        color: "#5587CC",
+                        height: "100px",
+                      }}
+                    >
+                      <ExclamationCircleTwoTone width={1000} /> Repot User
+                    </div>
+                    <Form.Item
+                      name="Chooose_Why"
+                      label="Choose Reason"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select a Reason!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Select a Reson"
+                        onChange={(value) => setReason(value)}
+                      >
+                        <Select.Option value="Fake Profile">
+                          Fake Profile
+                        </Select.Option>
+                        <Select.Option value="Cheating">Cheating</Select.Option>
+                        <Select.Option value="Misbehavior">
+                          Misbehavior
+                        </Select.Option>
+                        <Select.Option value="Other">Other</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      name="Report_reason"
+                      label="Tell Us More About Why"
+                      rules={[
+                        {
+                          type: "string",
+                          message: "Please enter a valid Reason!",
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={5}
+                        placeholder="Add a little more about why you are reporting this user"
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Modal>
+              </div>
             </Col>
           </Row>
         </Col>
@@ -260,7 +403,7 @@ const CoachProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                Sandun Malage
+                {coachDetails?.user.firstname} {coachDetails?.user.lastname}
               </h1>
               <p
                 style={{
@@ -518,12 +661,11 @@ const CoachProfileUser = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={["Physical"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -653,7 +795,7 @@ const CoachProfileUser = () => {
       >
         {" "}
       </div>
-      <PhotoCollage />
+      <PhotoCollageForUsers id={coachId} role={"COACH"} />
 
       {/* feedback */}
       <Row

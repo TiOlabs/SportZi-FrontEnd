@@ -1,4 +1,4 @@
-import { Button, Col, Row, Skeleton, Typography } from "antd";
+import { Button, Col, Empty, Row, Skeleton, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState } from "react";
@@ -116,23 +116,30 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-                {coachAssignDetails?.map((coach: Coach) => (
-                  <Col
-                    lg={{ span: 5 }}
-                    md={{ span: 8 }}
-                    sm={{ span: 12 }}
-                    xs={{ span: 24 }}
-                  >
-                    <CoachCard
-                      coachName={`${coach.user.firstname} ${coach.user.lastname}`}
-                      coach_last_name={coach.user.lastname}
-                      short_description={coach.short_desctiption}
-                      rate={coach.rate}
-                      // duration={coachAssignDetail.duration}
-                      coach_image={coach.user.user_image}
-                    />
-                  </Col>
-                ))}
+                {" "}
+                {coachAssignDetails.length === 0 ? (
+                  <Empty description={"No Coaches Availiable"} />
+                ) : (
+                  coachAssignDetails.map((coach: Coach) => (
+                    <Col
+                      lg={{ span: 5 }}
+                      md={{ span: 8 }}
+                      sm={{ span: 12 }}
+                      xs={{ span: 24 }}
+                      // Adding a unique key for each element
+                    >
+                      <CoachCard
+                        coachName={`${coach.user.firstname} ${coach.user.lastname}`}
+                        coach_last_name={coach.user.lastname}
+                        short_description={coach.short_desctiption} // Corrected the typo
+                        rate={coach.rate}
+                        // duration={coachAssignDetail.duration}
+                        coach_image={coach.user.user_image}
+                        coach_id={coach.coach_id}
+                      />
+                    </Col>
+                  ))
+                )}
               </Row>
               <Pagination
                 style={{ marginTop: "-30px" }}

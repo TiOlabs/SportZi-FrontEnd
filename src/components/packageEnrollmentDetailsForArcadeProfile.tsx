@@ -1,47 +1,19 @@
-import { Col, Row, Typography } from "antd";
-import { Button, Flex } from "antd";
-import { ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { Modal, Upload } from "antd";
-import type { RcFile, UploadProps } from "antd/es/upload";
-import type { UploadFile } from "antd/es/upload/interface";
-import React, { useEffect, useState } from "react";
+import { Col, Row } from "antd";
 import profilePic from "../assents/pro.png";
-import { Cloudinary } from "@cloudinary/url-gen";
+import { Grid } from "antd";
+import React, { useState } from "react";
+import { Button, Modal } from "antd";
 import axios from "axios";
-import { CoachBookingDetails, ZoneBookingDetails } from "../types";
+import { ZoneBookingDetails } from "../types";
 import { AdvancedImage } from "@cloudinary/react";
-import confirm from "antd/es/modal/confirm";
+import { Cloudinary } from "@cloudinary/url-gen";
 
-const CoachRequstRow = (props: any) => {
+const PackageEnrollmentDetailsInArcadeProfile = (props: any) => {
   console.log(props);
+  const { useBreakpoint } = Grid;
+  const { lg, md, sm, xs } = useBreakpoint();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpen1, setIsModalOpen1] = useState(false);
-  const [zoneBookingDetalsByCreateTime, setZoneBookingDetailsByCreateTime] =
-    useState<ZoneBookingDetails[]>([]);
-  console.log(props.created_at);
-  console.log(props.user_id);
-  let id;
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbyCreatedTime/${props.created_at}/${props.user_id}`
-        );
-
-        const data = await res.json();
-        console.log(data);
-        console.log(data[0]?.zone_booking_id);
-        id = data[0]?.zone_booking_id;
-        setZoneBookingDetailsByCreateTime(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, [props]);
-
-  console.log(id);
-  console.log(zoneBookingDetalsByCreateTime[0]?.zone_booking_id);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -54,79 +26,33 @@ const CoachRequstRow = (props: any) => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const showDeleteConfirm = () => {
-    confirm({
-      title: "Are you sure cancel this task?",
-      icon: <ExclamationCircleFilled />,
-      content: "This may affect to the user and the arcade.",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-
-      async onOk() {
-        let created_at, player_id;
-        try {
-          const res = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/getCoachBookinByBookingId/${props.booking_id}`
-          );
-          created_at = res.data.created_at;
-          player_id = res.data.player_id;
-          console.log(created_at);
-          console.log(player_id);
-        } catch (e) {
-          console.log(e);
+  const showDeleteConfirm = async () => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}api/updatePackageEnrollmentPlayerDetails/${props.player_id}/${props.package_id}`,
+        {
+          status: "canceled_By_Arcade",
+          email: props.email,
+          arcade_name: props.venue,
+          package_name: props.package_name,
+          role: props.role,
         }
-        try {
-          const response = await axios.put(
-            `http://localhost:8000/api/updatecoachBooking/${props.booking_id}`,
-            {
-              booking_id: props.booking_id,
-              status: "canceled_By_Player",
-              email: props.email,
-              role: props.role,
-              coach_name: props.coach_name,
-              player_name: props.player_name,
-              booking_date: props.booking_date,
-              booking_time: props.booking_time,
-            }
-          );
-          try {
-            const res = await axios.put(
-              `${process.env.REACT_APP_API_URL}api/updateArcadeBookingByCreatedTime/${created_at}/${player_id}`,
-              {
-                status: "canceled_By_Player",
-              }
-            );
+      );
 
-            console.log(res.data);
-          } catch (error) {
-            console.log(error);
-          }
-          const res = await axios.put(
-            `http://localhost:8000/api/updatearcadebooking/${zoneBookingDetalsByCreateTime[0]?.zone_booking_id}`,
-            {
-              zone_booking_id:
-                zoneBookingDetalsByCreateTime[0]?.zone_booking_id,
-              status: "canceled_By_Player",
-            }
-          );
+      // Close modal
+      setIsModalOpen(false);
 
-          props.setZoneBookingDetails((prev: any) => {
-            return prev.filter(
-              (coachBookingDetails: CoachBookingDetails) =>
-                coachBookingDetails.booking_id !== props.booking_id
-            );
-          });
-          setIsModalOpen(false);
-        } catch (error) {
-          console.log("error");
-          console.log(error);
-        }
-      },
-      onCancel() {
-        console.log("Cancel");
-      },
-    });
+      // Update zone booking details
+      //   props.setZoneBookingDetails((prev: any) => {
+      //     return prev.filter(
+      //       (zoneBookingDetails: ZoneBookingDetails) =>
+      //         zoneBookingDetails.zone_booking_id !== props.booking_id
+      //     );
+      //   });
+    } catch (error) {
+      console.log("error");
+      console.log(error);
+    }
   };
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -161,7 +87,7 @@ const CoachRequstRow = (props: any) => {
                   backgroundSize: "cover",
                 }}
                 cldImg={
-                  cld.image(props?.coach_image)
+                  cld.image(props?.package_image)
                   // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                   // .resize(Resize.scale().width(200).height(200))
                 }
@@ -183,7 +109,7 @@ const CoachRequstRow = (props: any) => {
               lg={12}
               xl={12}
             >
-              {props.coach_name}
+              {props.package_name}
             </Col>
           </Row>
         </Col>
@@ -203,7 +129,7 @@ const CoachRequstRow = (props: any) => {
           lg={6}
           xl={6}
         >
-          {props.booking_date}
+          Rs.{props.rate}
         </Col>
         <Col
           style={{
@@ -221,27 +147,30 @@ const CoachRequstRow = (props: any) => {
           lg={6}
           xl={6}
         >
-          {props.booking_time}
+          {props.duration} months
         </Col>
-        <Col
-          style={{
-            color: "#000",
-            fontFamily: "kanit",
-            fontWeight: "300",
-            fontSize: "18px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          xs={8}
-          sm={8}
-          md={8}
-          lg={6}
-          xl={6}
-        >
-          {props.venue}
-        </Col>
+        {lg && (
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            {props.venue}
+          </Col>
+        )}
       </Row>
+
       <Modal
         width={1000}
         title="Basic Modal"
@@ -296,17 +225,20 @@ const CoachRequstRow = (props: any) => {
           <Col xs={24} sm={12} md={12} lg={8} xl={8}>
             <Row style={{ width: "100%" }}>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                <div
+                <AdvancedImage
                   style={{
-                    backgroundColor: "#000",
                     width: "90px",
-                    height: "81px",
+                    height: "90px",
                     borderRadius: "50%",
                     marginRight: "10px",
-                    backgroundImage: `url(${profilePic})`,
                     backgroundSize: "cover",
                   }}
-                ></div>
+                  cldImg={
+                    cld.image(props?.package_image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
               </Col>
               <Col
                 style={{
@@ -336,7 +268,7 @@ const CoachRequstRow = (props: any) => {
               fontSize: "18px",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "right",
             }}
             xs={24}
             sm={12}
@@ -344,7 +276,7 @@ const CoachRequstRow = (props: any) => {
             lg={6}
             xl={6}
           >
-            {props.booking_date}
+            {props.enroll_date}
           </Col>
           <Col
             style={{
@@ -362,7 +294,7 @@ const CoachRequstRow = (props: any) => {
             lg={4}
             xl={4}
           >
-            {props.booking_time}
+            {props.duration} months
           </Col>
 
           <Col
@@ -381,15 +313,11 @@ const CoachRequstRow = (props: any) => {
             lg={6}
             xl={6}
           >
-            {props.venue}
+            {props.zone_name}
           </Col>
         </Row>
       </Modal>
-      <Modal></Modal>
     </>
   );
 };
-export default CoachRequstRow;
-// Are you sure you want to cancel this meeting? Please note that
-// cancellations made within 24 hours of the meeting may incur
-// charges.
+export default PackageEnrollmentDetailsInArcadeProfile;

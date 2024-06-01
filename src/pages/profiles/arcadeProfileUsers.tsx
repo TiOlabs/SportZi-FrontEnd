@@ -1,5 +1,19 @@
-import { StarFilled, StarTwoTone } from "@ant-design/icons";
-import { Col, List, Row, Typography, Image, Button } from "antd";
+import {
+  ExclamationCircleTwoTone,
+  StarFilled,
+  StarTwoTone,
+} from "@ant-design/icons";
+import {
+  Col,
+  List,
+  Row,
+  Typography,
+  Image,
+  Button,
+  Modal,
+  Form,
+  Select,
+} from "antd";
 import { Grid } from "antd";
 
 import backgroundImg from "../../assents/background2.png";
@@ -18,7 +32,7 @@ import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
-import { Arcade, CoachAssignDetails, Zone } from "../../types";
+import { Arcade, CoachAssignDetails, Package, Zone } from "../../types";
 import axios from "axios";
 import NavbarProfile from "../../components/NavBarProfile";
 import NavbarLogin from "../../components/NavBarLogin";
@@ -29,6 +43,10 @@ import ArcadeZoneCardUserView from "../../components/arcadeZoneCard(UserView)";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import CoachApplyForm from "../../components/coachApplyForArcade";
+import ArcadePackageUserView from "../../components/arcadePackageUserView";
+import TextArea from "antd/es/input/TextArea";
+import PhotoCollageForUsers from "../../components/photoCollageForUsers";
+import PhotoCollageForArcadeUsers from "../../components/photoCollageForArcadeUserViee";
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -41,6 +59,10 @@ const ArcadeProfileUser = () => {
   const [coachesInArcade, setCoachesInArcade] = useState<CoachAssignDetails[]>(
     []
   );
+  const [isModalOpenForReport, setismodelopenForReport] = useState(false);
+  const [description, setDescription] = useState("");
+  const [reason, setReason] = useState("");
+  const [arcadePackages, setArcadePackages] = useState<Arcade>();
   console.log("userDetails", userDetails);
   console.log("coachDetails", coachDetails);
 
@@ -75,6 +97,23 @@ const ArcadeProfileUser = () => {
     }
   }, []);
   useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${ArcadeId}`
+        );
+        const data = await res.data;
+        console.log(data);
+        setArcadePackages(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+  console.log(arcadePackages);
+
+  useEffect(() => {
     axios
       .get(
         `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${ArcadeId}`,
@@ -99,6 +138,47 @@ const ArcadeProfileUser = () => {
       cloudName,
     },
   });
+  const showModalForReport = () => {
+    setismodelopenForReport(true);
+  };
+  const handleOkForReport = () => {
+    setismodelopenForReport(false);
+  };
+  const handleCancelForReport = () => {
+    setismodelopenForReport(false);
+  };
+  const handleFinishForReport = async () => {
+    try {
+      console.log("userDetails", userDetails);
+      console.log("coachDetails", coachDetails);
+      console.log("arcadeDetails", arcadeDetails);
+      console.log(description, reason);
+      let id;
+      if (userDetails.id !== "") {
+        id = userDetails.id;
+      } else if (coachDetails.id !== "") {
+        id = coachDetails.id;
+      } else if (arcadeDetails.id !== "") {
+        id = arcadeDetails.id;
+      }
+      console.log(id);
+
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addreportarcade`,
+        {
+          reporter_user_id: id,
+          victim_arcade_id: ArcadeId,
+          report_reason: reason,
+          description: description,
+        }
+      );
+      console.log(res.data);
+      alert("Reported Successfully");
+    } catch (e) {
+      console.log(e);
+    }
+    setismodelopenForReport(false);
+  };
   return (
     <>
       {userDetails !== "" || coachDetails !== "" || arcadeDetails !== "" ? (
@@ -209,6 +289,84 @@ const ArcadeProfileUser = () => {
               >
                 {" "}
                 <CoachApplyForm />
+              </div>
+              <div>
+                <Button
+                  style={{
+                    backgroundColor: "#EFF4FA",
+                    color: "#0E458E",
+                    borderRadius: "3px",
+                    fontFamily: "kanit",
+                    borderColor: "#0E458E",
+                    marginTop: "20px",
+                  }}
+                  onClick={showModalForReport}
+                >
+                  Report User
+                </Button>
+                <Modal
+                  visible={isModalOpenForReport}
+                  onCancel={handleCancelForReport}
+                  okText="Report"
+                  onOk={handleFinishForReport}
+                >
+                  <Form
+                    layout="vertical"
+                    style={{ marginTop: "10%", margin: "2%" }}
+                    onFinish={handleFinishForReport}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        color: "#5587CC",
+                        height: "100px",
+                      }}
+                    >
+                      <ExclamationCircleTwoTone width={1000} /> Repot User
+                    </div>
+                    <Form.Item
+                      name="Chooose_Why"
+                      label="Choose Reason"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select a Reason!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Select a Reson"
+                        onChange={(value) => setReason(value)}
+                      >
+                        <Select.Option value="Fake Profile">
+                          Fake Profile
+                        </Select.Option>
+                        <Select.Option value="Cheating">Cheating</Select.Option>
+                        <Select.Option value="Misbehavior">
+                          Misbehavior
+                        </Select.Option>
+                        <Select.Option value="Other">Other</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      name="Report_reason"
+                      label="Tell Us More About Why"
+                      rules={[
+                        {
+                          type: "string",
+                          message: "Please enter a valid Reason!",
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={5}
+                        placeholder="Add a little more about why you are reporting this user"
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Modal>
               </div>
             </Col>
           </Row>
@@ -499,7 +657,7 @@ const ArcadeProfileUser = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Payment Types Types
+              Payment Types
             </Typography>
             <List
               style={{
@@ -730,7 +888,7 @@ const ArcadeProfileUser = () => {
         </p>
       </div>
 
-      <PhotoCollage />
+      <PhotoCollageForArcadeUsers />
 
       <Row
         style={{
@@ -895,43 +1053,21 @@ const ArcadeProfileUser = () => {
               marginBottom: "20px",
             }}
           >
-            {" "}
-            <ArcadePackages />
+            {arcadePackages?.package.map((package1: Package) => (
+              <ArcadePackageUserView
+                packageName={package1.package_name}
+                packageDescription={package1.description}
+                ArcadeName={package1.arcade.arcade_name}
+                rate={package1.rate_per_person}
+                package_image={package1.package_image}
+                package_id={package1.package_id}
+                player_id={userDetails.id}
+                zone_id={package1.zone_id}
+                arcade_id={ArcadeId}
+              />
+            ))}
           </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadePackages />
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {" "}
-            <ArcadePackages />
-          </Col>
+
           <Col
             style={{
               width: "100%",
@@ -1109,6 +1245,7 @@ const ArcadeProfileUser = () => {
         </Col>
       </Row>
       <AppFooter />
+      <Modal></Modal>
     </>
   );
 };

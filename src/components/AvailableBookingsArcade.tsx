@@ -58,6 +58,13 @@ const AvailableBookingsArcade = (props: any) => {
         {
           zone_booking_id: props.booking_id,
           status: "canceled_By_Arcade",
+          email: props.email,
+          arcade_name: props.arcade_name,
+          player_name: props.booked_by,
+          role:"ARCADE",
+          booking_date: props.date,
+          booking_time: props.time,
+          zone_name: props.zoneName,
         }
       );
 

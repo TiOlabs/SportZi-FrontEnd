@@ -24,7 +24,7 @@ import {
   Zone,
   ZoneBookingDetails,
 } from "../../types";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { time } from "console";
 import PaymentModal from "../../components/paymentCheckout";
 import { jwtDecode } from "jwt-decode";
@@ -115,7 +115,10 @@ const CoachBookingForm: React.FC = () => {
         );
         const data = await res.json();
         console.log(data);
-        setCoachAssignDetails(data);
+        const filteredData = data.filter(
+          (item: any) => item.status === "success"
+        );
+        setCoachAssignDetails(filteredData);
       } catch (err) {
         console.log(err);
       }
@@ -397,6 +400,13 @@ const CoachBookingForm: React.FC = () => {
       cloudName,
     },
   });
+  const disabledDate = (current: Dayjs | null): boolean => {
+    // Can not select days before today
+    const today = dayjs().startOf("day");
+    return current ? current.isBefore(today, "day") : false;
+  };
+  let zoneOpenTime = zoneDetails?.open_time;
+  let zoneCloseTime = zoneDetails?.close_time;
   return (
     <>
       <NavbarProfile />
@@ -443,13 +453,12 @@ const CoachBookingForm: React.FC = () => {
                   </Col>
                   <Col style={{}} xs={24} md={12} lg={24}>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                      <Form.Item name="datee" rules={[{ required: true }]}>
-                        <Calendar
-                          style={{ width: "94%", marginLeft: "3%" }}
-                          onChange={handleDateChange}
-                          onSelect={handleDateSelect}
-                        />
-                      </Form.Item>
+                      <Calendar
+                        style={{ width: "94%", marginLeft: "3%" }}
+                        onChange={handleDateChange}
+                        onSelect={handleDateSelect}
+                        disabledDate={disabledDate} // Add this line to disable past dates
+                      />
                     </div>
                   </Col>
                   <Form.Item
@@ -534,62 +543,6 @@ const CoachBookingForm: React.FC = () => {
                       )}
                     </Select>
                   </Form.Item>
-                  <Form.Item
-                    name="way_of_booking"
-                    label="Reservation Type"
-                    rules={[{ required: true }]}
-                    style={{
-                      width: "90%",
-                      marginTop: "0%",
-                      marginLeft: "20px",
-                    }}
-                  >
-                    <Select
-                      placeholder="Reservation Type"
-                      onChange={(value) => setReservationType(value)}
-                      allowClear
-                      disabled={!time || !datee}
-                      style={{
-                        height: "50px",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {zoneDetails?.way_of_booking === "full" ? (
-                        <>
-                          <Option value="full">Full Zone</Option>
-                          <Option value="person_by_person" disabled>
-                            Individual
-                          </Option>
-                        </>
-                      ) : zoneDetails?.way_of_booking === "person_by_person" ? (
-                        <>
-                          <Option value="full" disabled>
-                            Full Zone
-                          </Option>
-                          <Option value="person_by_person">Individual</Option>
-                        </>
-                      ) : zoneDetails?.way_of_booking === "Both" &&
-                        bookingDate.find(
-                          (item) =>
-                            item.date === datee &&
-                            item.zone.zone_id === zone &&
-                            item.time === time
-                        ) ? (
-                        <>
-                          <Option value="full" disabled>
-                            Full Zone
-                          </Option>
-                          <Option value="person_by_person">Individual</Option>
-                        </>
-                      ) : (
-                        <>
-                          <Option value="full">Full Zone</Option>
-                          <Option value="person_by_person">Individual</Option>
-                        </>
-                      )}
-                    </Select>
-                  </Form.Item>
                 </Row>
               </div>
             </Col>
@@ -598,7 +551,7 @@ const CoachBookingForm: React.FC = () => {
               xs={24}
               lg={14}
             >
-              <div
+              <Row
                 style={{
                   backgroundColor: "#BCE4EC",
                   width: "90%",
@@ -619,7 +572,10 @@ const CoachBookingForm: React.FC = () => {
                     alignSelf: "center",
                   }}
                 >
-                  {dayOfWeek && avaliability && avaliability.length > 0 ? (
+                  {dayOfWeek &&
+                  avaliability &&
+                  avaliability.length > 0 &&
+                  zoneDetails ? (
                     <>
                       {/* Filter available slots for the selected day */}
                       {avaliability
@@ -634,35 +590,47 @@ const CoachBookingForm: React.FC = () => {
                           const endHour = parseFloat(
                             timeRange[1].split(":")[0]
                           ); // Get the end hour
-                          const timeIncrement = 1; // Set the time increment to half-hour
+                          const timeIncrement = 1; // Set the time increment to one hour
+
+                          const openTime = parseFloat(
+                            (zoneDetails.open_time ?? "00:00").split(":")[0]
+                          );
+                          const closeTime = parseFloat(
+                            (zoneDetails.close_time ?? "24:00").split(":")[0]
+                          );
 
                           const timeSlots: any[] = [];
 
-                          // Generate time slots half-hour by half-hour
+                          // Generate time slots within zoneDetails' open and close times
                           for (
                             let i = startHour;
                             i < endHour;
                             i += timeIncrement
                           ) {
-                            const startTimeHour = Math.floor(i);
-                            const startTimeMinutes = i % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
-                            const endTimeHour = Math.floor(i + timeIncrement);
-                            const endTimeMinutes =
-                              (i + timeIncrement) % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
+                            if (
+                              i >= openTime &&
+                              i + timeIncrement <= closeTime
+                            ) {
+                              const startTimeHour = Math.floor(i);
+                              const startTimeMinutes =
+                                i % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
+                              const endTimeHour = Math.floor(i + timeIncrement);
+                              const endTimeMinutes =
+                                (i + timeIncrement) % 1 === 0 ? "00" : "30"; // Determine if it's on the hour or half past the hour
 
-                            const startTime = `${startTimeHour}:${startTimeMinutes}`;
-                            const endTime = `${endTimeHour}:${endTimeMinutes}`;
+                              const startTime = `${startTimeHour}:${startTimeMinutes}`;
+                              const endTime = `${endTimeHour}:${endTimeMinutes}`;
 
-                            timeSlots.push({
-                              startTime,
-                              endTime,
-                            });
+                              timeSlots.push({
+                                startTime,
+                                endTime,
+                              });
+                            }
                           }
 
                           return timeSlots;
                         })
                         // Sort the time slots based on start time
-
                         .sort(
                           (
                             a: { startTime: string },
@@ -820,11 +788,67 @@ const CoachBookingForm: React.FC = () => {
                     </>
                   ) : (
                     <Empty
-                      description={"Coach has no Availible Times on This Day!"}
+                      description={"Coach has no Available Times on This Day!"}
                     />
                   )}
                 </Form.Item>
-              </div>
+                <Form.Item
+                  name="way_of_booking"
+                  label="Reservation Type"
+                  rules={[{ required: true }]}
+                  style={{
+                    width: "90%",
+                    marginTop: "2%",
+                    marginLeft: "15px",
+                  }}
+                >
+                  <Select
+                    placeholder="Reservation Type"
+                    onChange={(value) => setReservationType(value)}
+                    allowClear
+                    disabled={!time || !datee}
+                    style={{
+                      height: "50px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {zoneDetails?.way_of_booking === "full" ? (
+                      <>
+                        <Option value="full">Full Zone</Option>
+                        <Option value="person_by_person" disabled>
+                          Individual
+                        </Option>
+                      </>
+                    ) : zoneDetails?.way_of_booking === "person_by_person" ? (
+                      <>
+                        <Option value="full" disabled>
+                          Full Zone
+                        </Option>
+                        <Option value="person_by_person">Individual</Option>
+                      </>
+                    ) : zoneDetails?.way_of_booking === "Both" &&
+                      bookingDate.find(
+                        (item) =>
+                          item.date === datee &&
+                          item.zone.zone_id === zone &&
+                          item.time === time
+                      ) ? (
+                      <>
+                        <Option value="full" disabled>
+                          Full Zone
+                        </Option>
+                        <Option value="person_by_person">Individual</Option>
+                      </>
+                    ) : (
+                      <>
+                        <Option value="full">Full Zone</Option>
+                        <Option value="person_by_person">Individual</Option>
+                      </>
+                    )}
+                  </Select>
+                </Form.Item>
+              </Row>
             </Col>
           </Row>
           <Row>

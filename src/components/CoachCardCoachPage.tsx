@@ -1,22 +1,22 @@
-import {  Button, Rate } from "antd";
+import { Button, Rate } from "antd";
 import "../styles/CoachCard.css";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CoachBookingContext } from "../context/coachBooking.context";
 
 const CoachCardCoachPage = (props: any) => {
-  const {setCoachId} = useContext(CoachBookingContext);
+  const { setCoachId } = useContext(CoachBookingContext);
   console.log("props", props);
   setTwoToneColor("blue");
   getTwoToneColor();
+  const navigate = useNavigate();
 
-  console.log(props.coach_image);
-  console.log(props.coach_name);
-  console.log(props.coach_sport);
-  console.log(props.coach_rating);
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   localStorage.setItem("coachId", props.coach_id);
   console.log(props.coach_id);
   const [cloudName] = useState("dle0txcgt");
@@ -25,7 +25,7 @@ const CoachCardCoachPage = (props: any) => {
       cloudName,
     },
   });
-setCoachId(props.coach_id);
+  setCoachId(props.coach_id);
   return (
     <>
       <div className="mainCard">
@@ -33,7 +33,7 @@ setCoachId(props.coach_id);
         <div className="mainCardsec2">
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
-              <p> {props.coach_name} </p>
+              <p onClick={handleClick}> {props.coach_name} </p>
               <p className="coachPosition">{props.coach_sport}</p>
             </div>
 
@@ -74,23 +74,23 @@ setCoachId(props.coach_id);
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
-            <Link to="/CoachBookingForm">
-              <Button
-                type="primary"
-                size="small"
-                style={{
-                  fontSize: "10px",
-                  background: "#5587CC",
-                  fontWeight: "400",
-                }}
-              >
-                Book Coach
-              </Button>
+              <Link to="/CoachBookingForm">
+                <Button
+                  type="primary"
+                  size="small"
+                  style={{
+                    fontSize: "10px",
+                    background: "#5587CC",
+                    fontWeight: "400",
+                  }}
+                >
+                  Book Coach
+                </Button>
               </Link>
             </div>
           </div>
         </div>
-        <div className="coachpicture">
+        <div onClick={handleClick} className="coachpicture">
           {" "}
           <AdvancedImage
             style={{ width: "80px", height: "80px", borderRadius: "50%" }}

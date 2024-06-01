@@ -4,7 +4,9 @@ import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const CoachReqestForArcade = (props: any) => {
   console.log("props", props);
@@ -34,6 +36,9 @@ const CoachReqestForArcade = (props: any) => {
             coach_id: props.coach_id,
             arcade_id: ArcadeId,
             status: "success",
+            coach_name: props.coach_name,
+            email: props.coach_Email,
+            arcade_name: props.arcade_name,
           }
         );
         console.log(res.data);
@@ -44,7 +49,16 @@ const CoachReqestForArcade = (props: any) => {
       console.log(e);
     }
   };
-
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <>
       <Row
@@ -63,17 +77,18 @@ const CoachReqestForArcade = (props: any) => {
         <Col xs={8} sm={8} md={8} lg={6} xl={6}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <div
-                style={{
-                  backgroundColor: "#000",
-                  width: "90px",
-                  height: "81px",
-                  borderRadius: "50%",
-                  marginRight: "10px",
-                  backgroundImage: `url(${profilePic})`,
-                  backgroundSize: "cover",
-                }}
-              ></div>
+              <AdvancedImage
+                onClick={handleClick}
+                style={{ width: "80px", height: "80px", borderRadius: "50%" }}
+                cldImg={
+                  cld.image(props.coach_image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+                // border-radius: 50%;
+                // width: 80px;
+                // height: 80px;
+              />
             </Col>
             <Col
               style={{

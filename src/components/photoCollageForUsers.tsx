@@ -9,7 +9,8 @@ import { ArcadeContext } from "../context/Arcade.context";
 import { CoachContext } from "../context/coach.context";
 import { UserContext } from "../context/userContext";
 
-const PhotoCollageForArcade = (props: any) => {
+const PhotoCollageForUsers = (props: any) => {
+  const { userDetails } = useContext(UserContext);
   const [userPhotos, setUserPhotos] = useState([]);
   // const { managerDetails } = useContext(ArcadeContext);
   // const { coachDetails } = useContext(CoachContext);
@@ -35,7 +36,7 @@ const PhotoCollageForArcade = (props: any) => {
   // }, [userDetails]);
   useEffect(() => {
     console.log(props);
-   
+    console.log(userDetails);
     const fetchData = async () => {
       try {
         let res;
@@ -52,6 +53,7 @@ const PhotoCollageForArcade = (props: any) => {
             `${process.env.REACT_APP_API_URL}api/getcoache/${idWithoutColon}`
           );
         }
+
         // else if (managerDetails) {
         //   console.log("Fetching manager details...");
         //   res = await axios.get(
@@ -178,4 +180,4 @@ const PhotoCollageForArcade = (props: any) => {
   );
 };
 
-export default PhotoCollageForArcade;
+export default PhotoCollageForUsers;

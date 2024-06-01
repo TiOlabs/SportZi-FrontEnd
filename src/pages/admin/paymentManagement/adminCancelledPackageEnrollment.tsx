@@ -1,6 +1,9 @@
 import { Col, Row, Button, Modal, Empty } from "antd";
 import { useEffect, useState } from "react";
-import { ZoneBookingDetails } from "../../../types";
+import {
+  PackageEnroolDetailsForPlayer,
+  ZoneBookingDetails,
+} from "../../../types";
 import axios from "axios";
 import { Spin } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
@@ -9,12 +12,14 @@ import { Cloudinary } from "@cloudinary/url-gen";
 const AdminCanceledPackageEnrollment = (props: any) => {
   const [loading, setLoading] = useState(true);
   const [zoneBookingDetails, setZoneBookingDetails] = useState([]);
-  const [adminCanceled, setAdminCanceled] = useState<ZoneBookingDetails[]>([]);
+  const [adminCanceled, setAdminCanceled] = useState<
+    PackageEnroolDetailsForPlayer[]
+  >([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentPlayerDetails`
         );
         const data = await res.data;
         setZoneBookingDetails(data);
@@ -23,7 +28,7 @@ const AdminCanceledPackageEnrollment = (props: any) => {
         // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
 
         const adminCanceled = data.filter(
-          (arcadeBooking: ZoneBookingDetails) =>
+          (arcadeBooking: PackageEnroolDetailsForPlayer) =>
             arcadeBooking.status === "canceled_By_Admin"
         );
         console.log(adminCanceled);
@@ -46,7 +51,7 @@ const AdminCanceledPackageEnrollment = (props: any) => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentPlayerDetails`
         );
         const data = await res.data;
         setZoneBookingDetails(data);
@@ -55,7 +60,7 @@ const AdminCanceledPackageEnrollment = (props: any) => {
         // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
 
         const adminCanceled = data.filter(
-          (arcadeBooking: ZoneBookingDetails) =>
+          (arcadeBooking: PackageEnroolDetailsForPlayer) =>
             arcadeBooking.status === "canceled_By_Admin"
         );
         console.log(adminCanceled);
@@ -112,24 +117,32 @@ const AdminCanceledPackageEnrollment = (props: any) => {
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
         >
           {adminCanceled.length === 0 ? <Empty /> : null}
-          {adminCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
-            <DataRow
-              booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-              booked_Arena={ZoneBookingDetails.zone.zone_name}
-              booked_by={ZoneBookingDetails.user.firstname}
-              rate={
-                Number(ZoneBookingDetails.zone.rate) *
-                Number(ZoneBookingDetails.participant_count)
-              }
-              user_id={ZoneBookingDetails.user.user_id}
-              zone_id={ZoneBookingDetails.zone.zone_id}
-              zone={ZoneBookingDetails.zone.zone_name}
-              booking_date={ZoneBookingDetails.date}
-              booking_time={ZoneBookingDetails.time}
-              participant_count={ZoneBookingDetails.participant_count}
-              created_at={ZoneBookingDetails.created_at}
-            />
-          ))}
+          {adminCanceled.map(
+            (packageEnrollmentForPlayer: PackageEnroolDetailsForPlayer) => (
+              <DataRow
+                package_id={packageEnrollmentForPlayer.package_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+                booked_Arena={
+                  packageEnrollmentForPlayer.package.arcade.arcade_name
+                }
+                booked_by={
+                  packageEnrollmentForPlayer.player.user.firstname +
+                  " " +
+                  packageEnrollmentForPlayer.player.user.lastname
+                }
+                rate={Number(packageEnrollmentForPlayer.rate)}
+                user_id={packageEnrollmentForPlayer.player_id}
+                zone_id={packageEnrollmentForPlayer.package.zone_id}
+                zone={packageEnrollmentForPlayer.package.zone.zone_name}
+                package_image={packageEnrollmentForPlayer.package.package_image}
+                // booking_date={packageEnrollmentForPlayer.date}
+                // booking_time={packageEnrollmentForPlayer.time}
+                // participant_count={packageEnrollmentForPlayer.participant_count}
+                created_at={packageEnrollmentForPlayer.enrolled_date}
+                canceled_at={packageEnrollmentForPlayer.canceled_at}
+                image={packageEnrollmentForPlayer.player.user.user_image}
+              />
+            )
+          )}
         </Col>
       </Spin>
     </Col>
@@ -174,7 +187,7 @@ function DataRow(props: any) {
             height: "80px",
           }}
           cldImg={
-            cld.image(props?.zone_image)
+            cld.image(props?.package_image)
             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
             // .resize(Resize.scale().width(200).height(200))
           }
@@ -208,15 +221,19 @@ function DataRow(props: any) {
         </div>
       </Col>
       <Col span={8}>
-        <div
+        <AdvancedImage
           style={{
             borderRadius: "50%",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(props?.image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
         <div
           style={{
             display: "flex",

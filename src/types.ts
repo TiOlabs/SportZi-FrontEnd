@@ -17,12 +17,14 @@ export interface Zone {
   zone_image: String;
   arcade: Arcade;
   capacity: Number;
+  time_Step: Number;
   description: String;
   way_of_booking: String;
   sport_id: String;
   sport: Sport;
   zoneBookingDetails: ZoneBookingDetails[];
   coachBookingDetails: CoachBookingDetails[];
+  package: Package[];
 }
 export interface Package {
   package_id: String;
@@ -34,11 +36,30 @@ export interface Package {
   canceled_at: String;
   status: String;
   arcade_id: String;
+  zone_id: String;
   percentageForCoach: Number;
   discount: Discount[];
   arcade: Arcade;
+  zone: Zone;
   coachApplyDetailsForPackage: String;
   playerPackageEnrollDetails: String;
+  packageDayAndTime: PackageDayAndTime[];
+}
+export interface PackageEnroolDetailsForPlayer {
+  player_id: String;
+  package_id: String;
+  status: String;
+  enrolled_date: String;
+  canceled_at: String;
+  rate: Number;
+  duration: Number;
+  player: Player;
+  package: Package;
+}
+export interface PackageDayAndTime {
+  package_id: string;
+  day: string;
+  time: string;
 }
 export interface ZoneBookingDetails {
   zone_booking_id: String;
@@ -135,6 +156,7 @@ export interface ArcadeBookings {
 }
 
 export interface Arcade {
+  packageDayAndTime: any;
   lng: number | (() => number);
   lat: number | (() => number);
   map(arg0: (booking: any) => any): unknown;
@@ -171,4 +193,23 @@ export interface CoachFeedbacks {
 export interface UserPhoto {
   user_id: String;
   image: String;
+}
+export interface Report {
+  report_id: String;
+  description: String;
+  report_reason: String;
+  reporter_user_id: String;
+  victim_user_id: String;
+  reporter_user: User;
+  victim_user: User;
+}
+
+export interface ReportArcade {
+  report_id: String;
+  description: String;
+  report_reason: String;
+  reporter_user_id: String;
+  victim_arcade_id: String;
+  reporter_user: User;
+  victim_arcade: Arcade;
 }
