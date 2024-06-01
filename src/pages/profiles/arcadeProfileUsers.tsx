@@ -958,6 +958,13 @@ const ArcadeProfileUser = () => {
         </Row>
       </Row>
 
+
+      {/* feedbacks */}
+
+
+
+      
+
       <Row
         style={{
           minWidth: "100%",
