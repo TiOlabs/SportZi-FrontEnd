@@ -116,7 +116,6 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-
                 {" "}
                 {coachAssignDetails.length === 0 ? (
                   <Empty description={"No Coaches Availiable"} />
@@ -136,6 +135,7 @@ const CoachCardSection = () => {
                         rate={coach.rate}
                         // duration={coachAssignDetail.duration}
                         coach_image={coach.user.user_image}
+                        coach_id={coach.user.user_id}
                       />
                     </Col>
                   ))
