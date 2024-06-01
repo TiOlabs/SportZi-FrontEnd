@@ -10,12 +10,15 @@ import {
   Row,
   Select,
   Typography,
+  Rate,
+  ConfigProvider,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import {
   ExclamationCircleTwoTone,
   StarFilled,
   StarTwoTone,
+  StarOutlined
 } from "@ant-design/icons";
 import profilePic from "../../assents/pro.png";
 import backgroundImg from "../../assents/background2.png";
@@ -25,6 +28,14 @@ import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
+
+
+
+interface FeedbackData {
+  feedback: string;
+  rating: number;
+}
+
 import { useContext, useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
@@ -47,9 +58,42 @@ const CoachProfileUser = () => {
   };
   const { userDetails } = useContext(UserContext);
   const [ismodelopen, setismodelopen] = useState(false);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0.0);
+
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+
+  const coachId = "C00001"; // Replace with actual coach ID
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbycoachId/${coachId}`
+        );
+
+        const { averageRating, totalFeedbacks } = response.data;
+        console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRating * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [coachId]);
+
   const [isModalOpenForReport, setismodelopenForReport] = useState(false);
   const [description, setDescription] = useState("");
   const [reason, setReason] = useState("");
+
 
   const showModal = () => {
     setismodelopen(true);
@@ -96,7 +140,6 @@ const CoachProfileUser = () => {
       id = userDetails?.id;
 
       console.log(id);
-
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}api/addreport`,
         {
@@ -112,6 +155,24 @@ const CoachProfileUser = () => {
       console.log(e);
     }
     setismodelopenForReport(false);
+
+    const submitFeedback = async () => {
+    try {
+      const response = await axiosInstance.post("/api/addcoachfeedbacks", {
+        comment,
+        rating,
+      });
+      console.log("Feedback data:", response.data); 
+
+      setComment("");
+      setRating(0);
+      alert("feedback was submitted successfully");
+      // setAverageRating(response.data.averageRating); // Update average rating
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("Error submitting feedback");
+    }
+
   };
   return (
     <>
@@ -379,7 +440,7 @@ const CoachProfileUser = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -414,11 +475,26 @@ const CoachProfileUser = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color:"#0E458E",
+                          fillOpacity:"0.8",
+                          borderBlockEnd:"dashed",
+                        }}
+                        
+                      />
                     </div>
                     <p
                       style={{
@@ -432,7 +508,7 @@ const CoachProfileUser = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      ({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -720,6 +796,77 @@ const CoachProfileUser = () => {
         {" "}
       </div>
       <PhotoCollageForUsers id={coachId} role={"COACH"} />
+
+      {/* feedback */}
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "50px",
+        }}
+      >
+        {/* <Col
+          span={24}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        > */}
+        <Col
+          span={21}
+          style={{
+            width: "100%",
+            paddingBottom: "10px",
+          }}
+        >
+          <TextArea
+            value={comment}
+            onChange={(e: any) => setComment(e.target.value)}
+            placeholder="Enter your feedback here"
+            rows={4}
+          />
+        </Col>
+
+        <Col
+          span={24}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingBottom: "10px",
+          }}
+        >
+          <Rate 
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            // color:"#0E458E",
+            borderBlock:"dashed #0E458E",
+            opacity:"1",
+            
+          }} 
+          value={rating} onChange={(value) => setRating(value)}
+          />
+        </Col>
+        <Col
+          span={24}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button type="primary" onClick={submitFeedback}>
+            Submit
+          </Button>
+        </Col>
+        {/* </Col> */}
+      </Row>
 
       <Row
         style={{
