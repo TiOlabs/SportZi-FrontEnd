@@ -6,9 +6,10 @@ import { usePlayer } from "../../context/player.context";
 import NavbarLogin from "../../components/NavBarLogin";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useUser } from "../../context/userContext";
 
 const Coaches = () => {
-  const { userDetails } = usePlayer();
+  const { userDetails } = useUser();
 
   const coaches = useLocation();
   useEffect(() => {

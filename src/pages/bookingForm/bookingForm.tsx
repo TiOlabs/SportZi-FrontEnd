@@ -234,6 +234,16 @@ const BookingForm = () => {
   } else if (zoneDetails?.full_zone_rate !== 0 && zone === "full") {
     fullAmount = Number(zoneDetails?.full_zone_rate);
   }
+  let finalAmount;
+  if (zoneDetails?.discount.discount_percentage === null) {
+    finalAmount = fullAmount ?? 0;
+  } else {
+    finalAmount =
+      (fullAmount ?? 0) -
+      ((fullAmount ?? 0) *
+        Number(zoneDetails?.discount.discount_percentage ?? 0)) /
+        100;
+  }
   console.log(fullAmount);
 
   // useEffect(() => {
@@ -812,7 +822,7 @@ const BookingForm = () => {
                   htmlType="submit"
                   item={"Zone Booking"}
                   orderId={5}
-                  amount={fullAmount}
+                  amount={finalAmount}
                   currency={"LKR"}
                   first_name={paymentDetails?.firstname}
                   last_name={paymentDetails?.lastname}

@@ -1141,6 +1141,7 @@ const ArcadeProfileArcade = () => {
                 way_of_booking={zone.way_of_booking}
                 sport={zone.sport.sport_name}
                 sport_id={zone.sport.sport_id}
+                full={zone.full_zone_rate}
               />
             </Col>
           ))}
@@ -1241,6 +1242,10 @@ const ArcadeProfileArcade = () => {
                 ArcadeName={pkg.arcade.arcade_name}
                 packageImage={pkg.package_image}
                 CoachPrecentage={pkg.percentageForCoach}
+                zoneName={pkg.zone.zone_name}
+                zone_id={pkg.zone.zone_id}
+                day={pkg.packageDayAndTime.map((item) => item.day)}
+                time={pkg.packageDayAndTime.map((item) => item.time)}
               />
             </Col>
           ))}

@@ -9,7 +9,15 @@ import {
   Typography,
   message,
 } from "antd";
-import { useEffect, useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useEffect,
+  useState,
+} from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import UpdatePackage from "./UpdatePackage";
@@ -134,6 +142,16 @@ const ArcadePackageUserView = (props: any) => {
             cldImg={cld.image(props.package_image)}
           />
         </Row>
+        <Row>
+          <Col
+            xs={24}
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          ></Col>
+        </Row>
         <Row
           style={{
             width: "100%",
@@ -184,7 +202,7 @@ const ArcadePackageUserView = (props: any) => {
                 width: "80%",
               }}
             >
-              Arcade : {props.ArcadeName}
+              Zone : {props.zone_name}
             </Typography>
             <Typography
               style={{
@@ -196,6 +214,67 @@ const ArcadePackageUserView = (props: any) => {
             >
               {props.packageDescription}
             </Typography>
+            <Row>
+              <Col
+                xs={24}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <div>
+                  <Row>
+                    <Col xs={6}>
+                      <Typography
+                        style={{
+                          fontSize: lg ? "18px" : "16px",
+                          fontFamily: "kanit",
+                          fontWeight: "400",
+                          color: "#5587CC",
+                        }}
+                      >
+                        Day & Time
+                      </Typography>
+                    </Col>
+                    <Col xs={18}>
+                      {props.day.map(
+                        (
+                          d:
+                            | string
+                            | number
+                            | boolean
+                            | ReactElement<
+                                any,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | ReactPortal
+                            | null
+                            | undefined,
+                          index: Key | null | undefined
+                        ) => (
+                          <Typography
+                            key={index}
+                            style={{
+                              fontSize: lg ? "18px" : "16px",
+                              fontFamily: "kanit",
+                              fontWeight: "300",
+                            }}
+                          >
+                            {d}{" "}
+                            {props.time &&
+                              typeof index === "number" &&
+                              props.time[index]}
+                          </Typography>
+                        )
+                      )}
+                    </Col>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
             <Row
               style={{
                 marginTop: "10px",
