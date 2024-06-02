@@ -25,6 +25,7 @@ import NavbarProfile from "../../components/NavBarProfile";
 import dayjs from "dayjs";
 import { count } from "console";
 import { max } from "moment";
+import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
 
 const { Option } = Select;
 

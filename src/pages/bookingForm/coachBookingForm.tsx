@@ -325,6 +325,7 @@ const CoachBookingForm: React.FC = () => {
         setZoneBookings({
           date: datee,
           time: time,
+          fullAmount: finalAmaount,
           participant_count: pcountInt,
           user_id: userDetails.user_id,
           zone_id: zone,

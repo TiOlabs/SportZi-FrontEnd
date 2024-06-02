@@ -359,7 +359,7 @@ const CoachAccepteLst = (props: any) => {
             lg={12}
             xl={12}
           >
-            {props.venue}
+            Zone: {props.venue}
           </Col>
           <Col
             style={{
@@ -378,7 +378,26 @@ const CoachAccepteLst = (props: any) => {
             lg={12}
             xl={12}
           >
-            {props.status}
+            Status: {props.status}
+          </Col>
+          <Col
+            style={{
+              marginTop: "10px",
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: md ? "18px" : "16px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+            xl={12}
+          >
+            Rate: Rs.{props.full_amount}
           </Col>
         </Row>
       </Modal>

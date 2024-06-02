@@ -3,6 +3,7 @@ import md5 from "crypto-js/md5";
 import { Button, message } from "antd";
 import axios from "axios";
 import { ZoneBookingsContext } from "../context/zoneBookings.context";
+import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
 
 declare global {
   interface Window {
@@ -69,11 +70,13 @@ const PaymentModal = (props: any): JSX.Element | null => {
     console.log(zoneBookings.zoneBookings.zone_id);
     console.log(zoneBookings.zoneBookings.way_of_booking);
     console.log(zoneBookings.zoneBookings.booking_type);
+
     axios
       .post("http://localhost:8000/api/addarcadebooking", {
         status: "success",
         date: zoneBookings.zoneBookings.date,
         time: zoneBookings.zoneBookings.time,
+        full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
         user_id: zoneBookings.zoneBookings.user_id,
         zone_id: zoneBookings.zoneBookings.zone_id,
@@ -103,6 +106,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         status: "success",
         date: zoneBookings.zoneBookings.date,
         time: zoneBookings.zoneBookings.time,
+        full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
         player_id: zoneBookings.zoneBookings.user_id,
         zone_id: zoneBookings.zoneBookings.zone_id,

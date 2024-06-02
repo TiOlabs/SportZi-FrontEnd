@@ -385,7 +385,7 @@ const CoachRequstRow = (props: any) => {
             lg={6}
             xl={6}
           >
-            {props.venue}
+            Zone: {props.venue}
           </Col>
 
           <Col
@@ -404,7 +404,25 @@ const CoachRequstRow = (props: any) => {
             lg={6}
             xl={6}
           >
-            {props.status}
+            Status: {props.status}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={6}
+          >
+            Rate: Rs.{props.full_amount}
           </Col>
         </Row>
       </Modal>

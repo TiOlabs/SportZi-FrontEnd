@@ -35,7 +35,7 @@ const Login = () => {
         httpOnly: false,
         secure: true,
       });
-      messageApi.open({
+      message.success({
         type: "success",
         content: "Successfully Login!",
       });
@@ -43,7 +43,7 @@ const Login = () => {
       navigate("/", { replace: true, state: { loggedIn: true } });
       window.location.href = "/";
     } catch (err) {
-      alert(
+      message.error(
         (err as any).response
           ? (err as any).response.data.message
           : "Login failed"

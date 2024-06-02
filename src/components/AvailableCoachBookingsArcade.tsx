@@ -333,7 +333,43 @@ const AvailableCoachBookingsArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            {props.time}
+            Zone: {props.time}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+          >
+            status: {props.status}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+          >
+           Rate: {props.full_amount}
           </Col>
           <Col
             style={{

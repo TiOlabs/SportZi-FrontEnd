@@ -68,7 +68,7 @@ export interface ZoneBookingDetails {
   status: String;
   created_at: String;
   canceled_at: String;
-  rate: Number;
+  full_amount: Number;
   date: String;
   time: String;
   participant_count: Number;
@@ -86,6 +86,7 @@ export interface CoachBookingDetails {
   participant_count: Number;
   date: String;
   time: String;
+  full_amount: Number;
   coach_id: String;
   arcade_id: String;
   player_id: String;

@@ -332,7 +332,7 @@ const AvailableBookingsArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            {props.zoneName}
+            zone: {props.zoneName}
           </Col>
           <Col
             style={{
@@ -350,7 +350,25 @@ const AvailableBookingsArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            {props.status}
+            status: {props.status}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+          >
+           Rate: Rs.{props.full_amount}
           </Col>
         </Row>
       </Modal>

@@ -43,7 +43,7 @@ const UpdatePackage = (props: UpdatePackageProps) => {
   console.log("props", props);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zone, setZone] = useState<Arcade>();
-  const [ZoneId, setZoneId] = useState("");
+  const [ZoneId, setZoneId] = useState(props.zone_id);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -103,6 +103,8 @@ const UpdatePackage = (props: UpdatePackageProps) => {
     },
   });
   const imgObject = cld.image(publicId);
+  console.log(props.zone_id);
+  console.log("zoneId", ZoneId);
   const handleFinish = async () => {
     const combinedTimeslot = timeSlots.map((slot) => ({
       day: slot.day,
@@ -112,6 +114,7 @@ const UpdatePackage = (props: UpdatePackageProps) => {
     console.log("description", description);
     console.log("CoachPrecentage", CoachPrecentage);
     console.log("PackageName", props.package_id);
+    console.log("zoneId", ZoneId);
     const rateInt = parseInt(rate);
     const CoachPrecentageInt = parseInt(CoachPrecentage);
     try {
@@ -129,8 +132,10 @@ const UpdatePackage = (props: UpdatePackageProps) => {
         }
       );
       console.log(res);
+      message.success("Package Updated Successfully");
     } catch (error) {
       console.log(error);
+      message.error("Failed to update package");
     }
     handleOk();
   };
@@ -256,9 +261,9 @@ const UpdatePackage = (props: UpdatePackageProps) => {
             ]}
           >
             <Select
+              defaultValue={ZoneId}
               placeholder="Select Zone"
               style={{ width: "100%" }}
-              defaultValue={props.zone_id}
               allowClear
               onChange={(value) => setZoneId(value)}
             >

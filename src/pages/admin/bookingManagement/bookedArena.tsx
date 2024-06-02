@@ -202,8 +202,7 @@ const BookedArena = (props: any) => {
               booked_Arena={ZoneBookingDetails.zone.zone_name}
               booked_by={ZoneBookingDetails.user.firstname}
               rate={
-                Number(ZoneBookingDetails.zone.rate) *
-                Number(ZoneBookingDetails.participant_count)
+                ZoneBookingDetails.full_amount
               }
               user_id={ZoneBookingDetails.user.user_id}
               zone_id={ZoneBookingDetails.zone.zone_id}

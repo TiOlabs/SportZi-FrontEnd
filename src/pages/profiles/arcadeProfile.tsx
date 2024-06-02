@@ -281,17 +281,25 @@ const ArcadeProfileArcade = () => {
   ];
 
   const CoachReqestToArchade = [
-    (coachAssignRequest || []).map((coachAssign: CoachAssignDetails) => (
-      <CoachReqestForArcade
-        coach_id={coachAssign.coach_id}
-        coach_Email={coachAssign.coach.user.email}
-        coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
-        coach_image={coachAssign.coach.user.user_image}
-        coach_discription={coachAssign.description}
-        date={coachAssign.assigned_date}
-        arcade_name={arcade?.arcade_name}
-      />
-    )),
+    (coachAssignRequest || []).map(
+      (coachAssign: CoachAssignDetails) => (
+        console.log("coachAssign", coachAssign),
+        (
+          <CoachReqestForArcade
+            coach_id={coachAssign.coach_id}
+            coach_Email={coachAssign.coach.user.email}
+            coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
+            coach_image={coachAssign.coach.user.user_image}
+            coach_discription={coachAssign.description}
+            date={coachAssign.assigned_date}
+            arcade_name={arcade?.arcade_name}
+            description={coachAssign.description}
+            duration={coachAssign.duration}
+            sport={coachAssign.coach.sport.sport_name}
+          />
+        )
+      )
+    ),
   ];
   const toggleItems = () => {
     setShowMore(!showMore);
@@ -356,6 +364,8 @@ const ArcadeProfileArcade = () => {
           return fullName.includes(filterValue2.toLowerCase());
         case "booking_id":
           return zone_booking_id.includes(filterValue2);
+        case "status":
+          return booking.status.includes(filterValue2);
         default:
           return true;
       }
@@ -406,6 +416,8 @@ const ArcadeProfileArcade = () => {
           return duration.toString().includes(filterValuePackage);
         case "enroll_date":
           return enrolled_date.includes(filterValuePackage);
+        case "status":
+          return enroll.status.includes(filterValuePackage);
         default:
           return true;
       }
@@ -1577,6 +1589,7 @@ const ArcadeProfileArcade = () => {
                       arcade_name={arcadeName}
                       email={booking.user.email}
                       status={booking.status}
+                      full_amount={booking.full_amount}
                     />
                   ))
               )}
@@ -1690,6 +1703,7 @@ const ArcadeProfileArcade = () => {
             <Option value="zoneName">Zone Name</Option>
             <Option value="booked_by">Booked By</Option>
             <Option value="booking_id">Booking ID</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
@@ -1920,6 +1934,8 @@ const ArcadeProfileArcade = () => {
                 coach_email={booking.coach.user.email}
                 coach_image={booking.coach.user.user_image}
                 coach_id={booking.coach_id}
+                status={booking.status}
+                full_amount={booking.full_amount}
               />
             ))
         ) : (
@@ -2117,6 +2133,7 @@ const ArcadeProfileArcade = () => {
             <Option value="rate">Rate</Option>
             <Option value="duration">Duration</Option>
             <Option value="enroll_date">Enroll Date</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
