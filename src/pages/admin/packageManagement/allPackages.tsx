@@ -1,5 +1,30 @@
-import { Col, Row, Button } from "antd";
+import { Col, Row, Button, Modal } from "antd";
+import { useEffect, useState } from "react";
+import { Package } from "../../../types";
+import axios from "axios";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+
 const AllPackagers = () => {
+
+  const [packages, setPackages] = useState<Package[]>([]);
+  useEffect(() => {
+
+
+    const fetchPackages = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/getPackageDetails"
+        );
+        setPackages(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+      }
+    };
+
+    fetchPackages();
+  }, []);
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -17,8 +42,42 @@ const AllPackagers = () => {
           />
         </Col>
       </Row>
-      <Row
-        style={{
+      {packages.map((packagedetails) => (
+        <DataRow
+          packagedetails={packagedetails}
+          key={packagedetails.package_id}
+        />
+      ))}
+    </Col>
+  );
+};
+
+export default AllPackagers;
+
+function DataRow(props:any) {
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+return(
+  
+  <Row
+  key={props.packagedetails.package_id}
+           style={{
           backgroundColor: "white",
           padding: "1%",
           marginTop: "50px",
@@ -37,7 +96,11 @@ const AllPackagers = () => {
               height: "80px",
               backgroundColor: "#000",
             }}
-          ></div>
+          >   <AdvancedImage
+          style={{ height: "100%", width: "100%" }}
+          cldImg={cld.image(props.packagedetails.package_image
+          )}
+        /></div>
           <div
             style={{
               display: "flex",
@@ -48,7 +111,8 @@ const AllPackagers = () => {
               fontSize: "16px",
             }}
           >
-            Swimming For Beginers
+            {props.packagedetails.package_name}
+            
           </div>
         </Col>
         <Col span={2} style={{}}>
@@ -63,19 +127,25 @@ const AllPackagers = () => {
             }}
           >
             {" "}
-            100$
+            Rs.{props.packagedetails.rate_per_person}
           </div>
         </Col>
         <Col span={8}>
-          <div
-            style={{
-              borderRadius: "50%",
-              position: "absolute",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "#000",
-            }}
-          ></div>
+                    <div
+                      style={{
+                        borderRadius: "50%",
+                        position: "absolute",
+                        width: "80px",
+                        height: "80px",
+                        backgroundColor: "#000",
+                      }}
+                    >
+                      <AdvancedImage
+                        style={{ height: "100%", width: "100%" }}
+                        cldImg={cld.image(props.packagedetails.arcade.arcade_image
+                        )}
+                      />
+                    </div>
           <div
             style={{
               display: "flex",
@@ -86,7 +156,7 @@ const AllPackagers = () => {
               fontSize: "16px",
             }}
           >
-            SSC{" "}
+            {props.packagedetails.arcade.arcade_name}
           </div>
         </Col>
         <Col span={6} style={{}}>
@@ -102,6 +172,7 @@ const AllPackagers = () => {
             <Button
               type="primary"
               style={{ width: "100px", backgroundColor: "#0E458E" }}
+              onClick={showModal}
             >
               <div
                 style={{
@@ -112,9 +183,46 @@ const AllPackagers = () => {
                   textAlign: "center",
                 }}
               >
-                Details
+                More Details
               </div>
             </Button>
+            <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800}>
+            <div style={{ lineHeight: 3.0, fontSize: "160px" }}>
+              <Row>
+              <div style={{ fontSize: "28px", color: "#0E458E" }}>
+                  Arcade Details
+                </div>
+                </Row>
+              <Row>
+                <Col span={12}>
+                  <Col>
+                  <b>Package Name : </b> { props.packagedetails.package_name}
+                  </Col>
+                  <Col>
+                  <b>Package Id :  </b> { props.packagedetails.package_id}
+                  </Col>
+                  <Col>
+                  <b>Package Rate : </b> {props.packagedetails.rate_per_person}
+                  </Col>
+                  <Col>
+                  <b>Package Rate : </b> {props.packagedetails.rate_per_person}
+                  </Col>
+                  <Col>
+                  <b>Package Discription : </b> {props.packagedetails.description}
+                  </Col>
+                
+                </Col>
+                <Col span={12}>
+                  <Col>
+                  <b>Arcade Name : </b> { props.packagedetails.arcade.arcade_name}
+                  </Col>
+                  <Col>
+                  <b>Zone Name : </b> { props.packagedetails.zone.zone_name}
+                  </Col>
+                </Col>
+              </Row>
+            </div>
+          </Modal>
             <Button
               type="primary"
               ghost
@@ -135,8 +243,6 @@ const AllPackagers = () => {
           </div>
         </Col>
       </Row>
-    </Col>
-  );
-};
+)
 
-export default AllPackagers;
+}
