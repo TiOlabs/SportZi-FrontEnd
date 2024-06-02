@@ -455,7 +455,6 @@ const CoachBookingForm: React.FC = () => {
   };
   let zoneOpenTime = zoneDetails?.open_time;
   let zoneCloseTime = zoneDetails?.close_time;
-
   const isWithinPackageTime = (buttonTime: string, packageTime: string) => {
     const [start, end] = packageTime.split("-");
     const [buttonStart, buttonEnd] = buttonTime.split("-");
@@ -502,6 +501,7 @@ const CoachBookingForm: React.FC = () => {
         )
     );
   };
+
   return (
     <>
       <NavbarProfile />

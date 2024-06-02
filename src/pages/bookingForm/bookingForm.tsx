@@ -223,7 +223,17 @@ const BookingForm = () => {
   console.log(capacity);
   const rate = zoneDetails?.rate;
   console.log(pcount);
-  let fullAmount = Number(rate) * Number(pcount);
+  console.log(zoneDetails?.full_zone_rate);
+  let fullAmount;
+  if (zoneDetails?.full_zone_rate === 0 && zone === "person_by_person") {
+    fullAmount = Number(rate) * Number(pcount);
+  } else if (zoneDetails?.full_zone_rate === 0 && zone === "full") {
+    fullAmount = Number(rate) * Number(zoneDetails.capacity);
+  } else if (zoneDetails?.full_zone_rate !== 0 && zone === "person_by_person") {
+    fullAmount = Number(rate) * Number(pcount);
+  } else if (zoneDetails?.full_zone_rate !== 0 && zone === "full") {
+    fullAmount = Number(zoneDetails?.full_zone_rate);
+  }
   console.log(fullAmount);
 
   // useEffect(() => {
@@ -384,6 +394,7 @@ const BookingForm = () => {
   let buttonData = [];
   for (let i = openTime; i < closeTime; i += timeStep) {
     console.log(i);
+    if (i + timeStep > closeTime) break;
     let nextTime = i + timeStep;
     let hour = Math.floor(i);
     let minute = (i - hour) * 60;
@@ -484,8 +495,23 @@ const BookingForm = () => {
     const buttonStartMinutes = timeToMinutes(buttonStart);
     const buttonEndMinutes = timeToMinutes(buttonEnd);
 
-    return buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+    // Check if button time is within the package time
+    const isWithin =
+      buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+
+    // Check for special case: add half-hour slots if needed
+    if (!isWithin) {
+      if (
+        buttonStartMinutes === startMinutes - 30 ||
+        buttonEndMinutes === endMinutes + 30
+      ) {
+        return true;
+      }
+    }
+
+    return isWithin;
   };
+
   const isPackageDayAndTime = (buttonId: string) => {
     if (!selectedDay || !packageDetails || !packageDetails.package || !buttonId)
       return false;
@@ -704,9 +730,18 @@ const BookingForm = () => {
                         }%, ${button.id === time ? "#1677FF" : "white"} 0%)`
                       : "none";
 
+                    const isDisabled =
+                      isFullyBooked ||
+                      isPackageTime ||
+                      zone === "" ||
+                      (zone === "full" &&
+                        bookingDate.find(
+                          (booking) => booking.time === button.id
+                        ));
+
                     return (
                       <button
-                        disabled={isFullyBooked || isPackageTime}
+                        disabled={isDisabled as boolean} // Update the type of isDisabled to boolean
                         key={button.id}
                         id={button.id.toString()}
                         type="button"

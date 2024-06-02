@@ -7,27 +7,38 @@ const ZoneBookingsProvider = ({ children }) => {
   const [zoneBookings, setZoneBookings] = useState({
     date: "",
     time: "",
-    // rate: fullAmount,
     participant_count: "",
     user_id: "",
     zone_id: "",
   });
+
+  // Function to update the state when localStorage changes
+  const updateZoneIdFromLocalStorage = () => {
+    const storedZoneId = localStorage.getItem("zoneId");
+    if (storedZoneId !== zoneId) {
+      setZoneId(storedZoneId);
+    }
+  };
+
   useEffect(() => {
-    const zoneId = localStorage.getItem("zoneId");
-    console.log("zoneId", zoneId);
-    setZoneId(zoneId);
-  }, [zoneId]);
-  console.log("zoneId", zoneId);
+    updateZoneIdFromLocalStorage(); // Initial load
+
+    // Check for changes in localStorage every second
+    const interval = setInterval(() => {
+      updateZoneIdFromLocalStorage();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     console.log("zoneBookings", zoneBookings);
-  
   }, [zoneBookings]);
 
-  // Other context provider logic...
-
   return (
-    <ZoneBookingsContext.Provider value={{ zoneId, setZoneId,zoneBookings,setZoneBookings }}>
+    <ZoneBookingsContext.Provider
+      value={{ zoneId, setZoneId, zoneBookings, setZoneBookings }}
+    >
       {children}
     </ZoneBookingsContext.Provider>
   );

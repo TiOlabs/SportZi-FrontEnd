@@ -88,6 +88,7 @@ const CoachRequstRow = (props: any) => {
               player_name: props.player_name,
               booking_date: props.booking_date,
               booking_time: props.booking_time,
+              arcade_email: props.arcade_email,
             }
           );
           try {
@@ -296,17 +297,20 @@ const CoachRequstRow = (props: any) => {
           <Col xs={24} sm={12} md={12} lg={8} xl={8}>
             <Row style={{ width: "100%" }}>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                <div
+                <AdvancedImage
                   style={{
-                    backgroundColor: "#000",
                     width: "90px",
-                    height: "81px",
+                    height: "90px",
                     borderRadius: "50%",
                     marginRight: "10px",
-                    backgroundImage: `url(${profilePic})`,
                     backgroundSize: "cover",
                   }}
-                ></div>
+                  cldImg={
+                    cld.image(props?.coach_image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
               </Col>
               <Col
                 style={{
@@ -382,6 +386,25 @@ const CoachRequstRow = (props: any) => {
             xl={6}
           >
             {props.venue}
+          </Col>
+
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={6}
+          >
+            {props.status}
           </Col>
         </Row>
       </Modal>

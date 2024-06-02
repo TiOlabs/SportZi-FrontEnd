@@ -361,6 +361,25 @@ const CoachAccepteLst = (props: any) => {
           >
             {props.venue}
           </Col>
+          <Col
+            style={{
+              marginTop: "10px",
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: md ? "18px" : "16px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+            xl={12}
+          >
+            {props.status}
+          </Col>
         </Row>
       </Modal>
 

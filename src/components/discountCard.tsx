@@ -89,7 +89,7 @@ const DiscountCard = (props: any) => {
                   textAlign: "center",
                 }}
               >
-                Level one cricket arcade
+                Level one {props.sport} zone
               </h4>
             </div>
           </div>

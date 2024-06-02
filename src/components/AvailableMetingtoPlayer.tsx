@@ -82,7 +82,7 @@ const AvailableMetingstoPlayer = (props: any) => {
         <Col xs={8} sm={8} md={8} lg={6} xl={6}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-            <AdvancedImage
+              <AdvancedImage
                 style={{
                   width: "90px",
                   height: "90px",
@@ -229,17 +229,20 @@ const AvailableMetingstoPlayer = (props: any) => {
           <Col xs={24} sm={12} md={12} lg={8} xl={8}>
             <Row style={{ width: "100%" }}>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                <div
+                <AdvancedImage
                   style={{
-                    backgroundColor: "#000",
                     width: "90px",
-                    height: "81px",
+                    height: "90px",
                     borderRadius: "50%",
                     marginRight: "10px",
-                    backgroundImage: `url(${profilePic})`,
                     backgroundSize: "cover",
                   }}
-                ></div>
+                  cldImg={
+                    cld.image(props?.zone_image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
               </Col>
               <Col
                 style={{
@@ -315,6 +318,24 @@ const AvailableMetingstoPlayer = (props: any) => {
             xl={6}
           >
             {props.venue}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={6}
+          >
+            {props.status}
           </Col>
         </Row>
       </Modal>

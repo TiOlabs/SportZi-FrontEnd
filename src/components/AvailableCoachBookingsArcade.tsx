@@ -48,34 +48,42 @@ const AvailableCoachBookingsArcade = (props: any) => {
     let created_at, user_id;
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/getArcadeBookingsByBookingId/${props.booking_id}`
+        `${process.env.REACT_APP_API_URL}api/getCoachBookinByBookingId/${props.booking_id}`
       );
+      console.log(res);
       created_at = res.data.created_at;
-      user_id = res.data.user_id;
+      user_id = res.data.player_id;
       console.log(created_at);
       console.log(user_id);
     } catch (error) {
       console.log(error);
     }
     try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}api/updateCoachBookingByCreatedTime/${created_at}/${user_id}`,
-        {
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}api/updateArcadeBookingByCreatedTime/${created_at}/${user_id}`,{
           status: "canceled_By_Arcade",
         }
       );
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
+
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+        `http://localhost:8000/api/updatecoachBooking/${props.booking_id}`,
         {
           zone_booking_id: props.booking_id,
           status: "canceled_By_Arcade",
-          // email: props.email,
-          // arcade_name: props.arcade_name,
-          // booked_by: props.booked_by,
+          email: props.player_email,
+          coach_email: props.coach_email,
+          arcade_name: props.arcade_name,
+          player_name: props.booked_by,
+          coach_name: props.booked_coach,
+          role: "ARCADE",
+          booking_date: props.date,
+          booking_time: props.time,
+          zone_name: props.zoneName,
         }
       );
       setIsConfirmModalOpen(false);

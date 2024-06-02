@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Col, Row, message } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
@@ -22,6 +22,7 @@ const CoachReqestForArcade = (props: any) => {
 
   const handleOk = () => {
     setIsModalOpen(false);
+    handleAccept();
   };
 
   const handleCancel = () => {
@@ -44,7 +45,7 @@ const CoachReqestForArcade = (props: any) => {
         console.log(res.data);
       };
       fetchData();
-      alert("Accepted");
+      message.success("Coach Assigned Successfully");
     } catch (e) {
       console.log(e);
     }
@@ -153,7 +154,7 @@ const CoachReqestForArcade = (props: any) => {
             }}
             key="submit"
             type="primary"
-            onClick={handleAccept}
+            onClick={showModal}
           >
             Accept
           </Button>
@@ -208,6 +209,7 @@ const CoachReqestForArcade = (props: any) => {
             }}
             key="submit"
             type="primary"
+            // onClick={handleOk}
             onClick={handleOk}
           >
             Accept
@@ -270,7 +272,7 @@ const CoachReqestForArcade = (props: any) => {
                 lg={12}
                 xl={12}
               >
-                kanishka
+                {props.coachName}
               </Col>
             </Row>
           </Col>
@@ -290,7 +292,7 @@ const CoachReqestForArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            Date
+            {props.date}
           </Col>
           <Col
             style={{

@@ -136,6 +136,7 @@ const CoachCardSection = () => {
                         // duration={coachAssignDetail.duration}
                         coach_image={coach.user.user_image}
                         coach_id={coach.coach_id}
+                        sport={coach.sport.sport_name}
                       />
                     </Col>
                   ))

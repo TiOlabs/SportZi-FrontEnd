@@ -9,6 +9,7 @@ export interface Zone {
   zone_name: String;
   zone_id: String;
   rate: Number;
+  full_zone_rate: Number;
   arcade_location: String;
   manager_id: String;
   open_time: String;
