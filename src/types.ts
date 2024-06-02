@@ -25,6 +25,7 @@ export interface Zone {
   zoneBookingDetails: ZoneBookingDetails[];
   coachBookingDetails: CoachBookingDetails[];
   package: Package[];
+  full_zone_rate: Number;
 }
 export interface Package {
   package_id: String;
