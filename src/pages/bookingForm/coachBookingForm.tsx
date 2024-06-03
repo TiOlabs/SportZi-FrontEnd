@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Row,
   Col,
@@ -33,6 +33,7 @@ import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import NavbarProfile from "../../components/NavBarProfile";
+import { useUser } from "../../context/userContext";
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
@@ -41,7 +42,8 @@ const CoachBookingForm: React.FC = () => {
     totalParticipantCount: number;
   }
   const { setZoneBookings } = useContext(ZoneBookingsContext);
-  const [userDetails, setUserDetails] = useState<any>();
+  const { userDetails } = useUser();
+  const [userData, setUserData] = useState<any>();
   const [avaliability, setAvaliability] = useState<any>();
   const [coachData, setcoachData] = useState<Coach>();
   const [time, setTime] = useState<string>("");
@@ -69,6 +71,8 @@ const CoachBookingForm: React.FC = () => {
   >([]);
   const [packageDetails, setPackageDetails] = useState<Arcade>();
 
+  const currentCoachId = useRef(coachId);
+
   const handleDateChange = (datee: any) => {
     // Extract the date part from the Day.js object
     const formattedDate = datee.format("YYYY-MM-DD");
@@ -85,59 +89,63 @@ const CoachBookingForm: React.FC = () => {
     console.log(day);
     setDayOfWeek(day);
   };
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const decoded = token ? jwtDecode(token) : undefined;
-    setDecodedValues(decoded);
-  }, []);
-  const userID = decodedValues?.userId;
+
   useEffect(() => {
     try {
       const fetchData = async () => {
         const resPaymentDetails = await fetch(
-          `http://localhost:8000/api/getuser/${userID}`
+          `http://localhost:8000/api/getuser/${userDetails.id}`
         );
         const paymentDetailsData = await resPaymentDetails.json();
         console.log(paymentDetailsData);
-        setUserDetails(paymentDetailsData);
+        setUserData(paymentDetailsData);
       };
       fetchData();
     } catch (e) {
       console.log("errrr", e);
     }
-  }, [userID]);
+  }, [userDetails]);
 
   useEffect(() => {
     console.log(coachId);
     const fetchData = async () => {
+      currentCoachId.current = coachId;
       try {
         const res = await fetch(
           `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachId}`
         );
         const data = await res.json();
         console.log(data);
-        const filteredData = data.filter(
-          (item: any) => item.status === "success"
-        );
-        setCoachAssignDetails(filteredData);
+        if (currentCoachId.current === coachId) {
+          const filteredData = data.filter(
+            (item: { status: string }) => item.status === "success"
+          );
+          setCoachAssignDetails(filteredData);
+        }
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, [coachId, arcade]);
-  console.log(arcade);
+  }, [coachId]);
+
+  console.log(coachId);
+
   useEffect(() => {
+    console.log(coachId);
     const fetchData = async () => {
+      currentCoachId.current = coachId;
       try {
         const res = await fetch(
           `${process.env.REACT_APP_API_URL}api/getcoache/${coachId}`
         );
         const data = await res.json();
         console.log(data);
-        setcoachData(data);
-        console.log(data.sport_id);
-        setCoachSport(data?.sport_id);
+        if (currentCoachId.current === coachId) {
+          setcoachData(data);
+          console.log(data.sport_id);
+          setCoachSport(data?.sport_id);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -292,7 +300,7 @@ const CoachBookingForm: React.FC = () => {
   const handleFinish = async () => {
     console.log("gggggggggg");
     console.log(date, time, pcount, zoneForCoachBookings);
-    console.log(userDetails.user_id);
+    console.log(userData.user_id);
     const pcountInt = parseInt(pcount);
 
     if (parseInt(pcount) <= 0) {
@@ -328,7 +336,7 @@ const CoachBookingForm: React.FC = () => {
           time: time,
           fullAmount: finalAmaount,
           participant_count: pcountInt,
-          user_id: userDetails.user_id,
+          user_id: userData.user_id,
           zone_id: zone,
           way_of_booking: reservationType,
           booking_type: "coach",
@@ -420,7 +428,7 @@ const CoachBookingForm: React.FC = () => {
   } else if (zoneDetails?.full_zone_rate !== 0 && reservationType === "full") {
     fullAmount = Number(zoneDetails?.full_zone_rate);
   }
-  let finalAmaount = Number(fullAmount) + coachAmount;
+  let finalAmaount = Number(fullAmount) + coachAmount * timeStep;
 
   // let finalAmount;
   // if (zoneDetails?.discount === null) {
@@ -1031,17 +1039,17 @@ const CoachBookingForm: React.FC = () => {
                   orderId={5}
                   amount={finalAmaount}
                   currency={"LKR"}
-                  first_name={userDetails?.firstname}
-                  last_name={userDetails?.lastname}
-                  email={userDetails?.email}
-                  phone={userDetails?.phone}
-                  address={userDetails?.address}
-                  city={userDetails?.city}
-                  country={userDetails?.contry}
+                  first_name={userData?.firstname}
+                  last_name={userData?.lastname}
+                  email={userData?.email}
+                  phone={userData?.phone}
+                  address={userData?.address}
+                  city={userData?.city}
+                  country={userData?.contry}
                   date={datee}
                   time={time}
                   pcount={pcount}
-                  userId={userDetails?.user_id}
+                  userId={userData?.user_id}
                   zoneId={zone}
                   arcadeId={arcade}
                   sportId={coachSport}
