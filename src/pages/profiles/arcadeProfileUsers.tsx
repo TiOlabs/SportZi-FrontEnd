@@ -180,6 +180,7 @@ const ArcadeProfileUser = () => {
     }
     setismodelopenForReport(false);
   };
+
   return (
     <>
       {userDetails !== "" || coachDetails !== "" || arcadeDetails !== "" ? (
@@ -1041,21 +1042,21 @@ const ArcadeProfileUser = () => {
             flexDirection: "row",
           }}
         >
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {arcadePackages?.package.map((package1: Package) => (
+          {arcadePackages?.package.map((package1: Package) => (
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
               <ArcadePackageUserView
                 packageName={package1.package_name}
                 packageDescription={package1.description}
@@ -1066,9 +1067,12 @@ const ArcadeProfileUser = () => {
                 player_id={userDetails.id}
                 zone_id={package1.zone_id}
                 arcade_id={ArcadeId}
+                zone_name={package1.zone.zone_name}
+                day={package1.packageDayAndTime.map((item) => item.day)}
+                time={package1.packageDayAndTime.map((item) => item.time)}
               />
-            ))}
-          </Col>
+            </Col>
+          ))}
 
           <Col
             style={{
@@ -1096,12 +1100,7 @@ const ArcadeProfileUser = () => {
         </Row>
       </Row>
 
-
       {/* feedbacks */}
-
-
-
-      
 
       <Row
         style={{

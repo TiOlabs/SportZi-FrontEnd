@@ -255,6 +255,10 @@ const PlayerProfile = () => {
       return booking.arcade.arcade_name
         .toLowerCase()
         .includes(filterValue.toLowerCase());
+    } else if (filterBy === "booking_id") {
+      return booking.booking_id.includes(filterValue);
+    } else if (filterBy === "status") {
+      return booking.status.includes(filterValue);
     }
     return true;
   });
@@ -273,6 +277,8 @@ const PlayerProfile = () => {
           .includes(filterValue.toLowerCase());
       } else if (filterBy === "booking_id") {
         return booking.zone_booking_id.includes(filterValue);
+      } else if (filterBy === "status") {
+        return booking.status.includes(filterValue);
       }
       return true;
     }
@@ -816,6 +822,7 @@ const PlayerProfile = () => {
               <Option value="coach_name">Coach Name</Option>
               <Option value="venue">Venue</Option>
               <Option value="booking_id">Booking ID</Option>
+              <Option value="status">Status</Option>
             </Select>
             <Input
               placeholder="Enter filter value"
@@ -945,6 +952,7 @@ const PlayerProfile = () => {
               zone_name={booking.zone.zone_name}
               arcade_email={booking.arcade.arcade_email}
               status={booking.status}
+              full_amount={booking.full_amount}
             />
           ))
         ) : (
@@ -1080,6 +1088,7 @@ const PlayerProfile = () => {
               <Option value="rate">Rate</Option>
               <Option value="zone_name">Zone Name</Option>
               <Option value="arcade_name">Arcade Name</Option>
+              <Option value="status">Status</Option>
             </Select>
             <Input
               placeholder="Enter filter value"
@@ -1300,6 +1309,7 @@ const PlayerProfile = () => {
                         userDetails.firstName + " " + userDetails.lastName
                       }
                       status={booking.status}
+                      full_amount={booking.full_amount}
                     />
                   ) : null // Return null for bookings that are not of type "zone"
               )

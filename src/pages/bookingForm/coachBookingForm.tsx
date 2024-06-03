@@ -326,6 +326,7 @@ const CoachBookingForm: React.FC = () => {
         setZoneBookings({
           date: datee,
           time: time,
+          fullAmount: finalAmaount,
           participant_count: pcountInt,
           user_id: userDetails.user_id,
           zone_id: zone,
@@ -401,6 +402,7 @@ const CoachBookingForm: React.FC = () => {
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
   let coachAmount = Number(coachData?.rate) * Number(pcount);
+  let coachRate = Number(coachData?.rate);
   let zonerate = Number(zoneDetails?.rate);
   let fullAmount;
   if (
@@ -418,6 +420,18 @@ const CoachBookingForm: React.FC = () => {
   } else if (zoneDetails?.full_zone_rate !== 0 && reservationType === "full") {
     fullAmount = Number(zoneDetails?.full_zone_rate);
   }
+  let finalAmaount = Number(fullAmount) + coachAmount;
+
+  // let finalAmount;
+  // if (zoneDetails?.discount === null) {
+  //   finalAmount = fullAmount ?? 0;
+  // } else {
+  //   finalAmount =
+  //     (fullAmount ?? 0) -
+  //     ((fullAmount ?? 0) *
+  //       Number(zoneDetails?.discount.discount_percentage ?? 0)) /
+  //       100;
+  // }
   console.log(fullAmount);
 
   console.log(fullAmount);
@@ -1015,7 +1029,7 @@ const CoachBookingForm: React.FC = () => {
                   htmlType="submit"
                   item={"Coach Booking"}
                   orderId={5}
-                  amount={fullAmount}
+                  amount={finalAmaount}
                   currency={"LKR"}
                   first_name={userDetails?.firstname}
                   last_name={userDetails?.lastname}

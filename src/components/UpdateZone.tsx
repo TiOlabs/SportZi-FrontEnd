@@ -119,6 +119,7 @@ console.log(props.sport)
 
       );
       console.log(res);
+      message.success("Zone Updated Successfully");
     } catch (error) {
       console.log("Error:");
       console.log(error);

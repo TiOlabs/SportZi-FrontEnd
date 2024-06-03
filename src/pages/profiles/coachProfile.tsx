@@ -237,6 +237,8 @@ const CoachProfile = () => {
       return booking.rate && booking.rate.toString().includes(filterValue);
     } else if (filterBy === "booking_id") {
       return booking.booking_id.toString().includes(filterValue);
+    } else if (filterBy === "status") {
+      return booking.status.includes(filterValue);
     }
     return true;
   });
@@ -868,6 +870,7 @@ const CoachProfile = () => {
               <Option value="player_name">Player Name</Option>
               <Option value="arcade_name">Arcade Name</Option>
               <Option value="booking_id">Booking ID</Option>
+              <Option value="status">Status</Option>
             </Select>
             <Input
               placeholder="Enter filter value"
@@ -1068,6 +1071,7 @@ const CoachProfile = () => {
               arcade_email={booking.arcade.arcade_email}
               arcade_name={booking.arcade.arcade_name}
               status={booking.status}
+              full_amount={booking.full_amount}
             />
           ))
         ) : (

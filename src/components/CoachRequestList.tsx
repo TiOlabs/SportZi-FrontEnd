@@ -317,7 +317,7 @@ const CoachReqestList = (props: any) => {
                 lg={12}
                 xl={12}
               >
-                kanishka jj
+               {props.arcade}
               </Col>
             </Row>
           </Col>
@@ -337,7 +337,7 @@ const CoachReqestList = (props: any) => {
             lg={12}
             xl={12}
           >
-            Date
+           {props.date}
           </Col>
         </Row>
 
