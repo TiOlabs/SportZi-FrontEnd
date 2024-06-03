@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Col, Form, Row } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
@@ -7,6 +7,7 @@ import axios from "axios";
 import { ZoneBookingDetails } from "../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import TextArea from "antd/es/input/TextArea";
 
 const AvailableMetingstoPlayer = (props: any) => {
   console.log(props);
@@ -14,6 +15,8 @@ const AvailableMetingstoPlayer = (props: any) => {
   const { lg, md, sm, xs } = useBreakpoint();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isResonModalOpen, setIsResonModalOpen] = useState(false);
+  const [reason, setReason] = useState("");
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -25,8 +28,36 @@ const AvailableMetingstoPlayer = (props: any) => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setIsResonModalOpen(false);
   };
+
+  const shoeResonModal = () => {
+    setIsResonModalOpen(true);
+  };
+  const handleOkForResonModal = () => {
+    setIsResonModalOpen(false);
+  };
+  const handleCancelForResonModal = () => {
+    setIsResonModalOpen(false);
+  };
+
   const showDeleteConfirm = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addbookingcancelarcade`,
+        {
+          booking_id: props.booking_id,
+          reason: reason,
+        }
+      );
+      // Close modal
+      setIsResonModalOpen(false);
+
+      // Update zone booking details
+    } catch (error) {
+      console.log("error");
+      console.log(error);
+    }
     try {
       const response = await axios.put(
         `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
@@ -40,6 +71,7 @@ const AvailableMetingstoPlayer = (props: any) => {
           booking_date: props.booking_date,
           booking_time: props.booking_time,
           arcade_name: props.venue,
+          reason: reason,
         }
       );
 
@@ -205,7 +237,8 @@ const AvailableMetingstoPlayer = (props: any) => {
               fontWeight: "400",
               fontSize: "18px",
             }}
-            onClick={showDeleteConfirm}
+            // onClick={showDeleteConfirm}
+            onClick={shoeResonModal}
             key="submit"
             type="primary"
           >
@@ -356,6 +389,74 @@ const AvailableMetingstoPlayer = (props: any) => {
             Rate: Rs.{props.full_amount}
           </Col>
         </Row>
+      </Modal>
+      <Modal
+        width={1000}
+        title="Basic Modal"
+        // open={isModalOpen}
+        open={isResonModalOpen}
+        onOk={handleOkForResonModal}
+        okText="Cancel Meeting"
+        onCancel={handleCancelForResonModal}
+        footer={[
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#0E458E",
+              border: "1px solid #0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            key="back"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>,
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#FF0000",
+              border: "1px solid #FF0000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            // onClick={showDeleteConfirm}
+            onClick={showDeleteConfirm}
+            key="submit"
+            type="primary"
+          >
+            Cancel Meeting
+          </Button>,
+        ]}
+      >
+        <Form layout="vertical" onFinish={showDeleteConfirm}>
+          <Form.Item>
+            <h3>Are you sure you want to cancel this meeting?</h3>
+          </Form.Item>
+
+          <Form.Item
+            name="reason"
+            label="Please enter the reason for cancellation"
+            rules={[
+              {
+                type: "string",
+                message: "Please enter a valid Description!",
+              },
+              {
+                required: true,
+                message: "Please input your Descrition!",
+              },
+            ]}
+          >
+            <TextArea
+              rows={5}
+              placeholder="Add a Short Description about Applying for Coaching"
+              onChange={(e) => setReason(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );
