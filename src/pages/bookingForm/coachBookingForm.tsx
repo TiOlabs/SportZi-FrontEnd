@@ -67,6 +67,7 @@ const CoachBookingForm: React.FC = () => {
   const [timeParticipantCounts1, setTimeParticipantCounts1] = useState<
     TimeParticipantCount[]
   >([]);
+  const [packageDetails, setPackageDetails] = useState<Arcade>();
 
   const handleDateChange = (datee: any) => {
     // Extract the date part from the Day.js object
@@ -443,6 +444,24 @@ const CoachBookingForm: React.FC = () => {
       cloudName,
     },
   });
+  const arcadeId = arcade;
+  useEffect(() => {
+    console.log(zoneDetails);
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${arcade}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setPackageDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [zoneDetails]);
   const disabledDate = (current: Dayjs | null): boolean => {
     // Can not select days before today
     const today = dayjs().startOf("day");
@@ -450,6 +469,53 @@ const CoachBookingForm: React.FC = () => {
   };
   let zoneOpenTime = zoneDetails?.open_time;
   let zoneCloseTime = zoneDetails?.close_time;
+  const isWithinPackageTime = (buttonTime: string, packageTime: string) => {
+    const [start, end] = packageTime.split("-");
+    const [buttonStart, buttonEnd] = buttonTime.split("-");
+
+    // Convert times to minutes for easier comparison
+    const timeToMinutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    const buttonStartMinutes = timeToMinutes(buttonStart);
+    const buttonEndMinutes = timeToMinutes(buttonEnd);
+
+    // Check if button time is within the package time
+    const isWithin =
+      buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+
+    // Check for special case: add half-hour slots if needed
+    if (!isWithin) {
+      if (
+        buttonStartMinutes === startMinutes - 30 ||
+        buttonEndMinutes === endMinutes + 30
+      ) {
+        return true;
+      }
+    }
+
+    return isWithin;
+  };
+
+  const isPackageDayAndTime = (buttonId: string) => {
+    if (!dayOfWeek || !packageDetails || !packageDetails.package || !buttonId)
+      return false;
+
+    return packageDetails.package.some(
+      (pkg) =>
+        pkg.zone_id === zone &&
+        pkg.packageDayAndTime &&
+        pkg.packageDayAndTime.some(
+          (pdt) =>
+            pdt.day === dayOfWeek && isWithinPackageTime(buttonId, pdt.time)
+        )
+    );
+  };
+
   return (
     <>
       <NavbarProfile />
@@ -715,7 +781,10 @@ const CoachBookingForm: React.FC = () => {
                                   );
                                 }) !== undefined ||
                                 !zone ||
-                                !arcade
+                                !arcade ||
+                                isPackageDayAndTime(
+                                  `${slot.startTime}-${slot.endTime}`
+                                )
                               }
                               style={{
                                 width: "100%",
@@ -778,8 +847,11 @@ const CoachBookingForm: React.FC = () => {
                                             `${slot.startTime}-${slot.endTime}` &&
                                           item.status === "success"
                                         );
-                                      })
-                                    ? "#FF0000" // Red color when disabled
+                                      }) ||
+                                      isPackageDayAndTime(
+                                        `${slot.startTime}-${slot.endTime}`
+                                      )
+                                    ? "#FF0000" // Red color when disabled due to package time
                                     : "#2EA8BF",
                               }}
                               onClick={() => {
@@ -806,6 +878,10 @@ const CoachBookingForm: React.FC = () => {
                                 );
                               })
                                 ? "Booked"
+                                : isPackageDayAndTime(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Has a Package `
                                 : `${slot.startTime}-${slot.endTime}`}
                             </Button>
                           </ConfigProvider>

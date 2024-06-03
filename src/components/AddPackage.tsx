@@ -16,9 +16,10 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { useParams } from "react-router-dom";
-import { Arcade, Zone } from "../types";
 import { Option } from "antd/es/mentions";
 import { Dayjs } from "dayjs";
+import { Arcade } from "../types";
+import { Package } from "../types";
 
 const AddPackage = () => {
   const { ArcadeId } = useParams();
