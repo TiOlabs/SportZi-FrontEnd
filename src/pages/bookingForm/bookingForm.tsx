@@ -593,6 +593,7 @@ const BookingForm = () => {
                   >
                     <Select
                       placeholder="Reservation Type"
+                      placeholder="Reservation Type"
                       onChange={(value) => setZone(value)}
                       allowClear
                       style={{
