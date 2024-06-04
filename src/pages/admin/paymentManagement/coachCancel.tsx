@@ -20,16 +20,7 @@ const CoachCancelCoachBookins = () => {
   const [search, setSearch] = useState<string>("");
   const [value, setValue] = useState<number>(1);
 
-<<<<<<< Updated upstream
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:8000/api/getCoachBookings"
-        );
-        const data = await res.data;
-        setArcadeCanceled(data);
-=======
+
   const fetchData = async () => {
     try {
       const res = await axios.get(
@@ -37,7 +28,7 @@ const CoachCancelCoachBookins = () => {
       );
       const data = await res.data;
       setArcadeBookingDetails(data);
->>>>>>> Stashed changes
+
 
       const canceledByCoach = data.filter(
         (coachBooking: CoachBookingDetails) =>

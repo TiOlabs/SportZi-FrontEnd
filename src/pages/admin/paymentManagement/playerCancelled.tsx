@@ -28,28 +28,44 @@ import {
 } from "@ant-design/icons";
 import { SearchProps } from "antd/es/input";
 const PlayerCanceled = () => {
-<<<<<<< Updated upstream
-=======
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState<number>(1);
-  const [playerBookingDetails, setPlayerBookingDetails] = useState<ZoneBookingDetails[]>([]);
-  const [playerCanceled, setPlayerCanceled] = useState<ZoneBookingDetails[]>([]);
-  const [canceledByPlayer, setCanceledByPlayer] = useState<ZoneBookingDetails[]>([]);
+  const [playerBookingDetails, setPlayerBookingDetails] = useState<
+    ZoneBookingDetails[]
+  >([]);
+  const [playerCanceled, setPlayerCanceled] = useState<ZoneBookingDetails[]>(
+    []
+  );
+  const [canceledByPlayer, setCanceledByPlayer] = useState<
+    ZoneBookingDetails[]
+  >([]);
   const [search, setSearch] = useState<string>("");
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/getarcadebookings`);
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/getarcadebookings`
+      );
       const data = await res.data;
       setPlayerBookingDetails(data);
 
-      const playerCanceledBookings = data.filter((arcadeBooking: ZoneBookingDetails) =>
-        arcadeBooking.status === "canceled_By_Player" &&
-        arcadeBooking.booking_type === "zone" &&
-        (arcadeBooking.zone.zone_name.toLowerCase().includes(search.toLowerCase()) ||
-          arcadeBooking.user.firstname.toLowerCase().includes(search.toLowerCase()) ||
-          arcadeBooking.date.includes(search) ||
-          (Number(arcadeBooking.zone.rate) * Number(arcadeBooking.participant_count)).toString().includes(search))
+      const playerCanceledBookings = data.filter(
+        (arcadeBooking: ZoneBookingDetails) =>
+          arcadeBooking.status === "canceled_By_Player" &&
+          arcadeBooking.booking_type === "zone" &&
+          (arcadeBooking.zone.zone_name
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
+            arcadeBooking.user.firstname
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            arcadeBooking.date.includes(search) ||
+            (
+              Number(arcadeBooking.zone.rate) *
+              Number(arcadeBooking.participant_count)
+            )
+              .toString()
+              .includes(search))
       );
 
       setCanceledByPlayer(playerCanceledBookings);
@@ -60,81 +76,39 @@ const PlayerCanceled = () => {
     }
   };
 
-  const filterBookingsByTime = (bookings: ZoneBookingDetails[], filterValue: number) => {
+  const filterBookingsByTime = (
+    bookings: ZoneBookingDetails[],
+    filterValue: number
+  ) => {
     if (filterValue === 1) {
-      const below24Hours = bookings.filter((arcadeBooking: ZoneBookingDetails) => {
-        const createdAt = new Date(arcadeBooking.created_at as string).getTime();
-        const canceledTime = new Date(arcadeBooking.canceled_at as string).getTime();
-        const timeDifference = canceledTime - createdAt;
-        const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-        return timeDifference < twentyFourHoursInMillis;
-      });
-      setPlayerCanceled(below24Hours);
-    } else if (filterValue === 2) {
-      const above24Hours = bookings.filter((arcadeBooking: ZoneBookingDetails) => {
-        const createdAt = new Date(arcadeBooking.created_at as string).getTime();
-        const canceledTime = new Date(arcadeBooking.canceled_at as string).getTime();
-        const timeDifference = canceledTime - createdAt;
-        const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-        return timeDifference >= twentyFourHoursInMillis;
-      });
-      setPlayerCanceled(above24Hours);
-    }
-  };
-
->>>>>>> Stashed changes
-  const onChange = (e: RadioChangeEvent) => {
-    const newValue = e.target.value;
-    setValue(newValue);
-  };
-  const [loading, setLoading] = useState(true);
-  const [value, setValue] = useState<number>(1);
-  const [playerBookingDetails, setPlayerBookingDetails] = useState<ZoneBookingDetails[]>([]);
-  const [playerCanceled, setPlayerCanceled] = useState<ZoneBookingDetails[]>([]);
-  const [canceledByPlayer, setCanceledByPlayer] = useState<ZoneBookingDetails[]>([]);
-  const [search, setSearch] = useState<string>("");
-
-  const fetchData = async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/api/getarcadebookings");
-      const data = await res.data;
-      setPlayerBookingDetails(data);
-
-      const playerCanceledBookings = data.filter((arcadeBooking: ZoneBookingDetails) =>
-        arcadeBooking.status === "canceled_By_Player" &&
-        arcadeBooking.booking_type === "zone" &&
-        (arcadeBooking.zone.zone_name.toLowerCase().includes(search.toLowerCase()) ||
-          arcadeBooking.user.firstname.toLowerCase().includes(search.toLowerCase()) ||
-          arcadeBooking.date.includes(search) ||
-          (Number(arcadeBooking.zone.rate) * Number(arcadeBooking.participant_count)).toString().includes(search))
+      const below24Hours = bookings.filter(
+        (arcadeBooking: ZoneBookingDetails) => {
+          const createdAt = new Date(
+            arcadeBooking.created_at as string
+          ).getTime();
+          const canceledTime = new Date(
+            arcadeBooking.canceled_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdAt;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference < twentyFourHoursInMillis;
+        }
       );
-
-      setCanceledByPlayer(playerCanceledBookings);
-      filterBookingsByTime(playerCanceledBookings, value);
-      setLoading(false);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const filterBookingsByTime = (bookings: ZoneBookingDetails[], filterValue: number) => {
-    if (filterValue === 1) {
-      const below24Hours = bookings.filter((arcadeBooking: ZoneBookingDetails) => {
-        const createdAt = new Date(arcadeBooking.created_at as string).getTime();
-        const canceledTime = new Date(arcadeBooking.canceled_at as string).getTime();
-        const timeDifference = canceledTime - createdAt;
-        const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-        return timeDifference < twentyFourHoursInMillis;
-      });
       setPlayerCanceled(below24Hours);
     } else if (filterValue === 2) {
-      const above24Hours = bookings.filter((arcadeBooking: ZoneBookingDetails) => {
-        const createdAt = new Date(arcadeBooking.created_at as string).getTime();
-        const canceledTime = new Date(arcadeBooking.canceled_at as string).getTime();
-        const timeDifference = canceledTime - createdAt;
-        const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-        return timeDifference >= twentyFourHoursInMillis;
-      });
+      const above24Hours = bookings.filter(
+        (arcadeBooking: ZoneBookingDetails) => {
+          const createdAt = new Date(
+            arcadeBooking.created_at as string
+          ).getTime();
+          const canceledTime = new Date(
+            arcadeBooking.canceled_at as string
+          ).getTime();
+          const timeDifference = canceledTime - createdAt;
+          const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+          return timeDifference >= twentyFourHoursInMillis;
+        }
+      );
       setPlayerCanceled(above24Hours);
     }
   };
@@ -161,29 +135,36 @@ const PlayerCanceled = () => {
     message.info("Click on menu item.");
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}api/getarcadebookings`);
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}api/getarcadebookings`
+      );
       const data = await res.json();
       setPlayerCanceled(data);
-      const filteredData2 = data.filter((zoneBookingDetails: ZoneBookingDetails) =>
-        zoneBookingDetails.status === "success"
+      const filteredData2 = data.filter(
+        (zoneBookingDetails: ZoneBookingDetails) =>
+          zoneBookingDetails.status === "success"
       );
       let sortedBookings = [...filteredData2];
       switch (e.key) {
         case "1":
-          sortedBookings.sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
-            const rateA = Number(a.zone.rate) * Number(a.participant_count);
-            const rateB = Number(b.zone.rate) * Number(b.participant_count);
-            return rateB - rateA;
-          });
+          sortedBookings.sort(
+            (a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+              const rateA = Number(a.zone.rate) * Number(a.participant_count);
+              const rateB = Number(b.zone.rate) * Number(b.participant_count);
+              return rateB - rateA;
+            }
+          );
           break;
         case "2":
-          sortedBookings.sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
-            const nameA = a.zone.arcade.arcade_name.toLowerCase();
-            const nameB = b.zone.arcade.arcade_name.toLowerCase();
-            if (nameA < nameB) return -1;
-            if (nameA > nameB) return 1;
-            return 0;
-          });
+          sortedBookings.sort(
+            (a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+              const nameA = a.zone.arcade.arcade_name.toLowerCase();
+              const nameB = b.zone.arcade.arcade_name.toLowerCase();
+              if (nameA < nameB) return -1;
+              if (nameA > nameB) return 1;
+              return 0;
+            }
+          );
           break;
         default:
           break;
