@@ -41,7 +41,6 @@ const PlayerCanceled = () => {
   >([]);
   const [search, setSearch] = useState<string>("");
 
-
   const fetchData = async () => {
     try {
       const res = await axios.get(
@@ -72,11 +71,7 @@ const PlayerCanceled = () => {
       setCanceledByPlayer(playerCanceledBookings);
       filterBookingsByTime(playerCanceledBookings, value);
       setLoading(false);
-      setCanceledByPlayer(playerCanceledBookings);
-      filterBookingsByTime(playerCanceledBookings, value);
-      setLoading(false);
     } catch (e) {
-      console.error(e);
       console.error(e);
     }
   };
@@ -136,25 +131,6 @@ const PlayerCanceled = () => {
     setSearch(value.trim());
   };
 
-
-  const onChange = (e: RadioChangeEvent) => {
-    const newValue = e.target.value;
-    setValue(newValue);
-    filterBookingsByTime(canceledByPlayer, newValue);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [search]);
-
-  useEffect(() => {
-    filterBookingsByTime(canceledByPlayer, value);
-  }, [value, canceledByPlayer]);
-
-  const onSearch: SearchProps["onSearch"] = (value: string) => {
-    setSearch(value.trim());
-  };
-
   const handleMenuClick: MenuProps["onClick"] = async (e) => {
     message.info("Click on menu item.");
     setLoading(true);
@@ -164,8 +140,9 @@ const PlayerCanceled = () => {
       );
       const data = await res.json();
       setPlayerCanceled(data);
-      const filteredData2 = data.filter((zoneBookingDetails: ZoneBookingDetails) =>
-        zoneBookingDetails.status === "success"
+      const filteredData2 = data.filter(
+        (zoneBookingDetails: ZoneBookingDetails) =>
+          zoneBookingDetails.status === "success"
       );
       let sortedBookings = [...filteredData2];
       switch (e.key) {
@@ -179,13 +156,15 @@ const PlayerCanceled = () => {
           );
           break;
         case "2":
-          sortedBookings.sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
-            const nameA = a.zone.arcade.arcade_name.toLowerCase();
-            const nameB = b.zone.arcade.arcade_name.toLowerCase();
-            if (nameA < nameB) return -1;
-            if (nameA > nameB) return 1;
-            return 0;
-          });
+          sortedBookings.sort(
+            (a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+              const nameA = a.zone.arcade.arcade_name.toLowerCase();
+              const nameB = b.zone.arcade.arcade_name.toLowerCase();
+              if (nameA < nameB) return -1;
+              if (nameA > nameB) return 1;
+              return 0;
+            }
+          );
           break;
         default:
           break;
@@ -197,7 +176,6 @@ const PlayerCanceled = () => {
       setLoading(false);
     }
   };
-
 
   const items: MenuProps["items"] = [
     {
@@ -224,7 +202,6 @@ const PlayerCanceled = () => {
       disabled: true,
     },
   ];
-
 
   const menuProps = {
     items,
