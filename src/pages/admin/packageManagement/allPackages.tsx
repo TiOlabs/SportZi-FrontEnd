@@ -14,7 +14,7 @@ const AllPackagers = () => {
     const fetchPackages = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/getPackageDetails"
+          `${process.env.REACT_APP_API_URL}getPackageDetails`
         );
         setPackages(response.data);
         console.log(response.data);

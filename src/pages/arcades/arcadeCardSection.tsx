@@ -48,7 +48,9 @@ const ArcadeCardSection = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/api/getarcadeDetails");
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}api/getarcadeDetails`
+      );
       const data = await res.json();
       let sortedArcades = [...data];
       if (search !== "") {
@@ -90,7 +92,9 @@ const ArcadeCardSection = () => {
     console.log("click", e);
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/api/getarcadeDetails");
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}api/getarcadeDetails`
+      );
       const data = await res.json();
       let sortedArcades = [...data];
       switch (e.key) {

@@ -21,6 +21,7 @@ import {
   Arcade,
   Coach,
   CoachAssignDetails,
+  User,
   Zone,
   ZoneBookingDetails,
 } from "../../types";
@@ -43,7 +44,7 @@ const CoachBookingForm: React.FC = () => {
   }
   const { setZoneBookings } = useContext(ZoneBookingsContext);
   const { userDetails } = useUser();
-  const [userData, setUserData] = useState<any>();
+  const [userData, setUserData] = useState<User>();
   const [avaliability, setAvaliability] = useState<any>();
   const [coachData, setcoachData] = useState<Coach>();
   const [time, setTime] = useState<string>("");
@@ -94,7 +95,7 @@ const CoachBookingForm: React.FC = () => {
     try {
       const fetchData = async () => {
         const resPaymentDetails = await fetch(
-          `http://localhost:8000/api/getuser/${userDetails.id}`
+          `${process.env.REACT_APP_API_URL}api/getuser/${userDetails.id}`
         );
         const paymentDetailsData = await resPaymentDetails.json();
         console.log(paymentDetailsData);
@@ -213,7 +214,7 @@ const CoachBookingForm: React.FC = () => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          `http://localhost:8000/api/getZoneDetails/${zone}`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetails/${zone}`
         );
 
         const data = await res.json();
@@ -231,7 +232,7 @@ const CoachBookingForm: React.FC = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbydate/${datee}/${zone}`
+          `${process.env.REACT_APP_API_URL}api/getarcadebookingbydate/${datee}/${zone}`
         );
 
         const data = await res.json();
@@ -300,7 +301,7 @@ const CoachBookingForm: React.FC = () => {
   const handleFinish = async () => {
     console.log("gggggggggg");
     console.log(date, time, pcount, zoneForCoachBookings);
-    console.log(userData.user_id);
+    console.log(userData?.user_id);
     const pcountInt = parseInt(pcount);
 
     if (parseInt(pcount) <= 0) {
@@ -336,7 +337,7 @@ const CoachBookingForm: React.FC = () => {
           time: time,
           fullAmount: finalAmaount,
           participant_count: pcountInt,
-          user_id: userData.user_id,
+          user_id: userData?.user_id,
           zone_id: zone,
           way_of_booking: reservationType,
           booking_type: "coach",
@@ -1042,10 +1043,10 @@ const CoachBookingForm: React.FC = () => {
                   first_name={userData?.firstname}
                   last_name={userData?.lastname}
                   email={userData?.email}
-                  phone={userData?.phone}
+                  phone={userData?.accountNumber}
                   address={userData?.address}
                   city={userData?.city}
-                  country={userData?.contry}
+                  country={userData?.country}
                   date={datee}
                   time={time}
                   pcount={pcount}
@@ -1060,6 +1061,15 @@ const CoachBookingForm: React.FC = () => {
                     (timeParticipantCounts1.find((item) => item.time === time)
                       ?.totalParticipantCount || 0)
                   }
+                  coach_email={coachData?.user.email}
+                  coach_name={
+                    coachData?.user.firstname + " " + coachData?.user.lastname
+                  }
+                  role={userData?.role}
+                  zone_name={zoneDetails?.zone_name}
+                  user_name={userData?.firstname + " " + userData?.lastname}
+                  arcade_name={arcadesofCoache?.arcade_name}
+
                   //zoneId={zoneId}
                   //reservation_type={zone}
                   //avaiableParticipantCount={

@@ -60,7 +60,7 @@ const AvailableMetingstoPlayer = (props: any) => {
     }
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+        `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${props.booking_id}`,
         {
           zone_booking_id: props.booking_id,
           status: "canceled_By_Player",

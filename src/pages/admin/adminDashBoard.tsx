@@ -155,7 +155,7 @@ const AdminPannel = () => {
   useEffect(() => {
     const fetchZoneBookings = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/getarcadebookings`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}api/getarcadebookings`);
         const data = await res.json();
         setZoneBookings(data);
         console.log(data);

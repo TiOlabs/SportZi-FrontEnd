@@ -87,7 +87,7 @@ const BookingForm = () => {
     try {
       const fetchData = async () => {
         const resPaymentDetails = await fetch(
-          `http://localhost:8000/api/getuser/${userId}`
+          `${process.env.REACT_APP_API_URL}api/getuser/${userId}`
         );
         const paymentDetailsData = await resPaymentDetails.json();
         console.log(paymentDetailsData);
@@ -103,7 +103,7 @@ const BookingForm = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbydate/${selectedDate}/${zoneId}`
+          `${process.env.REACT_APP_API_URL}api/getarcadebookingbydate/${selectedDate}/${zoneId}`
         );
 
         const data = await res.json();
@@ -185,7 +185,7 @@ const BookingForm = () => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          `http://localhost:8000/api/getZoneDetails/${zoneId}`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetails/${zoneId}`
         );
 
         const data = await res.json();
@@ -592,7 +592,7 @@ const BookingForm = () => {
                     }}
                   >
                     <Select
-                      placeholder="Select a Zone"
+                      placeholder="Reservation Type"
                       onChange={(value) => setZone(value)}
                       allowClear
                       style={{
@@ -843,6 +843,11 @@ const BookingForm = () => {
                     (timeParticipantCounts1.find((item) => item.time === time)
                       ?.totalParticipantCount ?? 0)
                   }
+                  arcade_email={zoneDetails?.arcade.arcade_email}
+                  arcade_name={zoneDetails?.arcade.arcade_name}
+                  role={paymentDetails?.role}
+                  zone_name={zoneDetails?.zone_name}
+
                 />
               </div>
             </Col>

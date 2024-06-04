@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 // Define custom Axios instance with type AxiosInstance
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8000", 
+  baseURL: `${process.env.REACT_APP_API_URL}/`, 
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",

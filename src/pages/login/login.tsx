@@ -25,10 +25,13 @@ const Login = () => {
 
   const onFinish = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/api/login", {
-        email: email,
-        password: password,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/login`,
+        {
+          email: email,
+          password: password,
+        }
+      );
 
       Cookies.set("token", res.data.token, {
         expires: 1,
@@ -49,7 +52,6 @@ const Login = () => {
           : "Login failed"
       );
     }
-    
   };
 
   return (

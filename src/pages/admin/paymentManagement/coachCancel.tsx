@@ -7,7 +7,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { SearchProps } from "antd/es/input";
 const CoachCancelCoachBookins = () => {
-  const [ArcadeBookingDetails, setArcadeBookingDetails] = useState<
+  const [arcadeBookingDetails, setArcadeBookingDetails] = useState<
     CoachBookingDetails[]
   >([]);
   const [loading, setLoading] = useState(true);
@@ -18,8 +18,9 @@ const CoachCancelCoachBookins = () => {
     []
   );
   const [search, setSearch] = useState<string>("");
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState<number>(1);
 
+<<<<<<< Updated upstream
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,76 +29,49 @@ const CoachCancelCoachBookins = () => {
         );
         const data = await res.data;
         setArcadeCanceled(data);
+=======
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/getCoachBookings`
+      );
+      const data = await res.data;
+      setArcadeBookingDetails(data);
+>>>>>>> Stashed changes
 
-        let sortedBookings = data.filter(
-          (coachBooking: { status: string }) =>
-            coachBooking.status === "canceled_By_Coach"
-        );
+      const canceledByCoach = data.filter(
+        (coachBooking: CoachBookingDetails) =>
+          coachBooking.status === "canceled_By_Coach"
+      );
 
-        // Filter based on search string and status
-        sortedBookings = sortedBookings.filter(
-          (coachBooking: CoachBookingDetails) =>
-            (search === "" || coachBooking.status === "canceled_By_Coach") &&
-            (coachBooking.zone.zone_name
-              .toLowerCase()
-              .includes(search.toLowerCase()) ||
-              coachBooking.player.user.firstname
-                .toLowerCase()
-                .includes(search.toLowerCase()) ||
-              coachBooking.date.includes(search) ||
-              (
-                Number(coachBooking.zone.rate) *
-                  Number(coachBooking.participant_count) +
-                Number(coachBooking.zone.rate) *
-                  Number(coachBooking.participant_count)
-              )
-                .toString()
-                .includes(search))
-        );
-
-        setArcadeCanceled(sortedBookings);
-        setArcadeCanceled(sortedBookings);
-        setLoading(false);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    fetchData();
-  }, [search]);
-
-  const onSearch: SearchProps["onSearch"] = (value: string) => {
-    setSearch(value.trim());
+      filterBookingsByTime(canceledByCoach, value);
+      setCanceledByArcade(canceledByCoach);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const onChange = (e: RadioChangeEvent) => {
-    const newValue = e.target.value;
-    setValue(newValue);
-
-    if (newValue === 1) {
-      const below24Hours = arcadeCanceled.filter(
+  const filterBookingsByTime = (
+    bookings: CoachBookingDetails[],
+    filterValue: number
+  ) => {
+    if (filterValue === 1) {
+      const below24Hours = bookings.filter(
         (coachBooking: CoachBookingDetails) => {
-          const canceledTime = new Date(
-            coachBooking.canceled_at as string
-          ).getTime();
-          const createdTime = new Date(
-            coachBooking.created_at as string
-          ).getTime();
+          const canceledTime = new Date(coachBooking.canceled_at as string).getTime();
+          const createdTime = new Date(coachBooking.created_at as string).getTime();
           const timeDifference = canceledTime - createdTime;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
           return timeDifference < twentyFourHoursInMillis;
         }
       );
       setArcadeCanceled(below24Hours);
-    } else if (newValue === 2) {
-      const above24Hours = arcadeCanceled.filter(
+    } else if (filterValue === 2) {
+      const above24Hours = bookings.filter(
         (coachBooking: CoachBookingDetails) => {
-          const canceledTime = new Date(
-            coachBooking.canceled_at as string
-          ).getTime();
-          const createdTime = new Date(
-            coachBooking.created_at as string
-          ).getTime();
+          const canceledTime = new Date(coachBooking.canceled_at as string).getTime();
+          const createdTime = new Date(coachBooking.created_at as string).getTime();
           const timeDifference = canceledTime - createdTime;
           const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
           return timeDifference >= twentyFourHoursInMillis;
@@ -106,6 +80,68 @@ const CoachCancelCoachBookins = () => {
       setArcadeCanceled(above24Hours);
     }
   };
+
+  const onChange = (e: RadioChangeEvent) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    filterBookingsByTime(canceledByArcade, newValue);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [search]);
+
+  useEffect(() => {
+    filterBookingsByTime(canceledByArcade, value);
+  }, [value, canceledByArcade]);
+
+  const onSearch = (value: string) => {
+    setSearch(value.trim());
+  };
+
+  // const handleMenuClick = async (e) => {
+  //   message.info("Click on menu item.");
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("http://localhost:8000/api/getCoachBookings");
+  //     const data = await res.json();
+  //     setArcadeCanceled(data);
+  //     const filteredData = data.filter(
+  //       (coachBooking: CoachBookingDetails) =>
+  //         coachBooking.status === "canceled_By_Coach"
+  //     );
+  //     let sortedBookings = [...filteredData];
+  //     switch (e.key) {
+  //       case "1":
+  //         sortedBookings.sort(
+  //           (a: CoachBookingDetails, b: CoachBookingDetails) => {
+  //             const rateA = Number(a.zone.rate) * Number(a.participant_count);
+  //             const rateB = Number(b.zone.rate) * Number(b.participant_count);
+  //             return rateB - rateA;
+  //           }
+  //         );
+  //         break;
+  //       case "2":
+  //         sortedBookings.sort(
+  //           (a: CoachBookingDetails, b: CoachBookingDetails) => {
+  //             const nameA = a.zone.zone_name.toLowerCase();
+  //             const nameB = b.zone.zone_name.toLowerCase();
+  //             if (nameA < nameB) return -1;
+  //             if (nameA > nameB) return 1;
+  //             return 0;
+  //           }
+  //         );
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //     setArcadeCanceled(sortedBookings);
+  //   } catch (error) {
+  //     console.error("Error fetching and sorting data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>

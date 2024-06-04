@@ -27,7 +27,7 @@ const CoachRequstRow = (props: any) => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbyCreatedTime/${props.created_at}/${props.user_id}`
+          `${process.env.REACT_APP_API_URL}api/getarcadebookingbyCreatedTime/${props.created_at}/${props.user_id}`
         );
 
         const data = await res.json();
@@ -90,7 +90,7 @@ const CoachRequstRow = (props: any) => {
         }
         try {
           const response = await axios.put(
-            `http://localhost:8000/api/updatecoachBooking/${props.booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
             {
               booking_id: props.booking_id,
               status: "canceled_By_Player",
@@ -117,7 +117,7 @@ const CoachRequstRow = (props: any) => {
             console.log(error);
           }
           const res = await axios.put(
-            `http://localhost:8000/api/updatearcadebooking/${zoneBookingDetalsByCreateTime[0]?.zone_booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${zoneBookingDetalsByCreateTime[0]?.zone_booking_id}`,
             {
               zone_booking_id:
                 zoneBookingDetalsByCreateTime[0]?.zone_booking_id,
