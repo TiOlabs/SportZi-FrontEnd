@@ -431,7 +431,7 @@ const ArcadeProfileArcade = () => {
       }
     }
   }, [arcadeDetails]);
-  console.log("sport", sport);
+
   return (
     <>
       <NavbarProfile />
