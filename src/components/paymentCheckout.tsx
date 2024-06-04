@@ -17,6 +17,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
   console.log(zoneBookings);
   console.log(zoneBookings.zoneBookings.date);
   console.log(props.first);
+  console.log(props.first_name + " " + props.last_name)
 
   // Put the payment variables here
   const [messageApi, contextHolder] = message.useMessage();
@@ -70,7 +71,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
     console.log(zoneBookings.zoneBookings.zone_id);
     console.log(zoneBookings.zoneBookings.way_of_booking);
     console.log(zoneBookings.zoneBookings.booking_type);
-
+    console.log(props.first_name + " " + props.last_name)
     axios
       .post("http://localhost:8000/api/addarcadebooking", {
         status: "success",
@@ -83,6 +84,13 @@ const PaymentModal = (props: any): JSX.Element | null => {
         way_of_booking: zoneBookings.zoneBookings.way_of_booking,
         booking_type: zoneBookings.zoneBookings.booking_type,
         created_at: zoneBookings.zoneBookings.created_at,
+        arcade_email: props.arcade_email,
+        arcade_name: props.arcade_name,
+        role: props.role,
+        reservation_type:props.reservation_type,
+        zone_name: props.zone_name,
+        user_name:props.first_name + " " + props.last_name,
+        email:props.email,
       })
       .then((res) => {
         console.log("Payment completed.");
@@ -113,6 +121,14 @@ const PaymentModal = (props: any): JSX.Element | null => {
         coach_id: props.coach_id,
         arcade_id: props.arcadeId,
         created_at: zoneBookings.zoneBookings.created_at,
+        coach_email: props.coach_email,
+        coach_name: props.coach_name,
+        role: props.role,
+        reservation_type:props.reservation_type,
+        zone_name: props.zone_name,
+        user_name:props.first_name + " " + props.last_name,
+        email:props.email,
+        arcade_name:props.arcade_name,
       })
       .then((res) => {
         console.log("Payment completed.");

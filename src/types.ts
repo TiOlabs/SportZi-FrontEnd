@@ -125,7 +125,7 @@ export interface User {
   city: String;
   country: String;
   user_image: String;
-  Phone: UserPhone;
+  Phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
 }

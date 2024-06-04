@@ -592,7 +592,7 @@ const BookingForm = () => {
                     }}
                   >
                     <Select
-                      placeholder="Select a Zone"
+                      placeholder="Reservation Type"
                       onChange={(value) => setZone(value)}
                       allowClear
                       style={{
@@ -843,6 +843,11 @@ const BookingForm = () => {
                     (timeParticipantCounts1.find((item) => item.time === time)
                       ?.totalParticipantCount ?? 0)
                   }
+                  arcade_email={zoneDetails?.arcade.arcade_email}
+                  arcade_name={zoneDetails?.arcade.arcade_name}
+                  role={paymentDetails?.role}
+                  zone_name={zoneDetails?.zone_name}
+                  
                 />
               </div>
             </Col>
