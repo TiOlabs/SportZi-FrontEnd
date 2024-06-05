@@ -901,7 +901,7 @@ const CoachBookingForm: React.FC = () => {
                                         );
                                       }) ||
                                       isPackageDayAndTime(
-                                        `${slot.startTime}-${slot.endTime}`e
+                                        `${slot.startTime}-${slot.endTime}`
                                       ) ||
                                       isCoachInthePackage(
                                         `${slot.startTime}-${slot.endTime}`
