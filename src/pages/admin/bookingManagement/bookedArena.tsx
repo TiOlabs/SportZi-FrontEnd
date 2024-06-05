@@ -35,7 +35,7 @@ const BookedArena = (props: any) => {
   const [search, setSearch] = useState<string>("");
   const fetchData = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/getarcadebookings`);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}api/getarcadebookings`);
       const data = await res.json();
       let sortedBookings = data.filter(
         (zoneBooking: { booking_type: string; status: string }) =>
@@ -78,7 +78,7 @@ const BookedArena = (props: any) => {
     console.log("click", e);
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/api/getarcadebookings");
+      const res = await fetch(`${process.env.REACT_APP_API_URL}api/getarcadebookings`);
       const data = await res.json();
       console.log("data", data);
       setZoneBookingDetails(data);
@@ -202,8 +202,7 @@ const BookedArena = (props: any) => {
               booked_Arena={ZoneBookingDetails.zone.zone_name}
               booked_by={ZoneBookingDetails.user.firstname}
               rate={
-                Number(ZoneBookingDetails.zone.rate) *
-                Number(ZoneBookingDetails.participant_count)
+                ZoneBookingDetails.full_amount
               }
               user_id={ZoneBookingDetails.user.user_id}
               zone_id={ZoneBookingDetails.zone.zone_id}
@@ -271,7 +270,7 @@ function DataRow(props: any) {
         // }
         try {
           const response = await axios.put(
-            `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${props.booking_id}`,
             {
               zone_booking_id: props.booking_id,
               status: "canceled_By_Admin",

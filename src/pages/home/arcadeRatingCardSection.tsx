@@ -7,7 +7,9 @@ const ArcadeRatingCardsSection = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await fetch("http://localhost:8000/api/getarcaderatings");
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getarcaderatings`
+        );
         const data = await res.json();
         setArcadeRatings(data);
       };

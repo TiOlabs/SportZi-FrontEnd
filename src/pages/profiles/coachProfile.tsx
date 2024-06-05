@@ -56,6 +56,8 @@ const CoachProfile = () => {
   >([]);
   const { coachDetails } = useContext(CoachContext);
   console.log("coachDetails", coachDetails);
+  const coach_id = coachDetails?.id;
+  console.log("coach_id", coach_id);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -68,7 +70,7 @@ const CoachProfile = () => {
   useEffect(() => {
     axiosInstance
       .get(
-        `${process.env.REACT_APP_API_URL}api/auth/getcoachDetailsForCoach/${coachId}`
+        `${process.env.REACT_APP_API_URL}api/auth/getcoachDetailsForCoach/${coachDetails?.id}`
       )
       .then((res) => {
         setDetails(res.data);
@@ -181,11 +183,11 @@ const CoachProfile = () => {
   const acceptedMeetings = [<CoachAccepteLst />];
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachDetails?.id}`
-        );
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachDetails?.id}`
+      )
+      .then((res) => {
         const data = res.data;
 
         if (value2 === 4) {
@@ -203,13 +205,12 @@ const CoachProfile = () => {
         }
 
         console.log(data);
-      };
+      })
 
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  }, [coachDetails, value2]);
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [coachAssignDetails, value2]);
 
   const [filterBy, setFilterBy] = useState("date");
   const [filterValue, setFilterValue] = useState(""); // Assuming value is for Radio.Group
@@ -237,6 +238,8 @@ const CoachProfile = () => {
       return booking.rate && booking.rate.toString().includes(filterValue);
     } else if (filterBy === "booking_id") {
       return booking.booking_id.toString().includes(filterValue);
+    } else if (filterBy === "status") {
+      return booking.status.includes(filterValue);
     }
     return true;
   });
@@ -868,6 +871,7 @@ const CoachProfile = () => {
               <Option value="player_name">Player Name</Option>
               <Option value="arcade_name">Arcade Name</Option>
               <Option value="booking_id">Booking ID</Option>
+              <Option value="status">Status</Option>
             </Select>
             <Input
               placeholder="Enter filter value"
@@ -1068,6 +1072,7 @@ const CoachProfile = () => {
               arcade_email={booking.arcade.arcade_email}
               arcade_name={booking.arcade.arcade_name}
               status={booking.status}
+              full_amount={booking.full_amount}
             />
           ))
         ) : (

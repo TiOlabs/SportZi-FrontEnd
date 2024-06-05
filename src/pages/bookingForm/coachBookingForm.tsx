@@ -76,6 +76,8 @@ const CoachBookingForm: React.FC = () => {
     CoachEnrollDetailsForPackages[]
   >([]);
 
+
+
   const currentCoachId = useRef(coachId);
 
   const handleDateChange = (datee: any) => {
@@ -110,6 +112,7 @@ const CoachBookingForm: React.FC = () => {
       console.log("errrr", e);
     }
   }, [coachId]);
+
 
   useEffect(() => {
     try {
@@ -560,6 +563,7 @@ const CoachBookingForm: React.FC = () => {
     );
   };
 
+
   return (
     <>
       <NavbarProfile />
@@ -831,6 +835,7 @@ const CoachBookingForm: React.FC = () => {
                                 ) ||
                                 isCoachInthePackage(
                                   `${slot.startTime}-${slot.endTime}`
+
                                 )
                               }
                               style={{
@@ -896,10 +901,11 @@ const CoachBookingForm: React.FC = () => {
                                         );
                                       }) ||
                                       isPackageDayAndTime(
-                                        `${slot.startTime}-${slot.endTime}`
+                                        `${slot.startTime}-${slot.endTime}`e
                                       ) ||
                                       isCoachInthePackage(
                                         `${slot.startTime}-${slot.endTime}`
+
                                       )
                                     ? "#FF0000" // Red color when disabled due to package time
                                     : "#2EA8BF",
@@ -936,6 +942,7 @@ const CoachBookingForm: React.FC = () => {
                                     `${slot.startTime}-${slot.endTime}`
                                   )
                                 ? `${slot.startTime}-${slot.endTime} : Coach has a Package`
+
                                 : `${slot.startTime}-${slot.endTime}`}
                             </Button>
                           </ConfigProvider>

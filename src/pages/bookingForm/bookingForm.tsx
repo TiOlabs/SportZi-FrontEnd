@@ -25,6 +25,7 @@ import NavbarProfile from "../../components/NavBarProfile";
 import dayjs from "dayjs";
 import { count } from "console";
 import { max } from "moment";
+import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
 
 const { Option } = Select;
 
@@ -86,7 +87,7 @@ const BookingForm = () => {
     try {
       const fetchData = async () => {
         const resPaymentDetails = await fetch(
-          `http://localhost:8000/api/getuser/${userId}`
+          `${process.env.REACT_APP_API_URL}api/getuser/${userId}`
         );
         const paymentDetailsData = await resPaymentDetails.json();
         console.log(paymentDetailsData);
@@ -102,7 +103,7 @@ const BookingForm = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbydate/${selectedDate}/${zoneId}`
+          `${process.env.REACT_APP_API_URL}api/getarcadebookingbydate/${selectedDate}/${zoneId}`
         );
 
         const data = await res.json();
@@ -184,7 +185,7 @@ const BookingForm = () => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          `http://localhost:8000/api/getZoneDetails/${zoneId}`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetails/${zoneId}`
         );
 
         const data = await res.json();
@@ -233,6 +234,16 @@ const BookingForm = () => {
     fullAmount = Number(rate) * Number(pcount);
   } else if (zoneDetails?.full_zone_rate !== 0 && zone === "full") {
     fullAmount = Number(zoneDetails?.full_zone_rate);
+  }
+  let finalAmount;
+  if (zoneDetails?.discount.discount_percentage === null) {
+    finalAmount = fullAmount ?? 0;
+  } else {
+    finalAmount =
+      (fullAmount ?? 0) -
+      ((fullAmount ?? 0) *
+        Number(zoneDetails?.discount.discount_percentage ?? 0)) /
+        100;
   }
   console.log(fullAmount);
 
@@ -581,7 +592,7 @@ const BookingForm = () => {
                     }}
                   >
                     <Select
-                      placeholder="Select a Zone"
+                      placeholder="Reservation Type"
                       onChange={(value) => setZone(value)}
                       allowClear
                       style={{
@@ -812,7 +823,7 @@ const BookingForm = () => {
                   htmlType="submit"
                   item={"Zone Booking"}
                   orderId={5}
-                  amount={fullAmount}
+                  amount={finalAmount}
                   currency={"LKR"}
                   first_name={paymentDetails?.firstname}
                   last_name={paymentDetails?.lastname}
@@ -832,6 +843,11 @@ const BookingForm = () => {
                     (timeParticipantCounts1.find((item) => item.time === time)
                       ?.totalParticipantCount ?? 0)
                   }
+                  arcade_email={zoneDetails?.arcade.arcade_email}
+                  arcade_name={zoneDetails?.arcade.arcade_name}
+                  role={paymentDetails?.role}
+                  zone_name={zoneDetails?.zone_name}
+
                 />
               </div>
             </Col>
@@ -844,5 +860,7 @@ const BookingForm = () => {
     </>
   );
 };
+
+//no
 
 export default BookingForm;

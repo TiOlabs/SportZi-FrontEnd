@@ -58,9 +58,10 @@ const CoachApplyForm = () => {
         }
       );
       console.log(res.data);
-      alert("Applied for Coaching Successfully");
+      message.success("Request Sent Successfully");
     } catch (e) {
       console.log(e);
+      message.error("Error Sending Request");
     }
     setIsModalOpen(false);
   };

@@ -129,8 +129,10 @@ const AddZone = () => {
       );
       console.log();
       UpdateData();
+      message.success("Zone added successfully");
     } catch (error) {
       console.log(error);
+      message.error("Failed to add zone");
     }
     handleOk();
   };
