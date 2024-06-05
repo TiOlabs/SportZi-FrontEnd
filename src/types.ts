@@ -216,3 +216,16 @@ export interface ReportArcade {
   reporter_user: User;
   victim_arcade: Arcade;
 }
+
+export interface CoachEnrollDetailsForPackages {
+  coach_id: String;
+  package_id: String;
+  duration: Number;
+  desCription: String;
+  applied_date: String;
+  status: String;
+  created_at: String;
+  canceled_at: String;
+  coach: Coach;
+  package: Package;
+}

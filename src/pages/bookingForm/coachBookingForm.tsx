@@ -21,6 +21,7 @@ import {
   Arcade,
   Coach,
   CoachAssignDetails,
+  CoachEnrollDetailsForPackages,
   User,
   Zone,
   ZoneBookingDetails,
@@ -71,6 +72,11 @@ const CoachBookingForm: React.FC = () => {
     TimeParticipantCount[]
   >([]);
   const [packageDetails, setPackageDetails] = useState<Arcade>();
+  const [packageEnrollDataForCoach, setPackageEnrollDataForCoach] = useState<
+    CoachEnrollDetailsForPackages[]
+  >([]);
+
+
 
   const currentCoachId = useRef(coachId);
 
@@ -90,6 +96,23 @@ const CoachBookingForm: React.FC = () => {
     console.log(day);
     setDayOfWeek(day);
   };
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getCoachEnrollPackageDetailsForCoachBookingForm/${coachId}`
+        );
+        const packageEnrollDetailsForCoach = await res.json();
+        console.log(packageEnrollDetailsForCoach);
+        setPackageEnrollDataForCoach(packageEnrollDetailsForCoach);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, [coachId]);
+
 
   useEffect(() => {
     try {
@@ -525,6 +548,22 @@ const CoachBookingForm: React.FC = () => {
     );
   };
 
+  const isCoachInthePackage = (buttonId: string) => {
+    if (!dayOfWeek || !packageDetails || !packageDetails.package || !buttonId)
+      return false;
+
+    return packageEnrollDataForCoach.some(
+      (pkg) =>
+        pkg.coach_id === coachId &&
+        pkg.package.packageDayAndTime &&
+        pkg.package.packageDayAndTime.some(
+          (pdt) =>
+            pdt.day === dayOfWeek && isWithinPackageTime(buttonId, pdt.time)
+        )
+    );
+  };
+
+
   return (
     <>
       <NavbarProfile />
@@ -793,6 +832,10 @@ const CoachBookingForm: React.FC = () => {
                                 !arcade ||
                                 isPackageDayAndTime(
                                   `${slot.startTime}-${slot.endTime}`
+                                ) ||
+                                isCoachInthePackage(
+                                  `${slot.startTime}-${slot.endTime}`
+
                                 )
                               }
                               style={{
@@ -858,7 +901,11 @@ const CoachBookingForm: React.FC = () => {
                                         );
                                       }) ||
                                       isPackageDayAndTime(
+                                        `${slot.startTime}-${slot.endTime}`e
+                                      ) ||
+                                      isCoachInthePackage(
                                         `${slot.startTime}-${slot.endTime}`
+
                                       )
                                     ? "#FF0000" // Red color when disabled due to package time
                                     : "#2EA8BF",
@@ -891,6 +938,11 @@ const CoachBookingForm: React.FC = () => {
                                     `${slot.startTime}-${slot.endTime}`
                                   )
                                 ? `${slot.startTime}-${slot.endTime} : Has a Package `
+                                : isCoachInthePackage(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Coach has a Package`
+
                                 : `${slot.startTime}-${slot.endTime}`}
                             </Button>
                           </ConfigProvider>
