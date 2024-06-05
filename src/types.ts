@@ -9,7 +9,6 @@ export interface Zone {
   zone_name: String;
   zone_id: String;
   rate: Number;
-  full_zone_rate: Number;
   arcade_location: String;
   manager_id: String;
   open_time: String;
@@ -26,6 +25,8 @@ export interface Zone {
   zoneBookingDetails: ZoneBookingDetails[];
   coachBookingDetails: CoachBookingDetails[];
   package: Package[];
+  discount: Discount;
+  full_zone_rate: Number;
 }
 export interface Package {
   package_id: String;
@@ -67,7 +68,7 @@ export interface ZoneBookingDetails {
   status: String;
   created_at: String;
   canceled_at: String;
-  rate: Number;
+  full_amount: Number;
   date: String;
   time: String;
   participant_count: Number;
@@ -85,6 +86,7 @@ export interface CoachBookingDetails {
   participant_count: Number;
   date: String;
   time: String;
+  full_amount: Number;
   coach_id: String;
   arcade_id: String;
   player_id: String;
@@ -123,7 +125,7 @@ export interface User {
   city: String;
   country: String;
   user_image: String;
-  Phone: UserPhone;
+  Phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
 }
@@ -213,4 +215,17 @@ export interface ReportArcade {
   victim_arcade_id: String;
   reporter_user: User;
   victim_arcade: Arcade;
+}
+
+export interface CoachEnrollDetailsForPackages {
+  coach_id: String;
+  package_id: String;
+  duration: Number;
+  desCription: String;
+  applied_date: String;
+  status: String;
+  created_at: String;
+  canceled_at: String;
+  coach: Coach;
+  package: Package;
 }

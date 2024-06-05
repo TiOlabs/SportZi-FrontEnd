@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Row,
   Col,
@@ -21,6 +21,8 @@ import {
   Arcade,
   Coach,
   CoachAssignDetails,
+  CoachEnrollDetailsForPackages,
+  User,
   Zone,
   ZoneBookingDetails,
 } from "../../types";
@@ -33,6 +35,7 @@ import { ZoneBookingsContext } from "../../context/zoneBookings.context";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import NavbarProfile from "../../components/NavBarProfile";
+import { useUser } from "../../context/userContext";
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
@@ -41,7 +44,8 @@ const CoachBookingForm: React.FC = () => {
     totalParticipantCount: number;
   }
   const { setZoneBookings } = useContext(ZoneBookingsContext);
-  const [userDetails, setUserDetails] = useState<any>();
+  const { userDetails } = useUser();
+  const [userData, setUserData] = useState<User>();
   const [avaliability, setAvaliability] = useState<any>();
   const [coachData, setcoachData] = useState<Coach>();
   const [time, setTime] = useState<string>("");
@@ -67,6 +71,12 @@ const CoachBookingForm: React.FC = () => {
   const [timeParticipantCounts1, setTimeParticipantCounts1] = useState<
     TimeParticipantCount[]
   >([]);
+  const [packageDetails, setPackageDetails] = useState<Arcade>();
+  const [packageEnrollDataForCoach, setPackageEnrollDataForCoach] = useState<
+    CoachEnrollDetailsForPackages[]
+  >([]);
+
+  const currentCoachId = useRef(coachId);
 
   const handleDateChange = (datee: any) => {
     // Extract the date part from the Day.js object
@@ -84,59 +94,79 @@ const CoachBookingForm: React.FC = () => {
     console.log(day);
     setDayOfWeek(day);
   };
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const decoded = token ? jwtDecode(token) : undefined;
-    setDecodedValues(decoded);
-  }, []);
-  const userID = decodedValues?.userId;
+
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const resPaymentDetails = await fetch(
-          `http://localhost:8000/api/getuser/${userID}`
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getCoachEnrollPackageDetailsForCoachBookingForm/${coachId}`
         );
-        const paymentDetailsData = await resPaymentDetails.json();
-        console.log(paymentDetailsData);
-        setUserDetails(paymentDetailsData);
+        const packageEnrollDetailsForCoach = await res.json();
+        console.log(packageEnrollDetailsForCoach);
+        setPackageEnrollDataForCoach(packageEnrollDetailsForCoach);
       };
       fetchData();
     } catch (e) {
       console.log("errrr", e);
     }
-  }, [userID]);
+  }, [coachId]);
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const resPaymentDetails = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getuser/${userDetails.id}`
+        );
+        const paymentDetailsData = await resPaymentDetails.json();
+        console.log(paymentDetailsData);
+        setUserData(paymentDetailsData);
+      };
+      fetchData();
+    } catch (e) {
+      console.log("errrr", e);
+    }
+  }, [userDetails]);
 
   useEffect(() => {
     console.log(coachId);
     const fetchData = async () => {
+      currentCoachId.current = coachId;
       try {
         const res = await fetch(
           `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachId}`
         );
         const data = await res.json();
         console.log(data);
-        const filteredData = data.filter(
-          (item: any) => item.status === "success"
-        );
-        setCoachAssignDetails(filteredData);
+        if (currentCoachId.current === coachId) {
+          const filteredData = data.filter(
+            (item: { status: string }) => item.status === "success"
+          );
+          setCoachAssignDetails(filteredData);
+        }
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, [coachId, arcade]);
-  console.log(arcade);
+  }, [coachId]);
+
+  console.log(coachId);
+
   useEffect(() => {
+    console.log(coachId);
     const fetchData = async () => {
+      currentCoachId.current = coachId;
       try {
         const res = await fetch(
           `${process.env.REACT_APP_API_URL}api/getcoache/${coachId}`
         );
         const data = await res.json();
         console.log(data);
-        setcoachData(data);
-        console.log(data.sport_id);
-        setCoachSport(data?.sport_id);
+        if (currentCoachId.current === coachId) {
+          setcoachData(data);
+          console.log(data.sport_id);
+          setCoachSport(data?.sport_id);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -204,7 +234,7 @@ const CoachBookingForm: React.FC = () => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          `http://localhost:8000/api/getZoneDetails/${zone}`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetails/${zone}`
         );
 
         const data = await res.json();
@@ -222,7 +252,7 @@ const CoachBookingForm: React.FC = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbydate/${datee}/${zone}`
+          `${process.env.REACT_APP_API_URL}api/getarcadebookingbydate/${datee}/${zone}`
         );
 
         const data = await res.json();
@@ -291,7 +321,7 @@ const CoachBookingForm: React.FC = () => {
   const handleFinish = async () => {
     console.log("gggggggggg");
     console.log(date, time, pcount, zoneForCoachBookings);
-    console.log(userDetails.user_id);
+    console.log(userData?.user_id);
     const pcountInt = parseInt(pcount);
 
     if (parseInt(pcount) <= 0) {
@@ -325,8 +355,9 @@ const CoachBookingForm: React.FC = () => {
         setZoneBookings({
           date: datee,
           time: time,
+          fullAmount: finalAmaount,
           participant_count: pcountInt,
-          user_id: userDetails.user_id,
+          user_id: userData?.user_id,
           zone_id: zone,
           way_of_booking: reservationType,
           booking_type: "coach",
@@ -400,6 +431,7 @@ const CoachBookingForm: React.FC = () => {
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
   let coachAmount = Number(coachData?.rate) * Number(pcount);
+  let coachRate = Number(coachData?.rate);
   let zonerate = Number(zoneDetails?.rate);
   let fullAmount;
   if (
@@ -417,6 +449,18 @@ const CoachBookingForm: React.FC = () => {
   } else if (zoneDetails?.full_zone_rate !== 0 && reservationType === "full") {
     fullAmount = Number(zoneDetails?.full_zone_rate);
   }
+  let finalAmaount = Number(fullAmount) + coachAmount * timeStep;
+
+  // let finalAmount;
+  // if (zoneDetails?.discount === null) {
+  //   finalAmount = fullAmount ?? 0;
+  // } else {
+  //   finalAmount =
+  //     (fullAmount ?? 0) -
+  //     ((fullAmount ?? 0) *
+  //       Number(zoneDetails?.discount.discount_percentage ?? 0)) /
+  //       100;
+  // }
   console.log(fullAmount);
 
   console.log(fullAmount);
@@ -429,6 +473,24 @@ const CoachBookingForm: React.FC = () => {
       cloudName,
     },
   });
+  const arcadeId = arcade;
+  useEffect(() => {
+    console.log(zoneDetails);
+    try {
+      const fetchData = async () => {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${arcade}`
+        );
+
+        const data = await res.json();
+        console.log(data);
+        setPackageDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [zoneDetails]);
   const disabledDate = (current: Dayjs | null): boolean => {
     // Can not select days before today
     const today = dayjs().startOf("day");
@@ -436,6 +498,68 @@ const CoachBookingForm: React.FC = () => {
   };
   let zoneOpenTime = zoneDetails?.open_time;
   let zoneCloseTime = zoneDetails?.close_time;
+  const isWithinPackageTime = (buttonTime: string, packageTime: string) => {
+    const [start, end] = packageTime.split("-");
+    const [buttonStart, buttonEnd] = buttonTime.split("-");
+
+    // Convert times to minutes for easier comparison
+    const timeToMinutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    const buttonStartMinutes = timeToMinutes(buttonStart);
+    const buttonEndMinutes = timeToMinutes(buttonEnd);
+
+    // Check if button time is within the package time
+    const isWithin =
+      buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+
+    // Check for special case: add half-hour slots if needed
+    if (!isWithin) {
+      if (
+        buttonStartMinutes === startMinutes - 30 ||
+        buttonEndMinutes === endMinutes + 30
+      ) {
+        return true;
+      }
+    }
+
+    return isWithin;
+  };
+
+  const isPackageDayAndTime = (buttonId: string) => {
+    if (!dayOfWeek || !packageDetails || !packageDetails.package || !buttonId)
+      return false;
+
+    return packageDetails.package.some(
+      (pkg) =>
+        pkg.zone_id === zone &&
+        pkg.packageDayAndTime &&
+        pkg.packageDayAndTime.some(
+          (pdt) =>
+            pdt.day === dayOfWeek && isWithinPackageTime(buttonId, pdt.time)
+        )
+    );
+  };
+
+  const isCoachInthePackage = (buttonId: string) => {
+    if (!dayOfWeek || !packageDetails || !packageDetails.package || !buttonId)
+      return false;
+
+    return packageEnrollDataForCoach.some(
+      (pkg) =>
+        pkg.coach_id === coachId &&
+        pkg.package.packageDayAndTime &&
+        pkg.package.packageDayAndTime.some(
+          (pdt) =>
+            pdt.day === dayOfWeek && isWithinPackageTime(buttonId, pdt.time)
+        )
+    );
+  };
+
   return (
     <>
       <NavbarProfile />
@@ -701,7 +825,13 @@ const CoachBookingForm: React.FC = () => {
                                   );
                                 }) !== undefined ||
                                 !zone ||
-                                !arcade
+                                !arcade ||
+                                isPackageDayAndTime(
+                                  `${slot.startTime}-${slot.endTime}`
+                                ) ||
+                                isCoachInthePackage(
+                                  `${slot.startTime}-${slot.endTime}`
+                                )
                               }
                               style={{
                                 width: "100%",
@@ -764,8 +894,14 @@ const CoachBookingForm: React.FC = () => {
                                             `${slot.startTime}-${slot.endTime}` &&
                                           item.status === "success"
                                         );
-                                      })
-                                    ? "#FF0000" // Red color when disabled
+                                      }) ||
+                                      isPackageDayAndTime(
+                                        `${slot.startTime}-${slot.endTime}`
+                                      ) ||
+                                      isCoachInthePackage(
+                                        `${slot.startTime}-${slot.endTime}`
+                                      )
+                                    ? "#FF0000" // Red color when disabled due to package time
                                     : "#2EA8BF",
                               }}
                               onClick={() => {
@@ -792,6 +928,14 @@ const CoachBookingForm: React.FC = () => {
                                 );
                               })
                                 ? "Booked"
+                                : isPackageDayAndTime(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Has a Package `
+                                : isCoachInthePackage(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Coach has a Package`
                                 : `${slot.startTime}-${slot.endTime}`}
                             </Button>
                           </ConfigProvider>
@@ -939,19 +1083,19 @@ const CoachBookingForm: React.FC = () => {
                   htmlType="submit"
                   item={"Coach Booking"}
                   orderId={5}
-                  amount={fullAmount}
+                  amount={finalAmaount}
                   currency={"LKR"}
-                  first_name={userDetails?.firstname}
-                  last_name={userDetails?.lastname}
-                  email={userDetails?.email}
-                  phone={userDetails?.phone}
-                  address={userDetails?.address}
-                  city={userDetails?.city}
-                  country={userDetails?.contry}
+                  first_name={userData?.firstname}
+                  last_name={userData?.lastname}
+                  email={userData?.email}
+                  phone={userData?.accountNumber}
+                  address={userData?.address}
+                  city={userData?.city}
+                  country={userData?.country}
                   date={datee}
                   time={time}
                   pcount={pcount}
-                  userId={userDetails?.user_id}
+                  userId={userData?.user_id}
                   zoneId={zone}
                   arcadeId={arcade}
                   sportId={coachSport}
@@ -962,6 +1106,15 @@ const CoachBookingForm: React.FC = () => {
                     (timeParticipantCounts1.find((item) => item.time === time)
                       ?.totalParticipantCount || 0)
                   }
+                  coach_email={coachData?.user.email}
+                  coach_name={
+                    coachData?.user.firstname + " " + coachData?.user.lastname
+                  }
+                  role={userData?.role}
+                  zone_name={zoneDetails?.zone_name}
+                  user_name={userData?.firstname + " " + userData?.lastname}
+                  arcade_name={arcadesofCoache?.arcade_name}
+
                   //zoneId={zoneId}
                   //reservation_type={zone}
                   //avaiableParticipantCount={
