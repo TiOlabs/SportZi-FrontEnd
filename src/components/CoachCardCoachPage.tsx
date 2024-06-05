@@ -83,6 +83,9 @@ const CoachCardCoachPage = (props: any) => {
                     background: "#5587CC",
                     fontWeight: "400",
                   }}
+                  onClick={() => {
+                    localStorage.setItem("coachId", props.coach_id);
+                  }}
                 >
                   Book Coach
                 </Button>

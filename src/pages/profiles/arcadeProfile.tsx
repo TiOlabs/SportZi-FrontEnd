@@ -48,6 +48,7 @@ import NavbarProfile from "../../components/NavBarProfile";
 import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
+import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -562,7 +563,7 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.arcade_name}
+                {arcade && arcade?.arcade_name}
               </h1>
               <p
                 style={{
@@ -1076,7 +1077,7 @@ const ArcadeProfileArcade = () => {
 
         <AddPhotoButton />
       </div>
-      <PhotoCollage />
+      <PhotoCollageForArcade arcade_id={ArcadeId} />
       <Row
         style={{
           paddingTop: "100px",
@@ -1185,7 +1186,6 @@ const ArcadeProfileArcade = () => {
       <Row
         style={{
           paddingTop: "100px",
-
           width: "100%",
           background: "white",
           minHeight: "600px",
@@ -2495,6 +2495,44 @@ const ArcadeProfileArcade = () => {
               <ReviewCard />
             </Col>
           </Row>
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            Report Genaration
+          </Typography>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={24}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+            marginBottom: "100px",
+          }}
+        >
+          <ReportGenarationForArcade />
         </Col>
       </Row>
       <AppFooter />

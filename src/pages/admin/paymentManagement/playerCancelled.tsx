@@ -19,7 +19,6 @@ import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { any } from "prop-types";
-import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import {
   DollarOutlined,
   DownOutlined,
