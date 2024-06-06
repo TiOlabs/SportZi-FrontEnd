@@ -23,7 +23,7 @@ export interface Zone {
   sport: Sport;
   zoneBookingDetails: ZoneBookingDetails[];
   coachBookingDetails: CoachBookingDetails[];
-  package: Package[]; 
+  package: Package[];
 }
 export interface Package {
   package_id: String;
@@ -167,7 +167,7 @@ export interface Arcade {
   manager_id: String;
   opening_time: String;
   closing_time: String;
-  arcade_address: String;
+  address: String;
   arcade_image: String;
   arcadefeedbacks: ArcadeFeedbacks[];
   zone: Zone[];

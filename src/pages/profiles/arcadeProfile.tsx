@@ -417,20 +417,24 @@ const ArcadeProfileArcade = () => {
 
   const [arcadeName, setArcadeName] = useState<any>();
   const [discription, setDiscription] = useState<any>();
+  const [address, setAddress] = useState<any>();
   const [sport, setSport] = useState<any[]>([]);
   useEffect(() => {
     if (arcadeDetails) {
       setArcadeName(arcadeDetails.arcade_name);
       setDiscription(arcadeDetails.distription);
+      setAddress(arcadeDetails.address);
 
       if (arcade?.zone) {
-        const sports = arcade.zone
-          .map((zoneItem) => zoneItem.sport)
-          .map((sportItem) => sportItem.sport_name);
+        const sports = Array.from(
+          new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
+        );
         setSport(sports);
       }
     }
   }, [arcadeDetails]);
+
+  //sports array also have the duplicate values how to remove it
 
   return (
     <>
@@ -587,20 +591,7 @@ const ArcadeProfileArcade = () => {
               >
                 {arcadeName}
               </h1>
-              <p
-                style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
 
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
-                }}
-              >
-                cricket, baseball,Swimming
-              </p>
               <p
                 style={{
                   margin: "0px",
@@ -613,8 +604,8 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                {arcadeDetails?.arcade_address &&
-                  arcadeDetails.arcade_address
+                {address &&
+                  address
                     .split(",")
                     .map(
                       (
@@ -743,7 +734,7 @@ const ArcadeProfileArcade = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
+              dataSource={sport}
               renderItem={(item) => (
                 <List.Item
                   style={{
