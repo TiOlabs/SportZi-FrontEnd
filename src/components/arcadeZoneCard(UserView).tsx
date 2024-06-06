@@ -1,11 +1,12 @@
 import { Button, Col, Grid, Modal, Row, Typography } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import UpdateZone from "./UpdateZone";
 import { ZoneBookingsContext } from "../context/zoneBookings.context";
 import { Link } from "react-router-dom";
+
 const ArcadeZoneCardUserView = (props: any) => {
   console.log("lol ", props);
   const [cloudName] = useState("dle0txcgt");
@@ -14,11 +15,18 @@ const ArcadeZoneCardUserView = (props: any) => {
       cloudName,
     },
   });
+
   const { setZoneId } = useContext(ZoneBookingsContext);
+
   const { useBreakpoint } = Grid;
+
   const { lg } = useBreakpoint();
   const [open, setOpen] = useState(false);
-  setZoneId(props.id);
+
+  useEffect(() => {
+    setZoneId(props.id);
+  }, [props.id]);
+
   const showModal = async () => {
     console.log("props.id", props.id);
     localStorage.setItem("zoneId", props.id);

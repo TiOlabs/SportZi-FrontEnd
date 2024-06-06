@@ -64,21 +64,25 @@ const CoachApplyForm = () => {
     }
     setIsModalOpen(false);
   };
-  if (userDetails?.role === "COACH") {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${userDetails?.id}`
-        );
-        const data = await res.data;
-        console.log(data);
-        setcoachisInArcade(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
+
+  useEffect(() => {
+    if (userDetails?.role === "COACH") {
+      try {
+        const fetchData = async () => {
+          const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${userDetails?.id}`
+          );
+          const data = await res.data;
+          console.log(data);
+          setcoachisInArcade(data);
+        };
+        fetchData();
+      } catch (e) {
+        console.log(e);
+      }
     }
-  }
+  }, [userDetails?.id]);
+
   const isCoachInArcade = coachisInArcade.some(
     (entry) => entry.arcade.arcade_id === ArcadeId && entry.status === "success"
   );

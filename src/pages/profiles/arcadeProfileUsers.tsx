@@ -51,11 +51,14 @@ const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const { ArcadeId } = useParams();
+  console.log("ArcadeId", ArcadeId);
   const [arcadeDetails1, setArcadeDetails] = useState<any>(null);
   const [arcade, setArcade] = useState<Arcade>();
+
   const { userDetails } = useContext(PlayerContext);
   const { coachDetails } = useContext(CoachContext);
   const { arcadeDetails } = useContext(ArcadeContext);
+
   const [coachesInArcade, setCoachesInArcade] = useState<CoachAssignDetails[]>(
     []
   );
@@ -80,7 +83,8 @@ const ArcadeProfileUser = () => {
       .catch((err) => {
         console.log("daddds", err);
       });
-  }, []);
+  }, [ArcadeId]);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -95,7 +99,10 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
+
+  console.log(arcade);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -110,7 +117,8 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
+
   console.log(arcadePackages);
 
   useEffect(() => {
@@ -132,22 +140,28 @@ const ArcadeProfileUser = () => {
         console.log(err);
       });
   }, [ArcadeId]);
+
   console.log("arcade", arcade?.arcade_image);
   const [cloudName] = useState("dle0txcgt");
+
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
+
   const showModalForReport = () => {
     setismodelopenForReport(true);
   };
+
   const handleOkForReport = () => {
     setismodelopenForReport(false);
   };
+
   const handleCancelForReport = () => {
     setismodelopenForReport(false);
   };
+
   const handleFinishForReport = async () => {
     try {
       console.log("userDetails", userDetails);
@@ -180,6 +194,9 @@ const ArcadeProfileUser = () => {
     }
     setismodelopenForReport(false);
   };
+
+  console.log("arcadeDetails1");
+
   return (
     <>
       {userDetails !== "" || coachDetails !== "" || arcadeDetails !== "" ? (
@@ -187,10 +204,6 @@ const ArcadeProfileUser = () => {
       ) : (
         <NavbarLogin />
       )}
-      <style>
-        @import
-        url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
-      </style>
 
       <Row>
         <Col
@@ -301,7 +314,7 @@ const ArcadeProfileUser = () => {
                     borderColor: "#0E458E",
                     marginTop: "20px",
                   }}
-                  onClick={showModalForReport}
+                  onClick={() => showModalForReport()}
                 >
                   Report User
                 </Button>
@@ -309,12 +322,12 @@ const ArcadeProfileUser = () => {
                   visible={isModalOpenForReport}
                   onCancel={handleCancelForReport}
                   okText="Report"
-                  onOk={handleFinishForReport}
+                  onOk={() => handleFinishForReport()}
                 >
                   <Form
                     layout="vertical"
                     style={{ marginTop: "10%", margin: "2%" }}
-                    onFinish={handleFinishForReport}
+                    onFinish={() => handleFinishForReport()}
                   >
                     <div
                       style={{
@@ -1066,6 +1079,7 @@ const ArcadeProfileUser = () => {
                 player_id={userDetails.id}
                 zone_id={package1.zone_id}
                 arcade_id={ArcadeId}
+                coachPresentage={package1.percentageForCoach}
               />
             ))}
           </Col>
@@ -1096,12 +1110,7 @@ const ArcadeProfileUser = () => {
         </Row>
       </Row>
 
-
       {/* feedbacks */}
-
-
-
-      
 
       <Row
         style={{
