@@ -523,6 +523,38 @@ const BookingForm = () => {
     return isWithin;
   };
 
+  const isZoneTime = (buttonId: string, zoneTime: string) => {
+    const [start, end] = zoneTime.split("-");
+    const [buttonStart, buttonEnd] = buttonId.split("-");
+
+    // Convert times to minutes for easier comparison
+    const timeToMinutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    const buttonStartMinutes = timeToMinutes(buttonStart);
+    const buttonEndMinutes = timeToMinutes(buttonEnd);
+
+    // Check if button time is within the zone time
+    const isWithin =
+      buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+
+    // Check for special case: add half-hour slots if needed
+    if (!isWithin) {
+      if (
+        buttonStartMinutes === startMinutes - 30 ||
+        buttonEndMinutes === endMinutes + 30
+      ) {
+        return true;
+      }
+    }
+
+    return isWithin;
+  };
+
   const isPackageDayAndTime = (buttonId: string) => {
     if (!selectedDay || !packageDetails || !packageDetails.package || !buttonId)
       return false;
@@ -535,6 +567,33 @@ const BookingForm = () => {
           (pdt) =>
             pdt.day === selectedDay && isWithinPackageTime(buttonId, pdt.time)
         )
+    );
+  };
+
+  const isZoneRejectDay = (buttonId: string) => {
+    if (
+      !selectedDay ||
+      !zoneDetails ||
+      !zoneDetails.zoneRejectDayAndTime ||
+      !buttonId
+    )
+      return false;
+
+    return zoneDetails.zoneRejectDayAndTime.some(
+      (zoneday) =>
+        zoneday.day === selectedDay &&
+        isZoneTime(buttonId, zoneday.time as string)
+    );
+  };
+
+  const isZoneRejectDate = (buttonId: string) => {
+    if (!selectedDate || !zoneDetails || !zoneDetails.zoneRejectDateAndTime)
+      return false;
+
+    return zoneDetails.zoneRejectDateAndTime.some(
+      (zonedate) =>
+        zonedate.date === selectedDate &&
+        isZoneTime(buttonId, zonedate.time as string)
     );
   };
 
@@ -716,6 +775,8 @@ const BookingForm = () => {
                     );
 
                     const isPackageTime = isPackageDayAndTime(button.id);
+                    const isZoneRejectDayTime = isZoneRejectDay(button.id);
+                    const isZoneRejectDateTime = isZoneRejectDate(button.id);
 
                     const buttonBackgroundColor = isBookedSuccessfully
                       ? "#0F70AE"
@@ -723,6 +784,10 @@ const BookingForm = () => {
                       ? "#1677FF"
                       : isPackageTime
                       ? "red"
+                      : isZoneRejectDayTime
+                      ? "#0F70AE"
+                      : isZoneRejectDateTime
+                      ? "#0F70AE"
                       : "white";
 
                     const gradientBackground = isFullyBooked
@@ -744,6 +809,8 @@ const BookingForm = () => {
                     const isDisabled =
                       isFullyBooked ||
                       isPackageTime ||
+                      isZoneRejectDayTime ||
+                      isZoneRejectDateTime ||
                       zone === "" ||
                       (zone === "full" &&
                         bookingDate.find(
@@ -768,12 +835,16 @@ const BookingForm = () => {
                           ? "Fully Booked"
                           : isPackageTime
                           ? `${button.time.toString()} - Has Package`
+                          : isZoneRejectDayTime
+                          ? `${button.time.toString()} - Zone Closed`
+                          : isZoneRejectDateTime
+                          ? `${button.time.toString()} - Zone Closed`
                           : button.time.toString()}
                       </button>
                     );
                   })}
                 </Form.Item>
-                ; ;{/* ${button.time} */}
+                {/* ${button.time} */}
                 {/* </Form.Item> */}
               </div>
             </Col>
@@ -847,7 +918,6 @@ const BookingForm = () => {
                   arcade_name={zoneDetails?.arcade.arcade_name}
                   role={paymentDetails?.role}
                   zone_name={zoneDetails?.zone_name}
-
                 />
               </div>
             </Col>

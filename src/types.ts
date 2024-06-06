@@ -27,6 +27,8 @@ export interface Zone {
   package: Package[];
   discount: Discount;
   full_zone_rate: Number;
+  zoneRejectDateAndTime: ZoneRejectDateAndTime[];
+  zoneRejectDayAndTime: ZoneRejectDayAndTime[];
 }
 export interface Package {
   package_id: String;
@@ -228,4 +230,18 @@ export interface CoachEnrollDetailsForPackages {
   canceled_at: String;
   coach: Coach;
   package: Package;
+}
+
+export interface ZoneRejectDateAndTime {
+  zone_id: String;
+  date: String;
+  time: String;
+  zone: Zone;
+}
+
+export interface ZoneRejectDayAndTime {
+  zone_id: String;
+  day: String;
+  time: String;
+  zone: Zone;
 }

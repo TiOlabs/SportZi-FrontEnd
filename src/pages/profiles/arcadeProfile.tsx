@@ -1102,6 +1102,9 @@ const ArcadeProfileArcade = () => {
               color: " #0E458E",
               fontSize: md ? "30px" : "20px",
               fontFamily: "Kanit",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
             }}
           >
             Book Our Zones
@@ -1155,6 +1158,12 @@ const ArcadeProfileArcade = () => {
                 sport={zone.sport.sport_name}
                 sport_id={zone.sport.sport_id}
                 full={zone.full_zone_rate}
+                day={zone.zoneRejectDayAndTime.map((item) => item.day)}
+                timeForDay={zone.zoneRejectDayAndTime.map((item) => item.time)}
+                date={zone.zoneRejectDateAndTime.map((item) => item.date)}
+                timeForDate={zone.zoneRejectDateAndTime.map(
+                  (item) => item.time
+                )}
               />
             </Col>
           ))}
@@ -2523,7 +2532,8 @@ const ArcadeProfileArcade = () => {
         </Col>
       </Row>
       <Row>
-        <Col span={24}
+        <Col
+          span={24}
           style={{
             display: "flex",
             justifyContent: "center",

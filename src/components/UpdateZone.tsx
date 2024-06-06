@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import {
   Button,
+  Calendar,
+  CalendarProps,
   Form,
   Input,
   InputNumber,
   Modal,
   Select,
+  Space,
   TimePicker,
   message,
 } from "antd";
@@ -14,8 +17,20 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useParams } from "react-router-dom";
+import { Option } from "antd/es/mentions";
+
+interface TimeSlot {
+  day: string;
+  startTime: string;
+  endTime: string;
+}
+interface TimeSlotsForDate {
+  date: string;
+  startTime: string;
+  endTime: string;
+}
 
 const UpdateZone = (props: any) => {
   const { ArcadeId } = useParams();
@@ -43,13 +58,13 @@ const UpdateZone = (props: any) => {
   const [startedTime, setStartedTime] = useState<any>(props.open_time);
   const [closedTime, setClosedTime] = useState<string | null>(props.close_time);
   const [discription, setDiscription] = useState(props.description);
-  const [sportc,setSportc] = useState("");
+  const [sportc, setSportc] = useState("");
   console.log(sportc);
-console.log(props.sport)
+  console.log(props.sport);
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  console.log(arcadeName)
+  console.log(arcadeName);
   const handleTimeChangeStart = (time: any, timeString: string) => {
     setStartedTime(timeString);
     console.log("Selected time:", timeString);
@@ -93,15 +108,111 @@ console.log(props.sport)
   });
   const imgObject = cld.image(publicId);
 
+  const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
+    console.log(value.format("YYYY-MM-DD"), mode);
+  };
+
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>(
+    props.day.map((day: string, index: number) => ({
+      day,
+      startTime: props.timeForDay[index].split("-")[0],
+      endTime: props.timeForDay[index].split("-")[1],
+    }))
+  );
+
+  const [timeSlotsForDate, setTimeSlotsForDate] = useState<TimeSlotsForDate[]>(
+    props.date.map((date: string, index: number) => ({
+      date: date,
+      startTime: props.timeForDate[index].split("-")[0],
+      endTime: props.timeForDate[index].split("-")[1],
+    }))
+  );
+
+  const handleDayChange = (index: number, value: string) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].day = value;
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleDateChange = (index: number, value: string) => {
+    const newTimeSlots = [...timeSlotsForDate];
+    newTimeSlots[index].date = value;
+    setTimeSlotsForDate(newTimeSlots);
+  };
+
+  const handleStartTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].startTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleStartTimeChangeForDate = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlotsForDate];
+    newTimeSlots[index].startTime = time ? time.format("HH:mm") : "";
+    setTimeSlotsForDate(newTimeSlots);
+  };
+
+  const handleEndTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].endTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleEndTimeChangeForDate = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlotsForDate];
+    newTimeSlots[index].endTime = time ? time.format("HH:mm") : "";
+    setTimeSlotsForDate(newTimeSlots);
+  };
+
+  const handleAddTimeSlot = () => {
+    setTimeSlots([...timeSlots, { day: "", startTime: "", endTime: "" }]);
+  };
+
+  const handleAddTimeSlotForDate = () => {
+    setTimeSlotsForDate([
+      ...timeSlotsForDate,
+      { date: "", startTime: "", endTime: "" },
+    ]);
+  };
+
+  const handleRemoveTimeSlot = (index: number) => {
+    const newTimeSlots = timeSlots.filter((_, i) => i !== index);
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleRemoveTimeSlotForDate = (index: number) => {
+    const newTimeSlots = timeSlotsForDate.filter((_, i) => i !== index);
+    setTimeSlotsForDate(newTimeSlots);
+  };
+
   const handleFinish = async () => {
+    const combinedTimeslot = timeSlots.map((slot) => ({
+      day: slot.day,
+      timeslot: `${slot.startTime}-${slot.endTime}`,
+    }));
+    const combinedTimeslotForDate = timeSlotsForDate.map((slot) => ({
+      date: slot.date,
+      timeslot: `${slot.startTime}-${slot.endTime}`,
+    }));
+    console.log(combinedTimeslot);
+    console.log(combinedTimeslotForDate);
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
-    let sportcc=sportc
-    if(sportcc === ""){
-      sportcc=props.sport_id
+    let sportcc = sportc;
+    if (sportcc === "") {
+      sportcc = props.sport_id;
     }
-      try {
-        console.log(sportcc)
+    try {
+      console.log(sportcc);
       const res = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
         {
@@ -115,8 +226,9 @@ console.log(props.sport)
           close_time: closedTime,
           arcade_id: ArcadeId,
           sport_id: sportcc,
+          combinedTimeslot: combinedTimeslot,
+          combinedTimeslotForDate: combinedTimeslotForDate,
         }
-
       );
       console.log(res);
       message.success("Zone Updated Successfully");
@@ -155,7 +267,7 @@ console.log(props.sport)
           >
             <h1>Update Arcade Details</h1>
           </div>
-          
+
           <Form.Item
             name="ArcadeName"
             label="Zone Name"
@@ -346,6 +458,169 @@ console.log(props.sport)
               }
             />
           </Form.Item>
+          <h4 style={{ color: "red" }}>Remove time slots by day</h4>
+
+          {timeSlots.map((slot: TimeSlot, index: number) => (
+            <Space key={index} direction="vertical" style={{ width: "100%" }}>
+              <Form.Item
+                name={`day-${index}`}
+                label={`Select Day ${index + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a day!",
+                  },
+                ]}
+              >
+                <Select
+                  defaultValue={slot.day}
+                  placeholder="Select Day"
+                  style={{ width: "100%" }}
+                  onChange={(value) => handleDayChange(index, value)}
+                >
+                  {daysOfWeek.map((day) => (
+                    <Option key={day} value={day}>
+                      {day}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name={`startTime-${index}`}
+                label={`Select Start Time ${index + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a start time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  defaultValue={
+                    slot.startTime ? dayjs(slot.startTime, "HH:mm") : null
+                  }
+                  format="HH:mm"
+                  onChange={(time) => handleStartTimeChange(index, time)}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+              <Form.Item
+                name={`endTime-${index}`}
+                label={`Select End Time ${index + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an end time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  defaultValue={
+                    slot.endTime ? dayjs(slot.endTime, "HH:mm") : null
+                  }
+                  format="HH:mm"
+                  onChange={(time) => handleEndTimeChange(index, time)}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+              {index > 0 && (
+                <Button
+                  style={{ width: "40%" }}
+                  onClick={() => handleRemoveTimeSlot(index)}
+                >
+                  <div style={{ fontSize: "15px" }}> Remove Time Slot</div>
+                </Button>
+              )}
+            </Space>
+          ))}
+          <Button
+            type="dashed"
+            onClick={handleAddTimeSlot}
+            style={{ width: "40%" }}
+          >
+            <div style={{ fontSize: "15px" }}>Add Time Slot</div>
+          </Button>
+
+          <h4 style={{ color: "red" }}>Remove time slots for special date</h4>
+
+          {timeSlotsForDate.map((slot2: TimeSlotsForDate, index2: number) => (
+            <Space key={index2} direction="vertical" style={{ width: "100%" }}>
+              <Form.Item
+                name={`date-${index2}`}
+                label={`Select Date ${index2 + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a date!",
+                  },
+                ]}
+              >
+                <Calendar
+                  onSelect={(date: Dayjs) =>
+                    handleDateChange(index2, date.format("YYYY-MM-DD"))
+                  }
+                  fullscreen={false}
+                  onPanelChange={onPanelChange}
+                />
+              </Form.Item>
+              <Form.Item
+                name={`startTimeForDate-${index2}`}
+                label={`Select Start Time ${index2 + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a start time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  defaultValue={
+                    slot2.startTime ? dayjs(slot2.startTime, "HH:mm") : null
+                  }
+                  format="HH:mm"
+                  onChange={(time) =>
+                    handleStartTimeChangeForDate(index2, time)
+                  }
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+              <Form.Item
+                name={`endTimeForDate-${index2}`}
+                label={`Select End Time ${index2 + 1}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an end time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  defaultValue={
+                    slot2.endTime ? dayjs(slot2.endTime, "HH:mm") : null
+                  }
+                  format="HH:mm"
+                  onChange={(time) => handleEndTimeChangeForDate(index2, time)}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+              {index2 > 0 && (
+                <Button
+                  style={{ width: "40%" }}
+                  onClick={() => handleRemoveTimeSlotForDate(index2)}
+                >
+                  <div style={{ fontSize: "15px" }}> Remove Time Slot</div>
+                </Button>
+              )}
+            </Space>
+          ))}
+          <Button
+            name="DateSlot"
+            type="default"
+            onClick={handleAddTimeSlotForDate}
+            style={{ width: "40%" }}
+          >
+            <div style={{ fontSize: "15px" }}>Add Time Slot</div>
+          </Button>
           {/* .................. picture upload........................  */}
 
           <Form.Item label="Upload Zone Image">
