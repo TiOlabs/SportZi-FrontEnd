@@ -83,6 +83,13 @@ const CoachCardSection = () => {
             return 0;
           });
           break;
+        case "3":
+          sortedArcades.sort((a: Coach, b: Coach) => {
+            const rateA = Number(a.rate || 0);
+            const rateB = Number(b.rate || 0);
+            return rateA - rateB; // Sort in ascending order of rate
+          });
+          break;
 
         // Add cases for other filters if needed
         default:
@@ -113,12 +120,12 @@ const CoachCardSection = () => {
       key: "2",
       icon: <SortAscendingOutlined />,
     },
-    // {
-    //   label: "Near Me",
-    //   key: "3",
-    //   icon: <UserOutlined />,
-    //   danger: true,
-    // },
+    {
+      label: "Hourly rate",
+      key: "3",
+      icon: <UserOutlined />,
+      danger: true,
+    },
   ];
 
   const menuProps = {
@@ -172,6 +179,8 @@ const CoachCardSection = () => {
           backgroundColor: "#EFF4FA",
           marginBottom: "5%",
           width: "100%",
+
+          overflowY: "scroll",
         }}
       >
         {loading ? (
@@ -185,7 +194,7 @@ const CoachCardSection = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: "3%",
+                marginTop: "2%",
               }}
               lg={8}
               xs={24}
@@ -195,7 +204,7 @@ const CoachCardSection = () => {
                 style={{
                   marginTop: "0vh",
                   marginRight: "10vh",
-                  marginBottom: "10vh",
+                  marginBottom: "0vh",
                 }}
               >
                 <CoachCardCoachPage

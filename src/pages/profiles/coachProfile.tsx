@@ -36,6 +36,7 @@ import {
 } from "../../types";
 import axios from "axios";
 import { Option } from "antd/es/mentions";
+import ReportGenarationForCoach from "../../components/reportGenarationForCoach";
 
 const RequestedMeetings = [<CoachReqestList />];
 
@@ -1496,8 +1497,47 @@ const CoachProfile = () => {
             </Col>
           </Row>
         </Col>
-        <AppFooter />
       </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            Report Genaration
+          </Typography>
+        </Col>
+      </Row>
+      <Row>
+        <Col
+          span={24}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+            marginBottom: "100px",
+          }}
+        >
+          <ReportGenarationForCoach coach_id={coachId} />
+        </Col>
+      </Row>
+      <AppFooter />
     </>
   );
 };

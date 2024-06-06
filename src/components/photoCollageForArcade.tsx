@@ -35,23 +35,15 @@ const PhotoCollageForArcade = (props: any) => {
   // }, [userDetails]);
   useEffect(() => {
     console.log(props);
-   
+
     const fetchData = async () => {
       try {
         let res;
 
-        if (props.role === "PLAYER") {
-          console.log("Fetching user details...");
-          res = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/getuser/${props.id}`
-          );
-        } else if (props.role === "COACH") {
-          let idWithoutColon = props.id.replace(":", "");
-          console.log("Fetching coach details...");
-          res = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/getcoache/${idWithoutColon}`
-          );
-        }
+        res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${props.arcade_id}`
+        );
+
         // else if (managerDetails) {
         //   console.log("Fetching manager details...");
         //   res = await axios.get(
@@ -61,8 +53,8 @@ const PhotoCollageForArcade = (props: any) => {
         console.log(res);
         if (res) {
           const data = res.data;
-          console.log(data.user.userphoto);
-          setUserPhotos(data.user.userphoto);
+          console.log(data.arcadephoto);
+          setUserPhotos(data.arcadephoto);
         }
       } catch (e) {
         console.log(e);

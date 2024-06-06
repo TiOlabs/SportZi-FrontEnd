@@ -301,6 +301,7 @@ const ArcadeProfileUser = () => {
                     fontFamily: "kanit",
                     borderColor: "#0E458E",
                     marginTop: "20px",
+                    marginBottom: "80px",
                   }}
                   onClick={showModalForReport}
                 >
@@ -393,7 +394,6 @@ const ArcadeProfileUser = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
@@ -926,7 +926,7 @@ const ArcadeProfileUser = () => {
               width: "90%",
               display: "flex",
               justifyContent: "flex-end",
-              marginBottom: "20px",
+              marginBottom: "60px",
             }}
           ></div>
         </Row>
@@ -1029,7 +1029,7 @@ const ArcadeProfileUser = () => {
               width: "90%",
               display: "flex",
               justifyContent: "flex-end",
-              marginBottom: "20px",
+              marginBottom: "60px",
             }}
           ></div>
         </Row>
