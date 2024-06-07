@@ -58,6 +58,17 @@ export interface PackageEnroolDetailsForPlayer {
   player: Player;
   package: Package;
 }
+export interface PackageEnrollDetailsForCoach {
+  coach_id: String;
+  package_id: String;
+  status: String;
+  enrolled_date: String;
+  canceled_at: String;
+  rate: Number;
+  duration: Number;
+  coach: Coach;
+  package: Package;
+}
 export interface PackageDayAndTime {
   package_id: string;
   day: string;

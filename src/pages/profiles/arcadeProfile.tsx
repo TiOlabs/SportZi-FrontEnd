@@ -38,6 +38,7 @@ import {
   PackageEnroolDetailsForPlayer,
   Zone,
   ZoneBookingDetails,
+  PackageEnrollDetailsForCoach,
 } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
@@ -48,6 +49,7 @@ import NavbarProfile from "../../components/NavBarProfile";
 import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
+import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
 import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 
 const ArcadeProfileArcade = () => {
@@ -57,6 +59,9 @@ const ArcadeProfileArcade = () => {
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
+  const [packageEnrollmentForCoach, setPackageEnrollmentForCoach] = useState<
+  PackageEnrollDetailsForCoach[]
+>([]);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -75,6 +80,21 @@ const ArcadeProfileArcade = () => {
     CoachAssignDetails[]
   >([]);
   const [arcadeCoaches, setArcadeCoaches] = useState<CoachAssignDetails[]>([]);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentCoachDetails`
+        );
+        const data = await res.data;
+        console.log(data);
+        setPackageEnrollmentForCoach(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  },[]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -302,6 +322,28 @@ const ArcadeProfileArcade = () => {
       )
     ),
   ];
+const CoachReqestToEnrollPackage = [
+    (packageEnrollmentForCoach || []).map(
+      (coachEnrollDetails: PackageEnrollDetailsForCoach) => (
+        <ArcadePackageCoachEnrollAccept
+          package_name={coachEnrollDetails.package.package_name}
+          package_image={coachEnrollDetails.package.package_image}
+          zone_name={coachEnrollDetails.package.zone.zone_name}
+          rate={coachEnrollDetails.rate}
+          duration={coachEnrollDetails.duration}
+          enrolled_date={coachEnrollDetails.enrolled_date}
+          arcade_name={arcade?.arcade_name}
+          coach_name={`${coachEnrollDetails.coach.user.firstname} ${coachEnrollDetails.coach.user.lastname}`}
+          coach_image={coachEnrollDetails.coach.user.user_image}
+          coach_id={coachEnrollDetails.coach_id}
+          package_id={coachEnrollDetails.package_id}
+          email={coachEnrollDetails.coach.user.email}
+          status={coachEnrollDetails.status}
+        />
+      )
+    ),
+  ];
+
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -2356,6 +2398,87 @@ const ArcadeProfileArcade = () => {
       </Row>
       <Row
         style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          {" "}
+          Coach Request For Enroll Package
+        </Typography>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {Array.isArray(CoachReqestToEnrollPackage) &&
+          CoachReqestToEnrollPackage.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </Row>
+      <Row
+        style={{
           minWidth: "100%",
           minHeight: "650px",
           height: "max-content",
@@ -2389,15 +2512,15 @@ const ArcadeProfileArcade = () => {
           >
             Reviews
           </Typography>
-          <Row
-            style={{
+              <Row
+             style={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-            }}
-          >
-            <Col
+              }}
+             >
+              <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2408,10 +2531,10 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2422,11 +2545,11 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2437,20 +2560,20 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
-            </Col>
-          </Row>
-          <Row
-            style={{
+             </Col>
+             </Row>
+             <Row
+             style={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-            }}
-          >
-            <Col
+             }}
+             >
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2461,10 +2584,10 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+              <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2475,11 +2598,11 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2490,11 +2613,12 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
             </Col>
           </Row>
+          
         </Col>
       </Row>
       <Row
