@@ -127,7 +127,7 @@ return(
             }}
           >
             {" "}
-            Rs.{props.packagedetails.rate_per_person}
+            LKR {props.packagedetails.rate_per_person}
           </div>
         </Col>
         <Col span={8}>

@@ -77,7 +77,7 @@ const CoachCard = (props: any) => {
                   fontWeight: "500",
                 }}
               >
-                Rs.{props.rate}
+                LKR {props.rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>

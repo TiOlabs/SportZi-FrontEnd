@@ -395,7 +395,7 @@ const AvailableBookingsArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            Rate: Rs.{props.full_amount}
+            Rate: LKR {props.full_amount}
           </Col>
         </Row>
       </Modal>

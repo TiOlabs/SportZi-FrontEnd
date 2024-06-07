@@ -126,18 +126,24 @@ const SignupCoach = () => {
     console.log(rateint);
     try {
       const response = await axiosInstance
-        .post("/api/addcoach", {
-          firstname: firstname,
-          lastname: lastname,
-          email: email,
-          password: password,
-          phone_number: phone,
-          DOB: selectedDateString,
-          gender: gender,
-          rate: rateint,
-          sport_id: sport,
-          combinedTimeslot: combinedTimeslot,
-        })
+        .post(
+          "/api/addcoach",
+          {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: password,
+            phone_number: phone,
+            DOB: selectedDateString,
+            gender: gender,
+            rate: rateint,
+            sport_id: sport,
+            combinedTimeslot: combinedTimeslot,
+          },
+          {
+            timeout: 10000, // Increase timeout to 10 seconds
+          }
+        )
         .then((res) => {
           console.log(res);
           alert("Form submitted successfully!");

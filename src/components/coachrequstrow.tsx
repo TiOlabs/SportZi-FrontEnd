@@ -451,7 +451,7 @@ const CoachRequstRow = (props: any) => {
             lg={6}
             xl={6}
           >
-            Rate: Rs.{props.full_amount}
+            Rate: LKR {props.full_amount}
           </Col>
         </Row>
       </Modal>

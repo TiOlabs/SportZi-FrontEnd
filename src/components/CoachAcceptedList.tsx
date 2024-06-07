@@ -428,7 +428,7 @@ const CoachAccepteLst = (props: any) => {
             lg={12}
             xl={12}
           >
-            Rate: Rs.{props.full_amount}
+            Rate: LKR {props.full_amount}
           </Col>
         </Row>
       </Modal>

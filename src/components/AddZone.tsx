@@ -407,7 +407,7 @@ const AddZone = () => {
 
           <Form.Item
             name="way_of_booking"
-            label="Way of Booking"
+            label="Reservation Type"
             rules={[
               {
                 required: true,

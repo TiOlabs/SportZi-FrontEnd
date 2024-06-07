@@ -144,7 +144,7 @@ const ArcadeZoneCard = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  Rs.{props.rate}
+                  LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{
