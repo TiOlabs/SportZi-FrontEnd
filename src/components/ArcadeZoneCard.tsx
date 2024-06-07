@@ -177,6 +177,10 @@ const ArcadeZoneCard = (props: any) => {
                   capacity={props.capacity}
                   sport={props.sport}
                   sport_id={props.sport_id}
+                  day={props.day}
+                  timeForDay={props.timeForDay}
+                  date={props.date}
+                  timeForDate={props.timeForDate}
                 />
 
                 <Button

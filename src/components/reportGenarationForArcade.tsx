@@ -141,6 +141,7 @@ const PrintableContent = React.forwardRef<
         <h2 style={{ color: "#0E458E", textAlign: "center" }}>
           Package Enrollments
         </h2>
+       
         <Row>
           <Col span={16}>
             <PieChart width={500} height={400}>
@@ -180,6 +181,7 @@ const PrintableContent = React.forwardRef<
       </div>
 
       <div style={{ marginBottom: "4rem" }}>
+      <hr />
         <h2 style={{ color: "#0E458E", textAlign: "center" }}>
           Booking Details
         </h2>

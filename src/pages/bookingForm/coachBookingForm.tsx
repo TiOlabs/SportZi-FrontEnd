@@ -76,8 +76,6 @@ const CoachBookingForm: React.FC = () => {
     CoachEnrollDetailsForPackages[]
   >([]);
 
-
-
   const currentCoachId = useRef(coachId);
 
   const handleDateChange = (datee: any) => {
@@ -112,7 +110,6 @@ const CoachBookingForm: React.FC = () => {
       console.log("errrr", e);
     }
   }, [coachId]);
-
 
   useEffect(() => {
     try {
@@ -533,6 +530,38 @@ const CoachBookingForm: React.FC = () => {
     return isWithin;
   };
 
+  const isZoneTime = (buttonTime: string, zoneTime: string) => {
+    const [start, end] = zoneTime.split("-");
+    const [buttonStart, buttonEnd] = buttonTime.split("-");
+
+    // Convert times to minutes for easier comparison
+    const timeToMinutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    const buttonStartMinutes = timeToMinutes(buttonStart);
+    const buttonEndMinutes = timeToMinutes(buttonEnd);
+
+    // Check if button time is within the zone time
+    const isWithin =
+      buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+
+    // Check for special case: add half-hour slots if needed
+    if (!isWithin) {
+      if (
+        buttonStartMinutes === startMinutes - 30 ||
+        buttonEndMinutes === endMinutes + 30
+      ) {
+        return true;
+      }
+    }
+
+    return isWithin;
+  };
+
   const isPackageDayAndTime = (buttonId: string) => {
     if (!dayOfWeek || !packageDetails || !packageDetails.package || !buttonId)
       return false;
@@ -545,6 +574,37 @@ const CoachBookingForm: React.FC = () => {
           (pdt) =>
             pdt.day === dayOfWeek && isWithinPackageTime(buttonId, pdt.time)
         )
+    );
+  };
+
+  const isZoneRejectDay = (buttonId: string) => {
+    if (
+      !dayOfWeek ||
+      !zoneDetails ||
+      !zoneDetails.zoneRejectDayAndTime ||
+      !buttonId
+    )
+      return false;
+
+    return zoneDetails.zoneRejectDayAndTime.some(
+      (zoneday) =>
+        zoneday.day === dayOfWeek &&
+        isZoneTime(buttonId, zoneday.time as string)
+    );
+  };
+
+  const isZoneRejectDate = (buttonId: string) => {
+    if (
+      !datee ||
+      !zoneDetails ||
+      !zoneDetails.zoneRejectDateAndTime ||
+      !buttonId
+    )
+      return false;
+
+    return zoneDetails.zoneRejectDateAndTime.some(
+      (zoneday) =>
+        zoneday.date === datee && isZoneTime(buttonId, zoneday.time as string)
     );
   };
 
@@ -562,7 +622,6 @@ const CoachBookingForm: React.FC = () => {
         )
     );
   };
-
 
   return (
     <>
@@ -833,9 +892,14 @@ const CoachBookingForm: React.FC = () => {
                                 isPackageDayAndTime(
                                   `${slot.startTime}-${slot.endTime}`
                                 ) ||
+                                isZoneRejectDay(
+                                  `${slot.startTime}-${slot.endTime}`
+                                ) ||
+                                isZoneRejectDate(
+                                  `${slot.startTime}-${slot.endTime}`
+                                ) ||
                                 isCoachInthePackage(
                                   `${slot.startTime}-${slot.endTime}`
-
                                 )
                               }
                               style={{
@@ -905,7 +969,12 @@ const CoachBookingForm: React.FC = () => {
                                       ) ||
                                       isCoachInthePackage(
                                         `${slot.startTime}-${slot.endTime}`
-
+                                      ) ||
+                                      isZoneRejectDay(
+                                        `${slot.startTime}-${slot.endTime}`
+                                      ) ||
+                                      isZoneRejectDate(
+                                        `${slot.startTime}-${slot.endTime}`
                                       )
                                     ? "#FF0000" // Red color when disabled due to package time
                                     : "#2EA8BF",
@@ -942,7 +1011,14 @@ const CoachBookingForm: React.FC = () => {
                                     `${slot.startTime}-${slot.endTime}`
                                   )
                                 ? `${slot.startTime}-${slot.endTime} : Coach has a Package`
-
+                                : isZoneRejectDay(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
+                                : isZoneRejectDate(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
                                 : `${slot.startTime}-${slot.endTime}`}
                             </Button>
                           </ConfigProvider>
