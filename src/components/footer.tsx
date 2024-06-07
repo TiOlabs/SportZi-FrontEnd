@@ -149,6 +149,8 @@ const AppFooter = () => {
             display: "flex",
             justifyContent: "center",
             marginTop: "-5%",
+            
+            
           }}
         >
           <Col sm={0} lg={12}></Col>
@@ -159,10 +161,11 @@ const AppFooter = () => {
             style={{
               display: "flex",
               justifyContent: "center",
+              
             }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.3 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.3}}>
                 {" "}
                 Company
               </h4>
@@ -173,7 +176,7 @@ const AppFooter = () => {
                 <div
                   style={{ fontSize: 14, cursor: "pointer", lineHeight: 1.5 }}
                 >
-                  <b>About us</b>
+                  About us
                 </div>
               </a>
 
@@ -185,14 +188,14 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Coaches</b>
+               Coaches
                 </div>
               </a>
 
               <a href="/Arcades" style={{ color: "#646464" }}>
                 <div style={{ fontSize: 14, cursor: "pointer" }}>
                   {" "}
-                  <b>Arcades</b>{" "}
+                  Arcades{" "}
                 </div>
               </a>
 
@@ -204,7 +207,7 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Home</b>
+                 Home
                 </div>
               </a>
             </div>
@@ -217,7 +220,7 @@ const AppFooter = () => {
             style={{ display: "flex", justifyContent: "center" }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.5 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.5 }}>
                 {" "}
                 Resources
               </h4>
@@ -227,9 +230,10 @@ const AppFooter = () => {
                     fontSize: 14,
                     cursor: "pointer",
                     lineHeight: 1.5,
+                   
                   }}
                 >
-                  <b> FAQ</b>
+                FAQ
                 </div>
               </a>
 
@@ -238,7 +242,7 @@ const AppFooter = () => {
                   style={{ fontSize: 14, cursor: "pointer", lineHeight: 1.5 }}
                 >
                   {" "}
-                  <b>Blog</b>{" "}
+                  Blog{" "}
                 </div>
               </a>
 
@@ -250,7 +254,7 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Updates</b>
+                Updates
                 </div>
               </a>
             </div>
@@ -262,7 +266,7 @@ const AppFooter = () => {
             style={{ display: "flex", justifyContent: "center" }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.5 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.5 }}>
                 {" "}
                 Support
               </h4>
@@ -274,14 +278,14 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Our story</b>
+                 Our story
                 </div>
               </a>
 
               <a href="/Contact" style={{ color: "#646464" }}>
                 <div style={{ fontSize: 14, cursor: "pointer" }}>
                   {" "}
-                  <b>Contact</b>{" "}
+                 Contact{" "}
                 </div>
               </a>
 
@@ -294,7 +298,7 @@ const AppFooter = () => {
                   }}
                 >
                   {" "}
-                  <b> News</b>
+                  News
                 </div>
               </a>
 
@@ -303,7 +307,7 @@ const AppFooter = () => {
                   style={{ fontSize: 14, cursor: "pointer", lineHeight: 1.5 }}
                 >
                   {" "}
-                  <b> Team</b>{" "}
+                  Team{" "}
                 </div>
               </a>
             </div>
@@ -316,7 +320,7 @@ const AppFooter = () => {
             style={{ display: "flex", justifyContent: "center" }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.5 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.5 }}>
                 {" "}
                 Site Map
               </h4>
@@ -329,13 +333,13 @@ const AppFooter = () => {
                   }}
                 >
                   {" "}
-                  <b> Packages</b>
+                 Packages
                 </div>
               </a>
 
               <a href="/Meetings" style={{ color: "#646464" }}>
                 <div style={{ fontSize: 14, cursor: "pointer" }}>
-                  <b> Meetings</b>
+              Meetings
                 </div>
               </a>
             </div>
