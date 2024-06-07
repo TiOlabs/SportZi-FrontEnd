@@ -50,6 +50,7 @@ import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
 import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
+import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -301,17 +302,25 @@ const ArcadeProfileArcade = () => {
   ];
 
   const CoachReqestToArchade = [
-    (coachAssignRequest || []).map((coachAssign: CoachAssignDetails) => (
-      <CoachReqestForArcade
-        coach_id={coachAssign.coach_id}
-        coach_Email={coachAssign.coach.user.email}
-        coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
-        coach_image={coachAssign.coach.user.user_image}
-        coach_discription={coachAssign.description}
-        date={coachAssign.assigned_date}
-        arcade_name={arcade?.arcade_name}
-      />
-    )),
+    (coachAssignRequest || []).map(
+      (coachAssign: CoachAssignDetails) => (
+        console.log("coachAssign", coachAssign),
+        (
+          <CoachReqestForArcade
+            coach_id={coachAssign.coach_id}
+            coach_Email={coachAssign.coach.user.email}
+            coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
+            coach_image={coachAssign.coach.user.user_image}
+            coach_discription={coachAssign.description}
+            date={coachAssign.assigned_date}
+            arcade_name={arcade?.arcade_name}
+            description={coachAssign.description}
+            duration={coachAssign.duration}
+            sport={coachAssign.coach.sport.sport_name}
+          />
+        )
+      )
+    ),
   ];
 const CoachReqestToEnrollPackage = [
     (packageEnrollmentForCoach || []).map(
@@ -398,6 +407,8 @@ const CoachReqestToEnrollPackage = [
           return fullName.includes(filterValue2.toLowerCase());
         case "booking_id":
           return zone_booking_id.includes(filterValue2);
+        case "status":
+          return booking.status.includes(filterValue2);
         default:
           return true;
       }
@@ -448,6 +459,8 @@ const CoachReqestToEnrollPackage = [
           return duration.toString().includes(filterValuePackage);
         case "enroll_date":
           return enrolled_date.includes(filterValuePackage);
+        case "status":
+          return enroll.status.includes(filterValuePackage);
         default:
           return true;
       }
@@ -592,7 +605,7 @@ const CoachReqestToEnrollPackage = [
                   marginBottom: "0px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.arcade_name}
+                {arcade && arcade?.arcade_name}
               </h1>
               <p
                 style={{
@@ -1106,7 +1119,7 @@ const CoachReqestToEnrollPackage = [
 
         <AddPhotoButton />
       </div>
-      <PhotoCollage />
+      <PhotoCollageForArcade arcade_id={ArcadeId} />
       <Row
         style={{
           paddingTop: "100px",
@@ -1183,6 +1196,7 @@ const CoachReqestToEnrollPackage = [
                 way_of_booking={zone.way_of_booking}
                 sport={zone.sport.sport_name}
                 sport_id={zone.sport.sport_id}
+                full={zone.full_zone_rate}
               />
             </Col>
           ))}
@@ -1214,7 +1228,6 @@ const CoachReqestToEnrollPackage = [
       <Row
         style={{
           paddingTop: "100px",
-
           width: "100%",
           background: "white",
           minHeight: "600px",
@@ -1283,6 +1296,10 @@ const CoachReqestToEnrollPackage = [
                 ArcadeName={pkg.arcade.arcade_name}
                 packageImage={pkg.package_image}
                 CoachPrecentage={pkg.percentageForCoach}
+                zoneName={pkg.zone.zone_name}
+                zone_id={pkg.zone.zone_id}
+                day={pkg.packageDayAndTime.map((item) => item.day)}
+                time={pkg.packageDayAndTime.map((item) => item.time)}
               />
             </Col>
           ))}
@@ -1614,6 +1631,7 @@ const CoachReqestToEnrollPackage = [
                       arcade_name={arcadeName}
                       email={booking.user.email}
                       status={booking.status}
+                      full_amount={booking.full_amount}
                     />
                   ))
               )}
@@ -1727,6 +1745,7 @@ const CoachReqestToEnrollPackage = [
             <Option value="zoneName">Zone Name</Option>
             <Option value="booked_by">Booked By</Option>
             <Option value="booking_id">Booking ID</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
@@ -1957,6 +1976,8 @@ const CoachReqestToEnrollPackage = [
                 coach_email={booking.coach.user.email}
                 coach_image={booking.coach.user.user_image}
                 coach_id={booking.coach_id}
+                status={booking.status}
+                full_amount={booking.full_amount}
               />
             ))
         ) : (
@@ -2154,6 +2175,7 @@ const CoachReqestToEnrollPackage = [
             <Option value="rate">Rate</Option>
             <Option value="duration">Duration</Option>
             <Option value="enroll_date">Enroll Date</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
@@ -2599,7 +2621,44 @@ const CoachReqestToEnrollPackage = [
           
         </Col>
       </Row>
-      
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            Report Genaration
+          </Typography>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={24}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+            marginBottom: "100px",
+          }}
+        >
+          <ReportGenarationForArcade />
+        </Col>
+      </Row>
       <AppFooter />
     </>
   );

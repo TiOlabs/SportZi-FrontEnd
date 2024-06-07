@@ -40,7 +40,7 @@ const ArcadeManagement = () => {
     const fetchArcades = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/getarcadeDetails"
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails`
         );
         setArcades(response.data);
       } catch (error) {

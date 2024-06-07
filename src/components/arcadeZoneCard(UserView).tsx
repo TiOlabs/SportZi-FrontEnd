@@ -97,6 +97,9 @@ const ArcadeZoneCardUserView = (props: any) => {
             >
               {props.zoneName}
             </Typography>
+            <Typography style={{ display: "flex", justifyContent: "right" }}>
+              {props.capacity} CPTY
+            </Typography>
             <Typography
               style={{
                 fontSize: lg ? "20px" : "18px",
@@ -105,7 +108,17 @@ const ArcadeZoneCardUserView = (props: any) => {
                 width: "80%",
               }}
             >
-              Week Days Day And weekend nights available
+              Availiable on : {props.open_time} - {props.close_time}
+            </Typography>
+            <Typography
+              style={{
+                fontSize: lg ? "20px" : "18px",
+                fontWeight: "light",
+                color: "black",
+                width: "80%",
+              }}
+            >
+              In Week Days
             </Typography>
             <Typography
               style={{

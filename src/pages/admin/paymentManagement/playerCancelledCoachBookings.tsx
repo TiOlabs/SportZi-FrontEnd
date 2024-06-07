@@ -27,7 +27,7 @@ const PlayerCanceledCoachBookings = () => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/getCoachBookings"
+          `${process.env.REACT_APP_API_URL}api/getCoachBookings`
         );
         const data = await res.data;
         setPlayerBookingDetails(data);

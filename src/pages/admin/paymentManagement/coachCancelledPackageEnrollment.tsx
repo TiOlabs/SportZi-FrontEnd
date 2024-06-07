@@ -20,7 +20,7 @@ const CoachCancelledPackageEnrollment = () => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getarcadebookings`
         );
         const data = await res.data;
         setArcadeBookingDetails(data);

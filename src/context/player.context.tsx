@@ -34,7 +34,7 @@ const PlayerProvider = ({ children }: any) => {
         if (t) {
           // Check if t is not null
           axiosInstance
-            .get(`http://localhost:8000/api/auth/getplayerdetails/${t}`)
+            .get(`${process.env.REACT_APP_API_URL}api/auth/getplayerdetails/${t}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
               setUserDetails({
