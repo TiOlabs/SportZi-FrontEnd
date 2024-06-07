@@ -5,8 +5,11 @@ import { useState } from "react";
 import axios from "axios";
 import UpdateZone from "./UpdateZone";
 const ArcadeZoneCard = (props: any) => {
+
   console.log("lol ", props);
+  
   const [cloudName] = useState("dle0txcgt");
+
   const cld = new Cloudinary({
     cloud: {
       cloudName,

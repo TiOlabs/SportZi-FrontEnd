@@ -12,6 +12,8 @@ import { usePlayer } from "../../context/player.context";
 import { useLocation } from "react-router-dom";
 import { useArcade } from "../../context/Arcade.context";
 import { useCoach } from "../../context/coach.context";
+import CoachApplyForm from "../../components/coachApplyForArcade";
+import ArcadeZoneCardUserView from "../../components/arcadeZoneCard(UserView)";
 
 const Home = () => {
   const location = useLocation();
@@ -26,12 +28,16 @@ const Home = () => {
 
   return (
     <>
-      {userDetails.id !== "" || managerDetails.id !== "" || coachDetails.id !== "" ? (
+      {userDetails.id !== "" ||
+      managerDetails.id !== "" ||
+      coachDetails.id !== "" ? (
         <Navbar />
       ) : (
         <NavbarLogin />
       )}
       <HeroSection />
+      {/* <ArcadeZoneCardUserView /> */}
+      {/* <CoachApplyForm /> */}
       <CoachCardSection />
       <DiscoutCardsSection />
       <MapSction />

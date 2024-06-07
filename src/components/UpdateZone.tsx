@@ -353,7 +353,6 @@ const UpdateZone = (props: any) => {
     if (sportcc === "") {
       sportcc = props.sport_id;
     }
-
     try {
       console.log(sportcc);
       const res = await axios.put(
@@ -474,6 +473,7 @@ const UpdateZone = (props: any) => {
 
     return isWithin;
   };
+
   return (
     <>
       <Button
