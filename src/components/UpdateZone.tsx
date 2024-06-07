@@ -43,13 +43,13 @@ const UpdateZone = (props: any) => {
   const [startedTime, setStartedTime] = useState<any>(props.open_time);
   const [closedTime, setClosedTime] = useState<string | null>(props.close_time);
   const [discription, setDiscription] = useState(props.description);
-  const [sportc,setSportc] = useState("");
+  const [sportc, setSportc] = useState("");
   console.log(sportc);
-console.log(props.sport)
+  console.log(props.sport);
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  console.log(arcadeName)
+  console.log(arcadeName);
   const handleTimeChangeStart = (time: any, timeString: string) => {
     setStartedTime(timeString);
     console.log("Selected time:", timeString);
@@ -96,12 +96,12 @@ console.log(props.sport)
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
-    let sportcc=sportc
-    if(sportcc === ""){
-      sportcc=props.sport_id
+    let sportcc = sportc;
+    if (sportcc === "") {
+      sportcc = props.sport_id;
     }
-      try {
-        console.log(sportcc)
+    try {
+      console.log(sportcc);
       const res = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
         {
@@ -116,7 +116,6 @@ console.log(props.sport)
           arcade_id: ArcadeId,
           sport_id: sportcc,
         }
-
       );
       console.log(res);
       message.success("Zone Updated Successfully");
@@ -126,6 +125,7 @@ console.log(props.sport)
     }
     handleOk();
   };
+
   return (
     <>
       <Button
@@ -155,7 +155,7 @@ console.log(props.sport)
           >
             <h1>Update Arcade Details</h1>
           </div>
-          
+
           <Form.Item
             name="ArcadeName"
             label="Zone Name"
