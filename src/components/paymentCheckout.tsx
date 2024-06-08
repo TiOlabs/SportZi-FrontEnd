@@ -108,6 +108,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
     console.log(props.coach_id);
     console.log(props.arcadeId);
     console.log(zoneBookings.zoneBookings.created_at);
+    console.log(props.userId)
 
     axios
       .post(`${process.env.REACT_APP_API_URL}api/addCoachBooking`, {

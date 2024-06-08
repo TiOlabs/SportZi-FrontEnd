@@ -25,6 +25,7 @@ const AddPhotoButton = () => {
   const { ArcadeId } = useParams();
   console.log(ArcadeId);
   const { userDetails } = useContext(UserContext);
+  console.log(userDetails);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -106,6 +107,7 @@ const AddPhotoButton = () => {
             user_id: userDetails.id,
           }
         );
+        window.location.reload();
       } catch (e) {
         console.log(e);
       }

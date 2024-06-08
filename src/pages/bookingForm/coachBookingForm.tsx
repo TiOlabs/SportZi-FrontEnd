@@ -36,6 +36,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import NavbarProfile from "../../components/NavBarProfile";
 import { useUser } from "../../context/userContext";
+import axiosInstance from "../../axiosInstance";
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
@@ -112,19 +113,19 @@ const CoachBookingForm: React.FC = () => {
   }, [coachId]);
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const resPaymentDetails = await fetch(
+    const fetchData = async () => {
+      try {
+        const resPaymentDetails = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}api/getuser/${userDetails.id}`
         );
-        const paymentDetailsData = await resPaymentDetails.json();
+        const paymentDetailsData = resPaymentDetails.data;
         console.log(paymentDetailsData);
         setUserData(paymentDetailsData);
-      };
-      fetchData();
-    } catch (e) {
-      console.log("errrr", e);
-    }
+      } catch (e) {
+        console.log("errrr", e);
+      }
+    };
+    fetchData();
   }, [userDetails]);
 
   useEffect(() => {

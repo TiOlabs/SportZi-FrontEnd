@@ -6,10 +6,11 @@ import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, TimePicker, Select } from "antd";
 import { Link } from "react-router-dom";
 import img1 from "./images/img1.png";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dayjs } from "dayjs";
 import axiosInstance from "../../axiosInstance";
 import MapForSignUpForm from "../../components/mapForSignUpForm";
+import { useLocation } from "../../context/location.context";
 
 //responsiveness
 const formItemLayout = {
@@ -48,25 +49,35 @@ const commonInputStyle = {
 const { Option } = Select;
 
 // function starting
-const SignupArcadeManager = () => {
+const SignupArcadeManager: React.FC = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
-  const [location, setLocation] = useState("");
   const [arcadename, setArcadeName] = useState("");
   const [arcadeemail, setArcadeEmail] = useState("");
   const [opentime, setOpentime] = useState<string>("");
   const [closetime, setClosetime] = useState<string>("");
-  const [selectedLocation, setSelectedLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(() => {
+  // const [selectedLocation, setSelectedLocation] = useState<{
+  //   lat: number;
+  //   lng: number;
+  // } | null>(() => {
+  //   const storedLocation = localStorage.getItem("selectedLocation");
+  //   return storedLocation ? JSON.parse(storedLocation) : null;
+  // });
+  const { selectedLocation } = useLocation();
+  useEffect(() => {
+    // Log the initial stored location when the component mounts
     const storedLocation = localStorage.getItem("selectedLocation");
-    return storedLocation ? JSON.parse(storedLocation) : null;
-  });
+    console.log("Initial storedLocation", storedLocation);
+  }, []);
+
+  useEffect(() => {
+    // Log the selected location whenever it changes
+    console.log("Updated selectedLocation", selectedLocation);
+  }, [selectedLocation]);
 
   const handleOpenTime = (
     time: Dayjs | null,
@@ -143,7 +154,6 @@ const SignupArcadeManager = () => {
     }
     return Promise.reject("Invalid phone number");
   };
-  console.log(selectedLocation);
 
   return (
     <>
@@ -452,7 +462,7 @@ const SignupArcadeManager = () => {
 
               {/* arcade email */}
               <Form.Item
-                name="arcade email"
+                name="arcadeemail"
                 label="Arcade E-mail"
                 rules={[
                   {
@@ -514,7 +524,7 @@ const SignupArcadeManager = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select Open Time!",
+                    message: "Please select Close Time!",
                   },
                 ]}
               >

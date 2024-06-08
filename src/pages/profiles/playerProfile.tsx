@@ -67,6 +67,7 @@ const PlayerProfile = () => {
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
   const [user_image, setUser_image] = useState(userDetails?.user_image);
+  const [loading, setLoading] = useState(false);
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     if (achivements) {
@@ -96,6 +97,7 @@ const PlayerProfile = () => {
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
   console.log(userDetails.id);
   useEffect(() => {
+    setLoading(true);
     axios
       .get(
         process.env.REACT_APP_API_URL +
@@ -128,9 +130,11 @@ const PlayerProfile = () => {
             );
           }
         });
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
       });
   }, [userDetails, value2]);
   useEffect(() => {
@@ -280,6 +284,8 @@ const PlayerProfile = () => {
         return booking.zone_booking_id.includes(filterValue);
       } else if (filterBy === "status") {
         return booking.status.includes(filterValue);
+      } else if (filterBy === "rate") {
+        return booking.full_amount.toString().includes(filterValue);
       }
       return true;
     }

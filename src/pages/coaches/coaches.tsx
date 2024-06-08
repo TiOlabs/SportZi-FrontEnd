@@ -10,6 +10,7 @@ import { useUser } from "../../context/userContext";
 
 const Coaches = () => {
   const { userDetails } = useUser();
+  console.log("userDetails", userDetails);
 
   const coaches = useLocation();
   useEffect(() => {
