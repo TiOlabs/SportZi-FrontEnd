@@ -36,6 +36,8 @@ import axios from "axios";
 import { Coach, User } from "../../types";
 import { UserContext } from "../../context/userContext";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
+import { CoachFeedback } from "../../types";
+import Feedback from "react-bootstrap/esm/Feedback";
 
 interface FeedbackData {
   feedback: string;
@@ -57,6 +59,8 @@ const CoachProfileUser = () => {
   const [ismodelopen, setismodelopen] = useState(false);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0.0);
+
+  const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
 
   const [averageRating, setAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
@@ -85,6 +89,27 @@ const CoachProfileUser = () => {
 
     fetchRatings();
   }, [coachId]);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getcoachfeedbacks/${coachId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  console.log("All feedbacks:::::::::::", allFeedbacks);
 
   const [isModalOpenForReport, setismodelopenForReport] = useState(false);
   const [description, setDescription] = useState("");
@@ -127,6 +152,7 @@ const CoachProfileUser = () => {
   };
   console.log("coachDetails", coachDetails);
   console.log("userDetails", userDetails);
+
   const handleFinishForReport = async () => {
     try {
       console.log("userDetails", userDetails);
@@ -154,10 +180,13 @@ const CoachProfileUser = () => {
 
   const submitFeedback = async () => {
     try {
-      const response = await axiosInstance.post("api/addcoachfeedbacks", {
-        comment,
-        rating,
-      });
+      const response = await axiosInstance.post(
+        `api/addcoachfeedbacks/${coachId}`,
+        {
+          comment,
+          rating,
+        }
+      );
       console.log("Feedback data:", response.data);
 
       setComment("");
@@ -791,77 +820,9 @@ const CoachProfileUser = () => {
       </div>
       <PhotoCollageForUsers id={coachId} role={"COACH"} />
 
-      {/* feedback */}
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "50px",
-        }}
-      >
-        {/* <Col
-          span={24}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        > */}
-        <Col
-          span={21}
-          style={{
-            width: "100%",
-            paddingBottom: "10px",
-          }}
-        >
-          <TextArea
-            value={comment}
-            onChange={(e: any) => setComment(e.target.value)}
-            placeholder="Enter your feedback here"
-            rows={4}
-          />
-        </Col>
+     
 
-        <Col
-          span={24}
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingBottom: "10px",
-          }}
-        >
-          <Rate
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              // color:"#0E458E",
-              borderBlock: "dashed #0E458E",
-              opacity: "1",
-            }}
-            value={rating}
-            onChange={(value) => setRating(value)}
-          />
-        </Col>
-        <Col
-          span={24}
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Button type="primary" onClick={submitFeedback}>
-            Submit
-          </Button>
-        </Col>
-        {/* </Col> */}
-      </Row>
-
+      {/* Reviews */}
       <Row
         style={{
           width: "100%",
@@ -898,7 +859,7 @@ const CoachProfileUser = () => {
             Reviews
           </Typography>
 
-          <Row
+          {/* <Row
             style={{
               width: "100%",
               minHeight: "300px",
@@ -951,13 +912,15 @@ const CoachProfileUser = () => {
               {" "}
               <ReviewCard />
             </Col>
-          </Row>
+          </Row> */}
+
           <Row
             style={{
               width: "100%",
               minHeight: "300px",
               paddingBottom: "20px",
               display: "flex",
+              flexDirection: "row",
               justifyContent: "center",
               alignContent: "center",
             }}
@@ -965,48 +928,29 @@ const CoachProfileUser = () => {
             <Col
               style={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignContent: "center",
               }}
               xs={24}
               sm={12}
-              md={12}
-              lg={8}
-              xl={8}
+              md={24}
+              lg={24}
+              xl={24}
             >
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
+              {allFeedbacks.map((feedback: any) =>
+                feedback.feedback.feedbackComments.map((comment: any) => (
+                  <ReviewCard
+                    key={comment.feedback_id}
+                    rate={feedback.rate}
+                    userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                    comment={comment.comment}
+                  />
+                ))
+              )}
             </Col>
           </Row>
+
           <Row>
             {" "}
             <div
@@ -1027,7 +971,7 @@ const CoachProfileUser = () => {
                 onClick={showModal}
               >
                 {" "}
-                Request for Booking
+                Give an Feedback
               </Button>
             </div>
           </Row>
@@ -1063,17 +1007,29 @@ const CoachProfileUser = () => {
             }}
             key="submit"
             type="primary"
-            onClick={handleOk}
+            onClick={submitFeedback}
           >
             Give Reveiw
           </Button>,
         ]}
       >
         <Flex vertical gap={32}>
+          <Rate
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              // color:"#0E458E",
+              // borderBlock: "dashed #0E458E",
+              opacity: "1",
+            }}
+            value={rating}
+            onChange={(value) => setRating(value)}
+          />
           <TextArea
             showCount
             maxLength={60}
-            onChange={onChange}
+            value={comment}
+            onChange={(e: any) => setComment(e.target.value)}
             placeholder="Write your feedback"
             style={{ height: 120, resize: "none", marginBottom: "20px" }}
           />
