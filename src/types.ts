@@ -165,8 +165,8 @@ export interface Arcade {
   location: string;
   distription: String;
   manager_id: String;
-  opening_time: String;
-  closing_time: String;
+  open_time: String;
+  close_time: String;
   address: String;
   arcade_image: String;
   arcadefeedbacks: ArcadeFeedbacks[];

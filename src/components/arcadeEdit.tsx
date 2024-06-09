@@ -8,6 +8,7 @@ import {
   Modal,
   Space,
   Tag,
+  TimePicker,
   Typography,
   Upload,
 } from "antd";
@@ -33,6 +34,12 @@ interface PlayerEditProps {
   setFirstname: (value: string) => void;
   discription: string;
   setDiscription: (value: string) => void;
+  address: string;
+  setAddress: (value: string) => void;
+  openTime: string;
+  setopenTime: (value: string) => void;
+  closeTime: string;
+  setCloseTime: (value: string) => void;
 }
 
 const ArcadeEdit = ({
@@ -40,6 +47,12 @@ const ArcadeEdit = ({
   setFirstname,
   discription,
   setDiscription,
+  address,
+  setAddress,
+  openTime,
+  setopenTime,
+  closeTime,
+  setCloseTime,
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
@@ -92,14 +105,9 @@ const ArcadeEdit = ({
   const onClose = () => {
     setOpen(false);
   };
-  console.log("inside try");
-  console.log("inside try", userDetails?.id);
 
   const onFinish = () => {
     try {
-      console.log("inside tryyyyy");
-      console.log("inside tryyyyyy", userDetails?.id);
-      console.log("inside tryyyyyy", firstname);
       axiosInstance
         .put(
           `http://localhost:8000/api/auth/updateArcadedetails/${userDetails?.id}`,
@@ -282,6 +290,57 @@ const ArcadeEdit = ({
                 onChange={(e) => setDiscription(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 4 }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="Address"
+              label="Address"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Address",
+                  whitespace: true,
+                },
+              ]}
+              style={{}}
+            >
+              <TextArea
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Controlled autosize"
+                autoSize={{ minRows: 3, maxRows: 4 }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="TimeStart"
+              label="Add Arcade Open Time"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select Zone Open time!",
+                },
+              ]}
+            >
+              <TimePicker
+                format="HH:mm"
+                // onChange={(e) => setopenTime(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="TimeClose"
+              label="Add Arcade Close Time"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select Zone Close Time!",
+                },
+              ]}
+            >
+              <TimePicker
+                format="HH:mm"
+                // onChange={(time, timeString: string | string[]) =>
+
+                // }
               />
             </Form.Item>
             {/* Achivements */}

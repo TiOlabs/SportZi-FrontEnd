@@ -419,12 +419,18 @@ const ArcadeProfileArcade = () => {
   const [discription, setDiscription] = useState<any>();
   const [address, setAddress] = useState<any>();
   const [sport, setSport] = useState<any[]>([]);
+  const [openTime, setOpenTime] = useState<any>();
+  const [closeTime, setCloseTime] = useState<any>();
+  const [managerId, setmanagerId] = useState<any>();
+  console.log("arcadeDetails", arcadeDetails);
   useEffect(() => {
     if (arcadeDetails) {
       setArcadeName(arcadeDetails.arcade_name);
       setDiscription(arcadeDetails.distription);
       setAddress(arcadeDetails.address);
-
+      setOpenTime(arcadeDetails.open_time);
+      setCloseTime(arcadeDetails.close_time);
+      setmanagerId(arcadeDetails.manager_id);
       if (arcade?.zone) {
         const sports = Array.from(
           new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
@@ -433,8 +439,7 @@ const ArcadeProfileArcade = () => {
       }
     }
   }, [arcadeDetails]);
-
-  //sports array also have the duplicate values how to remove it
+  console.log("open", openTime, "close", closeTime);
 
   return (
     <>
@@ -529,7 +534,7 @@ const ArcadeProfileArcade = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.distription}
+                {discription}
               </Typography>
             </Col>
           </Row>
@@ -574,6 +579,12 @@ const ArcadeProfileArcade = () => {
                 setFirstname={setArcadeName}
                 discription={discription}
                 setDiscription={setDiscription}
+                address={address}
+                setAddress={setAddress}
+                openTime={openTime}
+                setopenTime={setOpenTime}
+                closeTime={closeTime}
+                setCloseTime={setCloseTime}
               />
             </div>
             <div>
@@ -590,6 +601,19 @@ const ArcadeProfileArcade = () => {
                 }}
               >
                 {arcadeName}
+              </h1>
+              <h1
+                style={{
+                  color: "#000",
+                  fontSize: "28px",
+                  fontStyle: "normal",
+                  fontWeight: "300",
+                  fontFamily: "kanit",
+                  lineHeight: "normal",
+                  marginBottom: "0px",
+                }}
+              >
+                {managerId}
               </h1>
 
               <p
@@ -882,7 +906,7 @@ const ArcadeProfileArcade = () => {
                   >
                     &#8226;
                   </span>
-                  Open Time
+                  Open Time : {openTime}
                 </div>
               </List.Item>
               <List.Item
@@ -913,7 +937,7 @@ const ArcadeProfileArcade = () => {
                   >
                     &#8226;
                   </span>
-                  Close Time
+                  Close Time : {closeTime}
                 </div>
               </List.Item>
             </List>
