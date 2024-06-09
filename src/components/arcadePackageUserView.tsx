@@ -27,6 +27,7 @@ import { useUser } from "../context/userContext";
 import PaymentModal from "./paymentCheckout";
 import { CoachAssignDetails, User } from "../types";
 import DisabledContext from "antd/es/config-provider/DisabledContext";
+import axiosInstance from "../axiosInstance";
 
 const ArcadePackageUserView = (props: any) => {
   const { userDetails } = useUser();
@@ -69,6 +70,7 @@ const ArcadePackageUserView = (props: any) => {
         );
         console.log(res.data);
         setIsModalOpen(false);
+        message.success("Requested successfully");
       } catch (err) {
         console.log("err", err);
       }
@@ -93,8 +95,6 @@ const ArcadePackageUserView = (props: any) => {
     }
   };
 
-
-
   useEffect(() => {
     if (userDetails?.role === "COACH") {
       try {
@@ -113,12 +113,10 @@ const ArcadePackageUserView = (props: any) => {
     }
   }, [userDetails?.id]);
 
-
-
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await axios.get(
+        const res = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}api/getuser/${props.player_id}`
         );
         const data = await res.data;
@@ -253,7 +251,6 @@ const ArcadePackageUserView = (props: any) => {
                 fontFamily: "kanit",
               }}
             >
-              
               {props.coachPresentage}% of the rate will be given to the coach
             </Typography>
             <Row>
@@ -341,7 +338,7 @@ const ArcadePackageUserView = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                 LKR {props.rate}
+                  LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{
@@ -398,7 +395,7 @@ const ArcadePackageUserView = (props: any) => {
                     okButtonProps={{ disabled: true }}
                     onCancel={handleCancel}
                     width={800}
-                   >
+                  >
                     <Form
                       layout="vertical"
                       style={{ marginTop: "10%", margin: "2%" }}
@@ -445,7 +442,7 @@ const ArcadePackageUserView = (props: any) => {
                           }
                         />
                       </Form.Item>
-                      
+
                       <Form.Item>
                         <div
                           style={{
@@ -509,7 +506,9 @@ const ArcadePackageUserView = (props: any) => {
                           color: "#0E458E",
                         }}
                       >
-                        <h1>Application Form - For Enroll to the Package(Coach)</h1>
+                        <h1>
+                          Application Form - For Enroll to the Package(Coach)
+                        </h1>
                       </div>
                       <Form.Item
                         name="duration"
@@ -555,7 +554,9 @@ const ArcadePackageUserView = (props: any) => {
                       >
                         <Input
                           placeholder="Add a note"
-                          onChange={(e) => setCoachPackageDescription(e.target.value)}
+                          onChange={(e) =>
+                            setCoachPackageDescription(e.target.value)
+                          }
                         />
                       </Form.Item>
                     </Form>

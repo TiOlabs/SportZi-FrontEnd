@@ -26,6 +26,8 @@ import dayjs from "dayjs";
 import { count } from "console";
 import { max } from "moment";
 import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
+import PaymentModalForZoneBooking from "../../components/paymentCheckOutForZoneBooking";
+import axiosInstance from "../../axiosInstance";
 
 const { Option } = Select;
 
@@ -84,19 +86,20 @@ const BookingForm = () => {
 
   console.log(userId);
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const resPaymentDetails = await fetch(
+    const fetchData = async () => {
+      try {
+        const resPaymentDetails = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}api/getuser/${userId}`
         );
-        const paymentDetailsData = await resPaymentDetails.json();
+        const paymentDetailsData = resPaymentDetails.data;
         console.log(paymentDetailsData);
         setPaymentDetails(paymentDetailsData);
-      };
-      fetchData();
-    } catch (e) {
-      console.log("errrr", e);
-    }
+      } catch (e) {
+        console.log("errrr", e);
+      }
+    };
+
+    fetchData();
   }, [userId]);
   console.log(date);
   useEffect(() => {
@@ -481,6 +484,7 @@ const BookingForm = () => {
     day: React.SetStateAction<null>
     // Change the type to string
   ) => {
+    setTime("");
     setSelectedDate(date);
     setDate(date as unknown as string);
     setSelectedDay(day);
@@ -890,7 +894,7 @@ const BookingForm = () => {
               >
                 {contextHolder}
 
-                <PaymentModal
+                <PaymentModalForZoneBooking
                   htmlType="submit"
                   item={"Zone Booking"}
                   orderId={5}
@@ -908,6 +912,7 @@ const BookingForm = () => {
                   pcount={pcount}
                   userId={userId}
                   zoneId={zoneId}
+                  arcadeId={zoneDetails?.arcade.arcade_id}
                   reservation_type={zone}
                   avaiableParticipantCount={
                     Number(capacity) -

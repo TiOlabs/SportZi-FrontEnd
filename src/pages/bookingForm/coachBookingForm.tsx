@@ -93,6 +93,7 @@ const CoachBookingForm: React.FC = () => {
       weekday: "long",
     }).format(datee);
     console.log(day);
+    setTime("");
     setDayOfWeek(day);
   };
 
@@ -439,16 +440,51 @@ const CoachBookingForm: React.FC = () => {
     zoneDetails?.full_zone_rate === 0 &&
     reservationType === "person_by_person"
   ) {
-    fullAmount = Number(zonerate) * Number(pcount);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zonerate) * Number(pcount);
+    } else {
+      fullAmount =
+        Number(zonerate) * Number(pcount) -
+        (Number(zonerate) *
+          Number(pcount) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   } else if (zoneDetails?.full_zone_rate === 0 && reservationType === "full") {
-    fullAmount = Number(zonerate) * Number(zoneDetails.capacity);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zonerate) * Number(zoneDetails.capacity);
+    } else {
+      fullAmount =
+        Number(zonerate) * Number(zoneDetails.capacity) -
+        (Number(zonerate) *
+          Number(zoneDetails.capacity) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   } else if (
     zoneDetails?.full_zone_rate !== 0 &&
     reservationType === "person_by_person"
   ) {
-    fullAmount = Number(zonerate) * Number(pcount);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zonerate) * Number(pcount);
+    } else {
+      fullAmount =
+        Number(zonerate) * Number(pcount) -
+        (Number(zonerate) *
+          Number(pcount) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   } else if (zoneDetails?.full_zone_rate !== 0 && reservationType === "full") {
-    fullAmount = Number(zoneDetails?.full_zone_rate);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zoneDetails?.full_zone_rate);
+    } else {
+      fullAmount =
+        Number(zoneDetails?.full_zone_rate) -
+        (Number(zoneDetails?.full_zone_rate) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   }
   let finalAmaount = Number(fullAmount) + coachAmount * timeStep;
 
@@ -623,6 +659,8 @@ const CoachBookingForm: React.FC = () => {
         )
     );
   };
+  console.log(packageEnrollDataForCoach);
+  console.log(isCoachInthePackage)
 
   return (
     <>
@@ -949,7 +987,6 @@ const CoachBookingForm: React.FC = () => {
                                     : coachBookings.some(
                                         (item) =>
                                           item.date === datee &&
-                                          item.zone_id === zone &&
                                           item.coach_id === coachId &&
                                           item.time ===
                                             `${slot.startTime}-${slot.endTime}` &&
@@ -958,7 +995,6 @@ const CoachBookingForm: React.FC = () => {
                                       bookingDate.find((item) => {
                                         return (
                                           item.date === datee &&
-                                          item.zone.zone_id === zone &&
                                           item.way_of_booking === "full" &&
                                           item.time ===
                                             `${slot.startTime}-${slot.endTime}` &&

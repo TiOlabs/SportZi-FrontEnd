@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-const PaymentModal = (props: any): JSX.Element | null => {
+const PaymentModalForZoneBooking = (props: any): JSX.Element | null => {
   const zoneBookings = useContext(ZoneBookingsContext);
   const [arcadesofCoache, setarcadesofCoache] = useState<Arcade>();
   const [isZoneIntheArcade, setIsZoneIntheArcade] = useState(false);
@@ -54,26 +54,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
     fetchData();
   }, [props.arcadeId]);
 
-  useEffect(() => {
-    if (arcadesofCoache) {
-      const zoneFound = !!arcadesofCoache.zone.find(
-        (zone) => zone.zone_id === props.zoneId
-      );
-      setIsZoneIntheArcade(zoneFound);
-    }
-  }, [arcadesofCoache, props.zoneId]);
-
-  useEffect(() => {
-    if (arcadesofCoache) {
-      const zoneFound = !!arcadesofCoache.zone.find(
-        (zone) =>
-          (zone.zone_id === props.zoneId &&
-            zone.way_of_booking === props.reservation_type) ||
-          zone.way_of_booking === "Both"
-      );
-      setIsZonehasSelectedReservationType(zoneFound);
-    }
-  }, [arcadesofCoache, props.zoneId, props.reservation_type]);
+ 
 
   const payment = {
     sandbox: true,
@@ -216,16 +197,6 @@ const PaymentModal = (props: any): JSX.Element | null => {
         message.warning("Please select Participant Count.");
       } else if (!props.reservation_type) {
         message.warning("Please select Reservation Type.");
-      } else if (props.pcount > props.avaiableParticipantCount) {
-        message.warning(
-          "Participant count is more than available participant count."
-        );
-      } else if (!isZoneIntheArcade) {
-        message.warning("Zone is not in the selected Arcade.");
-      } else if (!isZonehasSelectedReservationType) {
-        message.warning(
-          "Selected Zone does not support selected reservation type."
-        );
       } else {
         pay();
       }
@@ -252,4 +223,4 @@ const PaymentModal = (props: any): JSX.Element | null => {
   );
 };
 
-export default PaymentModal;
+export default PaymentModalForZoneBooking;
