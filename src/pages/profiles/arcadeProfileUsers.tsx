@@ -51,11 +51,14 @@ const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const { ArcadeId } = useParams();
+  console.log("ArcadeId", ArcadeId);
   const [arcadeDetails1, setArcadeDetails] = useState<any>(null);
   const [arcade, setArcade] = useState<Arcade>();
+
   const { userDetails } = useContext(PlayerContext);
   const { coachDetails } = useContext(CoachContext);
   const { arcadeDetails } = useContext(ArcadeContext);
+
   const [coachesInArcade, setCoachesInArcade] = useState<CoachAssignDetails[]>(
     []
   );
@@ -80,7 +83,8 @@ const ArcadeProfileUser = () => {
       .catch((err) => {
         console.log("daddds", err);
       });
-  }, []);
+  }, [ArcadeId]);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -95,7 +99,10 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
+
+  console.log(arcade);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -110,7 +117,8 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
+
   console.log(arcadePackages);
 
   useEffect(() => {
@@ -125,28 +133,35 @@ const ArcadeProfileUser = () => {
         const filteredData = res.data.filter(
           (item: { status: string }) => item.status === "success"
         );
+        console.log("filteredData", filteredData);
         setCoachesInArcade(filteredData);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [ArcadeId]);
+
   console.log("arcade", arcade?.arcade_image);
   const [cloudName] = useState("dle0txcgt");
+
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
+
   const showModalForReport = () => {
     setismodelopenForReport(true);
   };
+
   const handleOkForReport = () => {
     setismodelopenForReport(false);
   };
+
   const handleCancelForReport = () => {
     setismodelopenForReport(false);
   };
+
   const handleFinishForReport = async () => {
     try {
       console.log("userDetails", userDetails);
@@ -179,6 +194,9 @@ const ArcadeProfileUser = () => {
     }
     setismodelopenForReport(false);
   };
+
+  console.log("arcadeDetails1");
+
   return (
     <>
       {userDetails !== "" || coachDetails !== "" || arcadeDetails !== "" ? (
@@ -186,10 +204,6 @@ const ArcadeProfileUser = () => {
       ) : (
         <NavbarLogin />
       )}
-      <style>
-        @import
-        url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
-      </style>
 
       <Row>
         <Col
@@ -299,8 +313,9 @@ const ArcadeProfileUser = () => {
                     fontFamily: "kanit",
                     borderColor: "#0E458E",
                     marginTop: "20px",
+                    marginBottom: "80px",
                   }}
-                  onClick={showModalForReport}
+                  onClick={() => showModalForReport()}
                 >
                   Report User
                 </Button>
@@ -308,12 +323,12 @@ const ArcadeProfileUser = () => {
                   visible={isModalOpenForReport}
                   onCancel={handleCancelForReport}
                   okText="Report"
-                  onOk={handleFinishForReport}
+                  onOk={() => handleFinishForReport()}
                 >
                   <Form
                     layout="vertical"
                     style={{ marginTop: "10%", margin: "2%" }}
-                    onFinish={handleFinishForReport}
+                    onFinish={() => handleFinishForReport()}
                   >
                     <div
                       style={{
@@ -391,7 +406,6 @@ const ArcadeProfileUser = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
@@ -819,35 +833,36 @@ const ArcadeProfileUser = () => {
         >
           <Row
             style={{
-              marginLeft: "5%",
+              overflowX: "hidden",
               width: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              marginBottom: "30px",
+              height: "450px",
+              overflowY: "scroll",
+              flexWrap: "nowrap",
             }}
           >
-            <Col
-              xs={{ span: 24 }}
-              sm={{ span: 12 }}
-              md={{ span: 8 }}
-              lg={{ span: 5 }}
-              xl={{ span: 5 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              {coachesInArcade.map((coach: CoachAssignDetails) => (
+            {coachesInArcade.map((coach: CoachAssignDetails) => (
+              <Col
+                lg={{ span: 5 }}
+                md={{ span: 8 }}
+                sm={{ span: 12 }}
+                xs={{ span: 24 }}
+                style={{
+                  display: "flex",
+                }}
+              >
                 <CoachCard
                   coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
                   coachImage={coach.coach.user.user_image}
                   short_description={coach.description}
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
+                  sport={coach.coach.sport.sport_name}
                 />
-              ))}
-            </Col>
+              </Col>
+            ))}
           </Row>
         </div>
         <Button
@@ -923,7 +938,7 @@ const ArcadeProfileUser = () => {
               width: "90%",
               display: "flex",
               justifyContent: "flex-end",
-              marginBottom: "20px",
+              marginBottom: "60px",
             }}
           ></div>
         </Row>
@@ -1026,7 +1041,7 @@ const ArcadeProfileUser = () => {
               width: "90%",
               display: "flex",
               justifyContent: "flex-end",
-              marginBottom: "20px",
+              marginBottom: "60px",
             }}
           ></div>
         </Row>
@@ -1039,21 +1054,21 @@ const ArcadeProfileUser = () => {
             flexDirection: "row",
           }}
         >
-          <Col
-            xs={24}
-            sm={12}
-            md={12}
-            lg={8}
-            xl={8}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            {arcadePackages?.package.map((package1: Package) => (
+          {arcadePackages?.package.map((package1: Package) => (
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
               <ArcadePackageUserView
                 packageName={package1.package_name}
                 packageDescription={package1.description}
@@ -1064,9 +1079,13 @@ const ArcadeProfileUser = () => {
                 player_id={userDetails.id}
                 zone_id={package1.zone_id}
                 arcade_id={ArcadeId}
+                coachPresentage={package1.percentageForCoach}
+                zone_name={package1.zone.zone_name}
+                day={package1.packageDayAndTime.map((item) => item.day)}
+                time={package1.packageDayAndTime.map((item) => item.time)}
               />
-            ))}
-          </Col>
+            </Col>
+          ))}
 
           <Col
             style={{
@@ -1094,12 +1113,7 @@ const ArcadeProfileUser = () => {
         </Row>
       </Row>
 
-
       {/* feedbacks */}
-
-
-
-      
 
       <Row
         style={{

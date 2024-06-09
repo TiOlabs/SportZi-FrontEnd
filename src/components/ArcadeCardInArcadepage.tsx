@@ -129,6 +129,7 @@ const ArcadeCard = (props: any) => {
                 pool, tennis courts, pool game area, dance, karate, and yoga
                 classes. Expert coaches, affordable fees, and more! Join us for
                 an active lifestyle.
+                {props.arcade_description}
               </p>
             </div>
           </div>

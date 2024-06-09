@@ -117,7 +117,7 @@ const MapSection: React.FC = () => {
           exceptional coaching staff.
         </p>
         <AutoComplete
-          style={{ padding: "0 10%", width: "80%" }}
+          style={{ padding: "0 10%", width: "100%" }}
           options={locationData.map((arcade) => ({
             value: arcade.name,
           }))}

@@ -1,5 +1,12 @@
 import { Button, Col, Grid, Modal, Row, Typography } from "antd";
-import { useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useState,
+} from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import UpdatePackage from "./UpdatePackage";
@@ -22,10 +29,9 @@ const ArcadePackages = (props: any) => {
   const showModal = () => {
     setOpen(true);
   };
-  const handleConfirmDelete = () =>{
+  const handleConfirmDelete = () => {
     window.location.reload();
-
-  }
+  };
   const { lg } = useBreakpoint();
   return (
     <>
@@ -102,7 +108,7 @@ const ArcadePackages = (props: any) => {
                 width: "80%",
               }}
             >
-              Zone : {props.ArcadeName}
+              Zone : {props.zoneName}
             </Typography>
             <Typography
               style={{
@@ -114,6 +120,67 @@ const ArcadePackages = (props: any) => {
             >
               {props.packageDescription}
             </Typography>
+            <Row>
+              <Col
+                xs={24}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <div>
+                  <Row>
+                    <Col xs={6}>
+                      <Typography
+                        style={{
+                          fontSize: lg ? "18px" : "16px",
+                          fontFamily: "kanit",
+                          fontWeight: "400",
+                          color: "#5587CC",
+                        }}
+                      >
+                        Day & Time
+                      </Typography>
+                    </Col>
+                    <Col xs={18}>
+                      {props.day.map(
+                        (
+                          d:
+                            | string
+                            | number
+                            | boolean
+                            | ReactElement<
+                                any,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | ReactPortal
+                            | null
+                            | undefined,
+                          index: Key | null | undefined
+                        ) => (
+                          <Typography
+                            key={index}
+                            style={{
+                              fontSize: lg ? "18px" : "16px",
+                              fontFamily: "kanit",
+                              fontWeight: "300",
+                            }}
+                          >
+                            {d}{" "}
+                            {props.time &&
+                              typeof index === "number" &&
+                              props.time[index]}
+                          </Typography>
+                        )
+                      )}
+                    </Col>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
             <Row
               style={{
                 marginTop: "10px",
@@ -138,7 +205,7 @@ const ArcadePackages = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  Rs.{props.rate}
+                  LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{
@@ -166,41 +233,42 @@ const ArcadePackages = (props: any) => {
                   package_id={props.package_id}
                   packageImage={props.packageImage}
                   coachPrecentage={props.CoachPrecentage}
+                  day={props.day}
+                  time={props.time}
+                  zone_id={props.zone_id}
                 />
                 <Button
-                    style={{
-                      backgroundColor: "red",
-                      color: "white",
-                      borderRadius: "3px",
-                    }}
-                    onClick={showModal}
-                  >
-                    Delete
-                  </Button>
-                  <Modal
-                    visible={open}
-                    onOk={async (e) => {
-                      const url = `${process.env.REACT_APP_API_URL}api/deletePackageDetails/${props.package_id}`;
-                      
-                      axios
-                        .delete(url)
-                        .then((response) => {
-                            alert("Package Deleted Successfully");
-                          if (response.status === 200) {
-                            console.log("success");
-                          } else {
-                            console.log("error");
-                          }
-                        })
-                        .catch((e) => console.log(e));
-                        handleConfirmDelete();
-                    }
-                    
-                  }
-                    onCancel={handleCancel}
-                  >
-                    <p>Are you sure you want to delete this arcade zone?</p>
-                  </Modal>
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    borderRadius: "3px",
+                  }}
+                  onClick={showModal}
+                >
+                  Delete
+                </Button>
+                <Modal
+                  visible={open}
+                  onOk={async (e) => {
+                    const url = `${process.env.REACT_APP_API_URL}api/deletePackageDetails/${props.package_id}`;
+
+                    axios
+                      .delete(url)
+                      .then((response) => {
+                        alert("Package Deleted Successfully");
+                        if (response.status === 200) {
+                          console.log("success");
+                        } else {
+                          console.log("error");
+                        }
+                      })
+                      .catch((e) => console.log(e));
+                    handleConfirmDelete();
+                  }}
+                  onCancel={handleCancel}
+                >
+                  <p>Are you sure you want to delete this arcade zone?</p>
+                </Modal>
               </Col>
             </Row>
           </Col>

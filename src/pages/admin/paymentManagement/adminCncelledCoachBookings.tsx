@@ -47,7 +47,7 @@ const AdminCanceledCoachBookings = (props: any) => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getarcadebookings`
         );
         const data = await res.data;
         setAdminCanceled(data);
@@ -99,7 +99,7 @@ const AdminCanceledCoachBookings = (props: any) => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getarcadebookings`
         );
         const data = await res.data;
         setZoneBookingDetails(data);
@@ -259,7 +259,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          Rs.{props.rate}
+          LKR {props.rate}
         </div>
       </Col>
       <Col span={8}>

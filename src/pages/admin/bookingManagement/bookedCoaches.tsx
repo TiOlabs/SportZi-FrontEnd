@@ -40,7 +40,7 @@ const BookedCoaches = (props: any) => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/getCoachBookings"
+          `${process.env.REACT_APP_API_URL}api/getCoachBookings`
         );
         const data = await res.data;
         setCoachBookingDetails(data);
@@ -220,7 +220,7 @@ function DataRow(props: any) {
         // }
         try {
           const response = await axios.put(
-            `http://localhost:8000/api/updatecoachBooking/${props.booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
             {
               booking_id: props.booking_id,
               status: "canceled_By_Admin",
@@ -254,7 +254,7 @@ function DataRow(props: any) {
         }
         try {
           const response = await axios.put(
-            `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${props.booking_id}`,
             {
               booking_id: props.booking_id,
               status: "canceled_By_Admin",
@@ -350,7 +350,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          Rs.{props.rate}
+          LKR {props.rate}
         </div>
       </Col>
       <Col span={7}>

@@ -39,7 +39,9 @@ const CoachesManagement = () => {
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/getcoach");
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getcoach`
+        );
         setCoaches(response.data);
       } catch (error) {
         console.error("Error fetching coaches:", error);

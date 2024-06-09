@@ -72,6 +72,7 @@ const CoachProfileUser = () => {
         const response = await axiosInstance.get(
           `/api/getaverageratingbycoachId/${coachId}`
         );
+        console.log("response:", response.data);
 
         const { averageRating, totalFeedbacks } = response.data;
         console.log("averageRating:", averageRating);

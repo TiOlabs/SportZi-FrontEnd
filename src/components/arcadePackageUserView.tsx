@@ -3,13 +3,22 @@ import {
   Col,
   Form,
   Grid,
+  Input,
   InputNumber,
   Modal,
   Row,
   Typography,
   message,
 } from "antd";
-import { useEffect, useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useEffect,
+  useState,
+} from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import UpdatePackage from "./UpdatePackage";
@@ -24,11 +33,10 @@ const ArcadePackageUserView = (props: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState<User>();
   const [duration, setDuration] = useState("");
+  const [coachPackageDescription, setCoachPackageDescription] = useState("");
   const [coachisInArcade, setcoachisInArcade] = useState<CoachAssignDetails[]>(
     []
   );
-  console.log("lol ", props);
-  console.log("lol ", props.packageImage);
   const { useBreakpoint } = Grid;
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -46,41 +54,67 @@ const ArcadePackageUserView = (props: any) => {
     window.location.reload();
   };
   const { lg } = useBreakpoint();
-  console.log(userDetails);
   const fullAmount = props.rate * parseInt(duration);
   const handleFinish = async () => {
-    // try {
-    //   const durationInt = parseInt(duration);
-    //   const res = await axios.post(
-    //     `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentPlayerDetails`,
-    //     {
-    //       package_id: props.package_id,
-    //       player_id: userDetails?.id,
-    //       duration: durationInt,
-    //       rate: fullAmount,
-    //     }
-    //   );
-    //   console.log("res", res);
-    //   setIsModalOpen(false);
-    // } catch (err) {
-    //   console.log("err", err);
-    // }
-  };
-  if (userDetails?.role === "COACH") {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${userDetails?.id}`
+    if (userDetails?.role === "COACH") {
+      try {
+        const res = await axios.post(
+          `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentCoachDetails`,
+          {
+            coach_id: userDetails?.id,
+            package_id: props.package_id,
+            description: coachPackageDescription,
+            duration: parseInt(duration),
+          }
         );
-        const data = await res.data;
-        console.log(data);
-        setcoachisInArcade(data);
-      };
-      fetchData();
-    } catch (e) {
-      console.log(e);
+        console.log(res.data);
+        setIsModalOpen(false);
+      } catch (err) {
+        console.log("err", err);
+      }
+      return;
     }
-  }
+    if (userDetails?.role === "PLAYER" || userDetails?.role === "MANAGER") {
+      try {
+        const res = await axios.post(
+          `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentPlayerDetails`,
+          {
+            package_id: props.package_id,
+            player_id: userDetails?.id,
+            duration: parseInt(duration),
+            rate: fullAmount,
+          }
+        );
+        console.log("res", res);
+        setIsModalOpen(false);
+      } catch (err) {
+        console.log("err", err);
+      }
+    }
+  };
+
+
+
+  useEffect(() => {
+    if (userDetails?.role === "COACH") {
+      try {
+        const fetchData = async () => {
+          const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${userDetails?.id}`
+          );
+          const data = await res.data;
+          console.log(data);
+          setcoachisInArcade(data);
+        };
+        fetchData();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [userDetails?.id]);
+
+
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -88,18 +122,20 @@ const ArcadePackageUserView = (props: any) => {
           `${process.env.REACT_APP_API_URL}api/getuser/${props.player_id}`
         );
         const data = await res.data;
-        console.log(data);
+
         setPaymentDetails(data);
       };
       fetchData();
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [props.player_id]);
+
   const [messageApi, contextHolder] = message.useMessage();
   const isCoachInArcade = coachisInArcade.some(
     (entry) => entry.arcade.arcade_id === props.arcade_id
   );
+
   const handleJoinClick = () => {
     if (isCoachInArcade) {
       // If the coach is in the arcade, show the modal
@@ -109,6 +145,7 @@ const ArcadePackageUserView = (props: any) => {
       message.warning("You have to apply to the arcade first.");
     }
   };
+
   return (
     <>
       <Row
@@ -133,6 +170,16 @@ const ArcadePackageUserView = (props: any) => {
             style={{ height: "100%", width: "100%" }}
             cldImg={cld.image(props.package_image)}
           />
+        </Row>
+        <Row>
+          <Col
+            xs={24}
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          ></Col>
         </Row>
         <Row
           style={{
@@ -184,7 +231,7 @@ const ArcadePackageUserView = (props: any) => {
                 width: "80%",
               }}
             >
-              Arcade : {props.ArcadeName}
+              Zone : {props.zone_name}
             </Typography>
             <Typography
               style={{
@@ -196,6 +243,80 @@ const ArcadePackageUserView = (props: any) => {
             >
               {props.packageDescription}
             </Typography>
+
+            <Typography
+              style={{
+                fontSize: lg ? "16px" : "14px",
+                fontWeight: "extra-light",
+                color: "red",
+                width: "80%",
+                fontFamily: "kanit",
+              }}
+            >
+              
+              {props.coachPresentage}% of the rate will be given to the coach
+            </Typography>
+            <Row>
+              <Col
+                xs={24}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <div>
+                  <Row>
+                    <Col xs={6}>
+                      <Typography
+                        style={{
+                          fontSize: lg ? "18px" : "16px",
+                          fontFamily: "kanit",
+                          fontWeight: "400",
+                          color: "#5587CC",
+                        }}
+                      >
+                        Day & Time
+                      </Typography>
+                    </Col>
+                    <Col xs={18}>
+                      {props.day.map(
+                        (
+                          d:
+                            | string
+                            | number
+                            | boolean
+                            | ReactElement<
+                                any,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | ReactPortal
+                            | null
+                            | undefined,
+                          index: Key | null | undefined
+                        ) => (
+                          <Typography
+                            key={index}
+                            style={{
+                              fontSize: lg ? "18px" : "16px",
+                              fontFamily: "kanit",
+                              fontWeight: "300",
+                            }}
+                          >
+                            {d}{" "}
+                            {props.time &&
+                              typeof index === "number" &&
+                              props.time[index]}
+                          </Typography>
+                        )
+                      )}
+                    </Col>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
             <Row
               style={{
                 marginTop: "10px",
@@ -220,7 +341,7 @@ const ArcadePackageUserView = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  Rs.{props.rate}
+                 LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{
@@ -252,7 +373,7 @@ const ArcadePackageUserView = (props: any) => {
                     }}
                     onClick={handleJoinClick}
                   >
-                    JOIN
+                    Join Now
                   </Button>
                 ) : userDetails?.role === "PLAYER" ||
                   userDetails?.role === "MANAGER" ? (
@@ -277,7 +398,7 @@ const ArcadePackageUserView = (props: any) => {
                     okButtonProps={{ disabled: true }}
                     onCancel={handleCancel}
                     width={800}
-                  >
+                   >
                     <Form
                       layout="vertical"
                       style={{ marginTop: "10%", margin: "2%" }}
@@ -324,6 +445,7 @@ const ArcadePackageUserView = (props: any) => {
                           }
                         />
                       </Form.Item>
+                      
                       <Form.Item>
                         <div
                           style={{
@@ -350,6 +472,7 @@ const ArcadePackageUserView = (props: any) => {
                             country={paymentDetails?.country}
                             // date={props.created_at}
                             // time={time}
+
                             duration={parseInt(duration)}
                             pcount={1}
                             userId={userDetails?.id}
@@ -386,7 +509,7 @@ const ArcadePackageUserView = (props: any) => {
                           color: "#0E458E",
                         }}
                       >
-                        <h1>Application Form - For Enroll to the Package</h1>
+                        <h1>Application Form - For Enroll to the Package(Coach)</h1>
                       </div>
                       <Form.Item
                         name="duration"
@@ -420,45 +543,20 @@ const ArcadePackageUserView = (props: any) => {
                           }
                         />
                       </Form.Item>
-                      <Form.Item>
-                        <div
-                          style={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            marginTop: "0%",
-                          }}
-                        >
-                          {contextHolder}
-
-                          <PaymentModal
-                            htmlType="submit"
-                            item={"Zone Booking"}
-                            orderId={5}
-                            amount={fullAmount}
-                            currency={"LKR"}
-                            first_name={paymentDetails?.firstname}
-                            last_name={paymentDetails?.lastname}
-                            email={paymentDetails?.email}
-                            phone={paymentDetails?.Phone}
-                            address={paymentDetails?.address}
-                            city={paymentDetails?.city}
-                            country={paymentDetails?.country}
-                            // date={props.created_at}
-                            // time={time}
-                            duration={duration}
-                            pcount={1}
-                            userId={userDetails?.id}
-                            zoneId={props.zone_id}
-                            arcade_id={props.arcade_id}
-                            // reservation_type={zone}
-                            // avaiableParticipantCount={
-                            //   Number(capacity) -
-                            //   (timeParticipantCounts1.find((item) => item.time === time)
-                            //     ?.totalParticipantCount ?? 0)
-                            // }
-                          />
-                        </div>
+                      <Form.Item
+                        name="description"
+                        label="Add description or note"
+                        rules={[
+                          {
+                            type: "string",
+                            message: "Please enter note!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          placeholder="Add a note"
+                          onChange={(e) => setCoachPackageDescription(e.target.value)}
+                        />
                       </Form.Item>
                     </Form>
                   </Modal>

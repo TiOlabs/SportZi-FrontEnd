@@ -94,6 +94,7 @@ const PlayerProfile = () => {
   };
   const currentDate = new Date();
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+  console.log(userDetails.id);
   useEffect(() => {
     axios
       .get(
@@ -121,7 +122,9 @@ const PlayerProfile = () => {
           } else if (value2 === 6) {
             return prev.filter(
               (playerBookingDetails: ZoneBookingDetails) =>
-                playerBookingDetails.status === "canceled_By_Player"
+                playerBookingDetails.status === "canceled_By_Player" ||
+                playerBookingDetails.status === "canceled_By_Arcade" ||
+                playerBookingDetails.status === "canceled_By_Coach"
             );
           }
         });
@@ -178,7 +181,9 @@ const PlayerProfile = () => {
           } else if (value === 3) {
             return prev.filter(
               (coachBookingData: CoachBookingDetails) =>
-                coachBookingData.status === "canceled_By_Player"
+                coachBookingData.status === "canceled_By_Player" ||
+                coachBookingData.status === "canceled_By_Coach" ||
+                coachBookingData.status === "canceled_By_Arcade"
             );
           }
         });
@@ -251,23 +256,34 @@ const PlayerProfile = () => {
       return booking.arcade.arcade_name
         .toLowerCase()
         .includes(filterValue.toLowerCase());
+    } else if (filterBy === "booking_id") {
+      return booking.booking_id.includes(filterValue);
+    } else if (filterBy === "status") {
+      return booking.status.includes(filterValue);
     }
     return true;
   });
-  const filteredBookingsForArcade = playerBookingsData.filter((booking:ZoneBookingDetails) => {
-    if (filterBy === "zone_name") {
-      const zoneName =
-        booking.zone.zone_name;
-      return zoneName.toLowerCase().includes(filterValue.toLowerCase());
-    } else if (filterBy === "date") {
-      return booking.date.includes(filterValue);
-    } else if (filterBy === "venue") {
-      return booking.zone.arcade.arcade_name
-        .toLowerCase()
-        .includes(filterValue.toLowerCase());
+  const filteredBookingsForArcade = playerBookingsData.filter(
+    (booking: ZoneBookingDetails) => {
+      if (filterBy === "zone_name") {
+        const zoneName = booking.zone.zone_name;
+        return zoneName.toLowerCase().includes(filterValue.toLowerCase());
+      } else if (filterBy === "date") {
+        return booking.date.includes(filterValue);
+      } else if (filterBy === "time") {
+        return booking.time.includes(filterValue);
+      } else if (filterBy === "arcade_name") {
+        return booking.zone.arcade.arcade_name
+          .toLowerCase()
+          .includes(filterValue.toLowerCase());
+      } else if (filterBy === "booking_id") {
+        return booking.zone_booking_id.includes(filterValue);
+      } else if (filterBy === "status") {
+        return booking.status.includes(filterValue);
+      }
+      return true;
     }
-    return true;
-  });
+  );
   return (
     <>
       {userDetails.id !== "" ? <NavbarProfile /> : <NavbarLogin />}
@@ -807,6 +823,7 @@ const PlayerProfile = () => {
               <Option value="coach_name">Coach Name</Option>
               <Option value="venue">Venue</Option>
               <Option value="booking_id">Booking ID</Option>
+              <Option value="status">Status</Option>
             </Select>
             <Input
               placeholder="Enter filter value"
@@ -933,6 +950,10 @@ const PlayerProfile = () => {
                 " " +
                 booking.player.user.lastname
               }
+              zone_name={booking.zone.zone_name}
+              arcade_email={booking.arcade.arcade_email}
+              status={booking.status}
+              full_amount={booking.full_amount}
             />
           ))
         ) : (
@@ -970,289 +991,6 @@ const PlayerProfile = () => {
         )}
       </div>
       <div
-      style={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <p
-        style={{
-          marginTop: "80px",
-          alignItems: "center",
-          color: "#0E458E",
-          fontFamily: "kanit",
-          fontWeight: "500",
-          fontSize: "32px",
-          paddingBottom: "10px",
-        }}
-      >
-        Available Meetings For You
-      </p>
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {/* Radio button section */}
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
-            }}
-          >
-            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-              <Radio value={4}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: { colorBorder: "#05a30a", colorPrimary: "#05a30a" },
-            }}
-          >
-            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-              <Radio value={5}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
-            }}
-          >
-            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-              <Radio value={6}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
-          <Select
-            defaultValue="date"
-            style={{ width: 120, height: "40px" }}
-            onChange={(value) => setFilterBy(value)}
-          >
-            <Option value="date">Date</Option>
-            <Option value="time">Time</Option>
-            <Option value="rate">Rate</Option>
-            <Option value="zone_name">Zone Name</Option>
-            <Option value="arcade_name">Arcade Name</Option>
-          </Select>
-          <Input
-            placeholder="Enter filter value"
-            style={{ width: 200, marginLeft: 10, height: "40px" }}
-            onChange={(e) => handleFilterChange1(e.target.value)}
-          />
-          <Button
-            style={{ marginLeft: 10, height: "40px" }}
-            ghost
-            type="primary"
-            onClick={() => {
-              setFilterValue("");
-              setFilterBy("date");
-            }}
-          >
-            Clear
-          </Button>
-        </Col>
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#0E458E",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Available
-          </Typography>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#05a30a",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Completed
-          </Typography>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#ad0508",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Canceled
-          </Typography>
-        </Col>
-        <Col span={16}></Col>
-      </Row>
-      <Row
-        style={{
-          borderRadius: "3px 3px 0px 0px",
-          width: "90%",
-          height: "97px",
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "#EFF4FA",
-          alignItems: "center",
-        }}
-      >
-        <Col
-          style={{
-            color: "#000",
-            fontFamily: "kanit",
-            fontWeight: "400",
-            fontSize: "28px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          xs={8}
-          sm={8}
-          md={8}
-          lg={6}
-          xl={6}
-        >
-          Zone
-        </Col>
-        <Col
-          style={{
-            color: "#000",
-            fontFamily: "kanit",
-            fontWeight: "400",
-            fontSize: "28px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          xs={8}
-          sm={8}
-          md={8}
-          lg={6}
-          xl={6}
-        >
-          Date
-        </Col>
-        <Col
-          style={{
-            color: "#000",
-            fontFamily: "kanit",
-            fontWeight: "400",
-            fontSize: "28px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          xs={8}
-          sm={8}
-          md={8}
-          lg={6}
-          xl={6}
-        >
-          Time
-        </Col>
-        <Col
-          style={{
-            color: "#000",
-            fontFamily: "kanit",
-            fontWeight: "400",
-            fontSize: "28px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          xs={8}
-          sm={8}
-          md={8}
-          lg={6}
-          xl={6}
-        >
-          Venue
-        </Col>
-      </Row>
-
-      <div
         style={{
           width: "100%",
           display: "flex",
@@ -1261,60 +999,356 @@ const PlayerProfile = () => {
           alignItems: "center",
         }}
       >
-        {filteredBookingsForArcade && filteredBookingsForArcade.length > 0 ? (
-          filteredBookingsForArcade.map((booking: ZoneBookingDetails) =>
-            // Check if booking type is "zone"
-            booking.booking_type === "zone" ? (
-              <AvailableMetingstoPlayer
-                key={booking.zone_booking_id} // Make sure to provide a unique key
-                booking_id={booking.zone_booking_id}
-                zone_image={booking.zone.zone_image}
-                zone_name={booking.zone.zone_name}
-                booking_date={booking.date}
-                booking_time={booking.time}
-                venue={booking.zone.arcade.arcade_name}
-                setZoneBookingDetails={setZoneBookingDetails1}
-                email={booking.zone.arcade.arcade_email}
-                role="PLAYER"
-                player_name={userDetails.firstName + " " + userDetails.lastName}
-              />
-            ) : null // Return null for bookings that are not of type "zone"
-          )
+        <p
+          style={{
+            marginTop: "80px",
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "32px",
+            paddingBottom: "10px",
+          }}
+        >
+          Available Meetings For You
+        </p>
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {/* Radio button section */}
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+              }}
+            >
+              <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+                <Radio value={4}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#05a30a", colorPrimary: "#05a30a" },
+              }}
+            >
+              <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+                <Radio value={5}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+              }}
+            >
+              <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+                <Radio value={6}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+          <Col span={8}></Col>
+          <Col span={8}>
+            <Select
+              defaultValue="date"
+              style={{ width: 120, height: "40px" }}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="date">Date</Option>
+              <Option value="time">Time</Option>
+              <Option value="rate">Rate</Option>
+              <Option value="zone_name">Zone Name</Option>
+              <Option value="arcade_name">Arcade Name</Option>
+              <Option value="status">Status</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{ width: 200, marginLeft: 10, height: "40px" }}
+              onChange={(e) => handleFilterChange1(e.target.value)}
+            />
+            <Button
+              style={{ marginLeft: 10, height: "40px" }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
+        </Row>
+
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Available
+            </Typography>
+          </Col>
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#05a30a",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Completed
+            </Typography>
+          </Col>
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#ad0508",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Canceled
+            </Typography>
+          </Col>
+          <Col span={16}></Col>
+        </Row>
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Zone
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Time
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Venue
+          </Col>
+        </Row>
+
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {filteredBookingsForArcade && filteredBookingsForArcade.length > 0 ? (
+            // Sort the bookings by date and time in descending order
+            filteredBookingsForArcade
+              .sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+                const dateTimeA: Date = new Date(`${a.date}T${a.time}`);
+                const dateTimeB: Date = new Date(`${b.date}T${b.time}`);
+                return dateTimeB.getTime() - dateTimeA.getTime(); // For descending order
+              })
+              .map(
+                (booking: ZoneBookingDetails) =>
+                  // Check if booking type is "zone"
+                  booking.booking_type === "zone" ? (
+                    <AvailableMetingstoPlayer
+                      key={booking.zone_booking_id} // Make sure to provide a unique key
+                      booking_id={booking.zone_booking_id}
+                      zone_image={booking.zone.zone_image}
+                      zone_name={booking.zone.zone_name}
+                      booking_date={booking.date}
+                      booking_time={booking.time}
+                      venue={booking.zone.arcade.arcade_name}
+                      setZoneBookingDetails={setZoneBookingDetails1}
+                      email={booking.zone.arcade.arcade_email}
+                      role="PLAYER"
+                      player_name={
+                        userDetails.firstName + " " + userDetails.lastName
+                      }
+                      status={booking.status}
+                      full_amount={booking.full_amount}
+                    />
+                  ) : null // Return null for bookings that are not of type "zone"
+              )
+          ) : (
+            <Empty description="No Bookings Available" />
+          )}
+        </div>
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
         ) : (
-          <Empty description="No Bookings Available" />
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
         )}
       </div>
-
-      {showMore ? (
-        <Button
-          style={{
-            alignItems: "center",
-            color: "#062C60",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: "18px",
-          }}
-          type="link"
-          onClick={toggleItems}
-        >
-          See More
-        </Button>
-      ) : (
-        <Button
-          style={{
-            alignItems: "center",
-            color: "#062C60",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: "18px",
-          }}
-          type="link"
-          onClick={toggleItems}
-        >
-          See Less
-        </Button>
-      )}
-    </div>
       <div
         style={{
           width: "100%",

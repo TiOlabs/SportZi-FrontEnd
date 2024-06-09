@@ -3,6 +3,7 @@ import md5 from "crypto-js/md5";
 import { Button, message } from "antd";
 import axios from "axios";
 import { ZoneBookingsContext } from "../context/zoneBookings.context";
+import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
 
 declare global {
   interface Window {
@@ -16,6 +17,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
   console.log(zoneBookings);
   console.log(zoneBookings.zoneBookings.date);
   console.log(props.first);
+  console.log(props.first_name + " " + props.last_name)
 
   // Put the payment variables here
   const [messageApi, contextHolder] = message.useMessage();
@@ -69,17 +71,26 @@ const PaymentModal = (props: any): JSX.Element | null => {
     console.log(zoneBookings.zoneBookings.zone_id);
     console.log(zoneBookings.zoneBookings.way_of_booking);
     console.log(zoneBookings.zoneBookings.booking_type);
+    console.log(props.first_name + " " + props.last_name)
     axios
-      .post("http://localhost:8000/api/addarcadebooking", {
+      .post(`${process.env.REACT_APP_API_URL}api/addarcadebooking`, {
         status: "success",
         date: zoneBookings.zoneBookings.date,
         time: zoneBookings.zoneBookings.time,
+        full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
         user_id: zoneBookings.zoneBookings.user_id,
         zone_id: zoneBookings.zoneBookings.zone_id,
         way_of_booking: zoneBookings.zoneBookings.way_of_booking,
         booking_type: zoneBookings.zoneBookings.booking_type,
         created_at: zoneBookings.zoneBookings.created_at,
+        arcade_email: props.arcade_email,
+        arcade_name: props.arcade_name,
+        role: props.role,
+        reservation_type:props.reservation_type,
+        zone_name: props.zone_name,
+        user_name:props.first_name + " " + props.last_name,
+        email:props.email,
       })
       .then((res) => {
         console.log("Payment completed.");
@@ -99,16 +110,25 @@ const PaymentModal = (props: any): JSX.Element | null => {
     console.log(zoneBookings.zoneBookings.created_at);
 
     axios
-      .post("http://localhost:8000/api/addCoachBooking", {
+      .post(`${process.env.REACT_APP_API_URL}api/addCoachBooking`, {
         status: "success",
         date: zoneBookings.zoneBookings.date,
         time: zoneBookings.zoneBookings.time,
+        full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
         player_id: zoneBookings.zoneBookings.user_id,
         zone_id: zoneBookings.zoneBookings.zone_id,
         coach_id: props.coach_id,
         arcade_id: props.arcadeId,
         created_at: zoneBookings.zoneBookings.created_at,
+        coach_email: props.coach_email,
+        coach_name: props.coach_name,
+        role: props.role,
+        reservation_type:props.reservation_type,
+        zone_name: props.zone_name,
+        user_name:props.first_name + " " + props.last_name,
+        email:props.email,
+        arcade_name:props.arcade_name,
       })
       .then((res) => {
         console.log("Payment completed.");
@@ -166,48 +186,50 @@ const PaymentModal = (props: any): JSX.Element | null => {
   const isReservationType = props.reservation_type;
 
   const handlePayment = () => {
-    if(props.item==="Zone Booking"){
-    if (isDay === null) {
-      message.warning("Please select a Day.");
-    } else if (isTime === "") {
-      message.warning("Please select a Time Slot.");
-    } else if (isParticipantCount === "") {
-      message.warning("Please select Participant Count.");
-    } else if (isUserId === "") {
-      message.warning("Please Login First.");
-    } else if (isZoneId === "") {
-      message.warning("Please select a zone.");
-    } else if (isReservationType === "") {
-      message.warning("Please select Reservatin Type.");
-    } else if (props.pcount > props.avaiableParticipantCount) {
-      message.warning(
-        "Participant count is more than available participant count."
-      );
-    } else {
-      pay();
-    }
-  }else if(props.item==="Coach Booking"){
-    if (isDay === null) {
-      message.warning("Please select a Day.");
-    } else if (isUserId === "") {
-      message.warning("Please Login First.");
-    } else if (isParticipantCount === "") {
-      message.warning("Please select Participant Count.");
-    } else if (isZoneId === "") {
-      message.warning("Please select a zone.");
-    } else if (isTime === "") {
-      message.warning("Please select a Time Slot.");
-    } else if (isReservationType === "") {
-      message.warning("Please select Reservatin Type.");
-    } else if (props.pcount > props.avaiableParticipantCount) {
-      message.warning(
-        "Participant count is more than available participant count."
-      );
-    } else {
-      pay();
+    console.log(props.avaiableParticipantCount);
+    console.log(props.pcount);
+    if (props.item === "Zone Booking") {
+      if (isDay === null) {
+        message.warning("Please select a Day.");
+      } else if (isReservationType === "") {
+        message.warning("Please select Reservatin Type.");
+      } else if (isTime === "") {
+        message.warning("Please select a Time Slot.");
+      } else if (isParticipantCount === "") {
+        message.warning("Please select Participant Count.");
+      } else if (isUserId === "") {
+        message.warning("Please Login First.");
+      } else if (isZoneId === "") {
+        message.warning("Please select a zone.");
+      } else if (props.pcount > props.avaiableParticipantCount) {
+        message.warning(
+          "Participant count is more than available participant count."
+        );
+      } else {
+        pay();
+      }
+    } else if (props.item === "Coach Booking") {
+      if (isDay === null) {
+        message.warning("Please select a Day.");
+      } else if (isUserId === "") {
+        message.warning("Please Login First.");
+      } else if (isZoneId === "") {
+        message.warning("Please select a zone.");
+      } else if (isTime === "") {
+        message.warning("Please select a Time Slot.");
+      } else if (isParticipantCount === "") {
+        message.warning("Please select Participant Count.");
+      } else if (isReservationType === "") {
+        message.warning("Please select Reservatin Type.");
+      } else if (props.pcount > props.avaiableParticipantCount) {
+        message.warning(
+          "Participant count is more than available participant count."
+        );
+      } else {
+        pay();
+      }
     }
   };
-};
   return (
     <>
       <Button

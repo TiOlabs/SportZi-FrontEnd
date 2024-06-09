@@ -112,7 +112,7 @@ const PlayerEdit = ({
       console.log("inside tryyyyyy", userDetails?.id);
       console.log("inside tryyyyyy", firstname);
       axiosInstance
-        .put(`http://localhost:8000/api/auth/updatePlayerdetails/${userDetails?.id}`, {
+        .put(`${process.env.REACT_APP_API_URL}api/auth/updatePlayerdetails/${userDetails?.id}`, {
           firstname: firstname,
           lastname: lastname,
           discription: discription,

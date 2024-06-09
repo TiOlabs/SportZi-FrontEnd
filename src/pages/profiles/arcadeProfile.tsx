@@ -38,6 +38,7 @@ import {
   PackageEnroolDetailsForPlayer,
   Zone,
   ZoneBookingDetails,
+  PackageEnrollDetailsForCoach,
 } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
@@ -48,6 +49,8 @@ import NavbarProfile from "../../components/NavBarProfile";
 import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
+import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
+import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -56,6 +59,9 @@ const ArcadeProfileArcade = () => {
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
+  const [packageEnrollmentForCoach, setPackageEnrollmentForCoach] = useState<
+  PackageEnrollDetailsForCoach[]
+>([]);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -74,6 +80,21 @@ const ArcadeProfileArcade = () => {
     CoachAssignDetails[]
   >([]);
   const [arcadeCoaches, setArcadeCoaches] = useState<CoachAssignDetails[]>([]);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentCoachDetails`
+        );
+        const data = await res.data;
+        console.log(data);
+        setPackageEnrollmentForCoach(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  },[]);
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -137,8 +158,9 @@ const ArcadeProfileArcade = () => {
                 );
               } else if (value === 3) {
                 return (
-                  booking.status === "canceled_By_Arcade" &&
-                  booking.booking_type === "zone"
+                  booking.status === "canceled_By_Arcade" ||
+                  (booking.status === "canceled_By_Player" &&
+                    booking.booking_type === "zone")
                 );
               }
             });
@@ -188,7 +210,11 @@ const ArcadeProfileArcade = () => {
                 booking.date < formattedCurrentDate
               );
             } else if (value2 === 6) {
-              return booking.status === "canceled_By_Arcade";
+              return (
+                booking.status === "canceled_By_Arcade" ||
+                booking.status === "canceled_By_Player" ||
+                booking.status === "canceled_By_Coach"
+              );
             }
             return false;
           }
@@ -269,24 +295,55 @@ const ArcadeProfileArcade = () => {
           date={booking.date}
           rate={zone.rate}
           zoneImage={zone.zone_image}
+          booking_type={booking.booking_type}
         />
       ))
     ),
   ];
 
   const CoachReqestToArchade = [
-    (coachAssignRequest || []).map((coachAssign: CoachAssignDetails) => (
-      <CoachReqestForArcade
-        coach_id={coachAssign.coach_id}
-        coach_Email={coachAssign.coach.user.email}
-        coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
-        coach_image={coachAssign.coach.user.user_image}
-        coach_discription={coachAssign.description}
-        date={coachAssign.assigned_date}
-        arcade_name={arcade?.arcade_name}
-      />
-    )),
+    (coachAssignRequest || []).map(
+      (coachAssign: CoachAssignDetails) => (
+        console.log("coachAssign", coachAssign),
+        (
+          <CoachReqestForArcade
+            coach_id={coachAssign.coach_id}
+            coach_Email={coachAssign.coach.user.email}
+            coach_name={`${coachAssign.coach.user.firstname} ${coachAssign.coach.user.lastname}`}
+            coach_image={coachAssign.coach.user.user_image}
+            coach_discription={coachAssign.description}
+            date={coachAssign.assigned_date}
+            arcade_name={arcade?.arcade_name}
+            description={coachAssign.description}
+            duration={coachAssign.duration}
+            sport={coachAssign.coach.sport.sport_name}
+          />
+        )
+      )
+    ),
   ];
+const CoachReqestToEnrollPackage = [
+    (packageEnrollmentForCoach || []).map(
+      (coachEnrollDetails: PackageEnrollDetailsForCoach) => (
+        <ArcadePackageCoachEnrollAccept
+          package_name={coachEnrollDetails.package.package_name}
+          package_image={coachEnrollDetails.package.package_image}
+          zone_name={coachEnrollDetails.package.zone.zone_name}
+          rate={coachEnrollDetails.rate}
+          duration={coachEnrollDetails.duration}
+          enrolled_date={coachEnrollDetails.enrolled_date}
+          arcade_name={arcade?.arcade_name}
+          coach_name={`${coachEnrollDetails.coach.user.firstname} ${coachEnrollDetails.coach.user.lastname}`}
+          coach_image={coachEnrollDetails.coach.user.user_image}
+          coach_id={coachEnrollDetails.coach_id}
+          package_id={coachEnrollDetails.package_id}
+          email={coachEnrollDetails.coach.user.email}
+          status={coachEnrollDetails.status}
+        />
+      )
+    ),
+  ];
+
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
@@ -298,7 +355,7 @@ const ArcadeProfileArcade = () => {
 
   console.log("in the arcade", ArcadeId);
 
-  const [arcadeDetails, setArcadeDetails] = useState<any>(null);
+  const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
     axiosInstance
       .get("/api/auth/getarchadedetails", {
@@ -350,6 +407,8 @@ const ArcadeProfileArcade = () => {
           return fullName.includes(filterValue2.toLowerCase());
         case "booking_id":
           return zone_booking_id.includes(filterValue2);
+        case "status":
+          return booking.status.includes(filterValue2);
         default:
           return true;
       }
@@ -400,12 +459,15 @@ const ArcadeProfileArcade = () => {
           return duration.toString().includes(filterValuePackage);
         case "enroll_date":
           return enrolled_date.includes(filterValuePackage);
+        case "status":
+          return enroll.status.includes(filterValuePackage);
         default:
           return true;
       }
     }
   );
-
+  console.log(arcadeDetails?.arcade_name);
+  const arcadeName = arcadeDetails?.arcade_name;
   return (
     <>
       <NavbarProfile />
@@ -543,7 +605,7 @@ const ArcadeProfileArcade = () => {
                   marginBottom: "0px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.arcade_name}
+                {arcade && arcade?.arcade_name}
               </h1>
               <p
                 style={{
@@ -571,8 +633,8 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                {arcadeDetails?.address &&
-                  arcadeDetails.address
+                {arcadeDetails?.arcade_address &&
+                  arcadeDetails.arcade_address
                     .split(",")
                     .map(
                       (
@@ -1001,6 +1063,7 @@ const ArcadeProfileArcade = () => {
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
                   coach_id={coach.coach_id}
+                  sport={coach.coach.sport.sport_name}
                 />
               </Col>
             ))}
@@ -1056,7 +1119,7 @@ const ArcadeProfileArcade = () => {
 
         <AddPhotoButton />
       </div>
-      <PhotoCollage />
+      <PhotoCollageForArcade arcade_id={ArcadeId} />
       <Row
         style={{
           paddingTop: "100px",
@@ -1081,6 +1144,9 @@ const ArcadeProfileArcade = () => {
               color: " #0E458E",
               fontSize: md ? "30px" : "20px",
               fontFamily: "Kanit",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
             }}
           >
             Book Our Zones
@@ -1133,6 +1199,13 @@ const ArcadeProfileArcade = () => {
                 way_of_booking={zone.way_of_booking}
                 sport={zone.sport.sport_name}
                 sport_id={zone.sport.sport_id}
+                full={zone.full_zone_rate}
+                day={zone.zoneRejectDayAndTime.map((item) => item.day)}
+                timeForDay={zone.zoneRejectDayAndTime.map((item) => item.time)}
+                date={zone.zoneRejectDateAndTime.map((item) => item.date)}
+                timeForDate={zone.zoneRejectDateAndTime.map(
+                  (item) => item.time
+                )}
               />
             </Col>
           ))}
@@ -1164,7 +1237,6 @@ const ArcadeProfileArcade = () => {
       <Row
         style={{
           paddingTop: "100px",
-
           width: "100%",
           background: "white",
           minHeight: "600px",
@@ -1233,6 +1305,10 @@ const ArcadeProfileArcade = () => {
                 ArcadeName={pkg.arcade.arcade_name}
                 packageImage={pkg.package_image}
                 CoachPrecentage={pkg.percentageForCoach}
+                zoneName={pkg.zone.zone_name}
+                zone_id={pkg.zone.zone_id}
+                day={pkg.packageDayAndTime.map((item) => item.day)}
+                time={pkg.packageDayAndTime.map((item) => item.time)}
               />
             </Col>
           ))}
@@ -1429,6 +1505,7 @@ const ArcadeProfileArcade = () => {
             <Option value="zoneName">Zone Name</Option>
             <Option value="booked_by">Booked By</Option>
             <Option value="booking_id">Booking ID</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
@@ -1543,25 +1620,32 @@ const ArcadeProfileArcade = () => {
           )}
         </Row>
         {filteredArcadeBookings.length > 0 ? (
-          <>
-            {filteredArcadeBookings.map((zone) =>
-              (zone.zoneBookingDetails || []).map((booking) => (
-                <AvailableBookingsArcade
-                  key={booking.zone_booking_id}
-                  user_image={booking.user.user_image}
-                  booking_id={booking.zone_booking_id}
-                  booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                  zoneName={zone.zone_name}
-                  time={booking.time}
-                  date={booking.date}
-                  rate={zone.rate}
-                  zoneImage={zone.zone_image}
-                  arcade_name={booking.zone.arcade.arcade_name}
-                  email={booking.user.email}
-                />
-              ))
-            )}
-          </>
+          (console.log(filteredArcadeBookings),
+          (
+            <>
+              {filteredArcadeBookings.map((zone) =>
+                (zone.zoneBookingDetails || [])
+                  .filter((booking) => booking.booking_type === "zone")
+                  .map((booking) => (
+                    <AvailableBookingsArcade
+                      key={booking.zone_booking_id}
+                      user_image={booking.user.user_image}
+                      booking_id={booking.zone_booking_id}
+                      booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                      zoneName={zone.zone_name}
+                      time={booking.time}
+                      date={booking.date}
+                      rate={zone.rate}
+                      zoneImage={zone.zone_image}
+                      arcade_name={arcadeName}
+                      email={booking.user.email}
+                      status={booking.status}
+                      full_amount={booking.full_amount}
+                    />
+                  ))
+              )}
+            </>
+          ))
         ) : (
           <Empty />
         )}
@@ -1670,6 +1754,7 @@ const ArcadeProfileArcade = () => {
             <Option value="zoneName">Zone Name</Option>
             <Option value="booked_by">Booked By</Option>
             <Option value="booking_id">Booking ID</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
@@ -1879,6 +1964,8 @@ const ArcadeProfileArcade = () => {
                 );
               } else if (filterBy === "booking_id") {
                 return booking.booking_id.includes(filterValue);
+              } else if (filterBy === "status") {
+                return booking.status.includes(filterValue);
               }
               return true;
             })
@@ -1898,6 +1985,8 @@ const ArcadeProfileArcade = () => {
                 coach_email={booking.coach.user.email}
                 coach_image={booking.coach.user.user_image}
                 coach_id={booking.coach_id}
+                status={booking.status}
+                full_amount={booking.full_amount}
               />
             ))
         ) : (
@@ -2095,6 +2184,7 @@ const ArcadeProfileArcade = () => {
             <Option value="rate">Rate</Option>
             <Option value="duration">Duration</Option>
             <Option value="enroll_date">Enroll Date</Option>
+            <Option value="status">Status</Option>
           </Select>
           <Input
             placeholder="Enter filter value"
@@ -2262,6 +2352,7 @@ const ArcadeProfileArcade = () => {
         style={{
           width: "100%",
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -2273,7 +2364,90 @@ const ArcadeProfileArcade = () => {
                 style={{
                   width: "100%",
                   display: "flex",
+                  flexDirection: "column",
                   justifyContent: "center",
+                  alignItems: "center",
+                }}
+                key={index}
+              >
+                {request}
+              </div>
+            )
+          )}
+
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          {" "}
+          Coach Request For Enroll Package
+        </Typography>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {Array.isArray(CoachReqestToEnrollPackage) &&
+          CoachReqestToEnrollPackage.slice(0, numberOfItemsShown).map(
+            (request, index) => (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
                 key={index}
               >
@@ -2347,15 +2521,15 @@ const ArcadeProfileArcade = () => {
           >
             Reviews
           </Typography>
-          <Row
-            style={{
+              <Row
+             style={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-            }}
-          >
-            <Col
+              }}
+             >
+              <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2366,10 +2540,10 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2380,11 +2554,11 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2395,20 +2569,20 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
-            </Col>
-          </Row>
-          <Row
-            style={{
+             </Col>
+             </Row>
+             <Row
+             style={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-            }}
-          >
-            <Col
+             }}
+             >
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2419,10 +2593,10 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+              <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2433,11 +2607,11 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
-            </Col>
-            <Col
+             </Col>
+             <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2448,11 +2622,51 @@ const ArcadeProfileArcade = () => {
               md={12}
               lg={8}
               xl={8}
-            >
+             >
               {" "}
               <ReviewCard />
             </Col>
           </Row>
+          
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            Report Genaration
+          </Typography>
+        </Col>
+      </Row>
+      <Row>
+        <Col
+          span={24}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+            marginBottom: "100px",
+          }}
+        >
+          <ReportGenarationForArcade />
         </Col>
       </Row>
       <AppFooter />

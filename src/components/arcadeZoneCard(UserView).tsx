@@ -1,11 +1,12 @@
 import { Button, Col, Grid, Modal, Row, Typography } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import UpdateZone from "./UpdateZone";
 import { ZoneBookingsContext } from "../context/zoneBookings.context";
 import { Link } from "react-router-dom";
+
 const ArcadeZoneCardUserView = (props: any) => {
   console.log("lol ", props);
   const [cloudName] = useState("dle0txcgt");
@@ -14,11 +15,18 @@ const ArcadeZoneCardUserView = (props: any) => {
       cloudName,
     },
   });
+
   const { setZoneId } = useContext(ZoneBookingsContext);
+
   const { useBreakpoint } = Grid;
+
   const { lg } = useBreakpoint();
   const [open, setOpen] = useState(false);
-  setZoneId(props.id);
+
+  useEffect(() => {
+    setZoneId(props.id);
+  }, [props.id]);
+
   const showModal = async () => {
     console.log("props.id", props.id);
     localStorage.setItem("zoneId", props.id);
@@ -89,6 +97,9 @@ const ArcadeZoneCardUserView = (props: any) => {
             >
               {props.zoneName}
             </Typography>
+            <Typography style={{ display: "flex", justifyContent: "right" }}>
+              {props.capacity} CPTY
+            </Typography>
             <Typography
               style={{
                 fontSize: lg ? "20px" : "18px",
@@ -97,7 +108,17 @@ const ArcadeZoneCardUserView = (props: any) => {
                 width: "80%",
               }}
             >
-              Week Days Day And weekend nights available
+              Availiable on : {props.open_time} - {props.close_time}
+            </Typography>
+            <Typography
+              style={{
+                fontSize: lg ? "20px" : "18px",
+                fontWeight: "light",
+                color: "black",
+                width: "80%",
+              }}
+            >
+              In Week Days
             </Typography>
             <Typography
               style={{
@@ -133,7 +154,7 @@ const ArcadeZoneCardUserView = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  Rs.{props.rate}
+                  LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{

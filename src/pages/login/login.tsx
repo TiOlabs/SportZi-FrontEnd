@@ -25,17 +25,20 @@ const Login = () => {
 
   const onFinish = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/api/login", {
-        email: email,
-        password: password,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/login`,
+        {
+          email: email,
+          password: password,
+        }
+      );
 
       Cookies.set("token", res.data.token, {
         expires: 1,
         httpOnly: false,
         secure: true,
       });
-      messageApi.open({
+      message.success({
         type: "success",
         content: "Successfully Login!",
       });
@@ -43,13 +46,12 @@ const Login = () => {
       navigate("/", { replace: true, state: { loggedIn: true } });
       window.location.href = "/";
     } catch (err) {
-      alert(
+      message.error(
         (err as any).response
           ? (err as any).response.data.message
           : "Login failed"
       );
     }
-    
   };
 
   return (
