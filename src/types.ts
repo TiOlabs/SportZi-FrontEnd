@@ -244,7 +244,7 @@ export interface CoachFeedback {
       lastname: string;
       email: string;
       password: string;
-      DOB:string;
+      DOB: string;
       gender: string;
       accountNumber: string;
       is_active: string;
@@ -259,6 +259,7 @@ export interface CoachFeedback {
       comment: string;
     };
   };
+}
 
 export interface CoachEnrollDetailsForPackages {
   coach_id: String;
@@ -285,5 +286,4 @@ export interface ZoneRejectDayAndTime {
   day: String;
   time: String;
   zone: Zone;
-
 }

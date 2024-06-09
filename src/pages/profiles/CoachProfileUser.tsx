@@ -37,7 +37,7 @@ import { Coach, User } from "../../types";
 import { UserContext } from "../../context/userContext";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import { CoachFeedback } from "../../types";
-import Feedback from "react-bootstrap/esm/Feedback";
+
 
 interface FeedbackData {
   feedback: string;
