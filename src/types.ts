@@ -230,6 +230,36 @@ export interface ReportArcade {
   victim_arcade: Arcade;
 }
 
+export interface CoachFeedback {
+  coach_feedback_id: string;
+  rate: number;
+  coach_id: string;
+  feedback: {
+    feedbacks_id: string;
+    user_id: string;
+    user: {
+      user_id: string;
+      role: string;
+      firstname: string;
+      lastname: string;
+      email: string;
+      password: string;
+      DOB:string;
+      gender: string;
+      accountNumber: string;
+      is_active: string;
+      user_image: string;
+      address: string;
+      city: string;
+      country: string;
+      description: string;
+    };
+    feedbackComments: {
+      feedback_id: string;
+      comment: string;
+    };
+  };
+
 export interface CoachEnrollDetailsForPackages {
   coach_id: String;
   package_id: String;
@@ -255,4 +285,5 @@ export interface ZoneRejectDayAndTime {
   day: String;
   time: String;
   zone: Zone;
+
 }
