@@ -21,6 +21,7 @@ import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { ArcadeEditContext } from "../context/ArcadeEdit.context";
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -29,6 +30,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+
 interface PlayerEditProps {
   firstname: string;
   setFirstname: (value: string) => void;
@@ -40,6 +42,7 @@ interface PlayerEditProps {
   setopenTime: (value: string) => void;
   closeTime: string;
   setCloseTime: (value: string) => void;
+  id: any;
 }
 
 const ArcadeEdit = ({
@@ -53,6 +56,7 @@ const ArcadeEdit = ({
   setopenTime,
   closeTime,
   setCloseTime,
+  id,
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
@@ -109,15 +113,13 @@ const ArcadeEdit = ({
   const onFinish = () => {
     try {
       axiosInstance
-        .put(
-          `http://localhost:8000/api/auth/updateArcadedetails/${userDetails?.id}`,
-          {
-            firstname: firstname,
-            discription: discription,
-            paymentType: "arcade",
-            user_image: publicId,
-          }
-        )
+        .put(`/api/auth/updatearchadedetails/${id}`, {
+          arcade_name: firstname,
+          discription: discription,
+          open_time: openTime,
+          close_time: closeTime,
+          //user_image:
+        })
         .then((res) => {
           setOpen(false);
           console.log("inside then", res.data);
@@ -323,9 +325,10 @@ const ArcadeEdit = ({
             >
               <TimePicker
                 format="HH:mm"
-                // onChange={(e) => setopenTime(e.target.value)}
+                onChange={(e) => setopenTime(e.format("HH:mm"))}
               />
             </Form.Item>
+            <p>{openTime}</p>
             <Form.Item
               name="TimeClose"
               label="Add Arcade Close Time"
@@ -338,9 +341,7 @@ const ArcadeEdit = ({
             >
               <TimePicker
                 format="HH:mm"
-                // onChange={(time, timeString: string | string[]) =>
-
-                // }
+                onChange={(e) => setCloseTime(e.format("HH:mm"))}
               />
             </Form.Item>
             {/* Achivements */}

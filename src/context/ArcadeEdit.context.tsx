@@ -54,7 +54,7 @@ const ArcadeEditprovider = ({ children }: any) => {
     }
   }, [t]);
 
-  // console.log("t", t);
+  console.log("t", arcadeEditDetails);
   return (
     <ArcadeEditContext.Provider value={{ arcadeEditDetails }}>
       {children}

@@ -67,6 +67,7 @@ const ArcadeProfileArcade = () => {
   };
   console.log("value", value);
   const { ArcadeId } = useParams();
+  console.log("ArcadeId", ArcadeId);
   const { managerDetails } = useArcade();
   //const { arcadeEditDetails } = useArcadeEdit();
   const [arcade, setArcade] = useState<Arcade>();
@@ -422,7 +423,7 @@ const ArcadeProfileArcade = () => {
   const [openTime, setOpenTime] = useState<any>();
   const [closeTime, setCloseTime] = useState<any>();
   const [managerId, setmanagerId] = useState<any>();
-  console.log("arcadeDetails", arcadeDetails);
+
   useEffect(() => {
     if (arcadeDetails) {
       setArcadeName(arcadeDetails.arcade_name);
@@ -431,6 +432,7 @@ const ArcadeProfileArcade = () => {
       setOpenTime(arcadeDetails.open_time);
       setCloseTime(arcadeDetails.close_time);
       setmanagerId(arcadeDetails.manager_id);
+
       if (arcade?.zone) {
         const sports = Array.from(
           new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
@@ -439,7 +441,6 @@ const ArcadeProfileArcade = () => {
       }
     }
   }, [arcadeDetails]);
-  console.log("open", openTime, "close", closeTime);
 
   return (
     <>
@@ -585,6 +586,7 @@ const ArcadeProfileArcade = () => {
                 setopenTime={setOpenTime}
                 closeTime={closeTime}
                 setCloseTime={setCloseTime}
+                id={ArcadeId}
               />
             </div>
             <div>
