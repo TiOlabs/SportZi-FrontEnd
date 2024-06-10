@@ -506,7 +506,7 @@ const CoachReqestToEnrollPackage = [
   console.log("arcadeDetails", arcadeDetails);
 
   console.log(arcadeDetails?.arcade_name);
-  const arcadeName = arcadeDetails?.arcade_name;
+  // const arcadeName = arcadeDetails?.arcade_name;
 
   return (
     <>
