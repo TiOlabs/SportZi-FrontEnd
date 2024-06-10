@@ -422,7 +422,7 @@ const ArcadeProfileArcade = () => {
   const [sport, setSport] = useState<any[]>([]);
   const [openTime, setOpenTime] = useState<any>();
   const [closeTime, setCloseTime] = useState<any>();
-  const [managerId, setmanagerId] = useState<any>();
+  const [managerName, setmanagerName] = useState<Arcade>();
 
   useEffect(() => {
     if (arcadeDetails) {
@@ -431,7 +431,6 @@ const ArcadeProfileArcade = () => {
       setAddress(arcadeDetails.address);
       setOpenTime(arcadeDetails.open_time);
       setCloseTime(arcadeDetails.close_time);
-      setmanagerId(arcadeDetails.manager_id);
 
       if (arcade?.zone) {
         const sports = Array.from(
@@ -442,6 +441,7 @@ const ArcadeProfileArcade = () => {
     }
   }, [arcadeDetails]);
 
+  console.log("arcadeDetails", arcadeDetails);
   return (
     <>
       <NavbarProfile />
@@ -593,7 +593,6 @@ const ArcadeProfileArcade = () => {
               <h1
                 style={{
                   color: "#000",
-
                   fontSize: "32px",
                   fontStyle: "normal",
                   fontWeight: "500",
@@ -607,15 +606,16 @@ const ArcadeProfileArcade = () => {
               <h1
                 style={{
                   color: "#000",
-                  fontSize: "28px",
+                  fontSize: "22px",
                   fontStyle: "normal",
-                  fontWeight: "300",
+                  fontWeight: "350",
                   fontFamily: "kanit",
                   lineHeight: "normal",
                   marginBottom: "0px",
+                  marginTop: "0px",
                 }}
               >
-                {managerId}
+                Manager Name :
               </h1>
 
               <p
