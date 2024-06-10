@@ -140,6 +140,7 @@ const CoachCardSection = () => {
                         coach_id={coach.coach_id}
                         sport={coach.sport.sport_name}
                         role ={userDetails.role}
+
                       />
                     </Col>
                   ))
