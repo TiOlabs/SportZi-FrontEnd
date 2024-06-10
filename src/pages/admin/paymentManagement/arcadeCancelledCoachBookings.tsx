@@ -2,7 +2,7 @@ import { Col, Row, Modal, Button, Empty, Radio, RadioChangeEvent } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { SearchProps } from "antd/es/input";
@@ -19,6 +19,9 @@ const ArcadeCancelledCoachBookings = () => {
   );
   const [value, setValue] = useState(1);
   const [search, setSearch] = useState<string>("");
+  const [filteredArcadeCanceled, setFilteredArcadeCanceled] = useState<
+    CoachBookingDetails[]
+  >([]);
   // useEffect(() => {
   //   try {
   //     const fetchData = async () => {
@@ -51,7 +54,7 @@ const ArcadeCancelledCoachBookings = () => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/getCoachBookings"
+          `${process.env.REACT_APP_API_URL}api/getCoachBookings`
         );
         const data = await res.data;
         setArcadeBookingDetails(data);
@@ -115,7 +118,7 @@ const ArcadeCancelledCoachBookings = () => {
           return timeDifference < twentyFourHoursInMillis;
         }
       );
-      setArcadeCanceled(below24Hours);
+      setFilteredArcadeCanceled(below24Hours);
     } else if (newValue === 2) {
       const above24Hours = arcadeCanceled.filter(
         (coachBooking: CoachBookingDetails) => {
@@ -130,9 +133,16 @@ const ArcadeCancelledCoachBookings = () => {
           return timeDifference >= twentyFourHoursInMillis;
         }
       );
-      setArcadeCanceled(above24Hours);
+      setFilteredArcadeCanceled(above24Hours);
     }
   };
+  useEffect(() => {
+    // Add initial data load or fetch logic here if needed
+    // Example: setArcadeCanceled(initialData);
+
+    // Debug: Log changes in filteredArcadeCanceled
+    console.log("Filtered Data:", filteredArcadeCanceled);
+  }, [filteredArcadeCanceled]);
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -161,8 +171,8 @@ const ArcadeCancelledCoachBookings = () => {
         </Col>
       </Row>
       <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
-        {arcadeCanceled.length === 0 ? <Empty /> : null}
-        {arcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
+        {filteredArcadeCanceled.length === 0 ? <Empty /> : null}
+        {filteredArcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
           <DataRow
             booking_id={CoachBookingDetails.booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
             booked_Coach={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
@@ -185,6 +195,7 @@ const ArcadeCancelledCoachBookings = () => {
             canceled_at={CoachBookingDetails.canceled_at}
             image={CoachBookingDetails.player.user.user_image}
             coach_Image={CoachBookingDetails.coach.user.user_image}
+            coach_id={CoachBookingDetails.coach.coach_id}
           />
         ))}
       </Col>
@@ -212,6 +223,10 @@ function DataRow(props: any) {
       cloudName,
     },
   });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <Row
       style={{
@@ -222,6 +237,7 @@ function DataRow(props: any) {
     >
       <Col span={8} style={{}}>
         <AdvancedImage
+          onClick={handleClick}
           style={{
             borderRadius: "50%",
             position: "absolute",

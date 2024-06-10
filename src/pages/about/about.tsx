@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import NavbarLogin from "../../components/NavBarLogin";
 import { usePlayer } from "../../context/player.context";
 import { useLocation } from "react-router-dom";
+import { useUser } from "../../context/userContext";
 
 const About = () => {
   const about = useLocation();
@@ -22,7 +23,7 @@ const About = () => {
   useEffect(() => {
     setToken(Cookies.get("token"));
   }, []);
-  const { userDetails } = usePlayer();
+  const { userDetails } = useUser();
   return (
     <div style={{}}>
       {userDetails.id !== "" ? <Navbar /> : <NavbarLogin />}

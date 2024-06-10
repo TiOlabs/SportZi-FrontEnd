@@ -17,6 +17,7 @@ export interface Zone {
   zone_image: String;
   arcade: Arcade;
   capacity: Number;
+  time_Step: Number;
   description: String;
   way_of_booking: String;
   sport_id: String;
@@ -24,6 +25,10 @@ export interface Zone {
   zoneBookingDetails: ZoneBookingDetails[];
   coachBookingDetails: CoachBookingDetails[];
   package: Package[];
+  discount: Discount;
+  full_zone_rate: Number;
+  zoneRejectDateAndTime: ZoneRejectDateAndTime[];
+  zoneRejectDayAndTime: ZoneRejectDayAndTime[];
 }
 export interface Package {
   package_id: String;
@@ -55,6 +60,17 @@ export interface PackageEnroolDetailsForPlayer {
   player: Player;
   package: Package;
 }
+export interface PackageEnrollDetailsForCoach {
+  coach_id: String;
+  package_id: String;
+  status: String;
+  enrolled_date: String;
+  canceled_at: String;
+  rate: Number;
+  duration: Number;
+  coach: Coach;
+  package: Package;
+}
 export interface PackageDayAndTime {
   package_id: string;
   day: string;
@@ -65,7 +81,7 @@ export interface ZoneBookingDetails {
   status: String;
   created_at: String;
   canceled_at: String;
-  rate: Number;
+  full_amount: Number;
   date: String;
   time: String;
   participant_count: Number;
@@ -83,6 +99,7 @@ export interface CoachBookingDetails {
   participant_count: Number;
   date: String;
   time: String;
+  full_amount: Number;
   coach_id: String;
   arcade_id: String;
   player_id: String;
@@ -121,7 +138,7 @@ export interface User {
   city: String;
   country: String;
   user_image: String;
-  Phone: UserPhone;
+  Phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
 }
@@ -192,4 +209,81 @@ export interface CoachFeedbacks {
 export interface UserPhoto {
   user_id: String;
   image: String;
+}
+export interface Report {
+  report_id: String;
+  description: String;
+  report_reason: String;
+  reporter_user_id: String;
+  victim_user_id: String;
+  reporter_user: User;
+  victim_user: User;
+}
+
+export interface ReportArcade {
+  report_id: String;
+  description: String;
+  report_reason: String;
+  reporter_user_id: String;
+  victim_arcade_id: String;
+  reporter_user: User;
+  victim_arcade: Arcade;
+}
+
+export interface CoachFeedback {
+  coach_feedback_id: string;
+  rate: number;
+  coach_id: string;
+  feedback: {
+    feedbacks_id: string;
+    user_id: string;
+    user: {
+      user_id: string;
+      role: string;
+      firstname: string;
+      lastname: string;
+      email: string;
+      password: string;
+      DOB: string;
+      gender: string;
+      accountNumber: string;
+      is_active: string;
+      user_image: string;
+      address: string;
+      city: string;
+      country: string;
+      description: string;
+    };
+    feedbackComments: {
+      feedback_id: string;
+      comment: string;
+    };
+  };
+}
+
+export interface CoachEnrollDetailsForPackages {
+  coach_id: String;
+  package_id: String;
+  duration: Number;
+  desCription: String;
+  applied_date: String;
+  status: String;
+  created_at: String;
+  canceled_at: String;
+  coach: Coach;
+  package: Package;
+}
+
+export interface ZoneRejectDateAndTime {
+  zone_id: String;
+  date: String;
+  time: String;
+  zone: Zone;
+}
+
+export interface ZoneRejectDayAndTime {
+  zone_id: String;
+  day: String;
+  time: String;
+  zone: Zone;
 }

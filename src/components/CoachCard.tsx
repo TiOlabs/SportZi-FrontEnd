@@ -1,4 +1,4 @@
-import { Col, Row, Button, Flex, Skeleton } from "antd";
+import { Col, Row, Button, Flex, Skeleton, message } from "antd";
 import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const CoachCard = (props: any) => {
+  console.log(props);
   setTwoToneColor("blue");
   getTwoToneColor();
   const [cloudName] = useState("dle0txcgt");
@@ -21,7 +22,7 @@ const CoachCard = (props: any) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`CoachUser/:${props.coach_id}`);
+    navigate(`/CoachUser/:${props.coach_id}`);
   };
   console.log("props", props);
   return (
@@ -32,7 +33,7 @@ const CoachCard = (props: any) => {
           <div className="nameDiscription">
             <div style={{ marginTop: "8px" }}>
               <p onClick={handleClick}>{props.coachName}</p>
-              <p className="coachPosition">level one Rugby Coach</p>
+              <p className="coachPosition">level one {props.sport} Coach</p>
             </div>
 
             <div className="ratings">
@@ -76,24 +77,30 @@ const CoachCard = (props: any) => {
                   fontWeight: "500",
                 }}
               >
-                Rs.{props.rate}
+                LKR {props.rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
-              <Link to="/CoachBookingForm">
-                <Button
-                  type="primary"
-                  size="small"
-                  style={{
-                    fontSize: "10px",
-                    background: "#5587CC",
-                    fontWeight: "400",
-                  }}
-                >
-                  Book Coach
-                </Button>
-              </Link>
+              <Button
+                type="primary"
+                size="small"
+                style={{
+                  fontSize: "10px",
+                  background: "#5587CC",
+                  fontWeight: "400",
+                }}
+                onClick={() => {
+                  if (props.role === "PLAYER") {
+                    localStorage.setItem("coachId", props.coach_id);
+                    navigate("/CoachBookingForm");
+                  } else {
+                    message.error("You are not a player");
+                  }
+                }}
+              >
+                Book Coach
+              </Button>
             </div>
           </div>
         </div>

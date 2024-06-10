@@ -2,15 +2,24 @@ import {
   Button,
   Col,
   Flex,
+  Form,
   Grid,
   Input,
   List,
   Modal,
   Row,
+  Select,
   Typography,
+  Rate,
+  ConfigProvider,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
-import { StarFilled, StarTwoTone } from "@ant-design/icons";
+import {
+  ExclamationCircleTwoTone,
+  StarFilled,
+  StarTwoTone,
+  StarOutlined,
+} from "@ant-design/icons";
 import profilePic from "../../assents/pro.png";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -19,14 +28,26 @@ import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import { Coach, User } from "../../types";
+import { UserContext } from "../../context/userContext";
+import PhotoCollageForUsers from "../../components/photoCollageForUsers";
+import { CoachFeedback } from "../../types";
+
+
+interface FeedbackData {
+  feedback: string;
+  rating: number;
+}
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { coachId } = useParams();
+  console.log(coachId);
   const { lg, md, sm, xs } = useBreakpoint();
   const { TextArea } = Input;
   const onChange = (
@@ -34,8 +55,66 @@ const CoachProfileUser = () => {
   ) => {
     console.log("Change:", e.target.value);
   };
-
+  const { userDetails } = useContext(UserContext);
   const [ismodelopen, setismodelopen] = useState(false);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0.0);
+
+  const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
+
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+  // Replace with actual coach ID
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbycoachId/${coachId}`
+        );
+        console.log("response:", response.data);
+
+        const { averageRating, totalFeedbacks } = response.data;
+        console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRating * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [coachId]);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getcoachfeedbacks/${coachId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  console.log("All feedbacks:::::::::::", allFeedbacks);
+
+  const [isModalOpenForReport, setismodelopenForReport] = useState(false);
+  const [description, setDescription] = useState("");
+  const [reason, setReason] = useState("");
 
   const showModal = () => {
     setismodelopen(true);
@@ -46,7 +125,7 @@ const CoachProfileUser = () => {
   const handleCancel = () => {
     setismodelopen(false);
   };
-  const [coachDetails, setCoachDetails] = useState({});
+  const [coachDetails, setCoachDetails] = useState<Coach>();
   useEffect(() => {
     axiosInstance
       .get(`/api/auth/getcoachDetailsForUsers`, {
@@ -61,8 +140,65 @@ const CoachProfileUser = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [coachId]);
 
+  const showModalForReport = () => {
+    setismodelopenForReport(true);
+  };
+  const handleOkForReport = () => {
+    setismodelopenForReport(false);
+  };
+  const handleCancelForReport = () => {
+    setismodelopenForReport(false);
+  };
+  console.log("coachDetails", coachDetails);
+  console.log("userDetails", userDetails);
+
+  const handleFinishForReport = async () => {
+    try {
+      console.log("userDetails", userDetails);
+      console.log(description, reason);
+      let id;
+      id = userDetails?.id;
+
+      console.log(id);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addreport`,
+        {
+          reporter_user_id: id,
+          victim_user_id: coachDetails?.coach_id,
+          report_reason: reason,
+          description: description,
+        }
+      );
+      console.log(res.data);
+      alert("Reported Successfully");
+    } catch (e) {
+      console.log(e);
+    }
+    setismodelopenForReport(false);
+  };
+
+  const submitFeedback = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `api/addcoachfeedbacks/${coachId}`,
+        {
+          comment,
+          rating,
+        }
+      );
+      console.log("Feedback data:", response.data);
+
+      setComment("");
+      setRating(0);
+      alert("feedback was submitted successfully");
+      // setAverageRating(response.data.averageRating); // Update average rating
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("Error submitting feedback");
+    }
+  };
   return (
     <>
       <style>
@@ -159,8 +295,7 @@ const CoachProfileUser = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {coachDetails &&
-                  (coachDetails as { Discription: string }).Discription}
+                {coachDetails?.short_desctiption}
               </Typography>
               <Button
                 style={{
@@ -173,6 +308,84 @@ const CoachProfileUser = () => {
                 {" "}
                 Request for Booking
               </Button>
+              <div>
+                <Button
+                  style={{
+                    backgroundColor: "#EFF4FA",
+                    color: "#0E458E",
+                    borderRadius: "3px",
+                    fontFamily: "kanit",
+                    borderColor: "#0E458E",
+                    marginTop: "20px",
+                  }}
+                  onClick={showModalForReport}
+                >
+                  Report User
+                </Button>
+                <Modal
+                  visible={isModalOpenForReport}
+                  onCancel={handleCancelForReport}
+                  okText="Report"
+                  onOk={handleFinishForReport}
+                >
+                  <Form
+                    layout="vertical"
+                    style={{ marginTop: "10%", margin: "2%" }}
+                    onFinish={handleFinishForReport}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        color: "#5587CC",
+                        height: "100px",
+                      }}
+                    >
+                      <ExclamationCircleTwoTone width={1000} /> Repot User
+                    </div>
+                    <Form.Item
+                      name="Chooose_Why"
+                      label="Choose Reason"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select a Reason!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Select a Reson"
+                        onChange={(value) => setReason(value)}
+                      >
+                        <Select.Option value="Fake Profile">
+                          Fake Profile
+                        </Select.Option>
+                        <Select.Option value="Cheating">Cheating</Select.Option>
+                        <Select.Option value="Misbehavior">
+                          Misbehavior
+                        </Select.Option>
+                        <Select.Option value="Other">Other</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      name="Report_reason"
+                      label="Tell Us More About Why"
+                      rules={[
+                        {
+                          type: "string",
+                          message: "Please enter a valid Reason!",
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={5}
+                        placeholder="Add a little more about why you are reporting this user"
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Modal>
+              </div>
             </Col>
           </Row>
         </Col>
@@ -215,10 +428,7 @@ const CoachProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                {coachDetails &&
-                  (coachDetails as { firstname: string }).firstname}
-                {coachDetails &&
-                  (coachDetails as { lastname: string }).lastname}
+                {coachDetails?.user.firstname} {coachDetails?.user.lastname}
               </h1>
               <p
                 style={{
@@ -255,7 +465,7 @@ const CoachProfileUser = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -290,11 +500,25 @@ const CoachProfileUser = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
                     </div>
                     <p
                       style={{
@@ -308,7 +532,7 @@ const CoachProfileUser = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      ({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -595,8 +819,11 @@ const CoachProfileUser = () => {
       >
         {" "}
       </div>
-      <PhotoCollage />
+      <PhotoCollageForUsers id={coachId} role={"COACH"} />
 
+     
+
+      {/* Reviews */}
       <Row
         style={{
           width: "100%",
@@ -633,7 +860,7 @@ const CoachProfileUser = () => {
             Reviews
           </Typography>
 
-          <Row
+          {/* <Row
             style={{
               width: "100%",
               minHeight: "300px",
@@ -686,13 +913,15 @@ const CoachProfileUser = () => {
               {" "}
               <ReviewCard />
             </Col>
-          </Row>
+          </Row> */}
+
           <Row
             style={{
               width: "100%",
               minHeight: "300px",
               paddingBottom: "20px",
               display: "flex",
+              flexDirection: "row",
               justifyContent: "center",
               alignContent: "center",
             }}
@@ -700,48 +929,29 @@ const CoachProfileUser = () => {
             <Col
               style={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignContent: "center",
               }}
               xs={24}
               sm={12}
-              md={12}
-              lg={8}
-              xl={8}
+              md={24}
+              lg={24}
+              xl={24}
             >
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
+              {allFeedbacks.map((feedback: any) =>
+                feedback.feedback.feedbackComments.map((comment: any) => (
+                  <ReviewCard
+                    key={comment.feedback_id}
+                    rate={feedback.rate}
+                    userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                    comment={comment.comment}
+                  />
+                ))
+              )}
             </Col>
           </Row>
+
           <Row>
             {" "}
             <div
@@ -762,7 +972,7 @@ const CoachProfileUser = () => {
                 onClick={showModal}
               >
                 {" "}
-                Request for Booking
+                Give an Feedback
               </Button>
             </div>
           </Row>
@@ -798,17 +1008,29 @@ const CoachProfileUser = () => {
             }}
             key="submit"
             type="primary"
-            onClick={handleOk}
+            onClick={submitFeedback}
           >
             Give Reveiw
           </Button>,
         ]}
       >
         <Flex vertical gap={32}>
+          <Rate
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              // color:"#0E458E",
+              // borderBlock: "dashed #0E458E",
+              opacity: "1",
+            }}
+            value={rating}
+            onChange={(value) => setRating(value)}
+          />
           <TextArea
             showCount
             maxLength={60}
-            onChange={onChange}
+            value={comment}
+            onChange={(e: any) => setComment(e.target.value)}
             placeholder="Write your feedback"
             style={{ height: 120, resize: "none", marginBottom: "20px" }}
           />
@@ -817,4 +1039,5 @@ const CoachProfileUser = () => {
     </>
   );
 };
+
 export default CoachProfileUser;

@@ -34,7 +34,7 @@ const UserProvider = ({ children }: any) => {
       const fetchData = async () => {
         if (t) {
           // Check if t is not null
-          axios
+          axiosInstance
             .get(`${process.env.REACT_APP_API_URL}api/getuser/${t}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
@@ -44,7 +44,7 @@ const UserProvider = ({ children }: any) => {
                 lastName: res.data.lastname,
                 role: res.data.role,
                 image: res.data.user_image,
-                phoneNumbers: res.data.phone[0].phone_number,
+                // phoneNumbers: res.data.phone[0].phone_number,
                 discription: res.data.Discription,
                 achivements: res.data.achivements,
               });

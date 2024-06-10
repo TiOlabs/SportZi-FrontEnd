@@ -1,6 +1,6 @@
 import "../../styles/signup.css";
 
-import { Flex, InputNumber } from "antd";
+import { Flex, InputNumber, Space, TimePicker } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
@@ -12,6 +12,7 @@ import axios from "axios";
 import { Moment } from "moment";
 import axiosInstance from "../../axiosInstance";
 import { Sport } from "../../types";
+import { Dayjs } from "dayjs";
 
 //responsiveness
 const formItemLayout = {
@@ -63,6 +64,9 @@ const SignupCoach = () => {
   const [gender, setGender] = useState("");
   const [sport, setSport] = useState("");
   const [sportDetails, setSportDetails] = useState<Sport[]>([]);
+  const [timeSlots, setTimeSlots] = useState([
+    { day: "", startTime: "", endTime: "" },
+  ]);
 
   useEffect(() => {
     const fetchSports = async () => {
@@ -77,23 +81,69 @@ const SignupCoach = () => {
     };
     fetchSports();
   }, []);
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  const handleDayChange = (index: number, value: string) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].day = value;
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleStartTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].startTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleEndTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].endTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
+
+  const handleAddTimeSlot = () => {
+    setTimeSlots([...timeSlots, { day: "", startTime: "", endTime: "" }]);
+  };
+
+  const handleRemoveTimeSlot = (index: number) => {
+    const newTimeSlots = timeSlots.filter((_, i) => i !== index);
+    setTimeSlots(newTimeSlots);
+  };
 
   const onFinish = async () => {
+    const combinedTimeslot = timeSlots.map((slot) => ({
+      day: slot.day,
+      timeslot: `${slot.startTime}-${slot.endTime}`,
+    }));
     const rateint = parseInt(rate);
-    console.log(rateint); 
+    console.log(rateint);
     try {
       const response = await axiosInstance
-        .post("/api/addcoach", {
-          firstname: firstname,
-          lastname: lastname,
-          email: email,
-          password: password,
-          phone_number: phone,
-          DOB: selectedDateString,
-          gender: gender,
-          rate: rateint,
-          sport_id: sport,
-        })
+        .post(
+          "/api/addcoach",
+          {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: password,
+            phone_number: phone,
+            DOB: selectedDateString,
+            gender: gender,
+            rate: rateint,
+            sport_id: sport,
+            combinedTimeslot: combinedTimeslot,
+          },
+          {
+            timeout: 10000, // Increase timeout to 10 seconds
+          }
+        )
         .then((res) => {
           console.log(res);
           alert("Form submitted successfully!");
@@ -468,6 +518,87 @@ const SignupCoach = () => {
                   </Option>
                 </Select>
               </Form.Item>
+              <div>Select Availiable Time Slots</div>
+              {/* Day and Time Slot Selection */}
+              {timeSlots.map((slot, index) => (
+                <Space
+                  key={index}
+                  direction="vertical"
+                  style={{ width: "100%" }}
+                >
+                  <Form.Item
+                    name={`day-${index}`}
+                    label={`Select Day ${index + 1}`}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a day!",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select Day"
+                      style={{ width: "100%" }}
+                      onChange={(value) => handleDayChange(index, value)}
+                    >
+                      {daysOfWeek.map((day) => (
+                        <Option key={day} value={day}>
+                          {day}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    name={`startTime-${index}`}
+                    label={`Select Start Time ${index + 1}`}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a start time!",
+                      },
+                    ]}
+                  >
+                    <TimePicker
+                      format="HH:mm"
+                      onChange={(time) => handleStartTimeChange(index, time)}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`endTime-${index}`}
+                    label={`Select End Time ${index + 1}`}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select an end time!",
+                      },
+                    ]}
+                  >
+                    <TimePicker
+                      format="HH:mm"
+                      onChange={(time) => handleEndTimeChange(index, time)}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  {index > 0 && (
+                    <Button
+                      style={{ width: "40%" }}
+                      onClick={() => handleRemoveTimeSlot(index)}
+                    >
+                      <div style={{ fontSize: "15px" }}> Remove Time Slot</div>
+                    </Button>
+                  )}
+                </Space>
+              ))}
+              <Button
+                type="dashed"
+                onClick={handleAddTimeSlot}
+                style={{ width: "40%" }}
+              >
+                <div style={{ fontSize: "15px" }}>
+                  Add Another Availiavle Time
+                </div>
+              </Button>
 
               <Form.Item
                 name="sport"

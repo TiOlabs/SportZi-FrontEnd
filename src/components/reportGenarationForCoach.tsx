@@ -2,8 +2,13 @@ import React, { useEffect, useState, useRef } from "react";
 import { Col, Row, Table, Button } from "antd";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { useReactToPrint } from "react-to-print";
-import { CoachBookingDetails, ZoneBookingDetails } from "../../types";
+import {
+  CoachBookingDetails,
+  PackageEnroolDetailsForPlayer,
+  ZoneBookingDetails,
+} from "../types";
 import { ColumnType } from "antd/es/table";
+import { useParams } from "react-router-dom";
 
 interface PrintableContentProps {
   zoneData: { name: string; value: number }[];
@@ -16,57 +21,16 @@ interface PrintableContentProps {
 const PrintableContent = React.forwardRef<
   HTMLDivElement,
   PrintableContentProps
->(({ zoneData, coachData, packageData, COLORS, tableColumns }, ref) => (
+>(({ coachData, packageData, COLORS, tableColumns }, ref) => (
   <div ref={ref} style={{ padding: "2%", backgroundColor: "#EFF4FA" }}>
     {/* Zone Bookings Section */}
-    <div style={{ marginBottom: "2rem" }}>
-      <hr />
-      <h3 style={{ color: "#0E458E", textAlign: "center" }}>Arena Bookings</h3>
-      <hr />
-      <Row>
-        <Col span={12}>
-          <PieChart width={500} height={300}>
-            <Pie
-              data={zoneData}
-              cx={150}
-              cy={150}
-              labelLine={false}
-              label={({ name, percent }) =>
-                `${name}: ${(percent * 100).toFixed(0)}%`
-              }
-              outerRadius={100}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {zoneData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend layout="vertical" verticalAlign="top" align="right" />
-          </PieChart>
-        </Col>
-        <Col span={12}>
-          <Table
-            columns={tableColumns}
-            dataSource={zoneData}
-            pagination={false}
-            bordered
-            title={() => <h3>Arena Booking Counts</h3>}
-          />
-        </Col>
-      </Row>
-    </div>
-    <hr />
+
     {/* Coach Bookings Section */}
-    <div style={{ marginBottom: "2rem" }}>
-      <h3 style={{ color: "#0E458E", textAlign: "center" }}>Coach Bookings</h3>
+    <div style={{ marginBottom: "4rem" }}>
+      <h2 style={{ color: "#0E458E", textAlign: "center" }}>Coach Bookings</h2>
       <Row>
-        <Col span={12}>
-          <PieChart width={500} height={300}>
+        <Col span={16}>
+          <PieChart width={500} height={400}>
             <Pie
               data={coachData}
               cx={200}
@@ -87,10 +51,10 @@ const PrintableContent = React.forwardRef<
               ))}
             </Pie>
             <Tooltip />
-            <Legend layout="vertical" verticalAlign="top" align="right" />
+            <Legend layout="vertical" verticalAlign="bottom" align="right" />
           </PieChart>
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <Table
             columns={tableColumns}
             dataSource={coachData}
@@ -103,13 +67,13 @@ const PrintableContent = React.forwardRef<
     </div>
     <hr />
     {/* Package Enrollments Section */}
-    <div style={{ marginBottom: "2rem" }}>
-      <h3 style={{ color: "#0E458E", textAlign: "center" }}>
+    <div style={{ marginBottom: "4rem" }}>
+      <h2 style={{ color: "#0E458E", textAlign: "center" }}>
         Package Enrollments
-      </h3>
+      </h2>
       <Row>
-        <Col span={12}>
-          <PieChart width={500} height={300}>
+        <Col span={16}>
+          <PieChart width={500} height={400}>
             <Pie
               data={packageData}
               cx={100}
@@ -130,10 +94,10 @@ const PrintableContent = React.forwardRef<
               ))}
             </Pie>
             <Tooltip />
-            <Legend layout="vertical" verticalAlign="top" align="right" />
+            <Legend layout="vertical" verticalAlign="bottom" align="right" />
           </PieChart>
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <Table
             columns={tableColumns}
             dataSource={packageData}
@@ -147,30 +111,42 @@ const PrintableContent = React.forwardRef<
   </div>
 ));
 
-const AdminPannel = () => {
+const ReportGenarationForCoach = (props: any) => {
   const [zoneBookings, setZoneBookings] = useState<ZoneBookingDetails[]>([]);
+  const [filteredArcadeBookings, setFilteredArcadeBookings] = useState<
+    ZoneBookingDetails[]
+  >([]);
   const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
   const [packageEnrollments, setPackageEnrollments] = useState<any[]>([]);
+  const { ArcadeId } = useParams();
 
-  useEffect(() => {
-    const fetchZoneBookings = async () => {
-      try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}api/getarcadebookings`);
-        const data = await res.json();
-        setZoneBookings(data);
-        console.log(data);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchZoneBookings();
-  }, []);
+  //   useEffect(() => {
+  //     const fetchZoneBookings = async () => {
+  //       try {
+  //         const res = await fetch(
+  //           `${process.env.REACT_APP_API_URL}api/getarcadebookings`
+  //         );
+  //         const data = await res.json();
+
+  //         setFilteredArcadeBookings(data);
+  //         const filteredData = data.filter(
+  //           (booking: ZoneBookingDetails) =>
+  //             booking.zone.arcade.arcade_id === ArcadeId
+  //         );
+  //         console.log(filteredData);
+  //         setZoneBookings(filteredData);
+  //       } catch (e) {
+  //         console.log(e);
+  //       }
+  //     };
+  //     fetchZoneBookings();
+  //   }, []);
 
   useEffect(() => {
     const fetchCoachBookings = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getCoachBookings`
+          `${process.env.REACT_APP_API_URL}api/getcoachDetailsForCoachByCoachId/${props.coach_id}`
         );
         const data = await res.json();
         setCoachBookings(data);
@@ -189,7 +165,11 @@ const AdminPannel = () => {
           `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentPlayerDetails`
         );
         const data = await res.json();
-        setPackageEnrollments(data);
+        const filteredData = data.filter(
+          (enrollment: PackageEnroolDetailsForPlayer) =>
+            enrollment.package.arcade_id === ArcadeId
+        );
+        setPackageEnrollments(filteredData);
         console.log(data);
       } catch (e) {
         console.log(e);
@@ -198,12 +178,6 @@ const AdminPannel = () => {
     fetchPackageEnrollment();
   }, []);
 
-  const bookingStatusCounts = {
-    success: 0,
-    canceled_By_Player: 0,
-    canceled_By_Arcade: 0,
-    canceled_By_Admin: 0,
-  };
   const coachBookingStatusCounts = {
     success: 0,
     canceled_By_Player: 0,
@@ -218,14 +192,6 @@ const AdminPannel = () => {
     canceled_By_Admin: 0,
     canceled_By_Coach: 0,
   };
-
-  zoneBookings.forEach((booking) => {
-    if (booking.status.toString() in bookingStatusCounts) {
-      bookingStatusCounts[
-        booking.status.toString() as keyof typeof bookingStatusCounts
-      ]++;
-    }
-  });
 
   coachBookings.forEach((booking) => {
     if (booking.status.toString() in coachBookingStatusCounts) {
@@ -242,19 +208,6 @@ const AdminPannel = () => {
       ]++;
     }
   });
-
-  const zoneData = [
-    { name: "Success", value: bookingStatusCounts.success },
-    {
-      name: "Canceled by Player",
-      value: bookingStatusCounts.canceled_By_Player,
-    },
-    {
-      name: "Canceled by Arcade",
-      value: bookingStatusCounts.canceled_By_Arcade,
-    },
-    { name: "Canceled by Admin", value: bookingStatusCounts.canceled_By_Admin },
-  ];
 
   const coachData = [
     { name: "Success", value: coachBookingStatusCounts.success },
@@ -318,31 +271,27 @@ const AdminPannel = () => {
 
   return (
     <>
-      <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
+      <Col span={24} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
         <Row justify="space-between">
-          <Col>NAV</Col>
+          <Col></Col>
           <Col>
             <Button type="primary" ghost onClick={handlePrint}>
               Print
             </Button>
           </Col>
         </Row>
-        <Row>
-          <Col style={{ color: "#0E458E" }}>
-            <h2>Dashboard</h2>
-          </Col>
-        </Row>
+
         <PrintableContent
           ref={printableContentRef}
-          zoneData={zoneData}
           coachData={coachData}
           packageData={packageData}
           COLORS={COLORS}
           tableColumns={tableColumns}
+          zoneData={[]}
         />
       </Col>
     </>
   );
 };
 
-export default AdminPannel;
+export default ReportGenarationForCoach;

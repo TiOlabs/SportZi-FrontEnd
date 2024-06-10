@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { usePlayer } from "../../context/player.context";
 import { useLocation } from "react-router-dom";
+import { useUser } from "../../context/userContext";
 
 const Arcades = () => {
   const arcades = useLocation();
@@ -18,7 +19,7 @@ const Arcades = () => {
   useEffect(() => {
     setToken(Cookies.get("token"));
   }, []);
-  const { userDetails } = usePlayer();
+  const { userDetails } = useUser();
   return (
     <>
       {userDetails.id !== "" ? <Navbar /> : <NavbarLogin />}

@@ -1,6 +1,9 @@
 import { Col, Row, Button, Modal } from "antd";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { useNavigate } from "react-router-dom";
 
 interface Coach {
   coach_id: string;
@@ -36,7 +39,9 @@ const CoachesManagement = () => {
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/getcoach");
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getcoach`
+        );
         setCoaches(response.data);
       } catch (error) {
         console.error("Error fetching coaches:", error);
@@ -90,7 +95,17 @@ function DataRow(props: any) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const navigate = useNavigate();
 
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <Row
       key={coachdetails.coach_id}
@@ -102,18 +117,18 @@ function DataRow(props: any) {
     >
       <Col></Col>
       <Col span={8} style={{}}>
-        <div
-          style={{
-            borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            width: "80px",
-            height: "80px",
-            backgroundColor: "#000",
-          }}
-        ></div>
+        <AdvancedImage
+          onClick={handleClick}
+          style={{ width: "80px", height: "80px", borderRadius: "50%" }}
+          cldImg={
+            cld.image(coachdetails.user.user_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+          // border-radius: 50%;
+          // width: 80px;
+          // height: 80px;
+        />
         <div
           style={{
             display: "flex",

@@ -1,10 +1,12 @@
 import { ExclamationCircleTwoTone } from "@ant-design/icons";
-import { Button, Form, InputNumber, Modal } from "antd";
+import { Button, Form, InputNumber, Modal, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCoach } from "../context/coach.context";
 import { useParams } from "react-router-dom";
+import { useUser } from "../context/userContext";
+import { Arcade, CoachAssignDetails } from "../types";
 
 const CoachApplyForm = () => {
   const { coachDetails } = useCoach();
@@ -13,6 +15,11 @@ const CoachApplyForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [duration, setDuration] = useState(0);
+  const { userDetails } = useUser();
+  const [coachisInArcade, setcoachisInArcade] = useState<CoachAssignDetails[]>(
+    []
+  );
+  const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -21,6 +28,20 @@ const CoachApplyForm = () => {
     setIsModalOpen(false);
   };
   console.log("coachDetails", coachDetails);
+  useEffect(() => {
+    const fetchArcadeDetails = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`
+        );
+        console.log(res.data);
+        setArcadeDetails(res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchArcadeDetails();
+  }, [ArcadeId]);
 
   const handleFinish = async () => {
     try {
@@ -31,29 +52,69 @@ const CoachApplyForm = () => {
           arcade_id: ArcadeId,
           description: description,
           duration: duration,
+          coach_name: coachDetails?.firstName + " " + coachDetails?.lastName,
+          arcade_name: arcadeDetails?.arcade_name,
+          email: arcadeDetails?.arcade_email,
         }
       );
       console.log(res.data);
-      alert("Applied for Coaching Successfully");
+      message.success("Request Sent Successfully");
     } catch (e) {
       console.log(e);
+      message.error("Error Sending Request");
     }
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    if (userDetails?.role === "COACH") {
+      try {
+        const fetchData = async () => {
+          const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${userDetails?.id}`
+          );
+          const data = await res.data;
+          console.log(data);
+          setcoachisInArcade(data);
+        };
+        fetchData();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [userDetails?.id]);
+
+  const isCoachInArcade = coachisInArcade.some(
+    (entry) => entry.arcade.arcade_id === ArcadeId && entry.status === "success"
+  );
+  const coachRequestedToArcade = coachisInArcade.some(
+    (entry) => entry.arcade.arcade_id === ArcadeId && entry.status === "pending"
+  );
+  const handleJoinClick = () => {
+    if (isCoachInArcade) {
+      message.warning("You are already in the Arcade.");
+    } else if (coachRequestedToArcade) {
+      message.warning("You are already Requested to the Arcade.");
+    } else {
+      showModal();
+    }
+  };
   return (
     <>
-      <Button
-        onClick={showModal}
-        style={{
-          backgroundColor: "#5587CC",
-          fontFamily: "kanit",
-          color: "#fff",
-          borderRadius: "3px",
-          marginTop: "30px",
-        }}
-      >
-        Apply For Coaching
-      </Button>
+      {userDetails?.role === "COACH" ? (
+        <Button
+          style={{
+            backgroundColor: "#5587CC",
+            fontFamily: "kanit",
+            color: "#fff",
+            borderRadius: "3px",
+            marginTop: "30px",
+          }}
+          onClick={handleJoinClick}
+        >
+          Apply For Coaching
+        </Button>
+      ) : null}
       <Modal
         visible={isModalOpen}
         onCancel={handleCancel}

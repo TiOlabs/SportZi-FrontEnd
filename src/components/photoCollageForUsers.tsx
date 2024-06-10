@@ -1,6 +1,6 @@
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { Col, Row, Empty, Dropdown, Menu } from "antd";
+import { Col, Row, Empty } from "antd";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
@@ -8,11 +8,10 @@ import { PlayerContext } from "../context/player.context";
 import { ArcadeContext } from "../context/Arcade.context";
 import { CoachContext } from "../context/coach.context";
 import { UserContext } from "../context/userContext";
-import { DeleteOutlined } from "@ant-design/icons";
 
-const PhotoCollageForArcade = (props: any) => {
-  const [userPhotos, setUserPhotos] = useState<any[]>([]);
-  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
+const PhotoCollageForUsers = (props: any) => {
+  const { userDetails } = useContext(UserContext);
+  const [userPhotos, setUserPhotos] = useState([]);
   // const { managerDetails } = useContext(ArcadeContext);
   // const { coachDetails } = useContext(CoachContext);
   // useEffect(() => {
@@ -37,14 +36,23 @@ const PhotoCollageForArcade = (props: any) => {
   // }, [userDetails]);
   useEffect(() => {
     console.log(props);
-
+    console.log(userDetails);
     const fetchData = async () => {
       try {
         let res;
 
-        res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${props.arcade_id}`
-        );
+        if (props.role === "PLAYER") {
+          console.log("Fetching user details...");
+          res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getuser/${props.id}`
+          );
+        } else if (props.role === "COACH") {
+          let idWithoutColon = props.id.replace(":", "");
+          console.log("Fetching coach details...");
+          res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getcoache/${idWithoutColon}`
+          );
+        }
 
         // else if (managerDetails) {
         //   console.log("Fetching manager details...");
@@ -55,8 +63,8 @@ const PhotoCollageForArcade = (props: any) => {
         console.log(res);
         if (res) {
           const data = res.data;
-          console.log(data.arcadephoto);
-          setUserPhotos(data.arcadephoto);
+          console.log(data.user.userphoto);
+          setUserPhotos(data.user.userphoto);
         }
       } catch (e) {
         console.log(e);
@@ -71,63 +79,16 @@ const PhotoCollageForArcade = (props: any) => {
       cloudName,
     },
   });
-  const handleMenuClick = (e: any, index: number) => {
-    // Specify type for index parameter
-    if (e.key === "delete") {
-      // Implement delete functionality here
-      console.log("Delete photo", userPhotos[index]);
-      try {
-        const res = axios.delete(
-          `${process.env.REACT_APP_API_URL}api/deleteArcadePhoto`,
-          {
-            data: {
-              user_id: userPhotos[index].arcade_id,
-              image: userPhotos[index].image,
-            },
-          }
-        );
-        console.log(res);
-        window.location.reload();
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  };
-  const getMenu = (index: number) => (
-    <Menu onClick={(e) => handleMenuClick(e, index)}>
-      <Menu.Item key="delete">Delete</Menu.Item>
-    </Menu>
-  );
+
   // Check if userPhotos is defined before using slice
   const items = userPhotos ? (
-    userPhotos.slice(0, 8).map(
-      (photo: any, index: number) => (
-        console.log(photo.image),
-        (
-          <div key={index} style={{ position: "relative" }}>
-            <Dropdown
-              overlay={getMenu(index)}
-              trigger={["click"]}
-              visible={openMenuIndex === index}
-              onVisibleChange={(visible) =>
-                setOpenMenuIndex(visible ? index : null)
-              }
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  top: 5,
-                  right: 5,
-                  cursor: "pointer",
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Replace this with your three-dot icon */}
-                <DeleteOutlined />
-              </span>
-            </Dropdown>
+    Array.from({ length: 1 }).map((_, index) =>
+      userPhotos.slice(0, 8).map(
+        (photo: any, photoIndex: number) => (
+          console.log(photo.image),
+          (
             <AdvancedImage
-              key={index}
+              key={photoIndex}
               style={{
                 width: "100%",
                 height: "100%",
@@ -136,7 +97,7 @@ const PhotoCollageForArcade = (props: any) => {
               }}
               cldImg={cld.image(photo.image)}
             />
-          </div>
+          )
         )
       )
     )
@@ -219,4 +180,4 @@ const PhotoCollageForArcade = (props: any) => {
   );
 };
 
-export default PhotoCollageForArcade;
+export default PhotoCollageForUsers;

@@ -19,6 +19,9 @@ const CoachArcadeCancel = () => {
   );
   const [value, setValue] = useState(1);
   const [search, setSearch] = useState<string>("");
+  const [filteredArcadeCanceled, setFilteredArcadeCanceled] = useState<
+    ZoneBookingDetails[]
+  >([]);
   // useEffect(() => {
   //   try {
   //     const fetchData = async () => {
@@ -52,14 +55,14 @@ const CoachArcadeCancel = () => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getarcadebookings`
         );
         const data = await res.data;
         setArcadeBookingDetails(data);
 
         let sortedBookings = data.filter(
           (arcadeBooking: { booking_type: string; status: string }) =>
-            arcadeBooking.status === "canceled_By_Player" &&
+            arcadeBooking.status === "canceled_By_Arcade" &&
             arcadeBooking.booking_type === "zone"
         );
 
@@ -100,6 +103,7 @@ const CoachArcadeCancel = () => {
 
   const onChange = (e: RadioChangeEvent) => {
     const newValue = e.target.value;
+    console.log(newValue);
     setValue(newValue);
 
     if (newValue === 1) {
@@ -116,7 +120,7 @@ const CoachArcadeCancel = () => {
           return timeDifference < twentyFourHoursInMillis;
         }
       );
-      setArcadeCanceled(below24Hours);
+      setFilteredArcadeCanceled(below24Hours);
     } else if (newValue === 2) {
       const above24Hours = arcadeCanceled.filter(
         (coachBooking: ZoneBookingDetails) => {
@@ -131,9 +135,17 @@ const CoachArcadeCancel = () => {
           return timeDifference >= twentyFourHoursInMillis;
         }
       );
-      setArcadeCanceled(above24Hours);
+      setFilteredArcadeCanceled(above24Hours);
     }
   };
+
+  useEffect(() => {
+    // Add initial data load or fetch logic here if needed
+    // Example: setArcadeCanceled(initialData);
+
+    // Debug: Log changes in filteredArcadeCanceled
+    console.log("Filtered Data:", filteredArcadeCanceled);
+  }, [filteredArcadeCanceled]);
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -155,35 +167,37 @@ const CoachArcadeCancel = () => {
       <Row style={{ marginTop: "20px" }}>
         <Col>
           {" "}
-          <Radio.Group onChange={onChange} value={value}>
+          <Radio.Group onChange={onChange} value={value} >
             <Radio value={1}>Before 24 hours</Radio>
             <Radio value={2}>After 24 hours</Radio>
           </Radio.Group>
         </Col>
       </Row>
       <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
-        {arcadeCanceled.length === 0 ? <Empty /> : null}
-        {arcadeCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
-          <DataRow
-            booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-            booked_Arena={ZoneBookingDetails.zone.zone_name}
-            booked_by={ZoneBookingDetails.user.firstname}
-            rate={
-              Number(ZoneBookingDetails.zone.rate) *
-              Number(ZoneBookingDetails.participant_count)
-            }
-            user_id={ZoneBookingDetails.user.user_id}
-            zone_id={ZoneBookingDetails.zone.zone_id}
-            zone={ZoneBookingDetails.zone.zone_name}
-            booking_date={ZoneBookingDetails.date}
-            booking_time={ZoneBookingDetails.time}
-            participant_count={ZoneBookingDetails.participant_count}
-            created_at={ZoneBookingDetails.created_at}
-            canceled_at={ZoneBookingDetails.canceled_at}
-            image={ZoneBookingDetails.user.user_image}
-            zone_image={ZoneBookingDetails.zone.zone_image}
-          />
-        ))}
+        {filteredArcadeCanceled.length === 0 ? <Empty /> : null}
+        {filteredArcadeCanceled.map(
+          (ZoneBookingDetails: ZoneBookingDetails) => (
+            <DataRow
+              booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+              booked_Arena={ZoneBookingDetails.zone.zone_name}
+              booked_by={ZoneBookingDetails.user.firstname}
+              rate={
+                Number(ZoneBookingDetails.zone.rate) *
+                Number(ZoneBookingDetails.participant_count)
+              }
+              user_id={ZoneBookingDetails.user.user_id}
+              zone_id={ZoneBookingDetails.zone.zone_id}
+              zone={ZoneBookingDetails.zone.zone_name}
+              booking_date={ZoneBookingDetails.date}
+              booking_time={ZoneBookingDetails.time}
+              participant_count={ZoneBookingDetails.participant_count}
+              created_at={ZoneBookingDetails.created_at}
+              canceled_at={ZoneBookingDetails.canceled_at}
+              image={ZoneBookingDetails.user.user_image}
+              zone_image={ZoneBookingDetails.zone.zone_image}
+            />
+          )
+        )}
       </Col>
     </Col>
   );
@@ -256,7 +270,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          Rs.{props.rate}
+          LKR {props.rate}
         </div>
       </Col>
       <Col span={8}>

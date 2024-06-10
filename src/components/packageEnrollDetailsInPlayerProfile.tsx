@@ -125,7 +125,7 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
           lg={6}
           xl={6}
         >
-          Rs.{props.rate}
+          LKR {props.rate}
         </Col>
         <Col
           style={{
@@ -310,6 +310,24 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
             xl={6}
           >
             {props.zone_name}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={6}
+          >
+            LKR {props.rate}
           </Col>
         </Row>
       </Modal>

@@ -22,7 +22,7 @@ const CoachProvider = ({ children }: any) => {
     const token = Cookies.get("token");
     const decoded = token ? jwtDecode(token) : undefined;
     setDecodedValues(decoded);
-  }, [coachDetails]);
+  }, []);
   console.log("decodedValues", decodedValues);
 
   console.log("decodedValues", decodedValues?.userId);
@@ -34,7 +34,7 @@ const CoachProvider = ({ children }: any) => {
         if (t) {
           // Check if t is not null
           axiosInstance
-            .get(`http://localhost:8000/api/auth/getcoachDetailsForCoach/${t}`)
+            .get(`${process.env.REACT_APP_API_URL}api/auth/getcoachDetailsForCoach/${t}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
               setCoachDetails({

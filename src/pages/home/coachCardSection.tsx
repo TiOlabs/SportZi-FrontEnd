@@ -6,11 +6,13 @@ import { Coach } from "../../types";
 import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
 import axios from "axios";
+import { useUser } from "../../context/userContext";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<Coach[]>([]);
   const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
+  const {userDetails} = useUser();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -135,7 +137,10 @@ const CoachCardSection = () => {
                         rate={coach.rate}
                         // duration={coachAssignDetail.duration}
                         coach_image={coach.user.user_image}
-                        coach_id={coach.user.user_id}
+                        coach_id={coach.coach_id}
+                        sport={coach.sport.sport_name}
+                        role ={userDetails.role}
+
                       />
                     </Col>
                   ))

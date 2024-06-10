@@ -5,8 +5,11 @@ import { useState } from "react";
 import axios from "axios";
 import UpdateZone from "./UpdateZone";
 const ArcadeZoneCard = (props: any) => {
+
   console.log("lol ", props);
+  
   const [cloudName] = useState("dle0txcgt");
+
   const cld = new Cloudinary({
     cloud: {
       cloudName,
@@ -23,10 +26,9 @@ const ArcadeZoneCard = (props: any) => {
   const handleCancel = () => {
     setOpen(false);
   };
-  const handleConfirmDelete = () =>{
+  const handleConfirmDelete = () => {
     window.location.reload();
-
-  }
+  };
 
   return (
     <>
@@ -85,6 +87,9 @@ const ArcadeZoneCard = (props: any) => {
             >
               {props.zoneName}
             </Typography>
+            <Typography style={{ display: "flex", justifyContent: "right" }}>
+              {props.capacity} CPTY
+            </Typography>
             <Typography
               style={{
                 fontSize: lg ? "20px" : "18px",
@@ -93,7 +98,17 @@ const ArcadeZoneCard = (props: any) => {
                 width: "80%",
               }}
             >
-              Week Days Day And weekend nights available
+              Availiable on : {props.open_time} - {props.close_time}
+            </Typography>
+            <Typography
+              style={{
+                fontSize: lg ? "20px" : "18px",
+                fontWeight: "light",
+                color: "black",
+                width: "80%",
+              }}
+            >
+              In Week Days
             </Typography>
             <Typography
               style={{
@@ -129,7 +144,7 @@ const ArcadeZoneCard = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  Rs.{props.rate}
+                  LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{
@@ -150,55 +165,56 @@ const ArcadeZoneCard = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                <UpdateZone 
-                id={props.id}
-                rate= {props.rate} 
-                name= {props.zoneName}
-                description = {props.description}
-                zoneImage= {props.zoneImage}
-                way_of_booking= {props.way_of_booking}
-                open_time= {props.open_time}
-                close_time= {props.close_time}
-                capacity= {props.capacity}
-                sport= {props.sport}
-                sport_id= {props.sport_id}
-                
+                <UpdateZone
+                  id={props.id}
+                  rate={props.rate}
+                  name={props.zoneName}
+                  description={props.description}
+                  zoneImage={props.zoneImage}
+                  way_of_booking={props.way_of_booking}
+                  open_time={props.open_time}
+                  close_time={props.close_time}
+                  capacity={props.capacity}
+                  sport={props.sport}
+                  sport_id={props.sport_id}
+                  day={props.day}
+                  timeForDay={props.timeForDay}
+                  date={props.date}
+                  timeForDate={props.timeForDate}
                 />
-                
-                  <Button
-                    style={{
-                      backgroundColor: "red",
-                      color: "white",
-                      borderRadius: "3px",
-                    }}
-                    onClick={showModal}
-                  >
-                    Delete
-                  </Button>
-                  <Modal
-                    visible={open}
-                    onOk={async (e) => {
-                      const url = `${process.env.REACT_APP_API_URL}api/deleteZoneDetails/${props.id}`;
-                      
-                      axios
-                        .delete(url)
-                        .then((response) => {
-                            console.log(response);
-                          if (response.status === 200) {
-                            console.log("success");
-                          } else {
-                            console.log("error");
-                          }
-                        })
-                        .catch((e) => console.log(e));
-                        handleConfirmDelete();
-                    }
-                    
-                  }
-                    onCancel={handleCancel}
-                  >
-                    <p>Are you sure you want to delete this arcade zone?</p>
-                  </Modal>
+
+                <Button
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    borderRadius: "3px",
+                  }}
+                  onClick={showModal}
+                >
+                  Delete
+                </Button>
+                <Modal
+                  visible={open}
+                  onOk={async (e) => {
+                    const url = `${process.env.REACT_APP_API_URL}api/deleteZoneDetails/${props.id}`;
+
+                    axios
+                      .delete(url)
+                      .then((response) => {
+                        console.log(response);
+                        if (response.status === 200) {
+                          console.log("success");
+                        } else {
+                          console.log("error");
+                        }
+                      })
+                      .catch((e) => console.log(e));
+                    handleConfirmDelete();
+                  }}
+                  onCancel={handleCancel}
+                >
+                  <p>Are you sure you want to delete this arcade zone?</p>
+                </Modal>
               </Col>
             </Row>
           </Col>

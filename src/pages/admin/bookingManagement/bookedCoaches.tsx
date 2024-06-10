@@ -2,7 +2,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { Col, Row, Button, Modal, Empty, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import confirm from "antd/es/modal/confirm";
@@ -40,7 +40,7 @@ const BookedCoaches = (props: any) => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/getCoachBookings"
+          `${process.env.REACT_APP_API_URL}api/getCoachBookings`
         );
         const data = await res.data;
         setCoachBookingDetails(data);
@@ -220,7 +220,7 @@ function DataRow(props: any) {
         // }
         try {
           const response = await axios.put(
-            `http://localhost:8000/api/updatecoachBooking/${props.booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
             {
               booking_id: props.booking_id,
               status: "canceled_By_Admin",
@@ -254,7 +254,7 @@ function DataRow(props: any) {
         }
         try {
           const response = await axios.put(
-            `http://localhost:8000/api/updatearcadebooking/${props.booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${props.booking_id}`,
             {
               booking_id: props.booking_id,
               status: "canceled_By_Admin",
@@ -283,6 +283,10 @@ function DataRow(props: any) {
     },
   });
 
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <Row
       style={{
@@ -294,6 +298,7 @@ function DataRow(props: any) {
       <Col></Col>
       <Col span={7} style={{}}>
         <AdvancedImage
+          onClick={handleClick}
           style={{
             borderRadius: "50%",
             position: "absolute",
@@ -301,7 +306,7 @@ function DataRow(props: any) {
             height: "80px",
           }}
           cldImg={
-            cld.image(props?.image)
+            cld.image(props?.coach_image)
             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
             // .resize(Resize.scale().width(200).height(200))
           }
@@ -345,7 +350,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          Rs.{props.rate}
+          LKR {props.rate}
         </div>
       </Col>
       <Col span={7}>

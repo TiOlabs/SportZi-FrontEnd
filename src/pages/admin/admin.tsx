@@ -5,6 +5,7 @@ import {
   EyeOutlined,
   MenuOutlined,
   ShoppingOutlined,
+  SolutionOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Col, Row, Menu } from "antd";
@@ -37,6 +38,8 @@ import AdminPannel from "./adminDashBoard";
 import AllPackagers from "./packageManagement/allPackages";
 import CancelPackagers from "./packageManagement/cancelPackagers";
 import SportManagement from "./sportManagement/sportManagement";
+import ReportManagement from "./reportManagement/reportManagement";
+import ReportUserManagement from "./reportManagement/reportUserManagement";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -97,6 +100,10 @@ const items: MenuProps["items"] = [
   getItem("Sports Management", "sub8", <EyeOutlined />, [
     getItem("Sport Management", "34"),
   ]),
+  getItem("Report Management", "sub9", <SolutionOutlined />, [
+    getItem("Reported Arcades", "35"),
+    getItem("Reported Users", "36"),
+  ]),
 ];
 
 const SideBarAdminPage = () => {
@@ -108,7 +115,7 @@ const SideBarAdminPage = () => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getarcadebookings`
         );
         const data = await res.data;
 
@@ -184,6 +191,10 @@ const SideBarAdminPage = () => {
       setstts("CancelPackagers");
     } else if (e.key === "34") {
       setstts("SportManagement");
+    } else if (e.key === "35") {
+      setstts("ArcadeReports");
+    } else if (e.key === "36") {
+      setstts("UserReports");
     }
   };
   return (
@@ -267,6 +278,8 @@ const SideBarAdminPage = () => {
       {stts === "AllPackagers" && <AllPackagers />}
       {stts === "CancelPackagers" && <CancelPackagers />}
       {stts === "SportManagement" && <SportManagement />}
+      {stts === "ArcadeReports" && <ReportManagement />}
+      {stts === "UserReports" && <ReportUserManagement />}
     </Row>
   );
 };
