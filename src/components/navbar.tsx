@@ -268,7 +268,11 @@ const Navbar: React.FC = () => {
         >
           {userDetails.firstName && userDetails.lastName
             ? `${userDetails.firstName} ${userDetails.lastName}`
-            : `${coachDetails.firstName} ${coachDetails.lastName}`}
+            : coachDetails.firstName && coachDetails.lastName
+            ? `${coachDetails.firstName} ${coachDetails.lastName}`
+            : managerDetails.firstName && managerDetails.lastName
+            ? `${managerDetails.firstName} ${managerDetails.lastName}`
+            : "User Name"}
         </div>
 
         <div
@@ -280,7 +284,13 @@ const Navbar: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          {userDetails?.role ? userDetails?.role : coachDetails?.role}
+          {userDetails?.role
+            ? userDetails?.role
+            : coachDetails?.role
+            ? coachDetails?.role
+            : managerDetails?.role
+            ? managerDetails?.role
+            : "Role"}
         </div>
         <Divider style={{}} />
       </div>
@@ -497,7 +507,11 @@ const Navbar: React.FC = () => {
                   >
                     {userDetails.firstName && userDetails.lastName
                       ? `${userDetails.firstName} ${userDetails.lastName}`
-                      : `${coachDetails.firstName} ${coachDetails.lastName}`}
+                      : coachDetails.firstName && coachDetails.lastName
+                      ? `${coachDetails.firstName} ${coachDetails.lastName}`
+                      : managerDetails.firstName && managerDetails.lastName
+                      ? `${managerDetails.firstName} ${managerDetails.lastName}`
+                      : "User Name"}
                   </div>
                   <div
                     className="NavBarUserProfileStatus"
@@ -508,7 +522,13 @@ const Navbar: React.FC = () => {
                       fontSize: "15px",
                     }}
                   >
-                    {userDetails?.role ? userDetails?.role : coachDetails?.role}
+                    {userDetails?.role
+                      ? userDetails?.role
+                      : coachDetails?.role
+                      ? coachDetails?.role
+                      : managerDetails?.role
+                      ? managerDetails?.role
+                      : "Role"}
                   </div>
                   <Divider style={{ color: "black" }} />
                 </div>
