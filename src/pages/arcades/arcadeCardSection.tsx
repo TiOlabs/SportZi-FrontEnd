@@ -248,8 +248,8 @@ const ArcadeCardSection = () => {
                 <div
                   style={{
                     marginTop: "0vh",
-                    marginRight: "10vh",
-                    marginBottom: "20vh",
+                    marginRight: "14vh",
+                    marginBottom: "23vh",
                   }}
                 >
                   <ArcadeCard

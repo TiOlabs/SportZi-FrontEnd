@@ -78,8 +78,8 @@ const AppFooter = () => {
                 color: "#0E458E",
                 fontFamily: "Kanit, sans-serif",
                 fontWeight: 300,
-
                 marginTop: "10%",
+                marginRight: "3%",
               }}
             >
               {" "}
@@ -91,7 +91,7 @@ const AppFooter = () => {
           </Col>
 
           <Col sm={0} lg={6}></Col>
-          <Col xs={24} sm={24} lg={8}>
+          <Col xs={23} sm={22} lg={8}>
             <h1
               style={{
                 display: "flex",
@@ -104,7 +104,8 @@ const AppFooter = () => {
                 fontWeight: 500,
                 lineHeight: 1.1,
                 marginTop: "10%",
-                marginBottom: "6%",
+                marginBottom: "5%",
+                marginLeft: "8%",
               }}
             >
               <b>Subscribe For Our Newsletter</b>
@@ -131,6 +132,7 @@ const AppFooter = () => {
                   border: "none",
                   borderRadius: 0,
                   height: 34,
+                  marginLeft: "2%",
                 }}
               />
 
@@ -148,7 +150,7 @@ const AppFooter = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: "-5%",
+            marginTop: "-4%",
             
             
           }}

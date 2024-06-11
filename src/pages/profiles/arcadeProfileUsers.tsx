@@ -300,7 +300,8 @@ const ArcadeProfileUser = () => {
                     borderRadius: "3px",
                     fontFamily: "kanit",
                     borderColor: "#0E458E",
-                    marginTop: "20px",
+                    marginTop: "10px",
+                    marginBottom: "45%",
                   }}
                   onClick={showModalForReport}
                 >
@@ -1119,6 +1120,7 @@ const ArcadeProfileUser = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            marginBottom: "5%",
           }}
           xs={24}
           sm={24}
@@ -1133,6 +1135,7 @@ const ArcadeProfileUser = () => {
               fontWeight: md ? "400" : "300",
               fontSize: md ? "32px" : "24px",
               color: "#0E458E",
+             
             }}
           >
             Reviews

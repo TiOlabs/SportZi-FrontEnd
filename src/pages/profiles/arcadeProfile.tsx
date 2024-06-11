@@ -493,7 +493,6 @@ const ArcadeProfileArcade = () => {
               style={{
                 position: "absolute",
                 display: "flex",
-
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
@@ -523,6 +522,7 @@ const ArcadeProfileArcade = () => {
             </Col>
           </Row>
         </Col>
+        
         <Col
           xs={24}
           sm={24}
@@ -2371,6 +2371,7 @@ const ArcadeProfileArcade = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            
           }}
           xs={24}
           sm={24}
@@ -2385,6 +2386,7 @@ const ArcadeProfileArcade = () => {
               fontWeight: md ? "400" : "300",
               fontSize: md ? "32px" : "24px",
               color: "#0E458E",
+              
             }}
           >
             Reviews
@@ -2395,6 +2397,7 @@ const ArcadeProfileArcade = () => {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              
             }}
           >
             <Col
@@ -2448,6 +2451,7 @@ const ArcadeProfileArcade = () => {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              
             }}
           >
             <Col
@@ -2484,6 +2488,7 @@ const ArcadeProfileArcade = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignContent: "center",
+              
               }}
               xs={24}
               sm={12}

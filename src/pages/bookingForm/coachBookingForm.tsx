@@ -350,6 +350,11 @@ const CoachBookingForm: React.FC = () => {
     }
   };
 
+
+
+  
+
+
   // eslint-disable-next-line no-octal
   const openTimeStr = zoneDetails?.open_time ?? "";
   const closeTimeStr = zoneDetails?.close_time ?? "";
@@ -528,7 +533,7 @@ const CoachBookingForm: React.FC = () => {
   return (
     <>
       <NavbarProfile />
-      <div style={{ margin: "2%", marginTop: "4%" }}>
+      <div style={{ margin: "2%", marginTop: "5%" }}>
         <Row>
           <Col lg={24} xs={24}></Col>
           <Col lg={24} xs={24}>
@@ -538,6 +543,7 @@ const CoachBookingForm: React.FC = () => {
                 justifyContent: "center",
                 textAlign: "center",
                 lineHeight: "2.5",
+           
               }}
             >
               Join Us and Unleash Your Potential with Our Expert Coaches
@@ -992,6 +998,9 @@ const CoachBookingForm: React.FC = () => {
               </Row>
             </Col>
           </Row>
+
+            
+
           <Row>
             <Col xs={24} lg={10}></Col>
             <Col xs={24} lg={14}>
@@ -1001,12 +1010,14 @@ const CoachBookingForm: React.FC = () => {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
+                  
                 }}
               ></div>
             </Col>
           </Row>
           <Row>
-            <Col xs={8} lg={6}>
+          <Col xs={1} md={3} lg={0}></Col>
+            <Col xs={8} sm={8} md={7} lg={6}>
               <Button
                 htmlType="submit"
                 style={{
@@ -1016,14 +1027,18 @@ const CoachBookingForm: React.FC = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   backgroundColor: "#BAE5EE",
+                  marginBottom: "0.8%",
+                 
                 }}
               >
                 <LeftOutlined />
                 Back
               </Button>
             </Col>
-            <Col xs={0} lg={4}></Col>
-            <Col xs={16} lg={14}>
+           
+
+            <Col xs={0} md={0} lg={4}></Col>
+            <Col xs={14} sm={12} md={12} lg={14}>
               <div
                 style={{
                   width: "100%",
@@ -1080,6 +1095,7 @@ const CoachBookingForm: React.FC = () => {
                 />
               </div>
             </Col>
+          
           </Row>
         </Form>
         <div style={{ marginTop: "40px" }}></div>
