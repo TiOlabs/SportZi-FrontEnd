@@ -55,7 +55,6 @@ import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachE
 import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 import Notification from "../../components/notification";
 
-
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
@@ -359,7 +358,6 @@ const ArcadeProfileArcade = () => {
     }
   };
 
-
   console.log("in the arcade", ArcadeId);
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
@@ -378,7 +376,6 @@ const ArcadeProfileArcade = () => {
       .catch((err) => {
         console.log(err);
       });
-
   }, [ArcadeId]);
 
   console.log("arcadeDetails", packageDetail);
@@ -477,7 +474,6 @@ const ArcadeProfileArcade = () => {
       }
     }
   );
-
 
   const [arcadeName, setArcadeName] = useState<any>();
   const [discription, setDiscription] = useState<any>();
@@ -682,7 +678,6 @@ const ArcadeProfileArcade = () => {
                 </Col>
               </Row>
               <p
-
                 style={{
                   color: "#000",
                   fontSize: "22px",
@@ -695,7 +690,7 @@ const ArcadeProfileArcade = () => {
                 }}
               >
                 Manager Name :
-              </h1>
+              </p>
 
               <p
                 style={{
@@ -709,7 +704,6 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-
                 {address &&
                   address
 
