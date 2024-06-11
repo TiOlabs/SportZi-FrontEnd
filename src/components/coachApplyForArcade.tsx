@@ -50,6 +50,7 @@ const CoachApplyForm = () => {
         {
           coach_id: coachDetails.id,
           arcade_id: ArcadeId,
+          arcadeId: ArcadeId,
           description: description,
           duration: duration,
           coach_name: coachDetails?.firstName + " " + coachDetails?.lastName,

@@ -72,6 +72,8 @@ const AvailableMetingstoPlayer = (props: any) => {
           booking_time: props.booking_time,
           arcade_name: props.venue,
           reason: reason,
+          user_id: props.user_id,
+          arcade_id: props.arcade_id,
         }
       );
 

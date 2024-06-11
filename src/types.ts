@@ -141,6 +141,7 @@ export interface User {
   Phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
+  natificationForUser: NotificationForUser[];
 }
 export interface UserPhone {
   user_id: String;
@@ -189,6 +190,7 @@ export interface Arcade {
   arcadefeedbacks: ArcadeFeedbacks[];
   zone: Zone[];
   package: Package[];
+  notificationForArcade: NotificationForArcade[];
 }
 
 export interface ArcadeFeedbacks {
@@ -317,4 +319,22 @@ export interface ZoneRejectDayAndTime {
   day: String;
   time: String;
   zone: Zone;
+}
+
+export interface NotificationForUser {
+  notification_id: String;
+  message: String;
+  is_read: Boolean;
+  created_at: String;
+  user_id: String;
+  user: User;
+}
+
+export interface NotificationForArcade {
+  notification_id: String;
+  message: String;
+  is_read: Boolean;
+  created_at: String;
+  arcade_id: String;
+  arcade: Arcade;
 }

@@ -84,6 +84,9 @@ const CoachAccepteLst = (props: any) => {
           booking_time: props.time,
           arcade_name: props.arcade_name,
           reason: reason,
+          coach_id: props.coach_id,
+          arcade_id: props.arcade_id,
+          player_id: props.player_id,
         }
       );
     } catch (e) {

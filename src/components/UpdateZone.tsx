@@ -78,6 +78,7 @@ const UpdateZone = (props: any) => {
   const emails: string[] = [];
   const user_names: string[] = [];
   const zoneBookingIds: string[] = [];
+  const user_ids: string[] = [];
   console.log(sportc);
   console.log(props.sport);
   const handleCancel = () => {
@@ -274,7 +275,8 @@ const UpdateZone = (props: any) => {
                 slot.timeslot,
                 booking.user.email as string,
                 booking.zone_booking_id as string,
-                booking.user.firstname as string
+                booking.user.firstname as string,
+                booking.user.user_id as string
               )
           ) ||
             combinedTimeslotForDate.some(
@@ -285,7 +287,8 @@ const UpdateZone = (props: any) => {
                   slot.timeslot,
                   booking.user.email as string,
                   booking.zone_booking_id as string,
-                  booking.user.firstname as string
+                  booking.user.firstname as string,
+                  booking.user.user_id as string
                 )
             ))
         );
@@ -395,6 +398,8 @@ const UpdateZone = (props: any) => {
             timeForDate: combinedTimeslotForDate,
             user_names: user_names,
             arcade_name: arcadeDetails?.arcade_name,
+            arcade_id: ArcadeId,
+            user_ids: user_ids,       
           }
         )
       );
@@ -434,7 +439,8 @@ const UpdateZone = (props: any) => {
     selectedTime: string,
     email: string,
     zone_Booking_id: string,
-    user_name: string
+    user_name: string,
+    user_id: string
   ) => {
     console.log(buttonTime, selectedTime);
     const [start, end] = selectedTime.split("-");
@@ -469,6 +475,7 @@ const UpdateZone = (props: any) => {
       emails.push(email);
       zoneBookingIds.push(zone_Booking_id);
       user_names.push(user_name);
+      user_ids.push(user_id);
     }
 
     return isWithin;

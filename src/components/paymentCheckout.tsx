@@ -115,6 +115,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         zone_name: props.zone_name,
         user_name: props.first_name + " " + props.last_name,
         email: props.email,
+        arcadeId: props.arcadeId,
       })
       .then(() => {
         window.location.reload();
