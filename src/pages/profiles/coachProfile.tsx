@@ -37,6 +37,7 @@ import {
 import axios from "axios";
 import { Option } from "antd/es/mentions";
 import ReportGenarationForCoach from "../../components/reportGenarationForCoach";
+import Notification from "../../components/notification";
 
 const RequestedMeetings = [<CoachReqestList />];
 
@@ -252,6 +253,7 @@ const CoachProfile = () => {
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
+
       <Row>
         <Col
           xs={24}
@@ -371,20 +373,32 @@ const CoachProfile = () => {
               flexDirection: "column",
             }}
           >
+            {" "}
             <div>
-              <h1
-                style={{
-                  color: "#000",
-                  fontSize: "32px",
-                  fontStyle: "capitalize",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {Details?.firstname} {Details?.lastname}
-              </h1>
+              <Row>
+                <Col>
+                  <h1
+                    style={{
+                      color: "#000",
+                      fontSize: "32px",
+                      fontStyle: "capitalize",
+                      fontWeight: "500",
+                      fontFamily: "kanit",
+                      lineHeight: "normal",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    {Details?.firstname} {Details?.lastname}
+                  </h1>
+                </Col>
+                <Col span={1}></Col>
+                <Col>
+                  <h1>
+                    <Notification userType="coach" id={coachDetails?.id} />
+                  </h1>
+                </Col>
+              </Row>
+
               <p
                 style={{
                   margin: "0px",
@@ -479,7 +493,6 @@ const CoachProfile = () => {
                 </Col>
               </Row>
             </div>
-
             <Typography
               style={{
                 color: "#000",
@@ -494,7 +507,6 @@ const CoachProfile = () => {
             >
               Qlifications
             </Typography>
-
             <List
               style={{
                 padding: "0px",
@@ -541,7 +553,6 @@ const CoachProfile = () => {
                 </List.Item>
               )}
             />
-
             <Typography
               style={{
                 color: "#000",
@@ -556,7 +567,6 @@ const CoachProfile = () => {
             >
               Expertise
             </Typography>
-
             <List
               style={{
                 padding: "0px",
@@ -1074,6 +1084,9 @@ const CoachProfile = () => {
               arcade_name={booking.arcade.arcade_name}
               status={booking.status}
               full_amount={booking.full_amount}
+              player_id={booking.player_id}
+              arcade_id={booking.arcade_id}
+              coach_id={booking.coach_id}
             />
           ))
         ) : (

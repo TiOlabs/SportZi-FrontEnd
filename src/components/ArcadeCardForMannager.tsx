@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col } from "antd";
 import { AdvancedImage } from "@cloudinary/react";
 import { useNavigate } from "react-router-dom";
+import Notification from "./notification";
 const ArcadeCardForMannager = (props: any) => {
   const navigate = useNavigate();
 
@@ -53,7 +54,7 @@ const ArcadeCardForMannager = (props: any) => {
           ></div>
         </Col>
         <Col
-          xs={18}
+          xs={16}
           style={{
             display: "flex",
             alignItems: "center",
@@ -69,6 +70,16 @@ const ArcadeCardForMannager = (props: any) => {
           >
             {props.name}
           </p>
+        </Col>
+        <Col
+          xs={2}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Notification userType="arcade" id={props.id} />
         </Col>
       </Row>
     </>
