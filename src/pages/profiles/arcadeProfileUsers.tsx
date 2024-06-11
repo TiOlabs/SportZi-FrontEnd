@@ -13,6 +13,8 @@ import {
   Modal,
   Form,
   Select,
+  Flex,
+  Rate,
 } from "antd";
 import { Grid } from "antd";
 
@@ -47,6 +49,8 @@ import ArcadePackageUserView from "../../components/arcadePackageUserView";
 import TextArea from "antd/es/input/TextArea";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import PhotoCollageForArcadeUsers from "../../components/photoCollageForArcadeUserViee";
+import { ArcadeFeedback } from "../../types";
+
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -68,6 +72,13 @@ const ArcadeProfileUser = () => {
   const [arcadePackages, setArcadePackages] = useState<Arcade>();
   console.log("userDetails", userDetails);
   console.log("coachDetails", coachDetails);
+
+  const [ismodelopen, setismodelopen] = useState(false);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0.0);
+  const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
 
   useEffect(() => {
     axiosInstance
@@ -141,6 +152,50 @@ const ArcadeProfileUser = () => {
       });
   }, [ArcadeId]);
 
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getarcadefeedbacks/${ArcadeId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbyarcadeId/${ArcadeId}`
+        );
+        console.log("response:", response.data);
+
+        const { averageRating, totalFeedbacks } = response.data;
+        console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRating * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [ArcadeId]);
+
   console.log("arcade", arcade?.arcade_image);
   const [cloudName] = useState("dle0txcgt");
 
@@ -196,6 +251,37 @@ const ArcadeProfileUser = () => {
   };
 
   console.log("arcadeDetails1");
+
+  const submitFeedback = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `api/addarcadefeedbacks/${ArcadeId}`,
+        {
+          comment,
+          rating,
+        }
+      );
+      console.log("Feedback data:", response.data);
+
+      setComment("");
+      setRating(0);
+      alert("feedback was submitted successfully");
+      // setAverageRating(response.data.averageRating); // Update average rating
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("Error submitting feedback");
+    }
+  };
+
+  const showModal = () => {
+    setismodelopen(true);
+  };
+  const handleOk = () => {
+    setismodelopen(false);
+  };
+  const handleCancel = () => {
+    setismodelopen(false);
+  };
 
   return (
     <>
@@ -476,7 +562,8 @@ const ArcadeProfileUser = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {/* 5.0 */}
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -511,11 +598,26 @@ const ArcadeProfileUser = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
+
                     </div>
                     <p
                       style={{
@@ -529,7 +631,8 @@ const ArcadeProfileUser = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      {/* 120 Feedbacks */}
+                      ({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -1150,7 +1253,7 @@ const ArcadeProfileUser = () => {
           >
             Reviews
           </Typography>
-          <Row
+          {/* <Row
             style={{
               display: "flex",
               justifyContent: "center",
@@ -1201,65 +1304,182 @@ const ArcadeProfileUser = () => {
             >
               {" "}
               <ReviewCard />
+            </Col>
+          </Row> */}
+          {/* <Row
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+          </Row> */}
+
+          <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={24}
+              lg={24}
+              xl={24}
+            >
+              {allFeedbacks.map((feedback: any) =>
+                feedback.feedback.feedbackComments.map((comment: any) => (
+                  <ReviewCard
+                    key={comment.feedback_id}
+                    rate={feedback.rate}
+                    userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                    comment={comment.comment}
+                  />
+                ))
+              )}
             </Col>
           </Row>
-          <Row
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Col
+
+          <Row>
+            {" "}
+            <div
               style={{
                 display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
+                justifyContent: "flex-end",
+                width: "100%",
               }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
             >
               {" "}
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
+              <Button
+                style={{
+                  backgroundColor: "#5587CC",
+                  fontFamily: "kanit",
+                  color: "#fff",
+                  borderRadius: "3px",
+                }}
+                onClick={showModal}
+              >
+                {" "}
+                Give an Feedback
+              </Button>
+            </div>
           </Row>
         </Col>
       </Row>
       <AppFooter />
-      <Modal></Modal>
+
+      <Modal
+        title="Give feedback "
+        open={ismodelopen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#0E458E",
+              border: "1px solid #0E458E",
+              fontFamily: "kanit",
+            }}
+            key="back"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>,
+          <Button
+            style={{
+              backgroundColor: "#5587CC",
+              fontFamily: "kanit",
+              color: "#fff",
+              borderRadius: "3px",
+            }}
+            key="submit"
+            type="primary"
+            onClick={submitFeedback}
+          >
+            Give Reveiw
+          </Button>,
+        ]}
+      >
+        <Flex vertical gap={32}>
+          <Rate
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              // color:"#0E458E",
+              // borderBlock: "dashed #0E458E",
+              opacity: "1",
+            }}
+            value={rating}
+            onChange={(value) => setRating(value)}
+          />
+          <TextArea
+            showCount
+            maxLength={60}
+            value={comment}
+            onChange={(e: any) => setComment(e.target.value)}
+            placeholder="Write your feedback"
+            style={{ height: 120, resize: "none", marginBottom: "20px" }}
+          />
+        </Flex>
+      </Modal>
     </>
   );
 };

@@ -42,6 +42,7 @@ import {
 } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
+import { useArcadeEdit } from "../../context/ArcadeEdit.context";
 import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
@@ -49,9 +50,11 @@ import NavbarProfile from "../../components/NavBarProfile";
 import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
+import ArcadeEdit from "../../components/arcadeEdit";
 import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
 import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 import Notification from "../../components/notification";
+
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -73,7 +76,9 @@ const ArcadeProfileArcade = () => {
   };
   console.log("value", value);
   const { ArcadeId } = useParams();
+  console.log("ArcadeId", ArcadeId);
   const { managerDetails } = useArcade();
+  //const { arcadeEditDetails } = useArcadeEdit();
   const [arcade, setArcade] = useState<Arcade>();
   const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
   const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
@@ -354,6 +359,7 @@ const ArcadeProfileArcade = () => {
     }
   };
 
+
   console.log("in the arcade", ArcadeId);
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
@@ -366,11 +372,15 @@ const ArcadeProfileArcade = () => {
       })
       .then((res) => {
         setArcadeDetails(res.data);
+
+        //  console.log("arcadeDetails", arcadeEditDetails);
       })
       .catch((err) => {
         console.log(err);
       });
+
   }, [ArcadeId]);
+
   console.log("arcadeDetails", packageDetail);
   const [filterBy, setFilterBy] = useState("date");
   const [filterValue, setFilterValue] = useState("");
@@ -467,8 +477,38 @@ const ArcadeProfileArcade = () => {
       }
     }
   );
+
+
+  const [arcadeName, setArcadeName] = useState<any>();
+  const [discription, setDiscription] = useState<any>();
+  const [address, setAddress] = useState<any>();
+  const [sport, setSport] = useState<any[]>([]);
+  const [openTime, setOpenTime] = useState<any>();
+  const [closeTime, setCloseTime] = useState<any>();
+  const [managerName, setmanagerName] = useState<Arcade>();
+
+  useEffect(() => {
+    if (arcadeDetails) {
+      setArcadeName(arcadeDetails.arcade_name);
+      setDiscription(arcadeDetails.distription);
+      setAddress(arcadeDetails.address);
+      setOpenTime(arcadeDetails.open_time);
+      setCloseTime(arcadeDetails.close_time);
+
+      if (arcade?.zone) {
+        const sports = Array.from(
+          new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
+        );
+        setSport(sports);
+      }
+    }
+  }, [arcadeDetails]);
+
+  console.log("arcadeDetails", arcadeDetails);
+
   console.log(arcadeDetails?.arcade_name);
-  const arcadeName = arcadeDetails?.arcade_name;
+  // const arcadeName = arcadeDetails?.arcade_name;
+
   return (
     <>
       <NavbarProfile />
@@ -562,7 +602,7 @@ const ArcadeProfileArcade = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.distription}
+                {discription}
               </Typography>
             </Col>
           </Row>
@@ -587,12 +627,35 @@ const ArcadeProfileArcade = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
+            <div
+              style={{
+                width: "80%",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                position: "absolute",
+                height: "0px",
+              }}
+            >
+              <ArcadeEdit
+                firstname={arcadeName}
+                setFirstname={setArcadeName}
+                discription={discription}
+                setDiscription={setDiscription}
+                address={address}
+                setAddress={setAddress}
+                openTime={openTime}
+                setopenTime={setOpenTime}
+                closeTime={closeTime}
+                setCloseTime={setCloseTime}
+                id={ArcadeId}
+              />
+            </div>
             <div>
               <Row>
                 <Col>
@@ -619,19 +682,21 @@ const ArcadeProfileArcade = () => {
                 </Col>
               </Row>
               <p
-                style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
 
-                  fontSize: "18px",
+                style={{
+                  color: "#000",
+                  fontSize: "22px",
                   fontStyle: "normal",
-                  fontWeight: "400",
+                  fontWeight: "350",
+                  fontFamily: "kanit",
                   lineHeight: "normal",
+                  marginBottom: "0px",
+                  marginTop: "0px",
                 }}
               >
-                cricket, baseball,Swimming
-              </p>
+                Manager Name :
+              </h1>
+
               <p
                 style={{
                   margin: "0px",
@@ -644,8 +709,10 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                {arcadeDetails?.arcade_address &&
-                  arcadeDetails.arcade_address
+
+                {address &&
+                  address
+
                     .split(",")
                     .map(
                       (
@@ -755,69 +822,6 @@ const ArcadeProfileArcade = () => {
               style={{
                 color: "#000",
                 fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Qulifications
-            </Typography>
-
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "1",
-              }}
-              itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
-                    }}
-                  >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
-
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
                 fontStyle: "normal",
                 fontWeight: "400",
                 lineHeight: "normal",
@@ -837,12 +841,11 @@ const ArcadeProfileArcade = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
+              dataSource={sport}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -886,7 +889,7 @@ const ArcadeProfileArcade = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Payment Types Types
+              Payment Types
             </Typography>
             <List
               style={{
@@ -897,11 +900,7 @@ const ArcadeProfileArcade = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={[
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-              ]}
+              dataSource={["Online Payment"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -961,43 +960,70 @@ const ArcadeProfileArcade = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  Open Time : {openTime}
+                </div>
+              </List.Item>
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    &#8226;
+                  </span>
+                  Close Time : {closeTime}
+                </div>
+              </List.Item>
+            </List>
           </div>
         </Col>
       </Row>
