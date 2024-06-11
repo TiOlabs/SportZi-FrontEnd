@@ -191,6 +191,13 @@ export interface Arcade {
   zone: Zone[];
   package: Package[];
   notificationForArcade: NotificationForArcade[];
+  manager: ArcadeManager;
+}
+
+export interface ArcadeManager {
+  manager_id: String;
+  user: User;
+  arcade: Arcade;
 }
 
 export interface ArcadeFeedbacks {

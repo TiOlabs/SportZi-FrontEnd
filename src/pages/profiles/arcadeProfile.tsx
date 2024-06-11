@@ -369,6 +369,7 @@ const ArcadeProfileArcade = () => {
         },
       })
       .then((res) => {
+        console.log("arcadeDetails", res.data);
         setArcadeDetails(res.data);
 
         //  console.log("arcadeDetails", arcadeEditDetails);
@@ -689,7 +690,8 @@ const ArcadeProfileArcade = () => {
                   marginTop: "0px",
                 }}
               >
-                Manager Name :
+                Manager Name : {arcadeDetails?.manager.user.firstname}{" "}
+                {arcadeDetails?.manager.user.lastname}
               </p>
 
               <p
