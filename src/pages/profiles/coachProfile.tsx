@@ -37,6 +37,7 @@ import {
 import axios from "axios";
 import { Option } from "antd/es/mentions";
 import ReportGenarationForCoach from "../../components/reportGenarationForCoach";
+import CoachEdit from "../../components/coachEdit";
 
 const RequestedMeetings = [<CoachReqestList />];
 
@@ -81,9 +82,6 @@ const CoachProfile = () => {
         console.log("errorrrrrrrrrrrrrrrr", err);
       });
   }, [coachDetails?.id]);
-  useEffect(() => {
-    console.log("coach detailsssss", Details);
-  }, [Details]);
 
   // useEffect(() => {
   //   axios
@@ -244,7 +242,18 @@ const CoachProfile = () => {
     }
     return true;
   });
+  const [firstname, setFirstName] = useState<any>();
+  const [lastname, setLastName] = useState<any>();
+  const [discription, setDiscription] = useState<any>();
+  const [profileImage, setProfileImage] = useState<any>();
 
+  useEffect(() => {
+    if (Details) {
+      setFirstName(Details?.firstname);
+      setLastName(Details?.lastname);
+      setDiscription(Details?.Discription);
+    }
+  }, [Details]);
   return (
     <>
       <NavbarProfile />
@@ -340,7 +349,7 @@ const CoachProfile = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {Details?.Discription}
+                {discription}
               </Typography>
             </Col>
           </Row>
@@ -365,15 +374,36 @@ const CoachProfile = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
+            <div
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                width: "80%",
+                display: "flex",
+                justifyContent: "flex-end",
+                flexDirection: "row",
+              }}
+            >
+              {" "}
+              <CoachEdit
+                firstname={firstname}
+                setFirstname={setFirstName}
+                lastName={lastname}
+                setLastName={setLastName}
+                discription={discription}
+                setDiscription={setDiscription}
+              />
+            </div>
+
             <div>
               <h1
                 style={{
+                  zIndex: "999",
                   color: "#000",
                   fontSize: "32px",
                   fontStyle: "capitalize",
@@ -383,7 +413,7 @@ const CoachProfile = () => {
                   marginBottom: "0px",
                 }}
               >
-                {Details?.firstname} {Details?.lastname}
+                {firstname} {lastname}
               </h1>
               <p
                 style={{
