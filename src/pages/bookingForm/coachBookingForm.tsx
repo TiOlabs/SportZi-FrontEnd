@@ -660,7 +660,7 @@ const CoachBookingForm: React.FC = () => {
     );
   };
   console.log(packageEnrollDataForCoach);
-  console.log(isCoachInthePackage)
+  console.log(isCoachInthePackage);
 
   return (
     <>
@@ -1215,7 +1215,7 @@ const CoachBookingForm: React.FC = () => {
                   date={datee}
                   time={time}
                   pcount={pcount}
-                  userId={userData?.user_id}
+                  userId={userDetails.id}
                   zoneId={zone}
                   arcadeId={arcade}
                   sportId={coachSport}

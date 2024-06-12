@@ -11,7 +11,7 @@ import {
 } from "antd";
 import ArcadeCard from "../../components/ArcadeCardInArcadepage";
 import { useEffect, useState } from "react";
-import { Arcade } from "../../types";
+import { Arcade, ArcadeFeedbacks } from "../../types";
 import type { SearchProps } from "antd/es/input/Search";
 import {
   DownOutlined,
@@ -176,7 +176,17 @@ const ArcadeCardSection = () => {
     items,
     onClick: handleMenuClick,
   };
-
+  function calculateAverageRate(feedbacks: ArcadeFeedbacks[]) {
+    if (feedbacks.length === 0) return 0;
+    let sum = 0;
+    let avgRate = 0.0;
+    feedbacks.map((feedback) => {
+      sum += feedback.rate as number;
+      avgRate = sum / feedbacks.length;
+    });
+    console.log("avgRate", avgRate);
+    return avgRate;
+  }
   return (
     <>
       <Row style={{ width: "100%" }}>
@@ -231,6 +241,7 @@ const ArcadeCardSection = () => {
         {loading ? (
           <Spin size="default" />
         ) : arcades.length > 0 ? (
+
           arcades.map((arcade: Arcade) => (
             <Col
               style={{

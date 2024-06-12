@@ -6,6 +6,7 @@ import {
   Grid,
   Input,
   Modal,
+  Skeleton,
   Space,
   Tag,
   TimePicker,
@@ -13,7 +14,7 @@ import {
   Upload,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { PlayerContext } from "../context/player.context";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
@@ -22,6 +23,8 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { ArcadeEditContext } from "../context/ArcadeEdit.context";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { useLocation } from "../context/location.context";
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -111,6 +114,9 @@ const ArcadeEdit = ({
   };
 
   const onFinish = () => {
+    // {"lat":6.795160823938917,"lng":79.89616736106872}
+    console.log("selectedLocation", selectedLocation);
+    const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
     try {
       axiosInstance
         .put(`/api/auth/updatearchadedetails/${id}`, {
@@ -118,6 +124,7 @@ const ArcadeEdit = ({
           discription: discription,
           open_time: openTime,
           close_time: closeTime,
+          location: location,
           //user_image:
         })
         .then((res) => {
@@ -175,6 +182,33 @@ const ArcadeEdit = ({
       sm: { span: 16 },
     },
   };
+  const center: google.maps.LatLngLiteral = { lat: 6.7969, lng: 79.9018 };
+  const { selectedLocation, setSelectedLocation } = useLocation();
+  const [selected, setSelected] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY || "",
+  });
+
+  const handleClick = useCallback(
+    (event: google.maps.MapMouseEvent) => {
+      if (event.latLng) {
+        const clickedLocation = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng(),
+        };
+        console.log("Clicked Location:", clickedLocation);
+        setSelectedLocation(clickedLocation);
+        setSelected(clickedLocation);
+      }
+    },
+    [setSelectedLocation, setSelected]
+  );
+
+  if (!isLoaded) {
+    return <Skeleton />;
+  }
 
   return (
     <>
@@ -368,7 +402,26 @@ const ArcadeEdit = ({
               achivements.split(",").map((achivements: string) => {
                 return <Tag>{achivements}</Tag>;
               })} */}
-            photo upload
+            <Form.Item name="Update Your Location" label="Update Your Location">
+              <GoogleMap
+                center={center}
+                zoom={15}
+                onClick={handleClick}
+                mapContainerStyle={{
+                  width: "100%",
+                  height: "40vh",
+                }}
+              >
+                {selected && (
+                  <Marker
+                    position={{
+                      lat: selected.lat,
+                      lng: selected.lng,
+                    }}
+                  />
+                )}
+              </GoogleMap>
+            </Form.Item>
             <Form.Item
               name="Upload profile picture"
               label="Upload profile picture"
