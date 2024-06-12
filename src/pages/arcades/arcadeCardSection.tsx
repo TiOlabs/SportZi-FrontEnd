@@ -241,42 +241,40 @@ const ArcadeCardSection = () => {
         {loading ? (
           <Spin size="default" />
         ) : arcades.length > 0 ? (
-          arcades.map((arcade: Arcade) => {
-            const averageRate = calculateAverageRate(arcade.arcadefeedbacks);
-            return (
-              <Col
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "3%",
-                }}
-                lg={8}
-                xs={24}
-                md={12}
-                key={arcade.arcade_id.toString()}
-              >
-                <Spin spinning={loading}>
-                  <div
-                    style={{
-                      marginTop: "0vh",
-                      marginRight: "10vh",
-                      marginBottom: "20vh",
-                    }}
-                  >
-                    <ArcadeCard
-                      fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
-                      arcade_name={arcade.arcade_name}
-                      arcade_rate={averageRate}
-                      arcade_image={arcade.arcade_image}
-                      arcade_description={arcade.distription}
-                      arcade_id={arcade.arcade_id}
-                    />
-                  </div>
-                </Spin>
-              </Col>
-            );
-          })
+
+          arcades.map((arcade: Arcade) => (
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "3%",
+              }}
+              lg={8}
+              xs={24}
+              md={12}
+              key={arcade.arcade_id.toString()}
+            >
+              <Spin spinning={loading}>
+                <div
+                  style={{
+                    marginTop: "0vh",
+                    marginRight: "10vh",
+                    marginBottom: "20vh",
+                  }}
+                >
+                  <ArcadeCard
+                    fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
+                    arcade_name={arcade.arcade_name}
+                    arcade_rate={arcade.averageRate}
+                    arcade_image={arcade.arcade_image}
+                    arcade_description={arcade.distription}
+                    arcade_id={arcade.arcade_id}
+                  />
+                </div>
+              </Spin>
+            </Col>
+          ))
         ) : (
           <Col span={24} style={{ textAlign: "center", marginTop: "20px" }}>
             <Empty description={"No search results found."} />

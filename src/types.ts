@@ -183,6 +183,7 @@ export interface Arcade {
   arcade_email: String;
   location: string;
   distription: String;
+  averageRate:number;
   manager_id: String;
   open_time: String;
   close_time: String;

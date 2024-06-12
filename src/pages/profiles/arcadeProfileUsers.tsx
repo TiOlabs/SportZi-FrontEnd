@@ -179,9 +179,10 @@ const ArcadeProfileUser = () => {
         );
         console.log("response:", response.data);
 
-        const { averageRating, totalFeedbacks } = response.data;
-        console.log("averageRating:", averageRating);
-        const roundedRating = Math.round(averageRating * 2) / 2;
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:::", averageRate);
+        const roundedRating = Math.round(averageRate * 2) / 2;
 
         setAverageRating(roundedRating);
         setTotalFeedbacks(totalFeedbacks);
@@ -255,7 +256,7 @@ const ArcadeProfileUser = () => {
   const submitFeedback = async () => {
     try {
       const response = await axiosInstance.post(
-        `api/addarcadefeedbacks/${ArcadeId}`,
+        `${process.env.REACT_APP_API_URL}api/addarcadefeedbacks/${ArcadeId}`,
         {
           comment,
           rating,
@@ -607,6 +608,7 @@ const ArcadeProfileUser = () => {
                       <Rate
                         allowHalf
                         disabled
+                        defaultValue={0.0}
                         value={averageRating}
                         style={{
                           scale: "0.7",
@@ -617,7 +619,6 @@ const ArcadeProfileUser = () => {
                           borderBlockEnd: "dashed",
                         }}
                       />
-
                     </div>
                     <p
                       style={{
@@ -631,8 +632,7 @@ const ArcadeProfileUser = () => {
                         margin: "0px",
                       }}
                     >
-                      {/* 120 Feedbacks */}
-                      ({totalFeedbacks} Feedbacks)
+                      {/* 120 Feedbacks */}({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -1235,6 +1235,8 @@ const ArcadeProfileUser = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            paddingBottom:"100px",
+            // backgroundColor:"#453245"
           }}
           xs={24}
           sm={24}
@@ -1371,30 +1373,38 @@ const ArcadeProfileUser = () => {
               alignContent: "center",
             }}
           >
-            <Col
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={24}
-              lg={24}
-              xl={24}
-            >
-              {allFeedbacks.map((feedback: any) =>
-                feedback.feedback.feedbackComments.map((comment: any) => (
-                  <ReviewCard
-                    key={comment.feedback_id}
-                    rate={feedback.rate}
-                    userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
-                    comment={comment.comment}
-                  />
-                ))
-              )}
-            </Col>
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "20vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
 
           <Row>
@@ -1472,7 +1482,7 @@ const ArcadeProfileUser = () => {
           />
           <TextArea
             showCount
-            maxLength={60}
+            maxLength={300}
             value={comment}
             onChange={(e: any) => setComment(e.target.value)}
             placeholder="Write your feedback"

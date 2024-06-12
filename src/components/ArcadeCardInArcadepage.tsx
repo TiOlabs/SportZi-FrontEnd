@@ -26,6 +26,12 @@ const ArcadeCard = (props: any) => {
   console.log("props", props);
   console.log("props", props.arcade_rate[0]?.rate);
 
+
+  const averageRate = props.arcade_rate;
+  const roundedRate= Math.round(averageRate * 2) / 2;
+  // console.log("Average Rate::::::::::::::::::::::::::::::", averageRate);
+  // console.log("Rounderd Rate::::::::::::::::::::::::::::::", roundedRate);
+
   return (
     <>
       <div
@@ -107,9 +113,12 @@ const ArcadeCard = (props: any) => {
                 marginBottom: "5px",
               }}
             >
+              {/* <div>{averageRate}</div> */}
               <Rate
+                allowHalf
                 disabled
-                defaultValue={props.arcade_rate}
+                defaultValue={0}
+                value={roundedRate}
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>
