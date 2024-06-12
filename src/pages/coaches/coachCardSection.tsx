@@ -21,11 +21,13 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { SearchProps } from "antd/es/input";
+import { useUser } from "../../context/userContext";
 
 const CoachCardSection = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>("");
+  const { userDetails } = useUser();
 
   const fetchData = async () => {
     setLoading(true);
@@ -216,6 +218,7 @@ const CoachCardSection = () => {
                   coach_short_description={coach.short_desctiption}
                   coach_rate={coach.rate}
                   sport={coach.sport.sport_name}
+                  role={userDetails?.role}
                 />
               </div>
             </Col>

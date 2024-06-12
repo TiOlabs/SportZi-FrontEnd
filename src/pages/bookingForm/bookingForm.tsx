@@ -756,7 +756,7 @@ const BookingForm = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     alignSelf: "center",
-                    overflowY: "auto", // Enable vertical scrolling
+                    overflowY: "scroll", // Enable vertical scrolling
                     maxHeight: "800px", // Set a maximum height for the container
                   }}
                 >

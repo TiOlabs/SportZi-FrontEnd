@@ -362,12 +362,11 @@ const ArcadeProfileArcade = () => {
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
-    axiosInstance
-      .get("/api/auth/getarchadedetails", {
-        params: {
-          ArcadeId: ArcadeId,
-        },
-      })
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`,
+        {}
+      )
       .then((res) => {
         console.log("arcadeDetails", res.data);
         setArcadeDetails(res.data);
@@ -505,7 +504,7 @@ const ArcadeProfileArcade = () => {
 
   console.log(arcadeDetails?.arcade_name);
   // const arcadeName = arcadeDetails?.arcade_name;
-
+  console.log(arcadeDetails);
   return (
     <>
       <NavbarProfile />
@@ -681,7 +680,7 @@ const ArcadeProfileArcade = () => {
               <p
                 style={{
                   color: "#000",
-                  fontSize: "22px",
+                  fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "350",
                   fontFamily: "kanit",
@@ -690,7 +689,7 @@ const ArcadeProfileArcade = () => {
                   marginTop: "0px",
                 }}
               >
-                Manager Name : {arcadeDetails?.manager.user.firstname}{" "}
+                Manager : {arcadeDetails?.manager.user.firstname}{" "}
                 {arcadeDetails?.manager.user.lastname}
               </p>
 
@@ -1292,7 +1291,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "Kanit",
             }}
           >
-            Our Packages
+            Our Packages For You
           </Typography>
           <div
             style={{

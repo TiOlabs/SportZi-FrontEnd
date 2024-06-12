@@ -31,7 +31,7 @@ const ArcadeRatingCardsSection = () => {
       sum += feedback.rate as number;
       avgRate = sum / feedbacks.length;
     });
-    console.log("avgRate", avgRate);  
+    console.log("avgRate", avgRate);
     return avgRate;
   }
   return (

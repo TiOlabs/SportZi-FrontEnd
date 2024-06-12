@@ -142,6 +142,7 @@ export interface User {
   Phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
+  coach:Coach;
   natificationForUser: NotificationForUser[];
 }
 export interface UserPhone {
