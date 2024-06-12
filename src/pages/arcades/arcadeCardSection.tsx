@@ -11,7 +11,7 @@ import {
 } from "antd";
 import ArcadeCard from "../../components/ArcadeCardInArcadepage";
 import { useEffect, useState } from "react";
-import { Arcade } from "../../types";
+import { Arcade, ArcadeFeedbacks } from "../../types";
 import type { SearchProps } from "antd/es/input/Search";
 import {
   DownOutlined,
@@ -176,7 +176,17 @@ const ArcadeCardSection = () => {
     items,
     onClick: handleMenuClick,
   };
-
+  function calculateAverageRate(feedbacks: ArcadeFeedbacks[]) {
+    if (feedbacks.length === 0) return 0;
+    let sum = 0;
+    let avgRate = 0.0;
+    feedbacks.map((feedback) => {
+      sum += feedback.rate as number;
+      avgRate = sum / feedbacks.length;
+    });
+    console.log("avgRate", avgRate);
+    return avgRate;
+  }
   return (
     <>
       <Row style={{ width: "100%" }}>
@@ -231,39 +241,42 @@ const ArcadeCardSection = () => {
         {loading ? (
           <Spin size="default" />
         ) : arcades.length > 0 ? (
-          arcades.map((arcade: Arcade) => (
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: "3%",
-              }}
-              lg={8}
-              xs={24}
-              md={12}
-              key={arcade.arcade_id.toString()}
-            >
-              <Spin spinning={loading}>
-                <div
-                  style={{
-                    marginTop: "0vh",
-                    marginRight: "10vh",
-                    marginBottom: "20vh",
-                  }}
-                >
-                  <ArcadeCard
-                    fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
-                    arcade_name={arcade.arcade_name}
-                    arcade_rate={arcade.arcadefeedbacks}
-                    arcade_image={arcade.arcade_image}
-                    arcade_description={arcade.distription}
-                    arcade_id={arcade.arcade_id}
-                  />
-                </div>
-              </Spin>
-            </Col>
-          ))
+          arcades.map((arcade: Arcade) => {
+            const averageRate = calculateAverageRate(arcade.arcadefeedbacks);
+            return (
+              <Col
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: "3%",
+                }}
+                lg={8}
+                xs={24}
+                md={12}
+                key={arcade.arcade_id.toString()}
+              >
+                <Spin spinning={loading}>
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "20vh",
+                    }}
+                  >
+                    <ArcadeCard
+                      fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
+                      arcade_name={arcade.arcade_name}
+                      arcade_rate={averageRate}
+                      arcade_image={arcade.arcade_image}
+                      arcade_description={arcade.distription}
+                      arcade_id={arcade.arcade_id}
+                    />
+                  </div>
+                </Spin>
+              </Col>
+            );
+          })
         ) : (
           <Col span={24} style={{ textAlign: "center", marginTop: "20px" }}>
             <Empty description={"No search results found."} />

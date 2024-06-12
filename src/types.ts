@@ -124,6 +124,7 @@ export interface Coach {
   user: User;
   sport: Sport;
   coachFeedbacks: CoachFeedbacks;
+  coachApplyDetailsForPackage: CoachEnrollDetailsForPackages[];
 }
 export interface User {
   user_id: String;

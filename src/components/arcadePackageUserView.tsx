@@ -134,10 +134,32 @@ const ArcadePackageUserView = (props: any) => {
     (entry) => entry.arcade.arcade_id === props.arcade_id
   );
 
+  const isCoachInThePackage = coachisInArcade.some((entry) =>
+    entry.coach.coachApplyDetailsForPackage.some(
+      (stts) => stts.status === "success"
+    )
+  );
+  console.log(coachisInArcade);
+  const isCoachApplyToThePackage = coachisInArcade.some((entry) =>
+    entry.coach.coachApplyDetailsForPackage.some(
+      (stts) => stts.status === "pending"
+    )
+  );
+  console.log(isCoachApplyToThePackage);
+  console.log(isCoachInArcade);
+  console.log(isCoachInThePackage);
   const handleJoinClick = () => {
     if (isCoachInArcade) {
       // If the coach is in the arcade, show the modal
-      showModal();
+      if (isCoachInThePackage) {
+        message.warning("You have already joined to the package.");
+        return;
+      } else if (isCoachApplyToThePackage) {
+        message.warning("You have already applied to the package.");
+        return;
+      } else {
+        showModal();
+      }
     } else {
       // If the coach is not in the arcade, show the message
       message.warning("You have to apply to the arcade first.");

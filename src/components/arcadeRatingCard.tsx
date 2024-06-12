@@ -3,16 +3,21 @@ import { Row } from "antd";
 import { Rate } from "antd";
 import { Button } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const ArcadeRatingCard = (props: any) => {
+  console.log("props", props);
   const [cloudName] = useState("dle0txcgt");
   // const cld = new Cloudinary({
   //   cloud: {
   //     cloudName,
   //   },
   // });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/arcadeProfile/${props.arcade_id}`);
+  };
   const { md } = useBreakpoint();
   return (
     <Row>
@@ -78,7 +83,6 @@ const ArcadeRatingCard = (props: any) => {
                   alignItems: "center",
                   lineHeight: "1",
                   textAlign: "center",
-                  
                 }}
               >
                 {props.arcadeName}
@@ -128,11 +132,13 @@ const ArcadeRatingCard = (props: any) => {
             </div>
           </div>
           <div className="BookArcadeButton">
-            <Link to="/bookings">
-              <Button type="primary" style={{ backgroundColor: "#5587CC" }}>
-                Book Arcade
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "#5587CC" }}
+              onClick={handleClick}
+            >
+              View Arcade
+            </Button>
           </div>
         </div>
       </div>

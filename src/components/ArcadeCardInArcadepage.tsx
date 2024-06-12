@@ -109,7 +109,7 @@ const ArcadeCard = (props: any) => {
             >
               <Rate
                 disabled
-                defaultValue={props.arcade_rate[0]?.rate}
+                defaultValue={props.arcade_rate}
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>
