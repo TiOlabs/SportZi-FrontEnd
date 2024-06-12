@@ -256,7 +256,7 @@ const ArcadeProfileUser = () => {
   const submitFeedback = async () => {
     try {
       const response = await axiosInstance.post(
-        `api/addarcadefeedbacks/${ArcadeId}`,
+        `${process.env.REACT_APP_API_URL}api/addarcadefeedbacks/${ArcadeId}`,
         {
           comment,
           rating,
