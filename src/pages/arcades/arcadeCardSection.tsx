@@ -255,7 +255,7 @@ const ArcadeCardSection = () => {
                   <ArcadeCard
                     fees={arcade.arcadefeedbacks[0]?.arcade_feedback_id}
                     arcade_name={arcade.arcade_name}
-                    arcade_rate={arcade.arcadefeedbacks}
+                    arcade_rate={arcade.averageRate}
                     arcade_image={arcade.arcade_image}
                     arcade_description={arcade.distription}
                     arcade_id={arcade.arcade_id}
