@@ -131,7 +131,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         time: zoneBookings.zoneBookings.time,
         full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
-        player_id: zoneBookings.zoneBookings.user_id,
+        player_id: props.userId,
         zone_id: zoneBookings.zoneBookings.zone_id,
         coach_id: props.coach_id,
         arcade_id: props.arcadeId,

@@ -12,6 +12,7 @@ import {
   Typography,
   Rate,
   ConfigProvider,
+  message,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import {
@@ -31,13 +32,13 @@ import AppFooter from "../../components/footer";
 import { useContext, useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Coach, User } from "../../types";
 import { UserContext } from "../../context/userContext";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import { CoachFeedback } from "../../types";
-
+import NavbarLogin from "../../components/NavBarLogin";
 
 interface FeedbackData {
   feedback: string;
@@ -47,7 +48,11 @@ interface FeedbackData {
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { coachId } = useParams();
+  const formattedCoachId = coachId?.replace(":", "") ?? "";
+  console.log("CoachId:", coachId);
+  console.log(formattedCoachId);
   console.log(coachId);
+  console.log(formattedCoachId);
   const { lg, md, sm, xs } = useBreakpoint();
   const { TextArea } = Input;
   const onChange = (
@@ -65,7 +70,7 @@ const CoachProfileUser = () => {
   const [averageRating, setAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
   // Replace with actual coach ID
-
+  console.log(userDetails);
   useEffect(() => {
     const fetchRatings = async () => {
       try {
@@ -199,13 +204,14 @@ const CoachProfileUser = () => {
       alert("Error submitting feedback");
     }
   };
+  const navigate = useNavigate();
   return (
     <>
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
-      <NavbarProfile />
+      {userDetails.id === "" ? <NavbarLogin /> : <NavbarProfile />}
       <Row>
         <Col
           xs={24}
@@ -304,6 +310,14 @@ const CoachProfileUser = () => {
                   color: "#fff",
                   borderRadius: "3px",
                 }}
+                onClick={() => {
+                  if (userDetails.role === "PLAYER") {
+                    localStorage.setItem("coachId", formattedCoachId as string);
+                    navigate("/CoachBookingForm");
+                  } else {
+                    message.error("You are not a player");
+                  }
+                }}
               >
                 {" "}
                 Request for Booking
@@ -318,7 +332,13 @@ const CoachProfileUser = () => {
                     borderColor: "#0E458E",
                     marginTop: "20px",
                   }}
-                  onClick={showModalForReport}
+                  onClick={() => {
+                    if (userDetails.id === "") {
+                      message.error("Please Login First");
+                    } else {
+                      showModalForReport();
+                    }
+                  }}
                 >
                   Report User
                 </Button>
@@ -821,8 +841,6 @@ const CoachProfileUser = () => {
       </div>
       <PhotoCollageForUsers id={coachId} role={"COACH"} />
 
-     
-
       {/* Reviews */}
       <Row
         style={{
@@ -969,7 +987,13 @@ const CoachProfileUser = () => {
                   color: "#fff",
                   borderRadius: "3px",
                 }}
-                onClick={showModal}
+                onClick={() => {
+                  if (userDetails.id === "") {
+                    message.error("Please Login First");
+                  } else {
+                    showModal();
+                  }
+                }}
               >
                 {" "}
                 Give an Feedback

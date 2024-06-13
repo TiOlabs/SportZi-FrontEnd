@@ -15,6 +15,7 @@ import {
   Select,
   Flex,
   Rate,
+  message,
 } from "antd";
 import { Grid } from "antd";
 
@@ -50,6 +51,7 @@ import TextArea from "antd/es/input/TextArea";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import PhotoCollageForArcadeUsers from "../../components/photoCollageForArcadeUserViee";
 import { ArcadeFeedback } from "../../types";
+import { UserContext } from "../../context/userContext";
 
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
@@ -59,9 +61,9 @@ const ArcadeProfileUser = () => {
   const [arcadeDetails1, setArcadeDetails] = useState<any>(null);
   const [arcade, setArcade] = useState<Arcade>();
 
-  const { userDetails } = useContext(PlayerContext);
+  const { userDetails } = useContext(UserContext);
   const { coachDetails } = useContext(CoachContext);
-  const { arcadeDetails } = useContext(ArcadeContext);
+  const { managerDetails } = useContext(ArcadeContext);
 
   const [coachesInArcade, setCoachesInArcade] = useState<CoachAssignDetails[]>(
     []
@@ -222,15 +224,15 @@ const ArcadeProfileUser = () => {
     try {
       console.log("userDetails", userDetails);
       console.log("coachDetails", coachDetails);
-      console.log("arcadeDetails", arcadeDetails);
+      console.log("arcadeDetails", managerDetails);
       console.log(description, reason);
       let id;
       if (userDetails.id !== "") {
         id = userDetails.id;
       } else if (coachDetails.id !== "") {
         id = coachDetails.id;
-      } else if (arcadeDetails.id !== "") {
-        id = arcadeDetails.id;
+      } else if (managerDetails.id !== "") {
+        id = managerDetails.id;
       }
       console.log(id);
 
@@ -244,7 +246,7 @@ const ArcadeProfileUser = () => {
         }
       );
       console.log(res.data);
-      alert("Reported Successfully");
+      message.info("Reported Successfully");
     } catch (e) {
       console.log(e);
     }
@@ -283,14 +285,17 @@ const ArcadeProfileUser = () => {
   const handleCancel = () => {
     setismodelopen(false);
   };
-
+  console.log(userDetails);
+  console.log(managerDetails);
+  console.log(coachDetails);
+  console.log(userDetails.id);
+  console.log(
+    userDetails.id === "" || managerDetails.id === "" || coachDetails.id === ""
+  );
+  console.log(coachesInArcade);
   return (
     <>
-      {userDetails !== "" || coachDetails !== "" || arcadeDetails !== "" ? (
-        <NavbarProfile />
-      ) : (
-        <NavbarLogin />
-      )}
+      {userDetails.id === "" ? <NavbarLogin /> : <NavbarProfile />}
 
       <Row>
         <Col
@@ -402,7 +407,13 @@ const ArcadeProfileUser = () => {
                     marginTop: "20px",
                     marginBottom: "80px",
                   }}
-                  onClick={() => showModalForReport()}
+                  onClick={() => {
+                    if (userDetails.id === "") {
+                      message.error("Please Login First");
+                    } else {
+                      showModalForReport();
+                    }
+                  }}
                 >
                   Report User
                 </Button>
@@ -963,6 +974,8 @@ const ArcadeProfileUser = () => {
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
                   sport={coach.coach.sport.sport_name}
+                  role={userDetails.role}
+                  coach_id={coach.coach_id}
                 />
               </Col>
             ))}
@@ -1235,7 +1248,7 @@ const ArcadeProfileUser = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            paddingBottom:"100px",
+            paddingBottom: "100px",
             // backgroundColor:"#453245"
           }}
           xs={24}
@@ -1424,7 +1437,13 @@ const ArcadeProfileUser = () => {
                   color: "#fff",
                   borderRadius: "3px",
                 }}
-                onClick={showModal}
+                onClick={() => {
+                  if (userDetails.id === "") {
+                    message.error("Please Login First");
+                  } else {
+                    showModal();
+                  }
+                }}
               >
                 {" "}
                 Give an Feedback

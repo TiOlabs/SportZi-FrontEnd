@@ -156,11 +156,13 @@ const CoachBookingForm: React.FC = () => {
 
   useEffect(() => {
     console.log(coachId);
+    let formattedCoachId = coachId.replace(":", "");
+    console.log(formattedCoachId);
     const fetchData = async () => {
       currentCoachId.current = coachId;
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getcoache/${coachId}`
+          `${process.env.REACT_APP_API_URL}api/getcoache/${formattedCoachId}`
         );
         const data = await res.json();
         console.log(data);
