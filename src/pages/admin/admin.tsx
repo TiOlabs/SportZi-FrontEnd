@@ -40,6 +40,7 @@ import CancelPackagers from "./packageManagement/cancelPackagers";
 import SportManagement from "./sportManagement/sportManagement";
 import ReportManagement from "./reportManagement/reportManagement";
 import ReportUserManagement from "./reportManagement/reportUserManagement";
+import SignUpAdmin from "./addAdmin/signUpAdmin";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -184,7 +185,7 @@ const SideBarAdminPage = () => {
     } else if (e.key === "31") {
       setstts("AdminCanceledPackage");
     } else if (e.key === "2") {
-      setstts("dashBoard");
+      setstts("signUpAdmin");
     } else if (e.key === "32") {
       setstts("AllPackagers");
     } else if (e.key === "33") {
@@ -256,7 +257,7 @@ const SideBarAdminPage = () => {
             /> */}
       </>
       {/* ))} */}
-      {stts === "dashBoard" && <AdminPannel />}
+      {stts === "signUpAdmin" && <SignUpAdmin />}
       {stts === "bookedcoach" && <BookedCoaches />}
       {stts === "packageEnrolled" && <PackageEnrolled />}
       {stts === "PlayerManagement" && <PlayerManagement />}
@@ -280,6 +281,7 @@ const SideBarAdminPage = () => {
       {stts === "SportManagement" && <SportManagement />}
       {stts === "ArcadeReports" && <ReportManagement />}
       {stts === "UserReports" && <ReportUserManagement />}
+      <AdminPannel />
     </Row>
   );
 };
