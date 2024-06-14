@@ -125,6 +125,7 @@ const ArcadeEdit = ({
           open_time: openTime,
           close_time: closeTime,
           location: location,
+          arcade_image: publicId,
           //user_image:
         })
         .then((res) => {
