@@ -6,6 +6,7 @@ import {
   Grid,
   Input,
   Modal,
+  Select,
   Space,
   Tag,
   TimePicker,
@@ -13,7 +14,7 @@ import {
   Upload,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { PlayerContext } from "../context/player.context";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
@@ -22,6 +23,10 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { ArcadeEditContext } from "../context/ArcadeEdit.context";
+import { Dayjs } from "dayjs";
+import axios from "axios";
+import { Sport } from "../types";
+const { Option } = Select;
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -36,8 +41,12 @@ interface PlayerEditProps {
   setFirstname: (value: string) => void;
   lastName: string;
   setLastName: (value: string) => void;
-     discription: string;
-    setDiscription: (value: string) => void;
+  discription: string;
+  setDiscription: (value: string) => void;
+  qulifications: string;
+  setQulifications: (value: string) => void;
+  expertice: string;
+  setExpertice: (value: string) => void;
   //   address: string;
   //   setAddress: (value: string) => void;
   //   openTime: string;
@@ -53,9 +62,12 @@ const CoachEdit = ({
   lastName,
   setLastName,
   discription,
- setDiscription,
-}:
-// address,
+  setDiscription,
+  qulifications,
+  setQulifications,
+  expertice,
+  setExpertice,
+}: // address,
 // setAddress,
 // openTime,
 // setopenTime,
@@ -180,7 +192,61 @@ PlayerEditProps) => {
       sm: { span: 16 },
     },
   };
+  const [timeSlots, setTimeSlots] = useState([
+    { day: "", startTime: "", endTime: "" },
+  ]);
+  const handleStartTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].startTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
+  const handleEndTimeChange = (index: number, time: Dayjs | null) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].endTime = time ? time.format("HH:mm") : "";
+    setTimeSlots(newTimeSlots);
+  };
 
+  const handleAddTimeSlot = () => {
+    setTimeSlots([...timeSlots, { day: "", startTime: "", endTime: "" }]);
+  };
+
+  const handleRemoveTimeSlot = (index: number) => {
+    const newTimeSlots = timeSlots.filter((_, i) => i !== index);
+    setTimeSlots(newTimeSlots);
+  };
+  const handleDayChange = (index: number, value: string) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots[index].day = value;
+    setTimeSlots(newTimeSlots);
+  };
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  const commonInputStyle = {
+    backgroundColor: "#d2f0ef",
+    height: "40px",
+  };
+  const [sportDetails, setSportDetails] = useState<Sport[]>([]);
+
+  useEffect(() => {
+    const fetchSports = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getSportDetails`
+        );
+        setSportDetails(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSports();
+  }, []);
   return (
     <>
       <p>
@@ -312,49 +378,20 @@ PlayerEditProps) => {
             >
               <TextArea
                 value={discription}
-                 onChange={(e) => setDiscription(e.target.value)}
+                onChange={(e) => setDiscription(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 4 }}
               />
             </Form.Item>
-            <Form.Item
-              name="TimeStart"
-              label="Add Arcade Open Time"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select Zone Open time!",
-                },
-              ]}
-            >
-              <TimePicker
-                format="HH:mm"
-                //     onChange={(e) => setopenTime(e.format("HH:mm"))}
-              />
-            </Form.Item>
-            <Form.Item
-              name="TimeClose"
-              label="Add Arcade Close Time"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select Zone Close Time!",
-                },
-              ]}
-            >
-              <TimePicker
-                format="HH:mm"
-                //    onChange={(e) => setCloseTime(e.format("HH:mm"))}
-              />
-            </Form.Item>
-            {/* Achivements */}
+
+            {/* Qulifications */}
             {/* <Form.Item
-              name="Achivements"
-              label="Achivements"
+              name="Qulifications"
+              label="Qulifications"
               rules={[
                 {
                   required: true,
-                  message: "Input your Achivements Using Comma Seprated",
+                  message: "Input your Qulifications Using Comma Seprated",
                   whitespace: true,
                 },
               ]}
@@ -362,16 +399,140 @@ PlayerEditProps) => {
             >
               <Input
                 // value={}
-                placeholder="Input your Achivements Using Comma Seprated"
-                onChange={(e) => setAchivements(e.target.value)}
+                placeholder="Input your Qulifications Using Comma Seprated"
+                onChange={(e) => setQulifications(e.target.value)}
               />
+            </Form.Item> */}
+
+            <Form.Item
+              name="sport"
+              label="Sport"
+              rules={[
+                {
+                  required: true,
+                  message: "Enter your sport",
+                  whitespace: true,
+                },
+              ]}
+            >
+              <Select
+                placeholder="select your Sport"
+                onChange={(value) => setExpertice(value)}
+                style={{
+                  ...commonInputStyle,
+                  border: "1px solid #ccc",
+                  padding: "4px",
+                }}
+              >
+                {sportDetails.map((sport) => (
+                  <Option
+                    value={sport.sport_id}
+                    style={{ ...commonInputStyle, border: "1px solid #ccc" }}
+                  >
+                    {sport.sport_name}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
 
-            {achivements &&
-              achivements.split(",").map((achivements: string) => {
-                return <Tag>{achivements}</Tag>;
-              })} */}
-            photo upload
+            {qulifications &&
+              qulifications.split(",").map((qulifications: string) => {
+                return <Tag>{qulifications}</Tag>;
+              })}
+            <Form.Item
+              name="Expertice"
+              label="Expertice"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Sport",
+                  whitespace: true,
+                },
+              ]}
+              style={{}}
+            >
+              <TextArea
+                value={expertice}
+                onChange={(e) => setExpertice(e.target.value)}
+                placeholder="Controlled autosize"
+              />
+            </Form.Item>
+            <div>Select Availiable Time Slots</div>
+            {/* Day and Time Slot Selection */}
+            {timeSlots.map((slot, index) => (
+              <Space key={index} direction="vertical" style={{ width: "100%" }}>
+                <Form.Item
+                  name={`day-${index}`}
+                  label={`Select Day ${index + 1}`}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select a day!",
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select Day"
+                    style={{ width: "100%" }}
+                    onChange={(value) => handleDayChange(index, value)}
+                  >
+                    {daysOfWeek.map((day) => (
+                      <Option key={day} value={day}>
+                        {day}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name={`startTime-${index}`}
+                  label={`Select Start Time ${index + 1}`}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select a start time!",
+                    },
+                  ]}
+                >
+                  <TimePicker
+                    format="HH:mm"
+                    onChange={(time) => handleStartTimeChange(index, time)}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name={`endTime-${index}`}
+                  label={`Select End Time ${index + 1}`}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select an end time!",
+                    },
+                  ]}
+                >
+                  <TimePicker
+                    format="HH:mm"
+                    onChange={(time) => handleEndTimeChange(index, time)}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+                {index > 0 && (
+                  <Button
+                    style={{ width: "40%" }}
+                    onClick={() => handleRemoveTimeSlot(index)}
+                  >
+                    <div style={{ fontSize: "15px" }}> Remove Time Slot</div>
+                  </Button>
+                )}
+              </Space>
+            ))}
+            <Button
+              type="dashed"
+              onClick={handleAddTimeSlot}
+              style={{ width: "auto" }}
+            >
+              <div style={{ fontSize: "15px" }}>Add Another Available Time</div>
+            </Button>
+
             <Form.Item
               name="Upload profile picture"
               label="Upload profile picture"

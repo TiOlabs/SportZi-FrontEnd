@@ -141,6 +141,12 @@ export interface User {
   Phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
+  Coach: Coach;
+  achivement: achivement;
+}
+export interface achivement {
+  user_id: String;
+  achivement_details: String;
 }
 export interface UserPhone {
   user_id: String;
@@ -286,4 +292,10 @@ export interface ZoneRejectDayAndTime {
   day: String;
   time: String;
   zone: Zone;
+}
+
+export interface Availiability {
+  coach_id: String;
+  day: String;
+  time: String;
 }
