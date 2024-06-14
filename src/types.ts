@@ -143,6 +143,7 @@ export interface User {
   userPhotos: UserPhoto;
   player: Player;
   coach:Coach;
+  Manager: ArcadeManager;
   natificationForUser: NotificationForUser[];
 }
 export interface UserPhone {
@@ -200,7 +201,7 @@ export interface Arcade {
 export interface ArcadeManager {
   manager_id: String;
   user: User;
-  arcade: Arcade;
+  arcade: Arcade[];
 }
 
 export interface ArcadeFeedbacks {

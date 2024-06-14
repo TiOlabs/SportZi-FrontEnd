@@ -54,6 +54,8 @@ import ArcadeEdit from "../../components/arcadeEdit";
 import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
 import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 import Notification from "../../components/notification";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -505,6 +507,13 @@ const ArcadeProfileArcade = () => {
   console.log(arcadeDetails?.arcade_name);
   // const arcadeName = arcadeDetails?.arcade_name;
   console.log(arcadeDetails);
+  const [cloudName] = useState("dle0txcgt");
+
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <NavbarProfile />
@@ -528,7 +537,7 @@ const ArcadeProfileArcade = () => {
           }}
         >
           {" "}
-          {arcadeBookings.length === 0 ? <Empty /> : null}
+          {/* {arcadeBookings.length === 0 ? <Empty /> : null} */}
           <Row
             style={{
               width: "100%",
@@ -551,10 +560,13 @@ const ArcadeProfileArcade = () => {
               lg={24}
               xl={24}
             >
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(arcade?.arcade_image.toString())
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
