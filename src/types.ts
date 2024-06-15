@@ -142,7 +142,7 @@ export interface User {
   phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
-  coach:Coach;
+  coach: Coach;
   Manager: ArcadeManager;
   natificationForUser: NotificationForUser[];
 }
@@ -185,7 +185,7 @@ export interface Arcade {
   arcade_email: String;
   location: string;
   distription: String;
-  averageRate:number;
+  averageRate: number;
   manager_id: String;
   open_time: String;
   close_time: String;
@@ -350,7 +350,7 @@ export interface NotificationForArcade {
   arcade: Arcade;
 }
 
-export interface Admin{
+export interface Admin {
   admin_id: String;
   user: User;
 }
