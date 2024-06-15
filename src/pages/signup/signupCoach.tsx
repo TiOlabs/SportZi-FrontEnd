@@ -123,7 +123,7 @@ const SignupCoach = () => {
       timeslot: `${slot.startTime}-${slot.endTime}`,
     }));
     const rateint = parseInt(rate);
-    console.log(rateint);
+
     try {
       const response = await axiosInstance
         .post(

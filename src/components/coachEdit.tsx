@@ -23,7 +23,7 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { ArcadeEditContext } from "../context/ArcadeEdit.context";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
 import { Sport } from "../types";
 const { Option } = Select;
@@ -47,6 +47,7 @@ interface PlayerEditProps {
   setQulifications: (value: string) => void;
   expertice: string;
   setExpertice: (value: string) => void;
+  coachId: any;
   //   address: string;
   //   setAddress: (value: string) => void;
   //   openTime: string;
@@ -67,6 +68,7 @@ const CoachEdit = ({
   setQulifications,
   expertice,
   setExpertice,
+  coachId,
 }: // address,
 // setAddress,
 // openTime,
@@ -127,29 +129,6 @@ PlayerEditProps) => {
     setOpen(false);
   };
 
-  const onFinish = () => {
-    // try {
-    //   axiosInstance
-    //     .put(`/api/auth/updatearchadedetails/${id}`, {
-    //       arcade_name: firstname,
-    //       discription: discription,
-    //       open_time: openTime,
-    //       close_time: closeTime,
-    //       //user_image:
-    //     })
-    //     .then((res) => {
-    //       setOpen(false);
-    //       console.log("inside then", res.data);
-    //     })
-    //     .catch(() => {
-    //       setOpen(false);
-    //     });
-    // } catch (error) {
-    //   setOpen(false);
-    //   onClose();
-    //   console.error("Error:", error);
-    // }
-  };
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -247,6 +226,46 @@ PlayerEditProps) => {
     };
     fetchSports();
   }, []);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  let combinedTimeslot: { day: string; timeslot: string }[];
+  const onFinish = () => {
+    combinedTimeslot = timeSlots.map((slot) => ({
+      day: slot.day,
+      timeslot: `${slot.startTime}-${slot.endTime}`,
+    }));
+
+    setFormSubmitted(true);
+  };
+
+  useEffect(() => {
+    if (formSubmitted) {
+      try {
+        console.log(combinedTimeslot);
+        axiosInstance
+          .put(`/api/auth/updatecoachDetails/${coachId}`, {
+            firstname: firstname,
+            lastName: lastName,
+            discription: discription,
+            sport_id: expertice,
+            combinedTimeslot: combinedTimeslot,
+            qulifications: qulifications.split(","),
+          })
+          .then((res) => {
+            setOpen(false);
+            alert("Form edited successfully!");
+          })
+          .catch(() => {
+            setOpen(false);
+            alert("Form edited w!");
+          });
+      } catch (err) {
+        console.log(err);
+      }
+
+      setFormSubmitted(false);
+    }
+  }, [formSubmitted]);
+
   return (
     <>
       <p>
@@ -342,6 +361,7 @@ PlayerEditProps) => {
               <Input
                 placeholder="Enter your first name"
                 value={firstname}
+                defaultValue={firstname}
                 onChange={(e) => setFirstname(e.target.value)}
               />
             </Form.Item>
@@ -361,6 +381,7 @@ PlayerEditProps) => {
               <Input
                 placeholder="Enter your last name"
                 value={lastName}
+                defaultValue={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </Form.Item>
@@ -377,15 +398,15 @@ PlayerEditProps) => {
               style={{}}
             >
               <TextArea
+                defaultValue={discription}
                 value={discription}
                 onChange={(e) => setDiscription(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 4 }}
               />
             </Form.Item>
-
             {/* Qulifications */}
-            {/* <Form.Item
+            <Form.Item
               name="Qulifications"
               label="Qulifications"
               rules={[
@@ -401,9 +422,13 @@ PlayerEditProps) => {
                 // value={}
                 placeholder="Input your Qulifications Using Comma Seprated"
                 onChange={(e) => setQulifications(e.target.value)}
+                defaultValue={qulifications}
               />
-            </Form.Item> */}
-
+            </Form.Item>
+            {qulifications &&
+              qulifications.split(",").map((qulifications: string) => {
+                return <Tag>{qulifications}</Tag>;
+              })}
             <Form.Item
               name="sport"
               label="Sport"
@@ -434,11 +459,6 @@ PlayerEditProps) => {
                 ))}
               </Select>
             </Form.Item>
-
-            {qulifications &&
-              qulifications.split(",").map((qulifications: string) => {
-                return <Tag>{qulifications}</Tag>;
-              })}
             <Form.Item
               name="Expertice"
               label="Expertice"
@@ -472,6 +492,7 @@ PlayerEditProps) => {
                   ]}
                 >
                   <Select
+                    defaultValue={slot.day}
                     placeholder="Select Day"
                     style={{ width: "100%" }}
                     onChange={(value) => handleDayChange(index, value)}
@@ -532,7 +553,6 @@ PlayerEditProps) => {
             >
               <div style={{ fontSize: "15px" }}>Add Another Available Time</div>
             </Button>
-
             <Form.Item
               name="Upload profile picture"
               label="Upload profile picture"

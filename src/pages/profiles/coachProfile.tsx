@@ -257,8 +257,7 @@ const CoachProfile = () => {
       setDiscription(Details?.Discription);
       setAvailableTimes(Details?.Coach?.availability);
       setExpertice(Details?.Coach?.sport?.sport_name);
-
-      console.log(expertice);
+      console.log(Details);
       const achiv = Details?.achivement;
       if (achiv) {
         let achiveArr: string[] = [];
@@ -271,7 +270,10 @@ const CoachProfile = () => {
       }
     }
   }, [Details]);
-
+  useEffect(() => {
+    setLastName(coachDetails?.lastname);
+  }, []);
+  console.log(lastname);
   const QulificationsGetToArry = (qulifications: string) => {
     if (qulifications) {
       return qulifications.split(",");
@@ -439,6 +441,7 @@ const CoachProfile = () => {
                 qulifications={qulifications}
                 expertice={expertice}
                 setExpertice={setExpertice}
+                coachId={coachDetails?.id}
               />
             </div>
 
