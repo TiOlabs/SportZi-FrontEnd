@@ -46,6 +46,7 @@ const Login = () => {
       navigate("/", { replace: true, state: { loggedIn: true } });
       window.location.href = "/";
     } catch (err) {
+      console.log(err);
       message.error(
         (err as any).response
           ? (err as any).response.data.message

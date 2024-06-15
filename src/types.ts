@@ -122,6 +122,7 @@ export interface Coach {
   averageRate: Number;
   short_desctiption: String;
   user: User;
+  status: String;
   sport: Sport;
   coachFeedbacks: CoachFeedbacks;
   coachApplyDetailsForPackage: CoachEnrollDetailsForPackages[];

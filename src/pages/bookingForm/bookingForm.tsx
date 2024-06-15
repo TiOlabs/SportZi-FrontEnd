@@ -600,7 +600,7 @@ const BookingForm = () => {
         isZoneTime(buttonId, zonedate.time as string)
     );
   };
-
+  console.log(paymentDetails);
   return (
     <>
       <NavbarProfile />
@@ -656,7 +656,10 @@ const BookingForm = () => {
                   >
                     <Select
                       placeholder="Reservation Type"
-                      onChange={(value) => setZone(value)}
+                      onChange={(value) => {
+                        setZone(value);
+                        setTime("");
+                      }}
                       allowClear
                       style={{
                         height: "50px",
@@ -714,12 +717,7 @@ const BookingForm = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
-                      max={
-                        Number(capacity) -
-                        (timeParticipantCounts1.find(
-                          (item) => item.time === time
-                        )?.totalParticipantCount || 0)
-                      }
+                   
                       onChange={(value) => setPcount(value?.toString() || "")}
                     />
                   </Form.Item>
@@ -727,7 +725,10 @@ const BookingForm = () => {
               </div>
             </Col>
             <Col
-              style={{ display: "flex", justifyContent: "center" }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
               xs={24}
               lg={14}
             >
@@ -738,6 +739,7 @@ const BookingForm = () => {
                   width: "90%",
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 {/* <Form.Item
@@ -752,6 +754,7 @@ const BookingForm = () => {
                     maxHeight: "800px",
                     display: "flex",
                     justifyContent: "center",
+                    width: "100%",
                   }}
                 >
                   <Form.Item
@@ -909,7 +912,7 @@ const BookingForm = () => {
                   first_name={paymentDetails?.firstname}
                   last_name={paymentDetails?.lastname}
                   email={paymentDetails?.email}
-                  phone={paymentDetails?.phone[0].phone_number}
+                  phone={paymentDetails?.email}
                   address={paymentDetails?.address}
                   city={paymentDetails?.city}
                   country={paymentDetails?.country}
