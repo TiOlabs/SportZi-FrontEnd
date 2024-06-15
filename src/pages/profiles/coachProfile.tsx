@@ -38,9 +38,15 @@ import {
 import axios from "axios";
 import { Option } from "antd/es/mentions";
 import ReportGenarationForCoach from "../../components/reportGenarationForCoach";
+import CoachEdit from "../../components/coachEdit";
+
 import Notification from "../../components/notification";
 import { CoachFeedback } from "../../types";
 
+interface AvailableTime {
+  day: string;
+  time: string;
+}
 const RequestedMeetings = [<CoachReqestList />];
 
 const CoachProfile = () => {
@@ -59,9 +65,7 @@ const CoachProfile = () => {
     CoachAssignDetails[]
   >([]);
   const { coachDetails } = useContext(CoachContext);
-  console.log("coachDetails", coachDetails);
   const coach_id = coachDetails?.id;
-  console.log("coach_id", coach_id);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -78,15 +82,11 @@ const CoachProfile = () => {
       )
       .then((res) => {
         setDetails(res.data);
-        console.log("responsedataaaa", res.data);
       })
       .catch((err) => {
         console.log("errorrrrrrrrrrrrrrrr", err);
       });
   }, [coachDetails?.id]);
-  useEffect(() => {
-    console.log("coach detailsssss", Details);
-  }, [Details]);
 
   // useEffect(() => {
   //   axios
@@ -247,6 +247,56 @@ const CoachProfile = () => {
     }
     return true;
   });
+  const [firstname, setFirstName] = useState<any>();
+  const [lastname, setLastName] = useState<any>();
+  const [discription, setDiscription] = useState<any>();
+  const [profileImage, setProfileImage] = useState<any[]>([]);
+  const [AvailableTimes, setAvailableTimes] = useState<any>();
+  const [qulifications, setQulifications] = useState<any>();
+  const [expertice, setExpertice] = useState<any>();
+  useEffect(() => {
+    if (Details) {
+      setFirstName(Details?.firstname);
+      setLastName(Details?.lastname);
+      setDiscription(Details?.Discription);
+      setAvailableTimes(Details?.Coach?.availability);
+      setExpertice(Details?.Coach?.sport?.sport_name);
+      console.log(Details);
+      const achiv = Details?.achivement;
+      if (achiv) {
+        let achiveArr: string[] = [];
+        achiv.map((item: any) => {
+          achiveArr.push(item.achivement_details as string);
+        });
+        console.log(achiveArr);
+        let achivArrString = achiveArr.join(",");
+        setQulifications(achivArrString);
+      }
+    }
+  }, [Details]);
+  useEffect(() => {
+    setLastName(coachDetails?.lastname);
+  }, []);
+  console.log(lastname);
+  const QulificationsGetToArry = (qulifications: string) => {
+    if (qulifications) {
+      return qulifications.split(",");
+    }
+    return [];
+  };
+  let groupedByDay: { [key: string]: string[] } = {};
+  if (AvailableTimes) {
+    groupedByDay = AvailableTimes.reduce(
+      (acc: { [key: string]: string[] }, { day, time }: AvailableTime) => {
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+        acc[day].push(time);
+        return acc;
+      },
+      {} as { [key: string]: string[] }
+    );
+  }
 
 
   //for display reviews
@@ -298,9 +348,6 @@ const CoachProfile = () => {
 
     fetchRatings();
   }, [coachId]);
-
-
-
 
 
   return (
@@ -399,7 +446,8 @@ const CoachProfile = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {Details?.Discription}
+                {discription}
+                {qulifications}
               </Typography>
             </Col>
           </Row>
@@ -424,12 +472,53 @@ const CoachProfile = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
+            <div
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                width: "80%",
+                display: "flex",
+                justifyContent: "flex-end",
+                flexDirection: "row",
+              }}
+            >
+              {" "}
+              <CoachEdit
+                firstname={firstname}
+                setFirstname={setFirstName}
+                lastName={lastname}
+                setLastName={setLastName}
+                discription={discription}
+                setDiscription={setDiscription}
+                setQulifications={setQulifications}
+                qulifications={qulifications}
+                expertice={expertice}
+                setExpertice={setExpertice}
+                coachId={coachDetails?.id}
+              />
+            </div>
+
+<!--             <div>
+              <h1
+                style={{
+                  zIndex: "999",
+                  color: "#000",
+                  fontSize: "32px",
+                  fontStyle: "capitalize",
+                  fontWeight: "500",
+                  fontFamily: "kanit",
+                  lineHeight: "normal",
+                  marginBottom: "0px",
+                }}
+              >
+                {firstname} {lastname}
+              </h1> -->
+
             {" "}
             <div>
               <Row>
@@ -456,6 +545,7 @@ const CoachProfile = () => {
                 </Col>
               </Row>
 
+
               <p
                 style={{
                   margin: "0px",
@@ -468,7 +558,7 @@ const CoachProfile = () => {
                   lineHeight: "normal",
                 }}
               >
-                First class rugby coach
+                First class {Details?.Coach?.sport?.sport_name} coach
               </p>
             </div>
             <div
@@ -584,10 +674,10 @@ const CoachProfile = () => {
                 fontWeight: "200",
                 color: "#000",
                 fontFamily: "kanit",
-                lineHeight: "1",
+                lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
+              dataSource={QulificationsGetToArry(qulifications)}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -647,43 +737,39 @@ const CoachProfile = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "none",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  {Details?.Coach?.sport?.sport_name}
+                </div>
+              </List.Item>
+            </List>
             <Typography
               style={{
                 color: "#000",
@@ -707,7 +793,7 @@ const CoachProfile = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={["physical"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -758,52 +844,68 @@ const CoachProfile = () => {
             >
               Available Times
             </Typography>
-            <List
+            <div
               style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
               }}
-              itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              {Object.keys(groupedByDay).map((day) => (
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
+                    flexDirection: "row",
+                    width: "100%",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
+                  key={day}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: lg ? "24px" : "18px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                      width: "1%",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
+                    &#8226;
+                  </span>
+                  <Typography
+                    style={{
+                      color: "#000",
+                      fontFamily: "kanit",
+                      width: "30%",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "normal",
+                      marginTop: "5px",
+                      fontSize: lg ? "24px" : "18px",
+                    }}
+                  >
+                    {day}
+                  </Typography>
+                  <div
+                    style={{
+                      marginTop: "5px",
+                      fontSize: lg ? "18px" : "14px",
+                      fontFamily: "kanit",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "40%",
+                      fontWeight: "300",
+                      justifyContent: "flex-start",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    {groupedByDay[day].map((time, index) => (
+                      <div key={index}>{time}</div>
+                    ))}
                   </div>
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </div>
           </div>
         </Col>
       </Row>

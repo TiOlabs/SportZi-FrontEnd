@@ -142,9 +142,14 @@ export interface User {
   phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
-  coach: Coach;
+  Coach: Coach;
+  achivement: achivement;
   Manager: ArcadeManager;
   natificationForUser: NotificationForUser[];
+}
+export interface achivement {
+  user_id: String;
+  achivement_details: String;
 }
 export interface UserPhone {
   user_id: String;
@@ -332,6 +337,12 @@ export interface ZoneRejectDayAndTime {
   zone: Zone;
 }
 
+
+export interface Availiability {
+  coach_id: String;
+  day: String;
+  time: String;
+}
 export interface NotificationForUser {
   notification_id: String;
   message: String;
