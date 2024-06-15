@@ -56,6 +56,9 @@ import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachE
 import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 import Notification from "../../components/notification";
 import { ArcadeFeedback } from "../../types";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -364,12 +367,11 @@ const ArcadeProfileArcade = () => {
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
-    axiosInstance
-      .get("/api/auth/getarchadedetails", {
-        params: {
-          ArcadeId: ArcadeId,
-        },
-      })
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`,
+        {}
+      )
       .then((res) => {
         console.log("arcadeDetails", res.data);
         setArcadeDetails(res.data);
@@ -507,6 +509,9 @@ const ArcadeProfileArcade = () => {
 
   console.log(arcadeDetails?.arcade_name);
   // const arcadeName = arcadeDetails?.arcade_name;
+  console.log(arcadeDetails);
+  const [cloudName] = useState("dle0txcgt");
+
 
   //For display reviews and averageRate
   const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
@@ -558,6 +563,13 @@ const ArcadeProfileArcade = () => {
     fetchRatings();
   }, [ArcadeId]);
 
+
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+
   return (
     <>
       <NavbarProfile />
@@ -581,7 +593,7 @@ const ArcadeProfileArcade = () => {
           }}
         >
           {" "}
-          {arcadeBookings.length === 0 ? <Empty /> : null}
+          {/* {arcadeBookings.length === 0 ? <Empty /> : null} */}
           <Row
             style={{
               width: "100%",
@@ -604,10 +616,13 @@ const ArcadeProfileArcade = () => {
               lg={24}
               xl={24}
             >
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(arcade?.arcade_image.toString())
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
@@ -733,7 +748,7 @@ const ArcadeProfileArcade = () => {
               <p
                 style={{
                   color: "#000",
-                  fontSize: "22px",
+                  fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "350",
                   fontFamily: "kanit",
@@ -742,7 +757,7 @@ const ArcadeProfileArcade = () => {
                   marginTop: "0px",
                 }}
               >
-                Manager Name : {arcadeDetails?.manager.user.firstname}{" "}
+                Manager : {arcadeDetails?.manager.user.firstname}{" "}
                 {arcadeDetails?.manager.user.lastname}
               </p>
 
@@ -1362,7 +1377,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "Kanit",
             }}
           >
-            Our Packages
+            Our Packages For You
           </Typography>
           <div
             style={{

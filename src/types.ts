@@ -124,6 +124,7 @@ export interface Coach {
   user: User;
   sport: Sport;
   coachFeedbacks: CoachFeedbacks;
+  coachApplyDetailsForPackage: CoachEnrollDetailsForPackages[];
 }
 export interface User {
   user_id: String;
@@ -138,9 +139,11 @@ export interface User {
   city: String;
   country: String;
   user_image: String;
-  Phone: UserPhone[];
+  phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
+  coach:Coach;
+  Manager: ArcadeManager;
   natificationForUser: NotificationForUser[];
 }
 export interface UserPhone {
@@ -198,7 +201,7 @@ export interface Arcade {
 export interface ArcadeManager {
   manager_id: String;
   user: User;
-  arcade: Arcade;
+  arcade: Arcade[];
 }
 
 export interface ArcadeFeedbacks {
@@ -345,4 +348,9 @@ export interface NotificationForArcade {
   created_at: String;
   arcade_id: String;
   arcade: Arcade;
+}
+
+export interface Admin{
+  admin_id: String;
+  user: User;
 }
