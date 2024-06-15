@@ -608,7 +608,7 @@ const ArcadeProfileUser = () => {
                       <Rate
                         allowHalf
                         disabled
-                        defaultValue={0.0}
+                        defaultValue={0}
                         value={averageRating}
                         style={{
                           scale: "0.7",
@@ -1219,6 +1219,7 @@ const ArcadeProfileUser = () => {
       {/* feedbacks */}
 
       <Row
+
         style={{
           minWidth: "100%",
           minHeight: "650px",
@@ -1255,112 +1256,6 @@ const ArcadeProfileUser = () => {
           >
             Reviews
           </Typography>
-          {/* <Row
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
-          </Row> */}
-          {/* <Row
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
-          </Row> */}
 
           <Row
             style={{
@@ -1382,6 +1277,7 @@ const ArcadeProfileUser = () => {
                     alignItems: "center",
                     marginTop: "3%",
                   }}
+                  xl={6}
                   lg={8}
                   xs={24}
                   md={12}
@@ -1391,7 +1287,7 @@ const ArcadeProfileUser = () => {
                     style={{
                       marginTop: "0vh",
                       marginRight: "10vh",
-                      marginBottom: "20vh",
+                      marginBottom: "10vh",
                     }}
                   >
                     <ReviewCard

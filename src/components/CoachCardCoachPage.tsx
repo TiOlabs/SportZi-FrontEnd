@@ -17,7 +17,7 @@ const CoachCardCoachPage = (props: any) => {
   const { userDetails } = useUser();
 
   const handleClick = () => {
-    navigate(`/CoachUser/:${props.coach_id}`);
+    navigate(`/CoachUser/${props.coach_id}`);
   };
   localStorage.setItem("coachId", props.coach_id);
   console.log(props.coach_id);
@@ -41,8 +41,10 @@ const CoachCardCoachPage = (props: any) => {
 
             <div className="ratings">
               <Rate
+                allowHalf
                 disabled
                 defaultValue={3}
+                value={props.coach_avgRate}
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>

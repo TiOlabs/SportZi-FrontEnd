@@ -119,7 +119,7 @@ export interface Player {
 export interface Coach {
   coach_id: String;
   rate: Number;
-  coach_rating: Number;
+  averageRate: Number;
   short_desctiption: String;
   user: User;
   sport: Sport;
