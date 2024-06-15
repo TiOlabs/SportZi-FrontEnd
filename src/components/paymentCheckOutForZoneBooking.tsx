@@ -54,8 +54,6 @@ const PaymentModalForZoneBooking = (props: any): JSX.Element | null => {
     fetchData();
   }, [props.arcadeId]);
 
- 
-
   const payment = {
     sandbox: true,
     merchant_id: "1226243",
@@ -96,6 +94,7 @@ const PaymentModalForZoneBooking = (props: any): JSX.Element | null => {
         zone_name: props.zone_name,
         user_name: props.first_name + " " + props.last_name,
         email: props.email,
+        arcadeId: props.arcadeId,
       })
       .then(() => {
         window.location.reload();
@@ -104,33 +103,33 @@ const PaymentModalForZoneBooking = (props: any): JSX.Element | null => {
         console.log(error);
       });
 
-    axios
-      .post(`${process.env.REACT_APP_API_URL}api/addCoachBooking`, {
-        status: "success",
-        date: zoneBookings.zoneBookings.date,
-        time: zoneBookings.zoneBookings.time,
-        full_amount: props.amount,
-        participant_count: zoneBookings.zoneBookings.participant_count,
-        player_id: zoneBookings.zoneBookings.user_id,
-        zone_id: zoneBookings.zoneBookings.zone_id,
-        coach_id: props.coach_id,
-        arcade_id: props.arcadeId,
-        created_at: zoneBookings.zoneBookings.created_at,
-        coach_email: props.coach_email,
-        coach_name: props.coach_name,
-        role: props.role,
-        reservation_type: props.reservation_type,
-        zone_name: props.zone_name,
-        user_name: props.first_name + " " + props.last_name,
-        email: props.email,
-        arcade_name: props.arcade_name,
-      })
-      .then(() => {
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // axios
+    //   .post(`${process.env.REACT_APP_API_URL}api/addCoachBooking`, {
+    //     status: "success",
+    //     date: zoneBookings.zoneBookings.date,
+    //     time: zoneBookings.zoneBookings.time,
+    //     full_amount: props.amount,
+    //     participant_count: zoneBookings.zoneBookings.participant_count,
+    //     player_id: zoneBookings.zoneBookings.user_id,
+    //     zone_id: zoneBookings.zoneBookings.zone_id,
+    //     coach_id: props.coach_id,
+    //     arcade_id: props.arcadeId,
+    //     created_at: zoneBookings.zoneBookings.created_at,
+    //     coach_email: props.coach_email,
+    //     coach_name: props.coach_name,
+    //     role: props.role,
+    //     reservation_type: props.reservation_type,
+    //     zone_name: props.zone_name,
+    //     user_name: props.first_name + " " + props.last_name,
+    //     email: props.email,
+    //     arcade_name: props.arcade_name,
+    //   })
+    //   .then(() => {
+    //     window.location.reload();
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
 
     axios
       .post(

@@ -12,6 +12,7 @@ import {
   Typography,
   Rate,
   ConfigProvider,
+  message,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import {
@@ -31,12 +32,15 @@ import AppFooter from "../../components/footer";
 import { useContext, useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Coach, User } from "../../types";
 import { UserContext } from "../../context/userContext";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import { CoachFeedback } from "../../types";
+
+import { any } from "prop-types";
+import NavbarLogin from "../../components/NavBarLogin";
 
 
 interface FeedbackData {
@@ -47,7 +51,12 @@ interface FeedbackData {
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { coachId } = useParams();
+  console.log("Coach ID +++++++++++++++++++++++++++++++++++++++:", coachId);
+  const formattedCoachId = coachId?.replace(":", "") ?? "";
+  console.log("CoachId:", coachId);
+  console.log(formattedCoachId);
   console.log(coachId);
+  console.log(formattedCoachId);
   const { lg, md, sm, xs } = useBreakpoint();
   const { TextArea } = Input;
   const onChange = (
@@ -65,7 +74,7 @@ const CoachProfileUser = () => {
   const [averageRating, setAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
   // Replace with actual coach ID
-
+  console.log(userDetails);
   useEffect(() => {
     const fetchRatings = async () => {
       try {
@@ -74,9 +83,10 @@ const CoachProfileUser = () => {
         );
         console.log("response:", response.data);
 
-        const { averageRating, totalFeedbacks } = response.data;
-        console.log("averageRating:", averageRating);
-        const roundedRating = Math.round(averageRating * 2) / 2;
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRate * 2) / 2;
 
         setAverageRating(roundedRating);
         setTotalFeedbacks(totalFeedbacks);
@@ -108,9 +118,9 @@ const CoachProfileUser = () => {
     };
 
     fetchFeedbacks();
-  }, []);
+  }, [coachId]);
 
-  console.log("All feedbacks:::::::::::", allFeedbacks);
+  // console.log("All feedbacks:::::::::::", allFeedbacks);
 
   const [isModalOpenForReport, setismodelopenForReport] = useState(false);
   const [description, setDescription] = useState("");
@@ -195,17 +205,18 @@ const CoachProfileUser = () => {
       alert("feedback was submitted successfully");
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
-      console.error("Error submitting feedback:", error);
-      alert("Error submitting feedback");
+      console.error("Error submitting feedback=====================", error);
+      alert("Error submitting feedback:");
     }
   };
+  const navigate = useNavigate();
   return (
     <>
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
-      <NavbarProfile />
+      {userDetails.id === "" ? <NavbarLogin /> : <NavbarProfile />}
       <Row>
         <Col
           xs={24}
@@ -304,6 +315,14 @@ const CoachProfileUser = () => {
                   color: "#fff",
                   borderRadius: "3px",
                 }}
+                onClick={() => {
+                  if (userDetails.role === "PLAYER") {
+                    localStorage.setItem("coachId", formattedCoachId as string);
+                    navigate("/CoachBookingForm");
+                  } else {
+                    message.error("You are not a player");
+                  }
+                }}
               >
                 {" "}
                 Request for Booking
@@ -318,7 +337,13 @@ const CoachProfileUser = () => {
                     borderColor: "#0E458E",
                     marginTop: "20px",
                   }}
-                  onClick={showModalForReport}
+                  onClick={() => {
+                    if (userDetails.id === "") {
+                      message.error("Please Login First");
+                    } else {
+                      showModalForReport();
+                    }
+                  }}
                 >
                   Report User
                 </Button>
@@ -821,19 +846,18 @@ const CoachProfileUser = () => {
       </div>
       <PhotoCollageForUsers id={coachId} role={"COACH"} />
 
-     
-
       {/* Reviews */}
       <Row
         style={{
           width: "100%",
           minHeight: "650px",
           marginTop: "100px",
+          backgroundImage: `url(${reviewBacground})`,
         }}
       >
         <Col
           style={{
-            backgroundImage: `url(${reviewBacground})`,
+           
             backgroundSize: "cover",
             backgroundPosition: "center",
             minHeight: "650px",
@@ -915,7 +939,7 @@ const CoachProfileUser = () => {
             </Col>
           </Row> */}
 
-          <Row
+          {/* <Row
             style={{
               width: "100%",
               minHeight: "300px",
@@ -950,6 +974,52 @@ const CoachProfileUser = () => {
                 ))
               )}
             </Col>
+          </Row> */}
+
+          <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
 
           <Row>
@@ -969,7 +1039,13 @@ const CoachProfileUser = () => {
                   color: "#fff",
                   borderRadius: "3px",
                 }}
-                onClick={showModal}
+                onClick={() => {
+                  if (userDetails.id === "") {
+                    message.error("Please Login First");
+                  } else {
+                    showModal();
+                  }
+                }}
               >
                 {" "}
                 Give an Feedback

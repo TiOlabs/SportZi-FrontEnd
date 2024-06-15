@@ -156,11 +156,13 @@ const CoachBookingForm: React.FC = () => {
 
   useEffect(() => {
     console.log(coachId);
+    let formattedCoachId = coachId.replace(":", "");
+    console.log(formattedCoachId);
     const fetchData = async () => {
       currentCoachId.current = coachId;
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getcoache/${coachId}`
+          `${process.env.REACT_APP_API_URL}api/getcoache/${formattedCoachId}`
         );
         const data = await res.json();
         console.log(data);
@@ -660,7 +662,7 @@ const CoachBookingForm: React.FC = () => {
     );
   };
   console.log(packageEnrollDataForCoach);
-  console.log(isCoachInthePackage)
+  console.log(isCoachInthePackage);
 
   return (
     <>
@@ -1215,7 +1217,7 @@ const CoachBookingForm: React.FC = () => {
                   date={datee}
                   time={time}
                   pcount={pcount}
-                  userId={userData?.user_id}
+                  userId={userDetails.id}
                   zoneId={zone}
                   arcadeId={arcade}
                   sportId={coachSport}

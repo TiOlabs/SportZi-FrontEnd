@@ -35,6 +35,7 @@ const CoachReqestForArcade = (props: any) => {
           `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
           {
             coach_id: props.coach_id,
+            coachId: props.coach_id,
             arcade_id: ArcadeId,
             status: "success",
             coach_name: props.coach_name,
