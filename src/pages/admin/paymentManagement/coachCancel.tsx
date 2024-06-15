@@ -1,12 +1,12 @@
-import { Col, Row, Modal, Button, Empty, RadioChangeEvent, Radio } from "antd";
+import { Col, Row, Modal, Button, Empty, Radio, RadioChangeEvent } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
+import { CoachBookingDetails } from "../../../types";
 import { Link, useNavigate } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { SearchProps } from "antd/es/input";
-const CoachCancelCoachBookins = () => {
+
+const CoachCancelCoachBookings = () => {
   const [arcadeBookingDetails, setArcadeBookingDetails] = useState<
     CoachBookingDetails[]
   >([]);
@@ -96,50 +96,6 @@ const CoachCancelCoachBookins = () => {
     setSearch(value.trim());
   };
 
-  // const handleMenuClick = async (e) => {
-  //   message.info("Click on menu item.");
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch("http://localhost:8000/api/getCoachBookings");
-  //     const data = await res.json();
-  //     setArcadeCanceled(data);
-  //     const filteredData = data.filter(
-  //       (coachBooking: CoachBookingDetails) =>
-  //         coachBooking.status === "canceled_By_Coach"
-  //     );
-  //     let sortedBookings = [...filteredData];
-  //     switch (e.key) {
-  //       case "1":
-  //         sortedBookings.sort(
-  //           (a: CoachBookingDetails, b: CoachBookingDetails) => {
-  //             const rateA = Number(a.zone.rate) * Number(a.participant_count);
-  //             const rateB = Number(b.zone.rate) * Number(b.participant_count);
-  //             return rateB - rateA;
-  //           }
-  //         );
-  //         break;
-  //       case "2":
-  //         sortedBookings.sort(
-  //           (a: CoachBookingDetails, b: CoachBookingDetails) => {
-  //             const nameA = a.zone.zone_name.toLowerCase();
-  //             const nameB = b.zone.zone_name.toLowerCase();
-  //             if (nameA < nameB) return -1;
-  //             if (nameA > nameB) return 1;
-  //             return 0;
-  //           }
-  //         );
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     setArcadeCanceled(sortedBookings);
-  //   } catch (error) {
-  //     console.error("Error fetching and sorting data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -160,7 +116,6 @@ const CoachCancelCoachBookins = () => {
       </Row>
       <Row style={{ marginTop: "20px" }}>
         <Col>
-          {" "}
           <Radio.Group onChange={onChange} value={value}>
             <Radio value={1}>Before 24 hours</Radio>
             <Radio value={2}>After 24 hours</Radio>
@@ -171,7 +126,8 @@ const CoachCancelCoachBookins = () => {
         {arcadeCanceled.length === 0 ? <Empty /> : null}
         {arcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
           <DataRow
-            booking_id={CoachBookingDetails.booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+            key={CoachBookingDetails.booking_id}
+            booking_id={CoachBookingDetails.booking_id}
             booked_Arena={CoachBookingDetails.zone.zone_name}
             booked_by={CoachBookingDetails.player.user.firstname}
             rate={
@@ -199,7 +155,7 @@ const CoachCancelCoachBookins = () => {
   );
 };
 
-export default CoachCancelCoachBookins;
+export default CoachCancelCoachBookings;
 
 function DataRow(props: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -212,7 +168,6 @@ function DataRow(props: any) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  console.log(props);
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -224,15 +179,10 @@ function DataRow(props: any) {
   const handleClick = () => {
     navigate(`/CoachUser/:${props.coach_id}`);
   };
+
   return (
-    <Row
-      style={{
-        backgroundColor: "white",
-        padding: "1%",
-        marginTop: "63px",
-      }}
-    >
-      <Col span={8} style={{}}>
+    <Row style={{ backgroundColor: "white", padding: "1%", marginTop: "63px" }}>
+      <Col span={8}>
         <AdvancedImage
           onClick={handleClick}
           style={{
@@ -241,11 +191,7 @@ function DataRow(props: any) {
             width: "80px",
             height: "80px",
           }}
-          cldImg={
-            cld.image(props?.coach_Image)
-            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-            // .resize(Resize.scale().width(200).height(200))
-          }
+          cldImg={cld.image(props?.coach_Image)}
         />
         <div
           style={{
@@ -260,7 +206,7 @@ function DataRow(props: any) {
           {props.coach_name}
         </div>
       </Col>
-      <Col span={2} style={{}}>
+      <Col span={2}>
         <div
           style={{
             display: "flex",
@@ -271,7 +217,6 @@ function DataRow(props: any) {
             fontSize: "16px",
           }}
         >
-          {" "}
           LKR {props.rate}
         </div>
       </Col>
@@ -284,11 +229,7 @@ function DataRow(props: any) {
               width: "80px",
               height: "80px",
             }}
-            cldImg={
-              cld.image(props?.image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
+            cldImg={cld.image(props?.image)}
           />
         </Link>
         <div
@@ -304,7 +245,7 @@ function DataRow(props: any) {
           {props.booked_by}
         </div>
       </Col>
-      <Col span={6} style={{}}>
+      <Col span={6}>
         <div
           style={{
             height: "80px",

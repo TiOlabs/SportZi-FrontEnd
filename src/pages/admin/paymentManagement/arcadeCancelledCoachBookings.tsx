@@ -1,11 +1,12 @@
 import { Col, Row, Modal, Button, Empty, Radio, RadioChangeEvent } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { CoachBookingDetails, ZoneBookingDetails } from "../../../types";
+import { CoachBookingDetails } from "../../../types";
 import { Link, useNavigate } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { SearchProps } from "antd/es/input";
+
 const ArcadeCancelledCoachBookings = () => {
   const [ArcadeBookingDetails, setArcadeBookingDetails] = useState<
     CoachBookingDetails[]
@@ -22,33 +23,6 @@ const ArcadeCancelledCoachBookings = () => {
   const [filteredArcadeCanceled, setFilteredArcadeCanceled] = useState<
     CoachBookingDetails[]
   >([]);
-  // useEffect(() => {
-  //   try {
-  //     const fetchData = async () => {
-  //       const res = await axios.get(
-  //         "http://localhost:8000/api/getCoachBookings"
-  //       );
-  //       const data = await res.data;
-  //       setArcadeBookingDetails(data);
-  //       console.log(data);
-
-  //       // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
-
-  //       const playerCanceledBookings = data.filter(
-  //         (coachBooking: CoachBookingDetails) =>
-  //           coachBooking.status === "canceled_By_Arcade"
-  //       );
-  //       console.log(playerCanceledBookings);
-
-  //       setCanceledByArcade(playerCanceledBookings);
-  //       setArcadeCanceled(playerCanceledBookings);
-  //       setLoading(false);
-  //     };
-  //     fetchData();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +60,23 @@ const ArcadeCancelledCoachBookings = () => {
         );
 
         setArcadeCanceled(sortedBookings);
-        setArcadeCanceled(sortedBookings);
+
+        // Filter for bookings canceled within 24 hours
+        const below24Hours = sortedBookings.filter(
+          (coachBooking: CoachBookingDetails) => {
+            const canceledTime = new Date(
+              coachBooking.canceled_at as string
+            ).getTime();
+            const createdTime = new Date(
+              coachBooking.created_at as string
+            ).getTime();
+            const timeDifference = canceledTime - createdTime;
+            const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+            return timeDifference < twentyFourHoursInMillis;
+          }
+        );
+
+        setFilteredArcadeCanceled(below24Hours);
         setLoading(false);
       } catch (e) {
         console.log(e);
@@ -102,6 +92,7 @@ const ArcadeCancelledCoachBookings = () => {
 
   const onChange = (e: RadioChangeEvent) => {
     const newValue = e.target.value;
+    console.log("New Value:", newValue);
     setValue(newValue);
 
     if (newValue === 1) {
@@ -136,13 +127,11 @@ const ArcadeCancelledCoachBookings = () => {
       setFilteredArcadeCanceled(above24Hours);
     }
   };
-  useEffect(() => {
-    // Add initial data load or fetch logic here if needed
-    // Example: setArcadeCanceled(initialData);
 
-    // Debug: Log changes in filteredArcadeCanceled
+  useEffect(() => {
     console.log("Filtered Data:", filteredArcadeCanceled);
   }, [filteredArcadeCanceled]);
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -163,7 +152,6 @@ const ArcadeCancelledCoachBookings = () => {
       </Row>
       <Row style={{ marginTop: "20px" }}>
         <Col>
-          {" "}
           <Radio.Group onChange={onChange} value={value}>
             <Radio value={1}>Before 24 hours</Radio>
             <Radio value={2}>After 24 hours</Radio>
@@ -172,32 +160,34 @@ const ArcadeCancelledCoachBookings = () => {
       </Row>
       <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
         {filteredArcadeCanceled.length === 0 ? <Empty /> : null}
-        {filteredArcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
-          <DataRow
-            booking_id={CoachBookingDetails.booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-            booked_Coach={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
-            booked_by={CoachBookingDetails.player.user.firstname}
-            rate={
-              Number(CoachBookingDetails.zone.rate) *
-                Number(CoachBookingDetails.participant_count) +
-              Number(CoachBookingDetails.coach.rate) *
-                Number(CoachBookingDetails.participant_count)
-            }
-            user_id={CoachBookingDetails.player.player_id}
-            arcade={CoachBookingDetails.arcade.arcade_name}
-            aracde_id={CoachBookingDetails.arcade.arcade_id}
-            zone_id={CoachBookingDetails.zone.zone_id}
-            zone={CoachBookingDetails.zone.zone_name}
-            booking_date={CoachBookingDetails.date}
-            booking_time={CoachBookingDetails.time}
-            participant_count={CoachBookingDetails.participant_count}
-            created_at={CoachBookingDetails.created_at}
-            canceled_at={CoachBookingDetails.canceled_at}
-            image={CoachBookingDetails.player.user.user_image}
-            coach_Image={CoachBookingDetails.coach.user.user_image}
-            coach_id={CoachBookingDetails.coach.coach_id}
-          />
-        ))}
+        {filteredArcadeCanceled.map(
+          (CoachBookingDetails: CoachBookingDetails) => (
+            <DataRow
+              booking_id={CoachBookingDetails.booking_id}
+              booked_Coach={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
+              booked_by={CoachBookingDetails.player.user.firstname}
+              rate={
+                Number(CoachBookingDetails.zone.rate) *
+                  Number(CoachBookingDetails.participant_count) +
+                Number(CoachBookingDetails.coach.rate) *
+                  Number(CoachBookingDetails.participant_count)
+              }
+              user_id={CoachBookingDetails.player.player_id}
+              arcade={CoachBookingDetails.arcade.arcade_name}
+              aracde_id={CoachBookingDetails.arcade.arcade_id}
+              zone_id={CoachBookingDetails.zone.zone_id}
+              zone={CoachBookingDetails.zone.zone_name}
+              booking_date={CoachBookingDetails.date}
+              booking_time={CoachBookingDetails.time}
+              participant_count={CoachBookingDetails.participant_count}
+              created_at={CoachBookingDetails.created_at}
+              canceled_at={CoachBookingDetails.canceled_at}
+              image={CoachBookingDetails.player.user.user_image}
+              coach_Image={CoachBookingDetails.coach.user.user_image}
+              coach_id={CoachBookingDetails.coach.coach_id}
+            />
+          )
+        )}
       </Col>
     </Col>
   );
@@ -228,14 +218,8 @@ function DataRow(props: any) {
     navigate(`/CoachUser/:${props.coach_id}`);
   };
   return (
-    <Row
-      style={{
-        backgroundColor: "white",
-        padding: "1%",
-        marginTop: "63px",
-      }}
-    >
-      <Col span={8} style={{}}>
+    <Row style={{ backgroundColor: "white", padding: "1%", marginTop: "63px" }}>
+      <Col span={8}>
         <AdvancedImage
           onClick={handleClick}
           style={{
@@ -244,11 +228,7 @@ function DataRow(props: any) {
             width: "80px",
             height: "80px",
           }}
-          cldImg={
-            cld.image(props?.coach_Image)
-            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-            // .resize(Resize.scale().width(200).height(200))
-          }
+          cldImg={cld.image(props?.coach_Image)}
         />
         <div
           style={{
@@ -263,7 +243,7 @@ function DataRow(props: any) {
           {props.booked_Coach}
         </div>
       </Col>
-      <Col span={2} style={{}}>
+      <Col span={2}>
         <div
           style={{
             display: "flex",
@@ -274,7 +254,6 @@ function DataRow(props: any) {
             fontSize: "16px",
           }}
         >
-          {" "}
           Rs.{props.rate}
         </div>
       </Col>
@@ -287,11 +266,7 @@ function DataRow(props: any) {
               width: "80px",
               height: "80px",
             }}
-            cldImg={
-              cld.image(props?.image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
+            cldImg={cld.image(props?.image)}
           />
         </Link>
         <div
@@ -307,7 +282,7 @@ function DataRow(props: any) {
           {props.booked_by}
         </div>
       </Col>
-      <Col span={6} style={{}}>
+      <Col span={6}>
         <div
           style={{
             height: "80px",
@@ -359,7 +334,7 @@ function DataRow(props: any) {
                       <b>Arcade :</b> {props.arcade}
                     </Col>
                     <Col span={8}>
-                      <b>User_ID</b> : {props.aracde_id}
+                      <b>Arcade_ID</b> : {props.aracde_id}
                     </Col>
                   </Row>
                 </Col>
