@@ -74,6 +74,7 @@ const CoachRequstRow = (props: any) => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      
 
       async onOk() {
         let created_at, player_id;

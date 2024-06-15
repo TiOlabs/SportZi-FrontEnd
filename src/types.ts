@@ -139,7 +139,7 @@ export interface User {
   city: String;
   country: String;
   user_image: String;
-  Phone: UserPhone[];
+  phone: UserPhone[];
   userPhotos: UserPhoto;
   player: Player;
   coach:Coach;
@@ -348,4 +348,9 @@ export interface NotificationForArcade {
   created_at: String;
   arcade_id: String;
   arcade: Arcade;
+}
+
+export interface Admin{
+  admin_id: String;
+  user: User;
 }

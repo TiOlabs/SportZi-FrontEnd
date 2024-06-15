@@ -909,7 +909,7 @@ const BookingForm = () => {
                   first_name={paymentDetails?.firstname}
                   last_name={paymentDetails?.lastname}
                   email={paymentDetails?.email}
-                  phone={paymentDetails?.Phone}
+                  phone={paymentDetails?.phone[0].phone_number}
                   address={paymentDetails?.address}
                   city={paymentDetails?.city}
                   country={paymentDetails?.country}
