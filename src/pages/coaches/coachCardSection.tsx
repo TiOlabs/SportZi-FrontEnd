@@ -71,8 +71,8 @@ const CoachCardSection = () => {
       switch (e.key) {
         case "1":
           sortedArcades.sort((a: Coach, b: Coach) => {
-            const rateA = Number(a.coach_rating || 0);
-            const rateB = Number(b.coach_rating || 0);
+            const rateA = Number(a.averageRate || 0);
+            const rateB = Number(b.averageRate || 0);
             return rateB - rateA; // Sort in descending order of rate
           });
           break;
@@ -214,7 +214,7 @@ const CoachCardSection = () => {
                   coach_image={coach.user.user_image}
                   coach_name={`${coach.user.firstname} ${coach.user.lastname}`}
                   coach_sport={coach.sport.sport_name}
-                  coach_rating={coach.coachFeedbacks.rate}
+                  coach_avgRate={coach.averageRate}
                   coach_short_description={coach.short_desctiption}
                   coach_rate={coach.rate}
                   sport={coach.sport.sport_name}

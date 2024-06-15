@@ -11,6 +11,7 @@ import {
   Form,
   Input,
   Select,
+  Rate
 } from "antd";
 import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
@@ -54,8 +55,10 @@ import ArcadeEdit from "../../components/arcadeEdit";
 import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
 import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
 import Notification from "../../components/notification";
+import { ArcadeFeedback } from "../../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
@@ -509,11 +512,64 @@ const ArcadeProfileArcade = () => {
   console.log(arcadeDetails);
   const [cloudName] = useState("dle0txcgt");
 
+
+  //For display reviews and averageRate
+  const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getarcadefeedbacks/${ArcadeId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbyarcadeId/${ArcadeId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:::", averageRate);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [ArcadeId]);
+
+
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
+
   return (
     <>
       <NavbarProfile />
@@ -765,7 +821,8 @@ const ArcadeProfileArcade = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {/* 5.0 */}
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -800,11 +857,27 @@ const ArcadeProfileArcade = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        defaultValue={0}
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />  
+
                     </div>
                     <p
                       style={{
@@ -818,7 +891,8 @@ const ArcadeProfileArcade = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      {/* 120 Feedbacks */}
+                      {totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -2569,7 +2643,7 @@ const ArcadeProfileArcade = () => {
           >
             Reviews
           </Typography>
-          <Row
+          {/* <Row
             style={{
               display: "flex",
               justifyContent: "center",
@@ -2674,6 +2748,52 @@ const ArcadeProfileArcade = () => {
               {" "}
               <ReviewCard />
             </Col>
+          </Row> */}
+
+          <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
         </Col>
       </Row>

@@ -88,7 +88,7 @@ const ReviewCard = (props: any) => {
       <div
         style={{
           boxShadow: "0px 0px 4px 0px white",
-          width: "200px",
+          width: "195px",
           height: "320px",
           display: "flex",
           flexDirection: "column",

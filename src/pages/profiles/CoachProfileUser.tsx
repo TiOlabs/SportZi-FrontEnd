@@ -38,7 +38,10 @@ import { Coach, User } from "../../types";
 import { UserContext } from "../../context/userContext";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import { CoachFeedback } from "../../types";
+
+import { any } from "prop-types";
 import NavbarLogin from "../../components/NavBarLogin";
+
 
 interface FeedbackData {
   feedback: string;
@@ -48,6 +51,7 @@ interface FeedbackData {
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { coachId } = useParams();
+  console.log("Coach ID +++++++++++++++++++++++++++++++++++++++:", coachId);
   const formattedCoachId = coachId?.replace(":", "") ?? "";
   console.log("CoachId:", coachId);
   console.log(formattedCoachId);
@@ -79,9 +83,10 @@ const CoachProfileUser = () => {
         );
         console.log("response:", response.data);
 
-        const { averageRating, totalFeedbacks } = response.data;
-        console.log("averageRating:", averageRating);
-        const roundedRating = Math.round(averageRating * 2) / 2;
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRate * 2) / 2;
 
         setAverageRating(roundedRating);
         setTotalFeedbacks(totalFeedbacks);
@@ -113,9 +118,9 @@ const CoachProfileUser = () => {
     };
 
     fetchFeedbacks();
-  }, []);
+  }, [coachId]);
 
-  console.log("All feedbacks:::::::::::", allFeedbacks);
+  // console.log("All feedbacks:::::::::::", allFeedbacks);
 
   const [isModalOpenForReport, setismodelopenForReport] = useState(false);
   const [description, setDescription] = useState("");
@@ -200,8 +205,8 @@ const CoachProfileUser = () => {
       alert("feedback was submitted successfully");
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
-      console.error("Error submitting feedback:", error);
-      alert("Error submitting feedback");
+      console.error("Error submitting feedback=====================", error);
+      alert("Error submitting feedback:");
     }
   };
   const navigate = useNavigate();
@@ -847,11 +852,12 @@ const CoachProfileUser = () => {
           width: "100%",
           minHeight: "650px",
           marginTop: "100px",
+          backgroundImage: `url(${reviewBacground})`,
         }}
       >
         <Col
           style={{
-            backgroundImage: `url(${reviewBacground})`,
+           
             backgroundSize: "cover",
             backgroundPosition: "center",
             minHeight: "650px",
@@ -933,7 +939,7 @@ const CoachProfileUser = () => {
             </Col>
           </Row> */}
 
-          <Row
+          {/* <Row
             style={{
               width: "100%",
               minHeight: "300px",
@@ -968,6 +974,52 @@ const CoachProfileUser = () => {
                 ))
               )}
             </Col>
+          </Row> */}
+
+          <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
 
           <Row>
