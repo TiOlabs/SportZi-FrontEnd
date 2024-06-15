@@ -227,20 +227,23 @@ PlayerEditProps) => {
     fetchSports();
   }, []);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  let combinedTimeslot: { day: string; timeslot: string }[];
+  const [combinedTimeslot, setCombinedTimeslot] = useState<
+    { day: string; timeslot: string }[]
+  >([]);
+
   const onFinish = () => {
-    combinedTimeslot = timeSlots.map((slot) => ({
+    const newcombinedTimeslot = timeSlots.map((slot) => ({
       day: slot.day,
       timeslot: `${slot.startTime}-${slot.endTime}`,
     }));
-
+    setCombinedTimeslot(newcombinedTimeslot);
     setFormSubmitted(true);
   };
 
   useEffect(() => {
     if (formSubmitted) {
       try {
-        console.log(combinedTimeslot);
+        console.log(expertice);
         axiosInstance
           .put(`/api/auth/updatecoachDetails/${coachId}`, {
             firstname: firstname,
@@ -435,7 +438,7 @@ PlayerEditProps) => {
               rules={[
                 {
                   required: true,
-                  message: "Enter your sport",
+                  message: "Select your sport",
                   whitespace: true,
                 },
               ]}
@@ -459,24 +462,7 @@ PlayerEditProps) => {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item
-              name="Expertice"
-              label="Expertice"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Sport",
-                  whitespace: true,
-                },
-              ]}
-              style={{}}
-            >
-              <TextArea
-                value={expertice}
-                onChange={(e) => setExpertice(e.target.value)}
-                placeholder="Controlled autosize"
-              />
-            </Form.Item>
+
             <div>Select Availiable Time Slots</div>
             {/* Day and Time Slot Selection */}
             {timeSlots.map((slot, index) => (
