@@ -69,7 +69,7 @@ const CoachCardSection = () => {
       const res = await fetch(`${process.env.REACT_APP_API_URL}api/getcoach`);
       const data = await res.json();
       const fiteredData = data.filter(
-        (coach: User) => coach.coach.status === "success"
+        (coach: User) => coach.Coach.status === "success"
       );
       let sortedArcades = [fiteredData];
       switch (e.key) {
@@ -81,7 +81,7 @@ const CoachCardSection = () => {
           });
           break;
         case "2":
-          sortedArcades.sort((a: Coach, b: Coach) => {
+          sortedArcades.sort((b: Coach, a: Coach) => {
             const nameA = a.user.firstname.toLowerCase();
             const nameB = b.user.firstname.toLowerCase();
             if (nameA < nameB) return -1;

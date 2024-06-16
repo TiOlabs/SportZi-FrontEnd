@@ -508,7 +508,7 @@ const ArcadePackageUserView = (props: any) => {
                             first_name={paymentDetails?.firstname}
                             last_name={paymentDetails?.lastname}
                             email={paymentDetails?.email}
-                            phone={paymentDetails?.phone[0]?.phone_number}
+                            phone={paymentDetails?.email}
                             address={paymentDetails?.address}
                             city={paymentDetails?.city}
                             country={paymentDetails?.country}
