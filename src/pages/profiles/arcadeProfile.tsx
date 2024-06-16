@@ -8,7 +8,6 @@ import {
   Button,
   ConfigProvider,
   Empty,
-  Form,
   Input,
   Select,
 } from "antd";
@@ -46,7 +45,6 @@ import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
-import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
 import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
@@ -95,8 +93,10 @@ const ArcadeProfileArcade = () => {
       console.log(e);
     }
   },[]);
+  console.log("arcade",ArcadeId); 
   useEffect(() => {
     try {
+      //some kinda error in here
       const fetchData = async () => {
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
@@ -124,7 +124,7 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
 
   useEffect(() => {
     axios
@@ -258,6 +258,27 @@ const ArcadeProfileArcade = () => {
         console.log(err);
       });
   }, [ArcadeId]);
+//use this for the coach request to arcade
+// useEffect(() => {
+//   axios
+//     .get(
+//       process.env.REACT_APP_API_URL + `api/getPackageEnrollmentPlayerDetails`
+//     )
+//     .then((res) => {
+//       console.log(res.data);
+//       setPackageEnrollmentForPlayer(res.data);
+//       setPackageEnrollmentForPlayer((prev: any) => {
+//         return prev.filter(
+//           (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
+//             playerEnrollDetails.status === "success" &&
+//             playerEnrollDetails.package.arcade_id === ArcadeId
+//         );
+//       });
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// }, [ArcadeId]);
 
   useEffect(() => {
     axios
@@ -352,7 +373,14 @@ const CoachReqestToEnrollPackage = [
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
-
+  const toggleItems2 = () => {
+    setShowMore(!showMore);
+    if (showMore) {
+      setNumberOfItemsShown(CoachReqestToEnrollPackage.length); // Show all items
+    } else {
+      setNumberOfItemsShown(4); // Show only the first 5 items
+    }
+  }
   console.log("in the arcade", ArcadeId);
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
@@ -612,7 +640,6 @@ const CoachReqestToEnrollPackage = [
                   margin: "0px",
                   color: "#000",
                   fontFamily: "kanit",
-
                   fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "400",
@@ -2248,7 +2275,7 @@ const CoachReqestToEnrollPackage = [
             lg={6}
             xl={6}
           >
-            Date
+            Rate
           </Col>
           <Col
             style={{
@@ -2457,7 +2484,7 @@ const CoachReqestToEnrollPackage = [
               fontSize: "18px",
             }}
             type="link"
-            onClick={toggleItems}
+            onClick={toggleItems2}
           >
             See More
           </Button>
@@ -2471,7 +2498,7 @@ const CoachReqestToEnrollPackage = [
               fontSize: "18px",
             }}
             type="link"
-            onClick={toggleItems}
+            onClick={toggleItems2}
           >
             See Less
           </Button>
@@ -2660,6 +2687,7 @@ const CoachReqestToEnrollPackage = [
         </Col>
       </Row>
       <AppFooter />
+
     </>
   );
 };
