@@ -8,7 +8,6 @@ import {
   Button,
   ConfigProvider,
   Empty,
-  Form,
   Input,
   Select,
   Rate,
@@ -48,7 +47,6 @@ import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
-import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
 import ArcadeEdit from "../../components/arcadeEdit";
@@ -104,9 +102,13 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+
+  },[]);
+  console.log("arcade",ArcadeId); 
+
   useEffect(() => {
     try {
+      //some kinda error in here
       const fetchData = async () => {
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
@@ -134,7 +136,7 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
 
   useEffect(() => {
     axios
@@ -286,7 +288,9 @@ const ArcadeProfileArcade = () => {
       .catch((err) => {
         console.log(err);
       });
+
   }, [ArcadeId, valueForCoachRequest]);
+
 
   useEffect(() => {
     axios
@@ -381,7 +385,14 @@ const ArcadeProfileArcade = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
-
+  const toggleItems2 = () => {
+    setShowMore(!showMore);
+    if (showMore) {
+      setNumberOfItemsShown(CoachReqestToEnrollPackage.length); // Show all items
+    } else {
+      setNumberOfItemsShown(4); // Show only the first 5 items
+    }
+  }
   console.log("in the arcade", ArcadeId);
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
@@ -770,6 +781,7 @@ const ArcadeProfileArcade = () => {
               <p
                 style={{
                   color: "#000",
+                  fontFamily: "kanit",
                   fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "350",
@@ -2400,7 +2412,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Date
+            Rate
           </Col>
           <Col
             style={{
@@ -2771,7 +2783,7 @@ const ArcadeProfileArcade = () => {
               fontSize: "18px",
             }}
             type="link"
-            onClick={toggleItems}
+            onClick={toggleItems2}
           >
             See More
           </Button>
@@ -2785,7 +2797,7 @@ const ArcadeProfileArcade = () => {
               fontSize: "18px",
             }}
             type="link"
-            onClick={toggleItems}
+            onClick={toggleItems2}
           >
             See Less
           </Button>
@@ -3020,6 +3032,7 @@ const ArcadeProfileArcade = () => {
         </Col>
       </Row>
       <AppFooter />
+
     </>
   );
 };
