@@ -785,7 +785,6 @@ const ArcadeProfileArcade = () => {
                   fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "350",
-                  fontFamily: "kanit",
                   lineHeight: "normal",
                   marginBottom: "0px",
                   marginTop: "0px",
