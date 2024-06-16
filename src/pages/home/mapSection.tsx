@@ -123,6 +123,9 @@ const MapSection: React.FC = () => {
           }))}
           onSelect={handleSearch}
           onSearch={handleSearch}
+          dropdownRender={(menu) => (
+            <div style={{ maxHeight: "150px", overflowY: "auto" }}>{menu}</div>
+          )}
         >
           <Input.Search placeholder="Search arcade by name" enterButton />
         </AutoComplete>

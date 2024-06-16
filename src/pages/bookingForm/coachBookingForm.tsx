@@ -912,7 +912,7 @@ const CoachBookingForm: React.FC = () => {
                                 coachBookings.find(
                                   (item) =>
                                     item.date === datee &&
-                                    item.zone_id === zone &&
+                                    // item.zone_id === zone &&
                                     item.coach_id === coachId &&
                                     item.time ===
                                       `${slot.startTime}-${slot.endTime}` &&
@@ -1025,7 +1025,7 @@ const CoachBookingForm: React.FC = () => {
                               {coachBookings.some(
                                 (item) =>
                                   item.date === datee &&
-                                  item.zone_id === zone &&
+                                  // item.zone_id === zone &&
                                   item.coach_id === coachId &&
                                   item.time ===
                                     `${slot.startTime}-${slot.endTime}` &&

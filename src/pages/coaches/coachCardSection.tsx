@@ -11,7 +11,7 @@ import {
 } from "antd";
 import CoachCardCoachPage from "../../components/CoachCardCoachPage";
 import { useEffect, useState } from "react";
-import { Coach } from "../../types";
+import { Coach, User } from "../../types";
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import {
@@ -36,6 +36,7 @@ const CoachCardSection = () => {
         `${process.env.REACT_APP_API_URL}api/getcoach`
       );
       const data = await res.data;
+      console.log(data);
       let sortedArcades = [...data];
 
       if (search !== "") {
@@ -67,7 +68,10 @@ const CoachCardSection = () => {
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}api/getcoach`);
       const data = await res.json();
-      let sortedArcades = [...data];
+      const fiteredData = data.filter(
+        (coach: User) => coach.coach.status === "success"
+      );
+      let sortedArcades = [fiteredData];
       switch (e.key) {
         case "1":
           sortedArcades.sort((a: Coach, b: Coach) => {

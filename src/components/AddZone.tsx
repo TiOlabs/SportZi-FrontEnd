@@ -169,6 +169,10 @@ const AddZone = () => {
       console.log(e);
     }
   }, []);
+
+  const sortedSports = [...SportDetails].sort((a, b) =>
+    a.sport_name.toString().localeCompare(b.sport_name.toString())
+  );
   return (
     <>
       <Button
@@ -439,8 +443,13 @@ const AddZone = () => {
             <Select
               placeholder="Select a sport"
               onChange={(value) => setSport(value)}
+              dropdownRender={(menu) => (
+                <div style={{ maxHeight: "150px", overflowY: "auto" }}>
+                  {menu}
+                </div>
+              )}
             >
-              {SportDetails.map((sport) => (
+              {sortedSports.map((sport) => (
                 <Select.Option value={sport.sport_id}>
                   {sport.sport_name}
                 </Select.Option>

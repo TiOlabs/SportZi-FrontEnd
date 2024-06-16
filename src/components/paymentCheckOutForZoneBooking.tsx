@@ -163,6 +163,9 @@ const PaymentModalForZoneBooking = (props: any): JSX.Element | null => {
   };
 
   const handlePayment = () => {
+    console.log(props);
+    console.log(props.pcount);
+    console.log(props.avaiableParticipantCount);
     if (props.item === "Zone Booking") {
       if (!props.date) {
         message.warning("Please select a Day.");
@@ -172,6 +175,10 @@ const PaymentModalForZoneBooking = (props: any): JSX.Element | null => {
         message.warning("Please select a Time Slot.");
       } else if (!props.pcount) {
         message.warning("Please select Participant Count.");
+      } else if (props.pcount > props.avaiableParticipantCount) {
+        message.warning(
+          "Participant count is more than available participant count."
+        );
       } else if (!props.userId) {
         message.warning("Please Login First.");
       } else if (!props.zoneId) {

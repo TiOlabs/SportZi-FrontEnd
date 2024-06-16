@@ -11,7 +11,7 @@ import {
   Form,
   Input,
   Select,
-  Rate
+  Rate,
 } from "antd";
 import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
@@ -59,10 +59,10 @@ import { ArcadeFeedback } from "../../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
-
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
   const [packageDetail, setPackageDetail] = useState<Arcade>();
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
@@ -246,7 +246,7 @@ const ArcadeProfileArcade = () => {
   //   setCoachBookings([]);
   //   // Logic to change value2
   // };
-
+  console.log("valueForCoachRequest", valueForCoachRequest);
   useEffect(() => {
     axios
       .get(
@@ -255,6 +255,7 @@ const ArcadeProfileArcade = () => {
       )
       .then((res) => {
         // Filter data where status is "success"
+        console.log("res.data", res.data);
         const filteredData = res.data.filter(
           (item: { status: string }) => item.status === "pending"
         );
@@ -262,12 +263,30 @@ const ArcadeProfileArcade = () => {
           (item: { status: string }) => item.status === "success"
         );
         setArcadeCoaches(filteredAssignedCoaches);
-        setCoachAssignRequest(filteredData);
+        console.log("res.data", res.data);
+        const filteredDataForCoachRequest = res.data.filter(
+          (item: { status: string }) => {
+            console.log("item", item);
+            if (valueForCoachRequest === 10) {
+              return item.status === "pending";
+            } else if (valueForCoachRequest === 11) {
+              return item.status === "success";
+            } else if (valueForCoachRequest === 12) {
+              return (
+                item.status === "canceled_By_Arcade" ||
+                item.status === "canceled_By_Coach"
+              );
+            }
+            return false;
+          }
+        );
+        console.log("filteredDataForCoachRequest", filteredDataForCoachRequest);
+        setCoachAssignRequest(filteredDataForCoachRequest);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [ArcadeId]);
+  }, [ArcadeId, valueForCoachRequest]);
 
   useEffect(() => {
     axios
@@ -512,7 +531,6 @@ const ArcadeProfileArcade = () => {
   console.log(arcadeDetails);
   const [cloudName] = useState("dle0txcgt");
 
-
   //For display reviews and averageRate
   const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
   const [averageRating, setAverageRating] = useState(0.0);
@@ -563,12 +581,16 @@ const ArcadeProfileArcade = () => {
     fetchRatings();
   }, [ArcadeId]);
 
-
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
+
+  const onChangeCoachRequests = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValueForCoachRequest(e.target.value);
+  };
 
   return (
     <>
@@ -876,8 +898,7 @@ const ArcadeProfileArcade = () => {
                           fillOpacity: "0.8",
                           borderBlockEnd: "dashed",
                         }}
-                      />  
-
+                      />
                     </div>
                     <p
                       style={{
@@ -2469,6 +2490,168 @@ const ArcadeProfileArcade = () => {
           {" "}
           Coach Request For Join Arcade
         </Typography>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={10}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={11}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={12}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Assigned
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
       </Row>
       <Row
         style={{
