@@ -503,7 +503,7 @@ const CoachProfile = () => {
               />
             </div>
 
-<!--             <div>
+{/* <!--             <div>
               <h1
                 style={{
                   zIndex: "999",
@@ -517,7 +517,7 @@ const CoachProfile = () => {
                 }}
               >
                 {firstname} {lastname}
-              </h1> -->
+              </h1> --> */}
 
             {" "}
             <div>
