@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const commonInputStyle = {
   height: "40px",
@@ -43,8 +44,20 @@ const Login = () => {
         content: "Successfully Login!",
       });
 
-      navigate("/", { replace: true, state: { loggedIn: true } });
-      window.location.href = "/";
+      const user:any=jwtDecode(res.data.token);
+      console.log(user.role);
+    
+
+      if (user.role==="ADMIN") {
+        navigate("/admin", {
+          replace: true,
+          state: { loggedIn: true },
+        });
+        window.location.href = "/admin";
+      } else {
+        navigate("/", { replace: true, state: { loggedIn: true } });
+        window.location.href = "/";
+      }
     } catch (err) {
       console.log(err);
       message.error(

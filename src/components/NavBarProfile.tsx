@@ -4,7 +4,7 @@ import {
   LogoutOutlined,
   MenuOutlined,
 } from "@ant-design/icons";
-import { Divider, Menu } from "antd";
+import { Badge, Divider, Menu } from "antd";
 import { Col, Row } from "antd";
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -18,6 +18,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import Cookies from "js-cookie";
 import { CoachContext } from "../context/coach.context";
 import { ArcadeContext } from "../context/Arcade.context";
+import Notification from "./notification";
 const NavbarProfile: React.FC = () => {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -28,7 +29,7 @@ const NavbarProfile: React.FC = () => {
   const { userDetails } = useContext(PlayerContext);
   const { coachDetails } = useContext(CoachContext);
   const { managerDetails } = useContext(ArcadeContext);
-
+  const [unreadCount, setUnreadCount] = useState(0);
   const [visible, setVisible] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const { pathname } = useLocation();
@@ -186,62 +187,56 @@ const NavbarProfile: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
+          
           {userDetails.role === "PLAYER" && (
             <Link to={`/profile/`}>
-              <AdvancedImage
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                  borderRadius: "50%",
-                  border: "1px solid black",
-                }}
-                cldImg={
-                  cld.image(userDetails?.image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
+              <Badge dot={1>0} offset={[-5, 5]}>
+                <AdvancedImage
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                  cldImg={cld.image(userDetails?.image)}
+                />
+              </Badge>
             </Link>
           )}
           {managerDetails.role === "MANAGER" && (
             <Link to={`/ChooseArchade/`}>
-              <AdvancedImage
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                  borderRadius: "50%",
-                  border: "1px solid black",
-                }}
-                cldImg={
-                  cld.image(managerDetails?.image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
+              <Badge dot={unreadCount > 0} offset={[-5, 5]}>
+                <AdvancedImage
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                  cldImg={cld.image(managerDetails?.image)}
+                />
+              </Badge>
             </Link>
           )}
-
           {coachDetails.role === "COACH" && (
             <Link to={`/coachProfile/`}>
-              <AdvancedImage
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                  borderRadius: "50%",
-                  border: "1px solid black",
-                }}
-                cldImg={
-                  cld.image(coachDetails?.image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
+              <Badge dot={unreadCount > 0} offset={[-5, 5]}>
+                <AdvancedImage
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                  cldImg={cld.image(coachDetails?.image)}
+                />
+              </Badge>
             </Link>
           )}
         </div>

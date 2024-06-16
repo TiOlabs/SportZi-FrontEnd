@@ -31,10 +31,8 @@ import {
   User,
 } from "../types";
 
-
 import DisabledContext from "antd/es/config-provider/DisabledContext";
 import axiosInstance from "../axiosInstance";
-
 
 const ArcadePackageUserView = (props: any) => {
   const { userDetails } = useUser();
@@ -47,7 +45,7 @@ const ArcadePackageUserView = (props: any) => {
   const [coachisInArcade, setcoachisInArcade] = useState<CoachAssignDetails[]>(
     []
   );
-  console.log("props", CoachDetailsForPackageEnroll[0]?.package_id);  
+  console.log("props", CoachDetailsForPackageEnroll[0]?.package_id);
   console.log("props", props.package_id);
   const { useBreakpoint } = Grid;
   const [cloudName] = useState("dle0txcgt");
@@ -76,6 +74,10 @@ const ArcadePackageUserView = (props: any) => {
     setLoading(true);
     if (userDetails?.role === "COACH") {
       try {
+        console.log("coachPackageDescription", coachPackageDescription);
+        console.log("duration", duration);
+        console.log("props.package_id", props.package_id);
+        console.log("userDetails?.id", userDetails?.id);
         const res = await axios.post(
           `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentCoachDetails`,
           {
@@ -430,19 +432,22 @@ const ArcadePackageUserView = (props: any) => {
                   alignItems: "center",
                 }}
               >
-
                 {isButtonVisible &&
                   (userDetails?.role === "COACH" ||
                     userDetails?.role === "PLAYER" ||
                     userDetails?.role === "MANAGER") && (
                     <>
-                      {CoachDetailsForPackageEnroll[0]?.status === "pending" && CoachDetailsForPackageEnroll[0]?.package_id === props.package_id ? (
-                        <p style={{ color: "green" }}>
-                          Request sent successfully
-                        </p>
-                      ) : CoachDetailsForPackageEnroll[0]?.status === "success" && CoachDetailsForPackageEnroll[0]?.package_id === props.package_id ? (
+                      {CoachDetailsForPackageEnroll.find(
+                        (item) => item.package_id === props.package_id
+                      )?.status === "pending" ? (
+                        <p style={{ color: "orange" }}> Request Pending</p>
+                      ) : CoachDetailsForPackageEnroll.find(
+                          (item) => item.package_id === props.package_id
+                        )?.status === "success" ? (
                         <p style={{ color: "green" }}>Successfully joined</p>
-                      ) : CoachDetailsForPackageEnroll[0]?.status === "rejected" && CoachDetailsForPackageEnroll[0]?.package_id === props.package_id ? (
+                      ) : CoachDetailsForPackageEnroll.find(
+                          (item) => item.package_id === props.package_id
+                        )?.status === "canceled_By_Arcade" ? (
                         <p style={{ color: "red" }}>You are rejected</p>
                       ) : (
                         <Button
@@ -453,7 +458,7 @@ const ArcadePackageUserView = (props: any) => {
                             fontFamily: "kanit",
                             borderColor: "#0E458E",
                           }}
-                          onClick={showModal}
+                          onClick={handleJoinClick}
                           loading={loading}
                         >
                           {userDetails?.role === "COACH"

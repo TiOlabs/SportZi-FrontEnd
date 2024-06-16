@@ -14,6 +14,8 @@ import { AdvancedImage } from "@cloudinary/react";
 import { useArcade } from "../context/Arcade.context";
 import { useCoach } from "../context/coach.context";
 import { useUser } from "../context/userContext";
+import Notification from "./notification";
+import NotificationDot from "./notificationDot";
 
 const Navbar: React.FC = () => {
   const [cloudName] = useState("dle0txcgt");
@@ -452,6 +454,10 @@ const Navbar: React.FC = () => {
                             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                             // .resize(Resize.scale().width(200).height(200))
                           }
+                        />{" "}
+                        <NotificationDot
+                          userType={userDetails.role.toLowerCase()}
+                          id={userDetails?.id}
                         />
                       </Link>
                     )}
@@ -471,6 +477,10 @@ const Navbar: React.FC = () => {
                             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                             // .resize(Resize.scale().width(200).height(200))
                           }
+                        />{" "}
+                        <NotificationDot
+                          userType={managerDetails.role.toLowerCase()}
+                          id={managerDetails?.id}
                         />
                       </Link>
                     )}
@@ -491,6 +501,10 @@ const Navbar: React.FC = () => {
                             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
                             // .resize(Resize.scale().width(200).height(200))
                           }
+                        />{" "}
+                        <NotificationDot
+                          userType={coachDetails.role.toLowerCase()}
+                          id={coachDetails?.id}
                         />
                       </Link>
                     )}
@@ -853,7 +867,9 @@ const Navbar: React.FC = () => {
                       pathname === "/about" ? "#01abf8" : fontColor(),
                     transition: aboutUnderlineStyle.transition,
                   }}
-                ></span>
+                >
+                  {" "}
+                </span>
               </Link>
             </div>
             <div className="navBarUserProfile" style={{ marginTop: "5px" }}>
@@ -883,6 +899,25 @@ const Navbar: React.FC = () => {
                         : cld.image("") // Provide a fallback or default image if necessary
                     }
                   />
+                  {userDetails.role === "PLAYER" && (
+                    <NotificationDot
+                      userType={userDetails.role.toLowerCase()}
+                      id={userDetails?.id}
+                    />
+                  )}
+                  {managerDetails.role === "MANAGER" && (
+                    console.log(managerDetails),
+                    <NotificationDot
+                      userType={managerDetails.role.toLowerCase()}
+                      id={managerDetails?.id}
+                    />
+                  )}
+                  {coachDetails.role === "COACH" && (
+                    <NotificationDot
+                      userType={coachDetails.role.toLowerCase()}
+                      id={coachDetails?.id}
+                    />
+                  )}
                 </a>
               </Popover>
             </div>
