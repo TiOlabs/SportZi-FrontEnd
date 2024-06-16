@@ -1,4 +1,4 @@
-import { Col, Row, Button, Flex, Skeleton } from "antd";
+import { Col, Row, Button, Flex, Skeleton, message } from "antd";
 import "../styles/CoachCard.css";
 import { StarOutlined, StarFilled, StarTwoTone } from "@ant-design/icons";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
@@ -77,28 +77,30 @@ const CoachCard = (props: any) => {
                   fontWeight: "500",
                 }}
               >
-                Rs.{props.rate}
+                LKR {props.rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
-              <Link to="/CoachBookingForm">
-                <Button
-                  type="primary"
-                  size="small"
-                  style={{
-                    fontSize: "10px",
-                    background: "#5587CC",
-                    fontWeight: "400",
-                  }}
-                  onClick={() => {
+              <Button
+                type="primary"
+                size="small"
+                style={{
+                  fontSize: "10px",
+                  background: "#5587CC",
+                  fontWeight: "400",
+                }}
+                onClick={() => {
+                  if (props.role === "PLAYER") {
                     localStorage.setItem("coachId", props.coach_id);
-                    
-                  }}
-                >
-                  Book Coach
-                </Button>
-              </Link>
+                    navigate("/CoachBookingForm");
+                  } else {
+                    message.error("You are not a player");
+                  }
+                }}
+              >
+                Book Coach
+              </Button>
             </div>
           </div>
         </div>

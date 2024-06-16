@@ -3,18 +3,18 @@ import axiosInstance from "../axiosInstance";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
-export const PlayerContext = createContext<any>(null);
+export const ArcadeEditContext = createContext<any>(null);
 
-const PlayerProvider = ({ children }: any) => {
+const ArcadeEditprovider = ({ children }: any) => {
   const [decodedValues, setDecodedValues] = useState<any>();
-  const [userDetails, setUserDetails] = useState<any>({
+  const [arcadeEditDetails, setArcadeEditDetails] = useState<any>({
     id: "",
     firstName: "",
-    lastName: "",
-    user_image: "",
-    coachname: "",
-    discription: "",
-    achivements: "",
+    // lastName: "",
+    // user_image: "",
+    // coachname: "",
+    // discription: "",
+    // achivements: "",
   });
 
   // const navigate = useNavigate();
@@ -27,7 +27,6 @@ const PlayerProvider = ({ children }: any) => {
 
   console.log("decodedValues", decodedValues?.userId);
   const t = decodedValues?.userId;
-  console.log("t", t);
 
   useEffect(() => {
     try {
@@ -35,18 +34,12 @@ const PlayerProvider = ({ children }: any) => {
         if (t) {
           // Check if t is not null
           axiosInstance
-            .get(`${process.env.REACT_APP_API_URL}api/auth/getplayerdetails/${t}`)
+            .get(`/api/auth/getarchadedetails`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
-              setUserDetails({
-                id: res.data.user_id,
-                firstName: res.data.firstname,
-                lastName: res.data.lastname,
-                role: res.data.role,
-                image: res.data.user_image,
-                phoneNumbers: res.data.phone[0].phone_number,
-                discription: res.data.Discription,
-                achivements: res.data.achivements,
+              setArcadeEditDetails({
+                id: res.data.arcade_id,
+                firstName: res.data.arcade_name,
               });
             })
             .catch((err) => {
@@ -61,20 +54,20 @@ const PlayerProvider = ({ children }: any) => {
     }
   }, [t]);
 
-  // console.log("t", t);
+  console.log("t", arcadeEditDetails);
   return (
-    <PlayerContext.Provider value={{ userDetails }}>
+    <ArcadeEditContext.Provider value={{ arcadeEditDetails }}>
       {children}
-    </PlayerContext.Provider>
+    </ArcadeEditContext.Provider>
   );
 };
 
-function usePlayer() {
-  const context = useContext(PlayerContext);
+function useArcadeEdit() {
+  const context = useContext(ArcadeEditContext);
   if (context === undefined) {
     throw new Error("usePlayer must be used within a PlayerProvider");
   }
   return context;
 }
 
-export { PlayerProvider, usePlayer };
+export { ArcadeEditprovider, useArcadeEdit };

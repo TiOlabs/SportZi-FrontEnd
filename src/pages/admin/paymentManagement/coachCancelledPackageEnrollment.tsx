@@ -154,7 +154,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          Rs.{props.rate}
+          LKR {props.rate}
         </div>
       </Col>
       <Col span={8}>

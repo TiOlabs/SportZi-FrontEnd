@@ -37,7 +37,8 @@ const ArcadeProvider = ({ children }: any) => {
             .get(`http://localhost:8000/api/getarcadeDetailsById/${id}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
-              
+              console.log("dataArcede", res.data.arcade);
+
               try {
                 setManagerDetails({
                   id: res.data.manager_id,
@@ -63,7 +64,6 @@ const ArcadeProvider = ({ children }: any) => {
     }
   }, [id]);
   console.log("managerDetails", managerDetails);
-  // console.log("t", t);
   return (
     <ArcadeContext.Provider value={{ managerDetails }}>
       {children}

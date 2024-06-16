@@ -12,6 +12,7 @@ import {
   Row,
   Select,
   Typography,
+  Rate
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -37,7 +38,15 @@ import {
 import axios from "axios";
 import { Option } from "antd/es/mentions";
 import ReportGenarationForCoach from "../../components/reportGenarationForCoach";
+import CoachEdit from "../../components/coachEdit";
 
+import Notification from "../../components/notification";
+import { CoachFeedback } from "../../types";
+
+interface AvailableTime {
+  day: string;
+  time: string;
+}
 const RequestedMeetings = [<CoachReqestList />];
 
 const CoachProfile = () => {
@@ -56,9 +65,7 @@ const CoachProfile = () => {
     CoachAssignDetails[]
   >([]);
   const { coachDetails } = useContext(CoachContext);
-  console.log("coachDetails", coachDetails);
   const coach_id = coachDetails?.id;
-  console.log("coach_id", coach_id);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -75,15 +82,11 @@ const CoachProfile = () => {
       )
       .then((res) => {
         setDetails(res.data);
-        console.log("responsedataaaa", res.data);
       })
       .catch((err) => {
         console.log("errorrrrrrrrrrrrrrrr", err);
       });
   }, [coachDetails?.id]);
-  useEffect(() => {
-    console.log("coach detailsssss", Details);
-  }, [Details]);
 
   // useEffect(() => {
   //   axios
@@ -244,6 +247,108 @@ const CoachProfile = () => {
     }
     return true;
   });
+  const [firstname, setFirstName] = useState<any>();
+  const [lastname, setLastName] = useState<any>();
+  const [discription, setDiscription] = useState<any>();
+  const [profileImage, setProfileImage] = useState<any[]>([]);
+  const [AvailableTimes, setAvailableTimes] = useState<any>();
+  const [qulifications, setQulifications] = useState<any>();
+  const [expertice, setExpertice] = useState<any>();
+  useEffect(() => {
+    if (Details) {
+      setFirstName(Details?.firstname);
+      setLastName(Details?.lastname);
+      setDiscription(Details?.Discription);
+      setAvailableTimes(Details?.Coach?.availability);
+      setExpertice(Details?.Coach?.sport?.sport_name);
+      console.log(Details);
+      const achiv = Details?.achivement;
+      if (achiv) {
+        let achiveArr: string[] = [];
+        achiv.map((item: any) => {
+          achiveArr.push(item.achivement_details as string);
+        });
+        console.log(achiveArr);
+        let achivArrString = achiveArr.join(",");
+        setQulifications(achivArrString);
+      }
+    }
+  }, [Details]);
+  useEffect(() => {
+    setLastName(coachDetails?.lastname);
+  }, []);
+  console.log(lastname);
+  const QulificationsGetToArry = (qulifications: string) => {
+    if (qulifications) {
+      return qulifications.split(",");
+    }
+    return [];
+  };
+  let groupedByDay: { [key: string]: string[] } = {};
+  if (AvailableTimes) {
+    groupedByDay = AvailableTimes.reduce(
+      (acc: { [key: string]: string[] }, { day, time }: AvailableTime) => {
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+        acc[day].push(time);
+        return acc;
+      },
+      {} as { [key: string]: string[] }
+    );
+  }
+
+
+  //for display reviews
+  const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getcoachfeedbacks/${coachId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, [coachId]);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbycoachId/${coachId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [coachId]);
+
 
   return (
     <>
@@ -252,6 +357,7 @@ const CoachProfile = () => {
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
+
       <Row>
         <Col
           xs={24}
@@ -340,7 +446,8 @@ const CoachProfile = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {Details?.Discription}
+                {discription}
+                {qulifications}
               </Typography>
             </Col>
           </Row>
@@ -365,15 +472,41 @@ const CoachProfile = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
-            <div>
+            <div
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                width: "80%",
+                display: "flex",
+                justifyContent: "flex-end",
+                flexDirection: "row",
+              }}
+            >
+              {" "}
+              <CoachEdit
+                firstname={firstname}
+                setFirstname={setFirstName}
+                lastName={lastname}
+                setLastName={setLastName}
+                discription={discription}
+                setDiscription={setDiscription}
+                setQulifications={setQulifications}
+                qulifications={qulifications}
+                expertice={expertice}
+                setExpertice={setExpertice}
+                coachId={coachDetails?.id}
+              />
+            </div>
+
+{/* <!--             <div>
               <h1
                 style={{
+                  zIndex: "999",
                   color: "#000",
                   fontSize: "32px",
                   fontStyle: "capitalize",
@@ -383,8 +516,36 @@ const CoachProfile = () => {
                   marginBottom: "0px",
                 }}
               >
-                {Details?.firstname} {Details?.lastname}
-              </h1>
+                {firstname} {lastname}
+              </h1> --> */}
+
+            {" "}
+            <div>
+              <Row>
+                <Col>
+                  <h1
+                    style={{
+                      color: "#000",
+                      fontSize: "32px",
+                      fontStyle: "capitalize",
+                      fontWeight: "500",
+                      fontFamily: "kanit",
+                      lineHeight: "normal",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    {Details?.firstname} {Details?.lastname}
+                  </h1>
+                </Col>
+                <Col span={1}></Col>
+                <Col>
+                  <h1>
+                    <Notification userType="coach" id={coachDetails?.id} />
+                  </h1>
+                </Col>
+              </Row>
+
+
               <p
                 style={{
                   margin: "0px",
@@ -397,7 +558,7 @@ const CoachProfile = () => {
                   lineHeight: "normal",
                 }}
               >
-                First class rugby coach
+                First class {Details?.Coach?.sport?.sport_name} coach
               </p>
             </div>
             <div
@@ -420,7 +581,7 @@ const CoachProfile = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -455,11 +616,25 @@ const CoachProfile = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
                     </div>
                     <p
                       style={{
@@ -473,13 +648,12 @@ const CoachProfile = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      ({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
               </Row>
             </div>
-
             <Typography
               style={{
                 color: "#000",
@@ -494,17 +668,16 @@ const CoachProfile = () => {
             >
               Qlifications
             </Typography>
-
             <List
               style={{
                 padding: "0px",
                 fontWeight: "200",
                 color: "#000",
                 fontFamily: "kanit",
-                lineHeight: "1",
+                lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
+              dataSource={QulificationsGetToArry(qulifications)}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -541,7 +714,6 @@ const CoachProfile = () => {
                 </List.Item>
               )}
             />
-
             <Typography
               style={{
                 color: "#000",
@@ -556,7 +728,6 @@ const CoachProfile = () => {
             >
               Expertise
             </Typography>
-
             <List
               style={{
                 padding: "0px",
@@ -566,43 +737,39 @@ const CoachProfile = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "none",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  {Details?.Coach?.sport?.sport_name}
+                </div>
+              </List.Item>
+            </List>
             <Typography
               style={{
                 color: "#000",
@@ -626,7 +793,7 @@ const CoachProfile = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={["physical"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -677,52 +844,68 @@ const CoachProfile = () => {
             >
               Available Times
             </Typography>
-            <List
+            <div
               style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
               }}
-              itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              {Object.keys(groupedByDay).map((day) => (
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
+                    flexDirection: "row",
+                    width: "100%",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
+                  key={day}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: lg ? "24px" : "18px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                      width: "1%",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
+                    &#8226;
+                  </span>
+                  <Typography
+                    style={{
+                      color: "#000",
+                      fontFamily: "kanit",
+                      width: "30%",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "normal",
+                      marginTop: "5px",
+                      fontSize: lg ? "24px" : "18px",
+                    }}
+                  >
+                    {day}
+                  </Typography>
+                  <div
+                    style={{
+                      marginTop: "5px",
+                      fontSize: lg ? "18px" : "14px",
+                      fontFamily: "kanit",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "40%",
+                      fontWeight: "300",
+                      justifyContent: "flex-start",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    {groupedByDay[day].map((time, index) => (
+                      <div key={index}>{time}</div>
+                    ))}
                   </div>
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </div>
           </div>
         </Col>
       </Row>
@@ -1074,6 +1257,9 @@ const CoachProfile = () => {
               arcade_name={booking.arcade.arcade_name}
               status={booking.status}
               full_amount={booking.full_amount}
+              player_id={booking.player_id}
+              arcade_id={booking.arcade_id}
+              coach_id={booking.coach_id}
             />
           ))
         ) : (
@@ -1356,6 +1542,8 @@ const CoachProfile = () => {
         )}
       </Row>
 
+
+{/* Reviews */}
       <Row
         style={{
           minWidth: "100%",
@@ -1390,7 +1578,9 @@ const CoachProfile = () => {
           >
             Reviews
           </Typography>
-          <Row
+
+
+          {/* <Row
             style={{
               display: "flex",
               justifyContent: "center",
@@ -1495,9 +1685,58 @@ const CoachProfile = () => {
               {" "}
               <ReviewCard />
             </Col>
+          </Row> */}
+
+<Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
+
         </Col>
       </Row>
+
+
       <Row
         style={{
           width: "100%",

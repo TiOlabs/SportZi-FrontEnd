@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { SearchProps } from "antd/es/input";
+
 const CoachArcadeCancel = () => {
   const [ArcadeBookingDetails, setArcadeBookingDetails] = useState<
     ZoneBookingDetails[]
@@ -22,34 +23,6 @@ const CoachArcadeCancel = () => {
   const [filteredArcadeCanceled, setFilteredArcadeCanceled] = useState<
     ZoneBookingDetails[]
   >([]);
-  // useEffect(() => {
-  //   try {
-  //     const fetchData = async () => {
-  //       const res = await axios.get(
-  //         "http://localhost:8000/api/getarcadebookings"
-  //       );
-  //       const data = await res.data;
-  //       setArcadeBookingDetails(data);
-  //       console.log(data);
-
-  //       // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
-
-  //       const playerCanceledBookings = data.filter(
-  //         (arcadeBooking: ZoneBookingDetails) =>
-  //           arcadeBooking.status === "canceled_By_Arcade" &&
-  //           arcadeBooking.booking_type === "zone"
-  //       );
-  //       console.log(playerCanceledBookings);
-
-  //       setCanceledByArcade(playerCanceledBookings);
-  //       setArcadeCanceled(playerCanceledBookings);
-  //       setLoading(false);
-  //     };
-  //     fetchData();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,7 +60,20 @@ const CoachArcadeCancel = () => {
         );
 
         setArcadeCanceled(sortedBookings);
-        setArcadeCanceled(sortedBookings);
+        // Set initial filtered data for value 1
+        setFilteredArcadeCanceled(
+          sortedBookings.filter((coachBooking: ZoneBookingDetails) => {
+            const canceledTime = new Date(
+              coachBooking.canceled_at as string
+            ).getTime();
+            const createdTime = new Date(
+              coachBooking.created_at as string
+            ).getTime();
+            const timeDifference = canceledTime - createdTime;
+            const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+            return timeDifference < twentyFourHoursInMillis;
+          })
+        );
         setLoading(false);
       } catch (e) {
         console.log(e);
@@ -102,6 +88,7 @@ const CoachArcadeCancel = () => {
   };
 
   const onChange = (e: RadioChangeEvent) => {
+    console.log(value);
     const newValue = e.target.value;
     console.log(newValue);
     setValue(newValue);
@@ -140,12 +127,9 @@ const CoachArcadeCancel = () => {
   };
 
   useEffect(() => {
-    // Add initial data load or fetch logic here if needed
-    // Example: setArcadeCanceled(initialData);
-
-    // Debug: Log changes in filteredArcadeCanceled
     console.log("Filtered Data:", filteredArcadeCanceled);
   }, [filteredArcadeCanceled]);
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -167,7 +151,7 @@ const CoachArcadeCancel = () => {
       <Row style={{ marginTop: "20px" }}>
         <Col>
           {" "}
-          <Radio.Group onChange={onChange} value={value} >
+          <Radio.Group onChange={onChange} value={value}>
             <Radio value={1}>Before 24 hours</Radio>
             <Radio value={2}>After 24 hours</Radio>
           </Radio.Group>
@@ -178,7 +162,7 @@ const CoachArcadeCancel = () => {
         {filteredArcadeCanceled.map(
           (ZoneBookingDetails: ZoneBookingDetails) => (
             <DataRow
-              booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+              booking_id={ZoneBookingDetails.zone_booking_id}
               booked_Arena={ZoneBookingDetails.zone.zone_name}
               booked_by={ZoneBookingDetails.user.firstname}
               rate={
@@ -239,11 +223,7 @@ function DataRow(props: any) {
             width: "80px",
             height: "80px",
           }}
-          cldImg={
-            cld.image(props?.zone_image)
-            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-            // .resize(Resize.scale().width(200).height(200))
-          }
+          cldImg={cld.image(props?.zone_image)}
         />
         <div
           style={{
@@ -270,7 +250,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          Rs.{props.rate}
+          LKR {props.rate}
         </div>
       </Col>
       <Col span={8}>
@@ -282,11 +262,7 @@ function DataRow(props: any) {
               width: "80px",
               height: "80px",
             }}
-            cldImg={
-              cld.image(props?.image)
-              // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-              // .resize(Resize.scale().width(200).height(200))
-            }
+            cldImg={cld.image(props?.image)}
           />
         </Link>
         <div

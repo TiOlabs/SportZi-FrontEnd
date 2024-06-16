@@ -24,9 +24,8 @@ const arcadePackageCoachEnrollAccept = (props: any) => {
   const handleClose = async () => {
     setIsModalOpen(false);
   };
-console.log(props);
+  console.log(props);
   const handleCancel = async () => {
-
     try {
         const response = await axios.put(
           `${process.env.REACT_APP_API_URL}api/updatePackageEnrollmentCoachDetails/${props.coach_id}/${props.package_id}`,
@@ -42,6 +41,7 @@ console.log(props);
         console.log("error");
         console.log(error);
       }
+
   };
 
   const showDeleteConfirm = async () => {
@@ -52,6 +52,7 @@ console.log(props);
           status: "rejected",
         }
       );
+
 
       setIsModalOpen(false);
       window.location.reload();
@@ -96,9 +97,7 @@ console.log(props);
                   marginRight: "10px",
                   backgroundSize: "cover",
                 }}
-                cldImg={
-                  cld.image(props.coach_image)
-                }
+                cldImg={cld.image(props.coach_image)}
               />
             </Col>
             <Col
@@ -117,7 +116,7 @@ console.log(props);
               lg={12}
               xl={12}
             >
-                Coach:- {props.coach_name}
+              Coach:- {props.coach_name}
             </Col>
           </Row>
         </Col>
@@ -137,7 +136,6 @@ console.log(props);
           lg={6}
           xl={6}
         >
-          
           Package Name:- {props.package_name}
         </Col>
         <Col
@@ -186,7 +184,7 @@ console.log(props);
               }}
               onClick={showEnrollConfirm}
             >
-                Enrollment Update
+              Enrollment Update
             </Button>
           </Col>
           ): null}
@@ -358,6 +356,7 @@ console.log(props);
           For:- {props.duration} months
         </Col>
 
+
         <Col
           style={{
             color: "red",
@@ -381,6 +380,7 @@ console.log(props);
     </Modal>
     ): null}
       
+
     </>
   );
 };

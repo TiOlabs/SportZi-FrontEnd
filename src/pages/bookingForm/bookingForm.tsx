@@ -26,6 +26,8 @@ import dayjs from "dayjs";
 import { count } from "console";
 import { max } from "moment";
 import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
+import PaymentModalForZoneBooking from "../../components/paymentCheckOutForZoneBooking";
+import axiosInstance from "../../axiosInstance";
 
 const { Option } = Select;
 
@@ -84,19 +86,20 @@ const BookingForm = () => {
 
   console.log(userId);
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const resPaymentDetails = await fetch(
+    const fetchData = async () => {
+      try {
+        const resPaymentDetails = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}api/getuser/${userId}`
         );
-        const paymentDetailsData = await resPaymentDetails.json();
+        const paymentDetailsData = resPaymentDetails.data;
         console.log(paymentDetailsData);
         setPaymentDetails(paymentDetailsData);
-      };
-      fetchData();
-    } catch (e) {
-      console.log("errrr", e);
-    }
+      } catch (e) {
+        console.log("errrr", e);
+      }
+    };
+
+    fetchData();
   }, [userId]);
   console.log(date);
   useEffect(() => {
@@ -481,6 +484,7 @@ const BookingForm = () => {
     day: React.SetStateAction<null>
     // Change the type to string
   ) => {
+    setTime("");
     setSelectedDate(date);
     setDate(date as unknown as string);
     setSelectedDay(day);
@@ -523,6 +527,38 @@ const BookingForm = () => {
     return isWithin;
   };
 
+  const isZoneTime = (buttonId: string, zoneTime: string) => {
+    const [start, end] = zoneTime.split("-");
+    const [buttonStart, buttonEnd] = buttonId.split("-");
+
+    // Convert times to minutes for easier comparison
+    const timeToMinutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    const buttonStartMinutes = timeToMinutes(buttonStart);
+    const buttonEndMinutes = timeToMinutes(buttonEnd);
+
+    // Check if button time is within the zone time
+    const isWithin =
+      buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+
+    // Check for special case: add half-hour slots if needed
+    if (!isWithin) {
+      if (
+        buttonStartMinutes === startMinutes - 30 ||
+        buttonEndMinutes === endMinutes + 30
+      ) {
+        return true;
+      }
+    }
+
+    return isWithin;
+  };
+
   const isPackageDayAndTime = (buttonId: string) => {
     if (!selectedDay || !packageDetails || !packageDetails.package || !buttonId)
       return false;
@@ -538,6 +574,33 @@ const BookingForm = () => {
     );
   };
 
+  const isZoneRejectDay = (buttonId: string) => {
+    if (
+      !selectedDay ||
+      !zoneDetails ||
+      !zoneDetails.zoneRejectDayAndTime ||
+      !buttonId
+    )
+      return false;
+
+    return zoneDetails.zoneRejectDayAndTime.some(
+      (zoneday) =>
+        zoneday.day === selectedDay &&
+        isZoneTime(buttonId, zoneday.time as string)
+    );
+  };
+
+  const isZoneRejectDate = (buttonId: string) => {
+    if (!selectedDate || !zoneDetails || !zoneDetails.zoneRejectDateAndTime)
+      return false;
+
+    return zoneDetails.zoneRejectDateAndTime.some(
+      (zonedate) =>
+        zonedate.date === selectedDate &&
+        isZoneTime(buttonId, zonedate.time as string)
+    );
+  };
+  console.log(paymentDetails);
   return (
     <>
       <NavbarProfile />
@@ -593,7 +656,10 @@ const BookingForm = () => {
                   >
                     <Select
                       placeholder="Reservation Type"
-                      onChange={(value) => setZone(value)}
+                      onChange={(value) => {
+                        setZone(value);
+                        setTime("");
+                      }}
                       allowClear
                       style={{
                         height: "50px",
@@ -651,12 +717,7 @@ const BookingForm = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
-                      max={
-                        Number(capacity) -
-                        (timeParticipantCounts1.find(
-                          (item) => item.time === time
-                        )?.totalParticipantCount || 0)
-                      }
+                   
                       onChange={(value) => setPcount(value?.toString() || "")}
                     />
                   </Form.Item>
@@ -664,7 +725,10 @@ const BookingForm = () => {
               </div>
             </Col>
             <Col
-              style={{ display: "flex", justifyContent: "center" }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
               xs={24}
               lg={14}
             >
@@ -675,6 +739,7 @@ const BookingForm = () => {
                   width: "90%",
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 {/* <Form.Item
@@ -682,98 +747,117 @@ const BookingForm = () => {
                 label="time Slot"
                 rules={[{ required: true }]}
               > */}
-                <Form.Item
-                  name="Time Slot"
+                <div
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    rowGap: "20px",
-                    width: "80%",
                     marginTop: "20px",
+                    overflowY: "scroll",
+                    maxHeight: "800px",
+                    display: "flex",
                     justifyContent: "center",
-                    alignItems: "center",
-                    alignSelf: "center",
-                    overflowY: "auto", // Enable vertical scrolling
-                    maxHeight: "800px", // Set a maximum height for the container
+                    width: "100%",
                   }}
                 >
-                  {buttonData.map((button) => {
-                    const isFullyBooked =
-                      bookingDate.find(
-                        (booking) =>
-                          booking.time === button.id &&
-                          booking.way_of_booking === "full"
-                      ) !== undefined ||
-                      timeParticipantCounts1.find(
-                        (item) => item.time === button.id
-                      )?.totalParticipantCount === capacity;
+                  <Form.Item
+                    name="Time Slot"
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      rowGap: "20px",
+                      width: "80%",
 
-                    const isBookedSuccessfully = bookingDate.find(
-                      (booking) =>
-                        booking.time === button.id &&
-                        booking.way_of_booking === "full" &&
-                        booking.status === "success"
-                    );
-
-                    const isPackageTime = isPackageDayAndTime(button.id);
-
-                    const buttonBackgroundColor = isBookedSuccessfully
-                      ? "#0F70AE"
-                      : button.id === time
-                      ? "#1677FF"
-                      : isPackageTime
-                      ? "red"
-                      : "white";
-
-                    const gradientBackground = isFullyBooked
-                      ? "none"
-                      : bookingDate.find(
+                      // Set a maximum height for the container
+                    }}
+                  >
+                    {buttonData.map((button) => {
+                      const isFullyBooked =
+                        bookingDate.find(
                           (booking) =>
                             booking.time === button.id &&
-                            booking.status === "success"
-                        )
-                      ? `linear-gradient(to right, #0F70AE ${
-                          ((timeParticipantCounts1.find(
-                            (item) => item.time === button.id
-                          )?.totalParticipantCount || 0) /
-                            Number(capacity)) *
-                          100
-                        }%, ${button.id === time ? "#1677FF" : "white"} 0%)`
-                      : "none";
+                            booking.way_of_booking === "full"
+                        ) !== undefined ||
+                        timeParticipantCounts1.find(
+                          (item) => item.time === button.id
+                        )?.totalParticipantCount === capacity;
 
-                    const isDisabled =
-                      isFullyBooked ||
-                      isPackageTime ||
-                      zone === "" ||
-                      (zone === "full" &&
-                        bookingDate.find(
-                          (booking) => booking.time === button.id
-                        ));
+                      const isBookedSuccessfully = bookingDate.find(
+                        (booking) =>
+                          booking.time === button.id &&
+                          booking.way_of_booking === "full" &&
+                          booking.status === "success"
+                      );
 
-                    return (
-                      <button
-                        disabled={isDisabled as boolean} // Update the type of isDisabled to boolean
-                        key={button.id}
-                        id={button.id.toString()}
-                        type="button"
-                        onClick={() => setTime(button.id)}
-                        style={{
-                          width: "100%",
-                          padding: "5%",
-                          backgroundColor: buttonBackgroundColor,
-                          backgroundImage: gradientBackground,
-                        }}
-                      >
-                        {isBookedSuccessfully || isFullyBooked
-                          ? "Fully Booked"
-                          : isPackageTime
-                          ? `${button.time.toString()} - Has Package`
-                          : button.time.toString()}
-                      </button>
-                    );
-                  })}
-                </Form.Item>
-                ; ;{/* ${button.time} */}
+                      const isPackageTime = isPackageDayAndTime(button.id);
+                      const isZoneRejectDayTime = isZoneRejectDay(button.id);
+                      const isZoneRejectDateTime = isZoneRejectDate(button.id);
+
+                      const buttonBackgroundColor = isBookedSuccessfully
+                        ? "#0F70AE"
+                        : button.id === time
+                        ? "#1677FF"
+                        : isPackageTime
+                        ? "red"
+                        : isZoneRejectDayTime
+                        ? "#0F70AE"
+                        : isZoneRejectDateTime
+                        ? "#0F70AE"
+                        : "white";
+
+                      const gradientBackground = isFullyBooked
+                        ? "none"
+                        : bookingDate.find(
+                            (booking) =>
+                              booking.time === button.id &&
+                              booking.status === "success"
+                          )
+                        ? `linear-gradient(to right, #0F70AE ${
+                            ((timeParticipantCounts1.find(
+                              (item) => item.time === button.id
+                            )?.totalParticipantCount || 0) /
+                              Number(capacity)) *
+                            100
+                          }%, ${button.id === time ? "#1677FF" : "white"} 0%)`
+                        : "none";
+
+                      const isDisabled =
+                        isFullyBooked ||
+                        isPackageTime ||
+                        isZoneRejectDayTime ||
+                        isZoneRejectDateTime ||
+                        zone === "" ||
+                        (zone === "full" &&
+                          bookingDate.find(
+                            (booking) => booking.time === button.id
+                          ));
+
+                      return (
+                        <button
+                          disabled={isDisabled as boolean} // Update the type of isDisabled to boolean
+                          key={button.id}
+                          id={button.id.toString()}
+                          type="button"
+                          onClick={() => setTime(button.id)}
+                          style={{
+                            width: "100%",
+                            padding: "5%",
+                            backgroundColor: buttonBackgroundColor,
+                            backgroundImage: gradientBackground,
+                          }}
+                        >
+                          {isBookedSuccessfully || isFullyBooked
+                            ? "Fully Booked"
+                            : isPackageTime
+                            ? `${button.time.toString()} - Has Package`
+                            : isZoneRejectDayTime
+                            ? `${button.time.toString()} - Zone Closed`
+                            : isZoneRejectDateTime
+                            ? `${button.time.toString()} - Zone Closed`
+                            : button.time.toString()}
+                        </button>
+                      );
+                    })}
+                  </Form.Item>
+                </div>
+                {/* ${button.time} */}
                 {/* </Form.Item> */}
               </div>
             </Col>
@@ -819,7 +903,7 @@ const BookingForm = () => {
               >
                 {contextHolder}
 
-                <PaymentModal
+                <PaymentModalForZoneBooking
                   htmlType="submit"
                   item={"Zone Booking"}
                   orderId={5}
@@ -828,7 +912,7 @@ const BookingForm = () => {
                   first_name={paymentDetails?.firstname}
                   last_name={paymentDetails?.lastname}
                   email={paymentDetails?.email}
-                  phone={paymentDetails?.Phone}
+                  phone={paymentDetails?.email}
                   address={paymentDetails?.address}
                   city={paymentDetails?.city}
                   country={paymentDetails?.country}
@@ -837,6 +921,7 @@ const BookingForm = () => {
                   pcount={pcount}
                   userId={userId}
                   zoneId={zoneId}
+                  arcadeId={zoneDetails?.arcade.arcade_id}
                   reservation_type={zone}
                   avaiableParticipantCount={
                     Number(capacity) -
@@ -847,7 +932,6 @@ const BookingForm = () => {
                   arcade_name={zoneDetails?.arcade.arcade_name}
                   role={paymentDetails?.role}
                   zone_name={zoneDetails?.zone_name}
-
                 />
               </div>
             </Col>

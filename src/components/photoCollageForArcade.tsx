@@ -1,6 +1,6 @@
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
-import { Col, Row, Empty } from "antd";
+import { Col, Row, Empty, Dropdown, Menu } from "antd";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
@@ -8,9 +8,11 @@ import { PlayerContext } from "../context/player.context";
 import { ArcadeContext } from "../context/Arcade.context";
 import { CoachContext } from "../context/coach.context";
 import { UserContext } from "../context/userContext";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const PhotoCollageForArcade = (props: any) => {
-  const [userPhotos, setUserPhotos] = useState([]);
+  const [userPhotos, setUserPhotos] = useState<any[]>([]);
+  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   // const { managerDetails } = useContext(ArcadeContext);
   // const { coachDetails } = useContext(CoachContext);
   // useEffect(() => {
@@ -69,16 +71,63 @@ const PhotoCollageForArcade = (props: any) => {
       cloudName,
     },
   });
-
+  const handleMenuClick = (e: any, index: number) => {
+    // Specify type for index parameter
+    if (e.key === "delete") {
+      // Implement delete functionality here
+      console.log("Delete photo", userPhotos[index]);
+      try {
+        const res = axios.delete(
+          `${process.env.REACT_APP_API_URL}api/deleteArcadePhoto`,
+          {
+            data: {
+              user_id: userPhotos[index].arcade_id,
+              image: userPhotos[index].image,
+            },
+          }
+        );
+        console.log(res);
+        window.location.reload();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+  const getMenu = (index: number) => (
+    <Menu onClick={(e) => handleMenuClick(e, index)}>
+      <Menu.Item key="delete">Delete</Menu.Item>
+    </Menu>
+  );
   // Check if userPhotos is defined before using slice
   const items = userPhotos ? (
-    Array.from({ length: 1 }).map((_, index) =>
-      userPhotos.slice(0, 8).map(
-        (photo: any, photoIndex: number) => (
-          console.log(photo.image),
-          (
+    userPhotos.slice(0, 8).map(
+      (photo: any, index: number) => (
+        console.log(photo.image),
+        (
+          <div key={index} style={{ position: "relative" }}>
+            <Dropdown
+              overlay={getMenu(index)}
+              trigger={["click"]}
+              visible={openMenuIndex === index}
+              onVisibleChange={(visible) =>
+                setOpenMenuIndex(visible ? index : null)
+              }
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 5,
+                  right: 5,
+                  cursor: "pointer",
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Replace this with your three-dot icon */}
+                <DeleteOutlined />
+              </span>
+            </Dropdown>
             <AdvancedImage
-              key={photoIndex}
+              key={index}
               style={{
                 width: "100%",
                 height: "100%",
@@ -87,7 +136,7 @@ const PhotoCollageForArcade = (props: any) => {
               }}
               cldImg={cld.image(photo.image)}
             />
-          )
+          </div>
         )
       )
     )

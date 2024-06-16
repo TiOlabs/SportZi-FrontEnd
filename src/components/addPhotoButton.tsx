@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Modal, Upload, Button, Row, Col } from "antd";
+import { Modal, Upload, Button, Row, Col, message } from "antd";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
 import React, { useContext, useEffect, useState } from "react";
@@ -25,6 +25,7 @@ const AddPhotoButton = () => {
   const { ArcadeId } = useParams();
   console.log(ArcadeId);
   const { userDetails } = useContext(UserContext);
+  console.log(userDetails);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -106,6 +107,8 @@ const AddPhotoButton = () => {
             user_id: userDetails.id,
           }
         );
+        message.success("Photo uploaded successfully");
+        window.location.reload();
       } catch (e) {
         console.log(e);
       }
@@ -122,6 +125,8 @@ const AddPhotoButton = () => {
             arcade_id: ArcadeId,
           }
         );
+        message.success("Photo uploaded successfully");
+        window.location.reload();
       } catch (e) {
         console.log(e);
       }

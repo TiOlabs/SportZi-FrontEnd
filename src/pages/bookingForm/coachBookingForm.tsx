@@ -36,6 +36,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import NavbarProfile from "../../components/NavBarProfile";
 import { useUser } from "../../context/userContext";
+import axiosInstance from "../../axiosInstance";
 const { Option } = Select;
 
 const CoachBookingForm: React.FC = () => {
@@ -76,8 +77,6 @@ const CoachBookingForm: React.FC = () => {
     CoachEnrollDetailsForPackages[]
   >([]);
 
-
-
   const currentCoachId = useRef(coachId);
 
   const handleDateChange = (datee: any) => {
@@ -94,6 +93,7 @@ const CoachBookingForm: React.FC = () => {
       weekday: "long",
     }).format(datee);
     console.log(day);
+    setTime("");
     setDayOfWeek(day);
   };
 
@@ -113,21 +113,20 @@ const CoachBookingForm: React.FC = () => {
     }
   }, [coachId]);
 
-
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const resPaymentDetails = await fetch(
+    const fetchData = async () => {
+      try {
+        const resPaymentDetails = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}api/getuser/${userDetails.id}`
         );
-        const paymentDetailsData = await resPaymentDetails.json();
+        const paymentDetailsData = resPaymentDetails.data;
         console.log(paymentDetailsData);
         setUserData(paymentDetailsData);
-      };
-      fetchData();
-    } catch (e) {
-      console.log("errrr", e);
-    }
+      } catch (e) {
+        console.log("errrr", e);
+      }
+    };
+    fetchData();
   }, [userDetails]);
 
   useEffect(() => {
@@ -157,11 +156,13 @@ const CoachBookingForm: React.FC = () => {
 
   useEffect(() => {
     console.log(coachId);
+    let formattedCoachId = coachId.replace(":", "");
+    console.log(formattedCoachId);
     const fetchData = async () => {
       currentCoachId.current = coachId;
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getcoache/${coachId}`
+          `${process.env.REACT_APP_API_URL}api/getcoache/${formattedCoachId}`
         );
         const data = await res.json();
         console.log(data);
@@ -441,16 +442,51 @@ const CoachBookingForm: React.FC = () => {
     zoneDetails?.full_zone_rate === 0 &&
     reservationType === "person_by_person"
   ) {
-    fullAmount = Number(zonerate) * Number(pcount);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zonerate) * Number(pcount);
+    } else {
+      fullAmount =
+        Number(zonerate) * Number(pcount) -
+        (Number(zonerate) *
+          Number(pcount) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   } else if (zoneDetails?.full_zone_rate === 0 && reservationType === "full") {
-    fullAmount = Number(zonerate) * Number(zoneDetails.capacity);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zonerate) * Number(zoneDetails.capacity);
+    } else {
+      fullAmount =
+        Number(zonerate) * Number(zoneDetails.capacity) -
+        (Number(zonerate) *
+          Number(zoneDetails.capacity) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   } else if (
     zoneDetails?.full_zone_rate !== 0 &&
     reservationType === "person_by_person"
   ) {
-    fullAmount = Number(zonerate) * Number(pcount);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zonerate) * Number(pcount);
+    } else {
+      fullAmount =
+        Number(zonerate) * Number(pcount) -
+        (Number(zonerate) *
+          Number(pcount) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   } else if (zoneDetails?.full_zone_rate !== 0 && reservationType === "full") {
-    fullAmount = Number(zoneDetails?.full_zone_rate);
+    if (zoneDetails?.discount.discount_percentage === null) {
+      fullAmount = Number(zoneDetails?.full_zone_rate);
+    } else {
+      fullAmount =
+        Number(zoneDetails?.full_zone_rate) -
+        (Number(zoneDetails?.full_zone_rate) *
+          Number(zoneDetails?.discount.discount_percentage)) /
+          100;
+    }
   }
   let finalAmaount = Number(fullAmount) + coachAmount * timeStep;
 
@@ -533,6 +569,38 @@ const CoachBookingForm: React.FC = () => {
     return isWithin;
   };
 
+  const isZoneTime = (buttonTime: string, zoneTime: string) => {
+    const [start, end] = zoneTime.split("-");
+    const [buttonStart, buttonEnd] = buttonTime.split("-");
+
+    // Convert times to minutes for easier comparison
+    const timeToMinutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    const buttonStartMinutes = timeToMinutes(buttonStart);
+    const buttonEndMinutes = timeToMinutes(buttonEnd);
+
+    // Check if button time is within the zone time
+    const isWithin =
+      buttonStartMinutes >= startMinutes && buttonEndMinutes <= endMinutes;
+
+    // Check for special case: add half-hour slots if needed
+    if (!isWithin) {
+      if (
+        buttonStartMinutes === startMinutes - 30 ||
+        buttonEndMinutes === endMinutes + 30
+      ) {
+        return true;
+      }
+    }
+
+    return isWithin;
+  };
+
   const isPackageDayAndTime = (buttonId: string) => {
     if (!dayOfWeek || !packageDetails || !packageDetails.package || !buttonId)
       return false;
@@ -545,6 +613,37 @@ const CoachBookingForm: React.FC = () => {
           (pdt) =>
             pdt.day === dayOfWeek && isWithinPackageTime(buttonId, pdt.time)
         )
+    );
+  };
+
+  const isZoneRejectDay = (buttonId: string) => {
+    if (
+      !dayOfWeek ||
+      !zoneDetails ||
+      !zoneDetails.zoneRejectDayAndTime ||
+      !buttonId
+    )
+      return false;
+
+    return zoneDetails.zoneRejectDayAndTime.some(
+      (zoneday) =>
+        zoneday.day === dayOfWeek &&
+        isZoneTime(buttonId, zoneday.time as string)
+    );
+  };
+
+  const isZoneRejectDate = (buttonId: string) => {
+    if (
+      !datee ||
+      !zoneDetails ||
+      !zoneDetails.zoneRejectDateAndTime ||
+      !buttonId
+    )
+      return false;
+
+    return zoneDetails.zoneRejectDateAndTime.some(
+      (zoneday) =>
+        zoneday.date === datee && isZoneTime(buttonId, zoneday.time as string)
     );
   };
 
@@ -562,7 +661,8 @@ const CoachBookingForm: React.FC = () => {
         )
     );
   };
-
+  console.log(packageEnrollDataForCoach);
+  console.log(isCoachInthePackage);
 
   return (
     <>
@@ -812,7 +912,7 @@ const CoachBookingForm: React.FC = () => {
                                 coachBookings.find(
                                   (item) =>
                                     item.date === datee &&
-                                    item.zone_id === zone &&
+                                    // item.zone_id === zone &&
                                     item.coach_id === coachId &&
                                     item.time ===
                                       `${slot.startTime}-${slot.endTime}` &&
@@ -833,9 +933,14 @@ const CoachBookingForm: React.FC = () => {
                                 isPackageDayAndTime(
                                   `${slot.startTime}-${slot.endTime}`
                                 ) ||
+                                isZoneRejectDay(
+                                  `${slot.startTime}-${slot.endTime}`
+                                ) ||
+                                isZoneRejectDate(
+                                  `${slot.startTime}-${slot.endTime}`
+                                ) ||
                                 isCoachInthePackage(
                                   `${slot.startTime}-${slot.endTime}`
-
                                 )
                               }
                               style={{
@@ -884,7 +989,6 @@ const CoachBookingForm: React.FC = () => {
                                     : coachBookings.some(
                                         (item) =>
                                           item.date === datee &&
-                                          item.zone_id === zone &&
                                           item.coach_id === coachId &&
                                           item.time ===
                                             `${slot.startTime}-${slot.endTime}` &&
@@ -893,7 +997,6 @@ const CoachBookingForm: React.FC = () => {
                                       bookingDate.find((item) => {
                                         return (
                                           item.date === datee &&
-                                          item.zone.zone_id === zone &&
                                           item.way_of_booking === "full" &&
                                           item.time ===
                                             `${slot.startTime}-${slot.endTime}` &&
@@ -905,7 +1008,12 @@ const CoachBookingForm: React.FC = () => {
                                       ) ||
                                       isCoachInthePackage(
                                         `${slot.startTime}-${slot.endTime}`
-
+                                      ) ||
+                                      isZoneRejectDay(
+                                        `${slot.startTime}-${slot.endTime}`
+                                      ) ||
+                                      isZoneRejectDate(
+                                        `${slot.startTime}-${slot.endTime}`
                                       )
                                     ? "#FF0000" // Red color when disabled due to package time
                                     : "#2EA8BF",
@@ -917,7 +1025,7 @@ const CoachBookingForm: React.FC = () => {
                               {coachBookings.some(
                                 (item) =>
                                   item.date === datee &&
-                                  item.zone_id === zone &&
+                                  // item.zone_id === zone &&
                                   item.coach_id === coachId &&
                                   item.time ===
                                     `${slot.startTime}-${slot.endTime}` &&
@@ -942,7 +1050,14 @@ const CoachBookingForm: React.FC = () => {
                                     `${slot.startTime}-${slot.endTime}`
                                   )
                                 ? `${slot.startTime}-${slot.endTime} : Coach has a Package`
-
+                                : isZoneRejectDay(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
+                                : isZoneRejectDate(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
                                 : `${slot.startTime}-${slot.endTime}`}
                             </Button>
                           </ConfigProvider>
@@ -1102,7 +1217,7 @@ const CoachBookingForm: React.FC = () => {
                   date={datee}
                   time={time}
                   pcount={pcount}
-                  userId={userData?.user_id}
+                  userId={userDetails.id}
                   zoneId={zone}
                   arcadeId={arcade}
                   sportId={coachSport}

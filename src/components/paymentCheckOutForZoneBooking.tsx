@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-const PaymentModal = (props: any): JSX.Element | null => {
+const PaymentModalForZoneBooking = (props: any): JSX.Element | null => {
   const zoneBookings = useContext(ZoneBookingsContext);
   const [arcadesofCoache, setarcadesofCoache] = useState<Arcade>();
   const [isZoneIntheArcade, setIsZoneIntheArcade] = useState(false);
@@ -53,27 +53,6 @@ const PaymentModal = (props: any): JSX.Element | null => {
     };
     fetchData();
   }, [props.arcadeId]);
-
-  useEffect(() => {
-    if (arcadesofCoache) {
-      const zoneFound = !!arcadesofCoache.zone.find(
-        (zone) => zone.zone_id === props.zoneId
-      );
-      setIsZoneIntheArcade(zoneFound);
-    }
-  }, [arcadesofCoache, props.zoneId]);
-
-  useEffect(() => {
-    if (arcadesofCoache) {
-      const zoneFound = !!arcadesofCoache.zone.find(
-        (zone) =>
-          (zone.zone_id === props.zoneId &&
-            zone.way_of_booking === props.reservation_type) ||
-          zone.way_of_booking === "Both"
-      );
-      setIsZonehasSelectedReservationType(zoneFound);
-    }
-  }, [arcadesofCoache, props.zoneId, props.reservation_type]);
 
   const payment = {
     sandbox: true,
@@ -124,33 +103,33 @@ const PaymentModal = (props: any): JSX.Element | null => {
         console.log(error);
       });
 
-    axios
-      .post(`${process.env.REACT_APP_API_URL}api/addCoachBooking`, {
-        status: "success",
-        date: zoneBookings.zoneBookings.date,
-        time: zoneBookings.zoneBookings.time,
-        full_amount: props.amount,
-        participant_count: zoneBookings.zoneBookings.participant_count,
-        player_id: props.userId,
-        zone_id: zoneBookings.zoneBookings.zone_id,
-        coach_id: props.coach_id,
-        arcade_id: props.arcadeId,
-        created_at: zoneBookings.zoneBookings.created_at,
-        coach_email: props.coach_email,
-        coach_name: props.coach_name,
-        role: props.role,
-        reservation_type: props.reservation_type,
-        zone_name: props.zone_name,
-        user_name: props.first_name + " " + props.last_name,
-        email: props.email,
-        arcade_name: props.arcade_name,
-      })
-      .then(() => {
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // axios
+    //   .post(`${process.env.REACT_APP_API_URL}api/addCoachBooking`, {
+    //     status: "success",
+    //     date: zoneBookings.zoneBookings.date,
+    //     time: zoneBookings.zoneBookings.time,
+    //     full_amount: props.amount,
+    //     participant_count: zoneBookings.zoneBookings.participant_count,
+    //     player_id: zoneBookings.zoneBookings.user_id,
+    //     zone_id: zoneBookings.zoneBookings.zone_id,
+    //     coach_id: props.coach_id,
+    //     arcade_id: props.arcadeId,
+    //     created_at: zoneBookings.zoneBookings.created_at,
+    //     coach_email: props.coach_email,
+    //     coach_name: props.coach_name,
+    //     role: props.role,
+    //     reservation_type: props.reservation_type,
+    //     zone_name: props.zone_name,
+    //     user_name: props.first_name + " " + props.last_name,
+    //     email: props.email,
+    //     arcade_name: props.arcade_name,
+    //   })
+    //   .then(() => {
+    //     window.location.reload();
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
 
     axios
       .post(
@@ -184,6 +163,9 @@ const PaymentModal = (props: any): JSX.Element | null => {
   };
 
   const handlePayment = () => {
+    console.log(props);
+    console.log(props.pcount);
+    console.log(props.avaiableParticipantCount);
     if (props.item === "Zone Booking") {
       if (!props.date) {
         message.warning("Please select a Day.");
@@ -193,6 +175,10 @@ const PaymentModal = (props: any): JSX.Element | null => {
         message.warning("Please select a Time Slot.");
       } else if (!props.pcount) {
         message.warning("Please select Participant Count.");
+      } else if (props.pcount > props.avaiableParticipantCount) {
+        message.warning(
+          "Participant count is more than available participant count."
+        );
       } else if (!props.userId) {
         message.warning("Please Login First.");
       } else if (!props.zoneId) {
@@ -217,16 +203,6 @@ const PaymentModal = (props: any): JSX.Element | null => {
         message.warning("Please select Participant Count.");
       } else if (!props.reservation_type) {
         message.warning("Please select Reservation Type.");
-      } else if (props.pcount > props.avaiableParticipantCount) {
-        message.warning(
-          "Participant count is more than available participant count."
-        );
-      } else if (!isZoneIntheArcade) {
-        message.warning("Zone is not in the selected Arcade.");
-      } else if (!isZonehasSelectedReservationType) {
-        message.warning(
-          "Selected Zone does not support selected reservation type."
-        );
       } else {
         pay();
       }
@@ -253,4 +229,4 @@ const PaymentModal = (props: any): JSX.Element | null => {
   );
 };
 
-export default PaymentModal;
+export default PaymentModalForZoneBooking;

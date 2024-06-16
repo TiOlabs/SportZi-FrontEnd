@@ -10,6 +10,7 @@ import {
   Empty,
   Input,
   Select,
+  Rate,
 } from "antd";
 import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
@@ -41,25 +42,32 @@ import {
 } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
+import { useArcadeEdit } from "../../context/ArcadeEdit.context";
 import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
+import ArcadeEdit from "../../components/arcadeEdit";
 import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
 import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
+import Notification from "../../components/notification";
+import { ArcadeFeedback } from "../../types";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
   const [packageDetail, setPackageDetail] = useState<Arcade>();
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
   const [packageEnrollmentForCoach, setPackageEnrollmentForCoach] = useState<
-  PackageEnrollDetailsForCoach[]
->([]);
+    PackageEnrollDetailsForCoach[]
+  >([]);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -70,7 +78,9 @@ const ArcadeProfileArcade = () => {
   };
   console.log("value", value);
   const { ArcadeId } = useParams();
+  console.log("ArcadeId", ArcadeId);
   const { managerDetails } = useArcade();
+  //const { arcadeEditDetails } = useArcadeEdit();
   const [arcade, setArcade] = useState<Arcade>();
   const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
   const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
@@ -92,8 +102,10 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
+
   },[]);
   console.log("arcade",ArcadeId); 
+
   useEffect(() => {
     try {
       //some kinda error in here
@@ -236,7 +248,7 @@ const ArcadeProfileArcade = () => {
   //   setCoachBookings([]);
   //   // Logic to change value2
   // };
-
+  console.log("valueForCoachRequest", valueForCoachRequest);
   useEffect(() => {
     axios
       .get(
@@ -245,6 +257,7 @@ const ArcadeProfileArcade = () => {
       )
       .then((res) => {
         // Filter data where status is "success"
+        console.log("res.data", res.data);
         const filteredData = res.data.filter(
           (item: { status: string }) => item.status === "pending"
         );
@@ -252,33 +265,32 @@ const ArcadeProfileArcade = () => {
           (item: { status: string }) => item.status === "success"
         );
         setArcadeCoaches(filteredAssignedCoaches);
-        setCoachAssignRequest(filteredData);
+        console.log("res.data", res.data);
+        const filteredDataForCoachRequest = res.data.filter(
+          (item: { status: string }) => {
+            console.log("item", item);
+            if (valueForCoachRequest === 10) {
+              return item.status === "pending";
+            } else if (valueForCoachRequest === 11) {
+              return item.status === "success";
+            } else if (valueForCoachRequest === 12) {
+              return (
+                item.status === "canceled_By_Arcade" ||
+                item.status === "canceled_By_Coach"
+              );
+            }
+            return false;
+          }
+        );
+        console.log("filteredDataForCoachRequest", filteredDataForCoachRequest);
+        setCoachAssignRequest(filteredDataForCoachRequest);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [ArcadeId]);
-//use this for the coach request to arcade
-// useEffect(() => {
-//   axios
-//     .get(
-//       process.env.REACT_APP_API_URL + `api/getPackageEnrollmentPlayerDetails`
-//     )
-//     .then((res) => {
-//       console.log(res.data);
-//       setPackageEnrollmentForPlayer(res.data);
-//       setPackageEnrollmentForPlayer((prev: any) => {
-//         return prev.filter(
-//           (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
-//             playerEnrollDetails.status === "success" &&
-//             playerEnrollDetails.package.arcade_id === ArcadeId
-//         );
-//       });
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-// }, [ArcadeId]);
+
+  }, [ArcadeId, valueForCoachRequest]);
+
 
   useEffect(() => {
     axios
@@ -343,7 +355,7 @@ const ArcadeProfileArcade = () => {
       )
     ),
   ];
-const CoachReqestToEnrollPackage = [
+  const CoachReqestToEnrollPackage = [
     (packageEnrollmentForCoach || []).map(
       (coachEnrollDetails: PackageEnrollDetailsForCoach) => (
         <ArcadePackageCoachEnrollAccept
@@ -385,19 +397,22 @@ const CoachReqestToEnrollPackage = [
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
-    axiosInstance
-      .get("/api/auth/getarchadedetails", {
-        params: {
-          ArcadeId: ArcadeId,
-        },
-      })
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`,
+        {}
+      )
       .then((res) => {
+        console.log("arcadeDetails", res.data);
         setArcadeDetails(res.data);
+
+        //  console.log("arcadeDetails", arcadeEditDetails);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [ArcadeId]);
+
   console.log("arcadeDetails", packageDetail);
   const [filterBy, setFilterBy] = useState("date");
   const [filterValue, setFilterValue] = useState("");
@@ -494,8 +509,100 @@ const CoachReqestToEnrollPackage = [
       }
     }
   );
+
+  const [arcadeName, setArcadeName] = useState<any>();
+  const [discription, setDiscription] = useState<any>();
+  const [address, setAddress] = useState<any>();
+  const [sport, setSport] = useState<any[]>([]);
+  const [openTime, setOpenTime] = useState<any>();
+  const [closeTime, setCloseTime] = useState<any>();
+  const [managerName, setmanagerName] = useState<Arcade>();
+
+  useEffect(() => {
+    if (arcadeDetails) {
+      setArcadeName(arcadeDetails.arcade_name);
+      setDiscription(arcadeDetails.distription);
+      setAddress(arcadeDetails.address);
+      setOpenTime(arcadeDetails.open_time);
+      setCloseTime(arcadeDetails.close_time);
+
+      if (arcade?.zone) {
+        const sports = Array.from(
+          new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
+        );
+        setSport(sports);
+      }
+    }
+  }, [arcadeDetails]);
+
+  console.log("arcadeDetails", arcadeDetails);
+
   console.log(arcadeDetails?.arcade_name);
-  const arcadeName = arcadeDetails?.arcade_name;
+  // const arcadeName = arcadeDetails?.arcade_name;
+  console.log(arcadeDetails);
+  const [cloudName] = useState("dle0txcgt");
+
+  //For display reviews and averageRate
+  const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getarcadefeedbacks/${ArcadeId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbyarcadeId/${ArcadeId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:::", averageRate);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [ArcadeId]);
+
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+
+  const onChangeCoachRequests = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValueForCoachRequest(e.target.value);
+  };
+
   return (
     <>
       <NavbarProfile />
@@ -519,7 +626,7 @@ const CoachReqestToEnrollPackage = [
           }}
         >
           {" "}
-          {arcadeBookings.length === 0 ? <Empty /> : null}
+          {/* {arcadeBookings.length === 0 ? <Empty /> : null} */}
           <Row
             style={{
               width: "100%",
@@ -542,10 +649,13 @@ const CoachReqestToEnrollPackage = [
               lg={24}
               xl={24}
             >
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(arcade?.arcade_image.toString())
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
@@ -589,7 +699,7 @@ const CoachReqestToEnrollPackage = [
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.distription}
+                {discription}
               </Typography>
             </Col>
           </Row>
@@ -614,40 +724,77 @@ const CoachReqestToEnrollPackage = [
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
+            <div
+              style={{
+                width: "80%",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                position: "absolute",
+                height: "0px",
+              }}
+            >
+              <ArcadeEdit
+                firstname={arcadeName}
+                setFirstname={setArcadeName}
+                discription={discription}
+                setDiscription={setDiscription}
+                address={address}
+                setAddress={setAddress}
+                openTime={openTime}
+                setopenTime={setOpenTime}
+                closeTime={closeTime}
+                setCloseTime={setCloseTime}
+                id={ArcadeId}
+              />
+            </div>
             <div>
-              <h1
-                style={{
-                  color: "#000",
+              <Row>
+                <Col>
+                  <h1
+                    style={{
+                      color: "#000",
 
-                  fontSize: "32px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {arcade && arcade?.arcade_name}
-              </h1>
+                      fontSize: "32px",
+                      fontStyle: "normal",
+                      fontWeight: "500",
+                      fontFamily: "kanit",
+                      lineHeight: "normal",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    {arcade && arcade?.arcade_name}
+                  </h1>
+                </Col>
+                <Col span={2}></Col>
+                <Col>
+                  <h1>
+                    <Notification userType="arcade" id={ArcadeId as string} />
+                  </h1>
+                </Col>
+              </Row>
               <p
                 style={{
-                  margin: "0px",
                   color: "#000",
                   fontFamily: "kanit",
                   fontSize: "18px",
                   fontStyle: "normal",
-                  fontWeight: "400",
+                  fontWeight: "350",
+                  fontFamily: "kanit",
                   lineHeight: "normal",
+                  marginBottom: "0px",
+                  marginTop: "0px",
                 }}
               >
-                cricket, baseball,Swimming
+                Manager : {arcadeDetails?.manager.user.firstname}{" "}
+                {arcadeDetails?.manager.user.lastname}
               </p>
+
               <p
                 style={{
                   margin: "0px",
@@ -660,8 +807,9 @@ const CoachReqestToEnrollPackage = [
                   width: "150px",
                 }}
               >
-                {arcadeDetails?.arcade_address &&
-                  arcadeDetails.arcade_address
+                {address &&
+                  address
+
                     .split(",")
                     .map(
                       (
@@ -707,7 +855,8 @@ const CoachReqestToEnrollPackage = [
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {/* 5.0 */}
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -742,11 +891,26 @@ const CoachReqestToEnrollPackage = [
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        defaultValue={0}
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
                     </div>
                     <p
                       style={{
@@ -760,7 +924,8 @@ const CoachReqestToEnrollPackage = [
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      {/* 120 Feedbacks */}
+                      {totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -771,69 +936,6 @@ const CoachReqestToEnrollPackage = [
               style={{
                 color: "#000",
                 fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Qulifications
-            </Typography>
-
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "1",
-              }}
-              itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
-                    }}
-                  >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
-
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
                 fontStyle: "normal",
                 fontWeight: "400",
                 lineHeight: "normal",
@@ -853,12 +955,11 @@ const CoachReqestToEnrollPackage = [
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
+              dataSource={sport}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -902,7 +1003,7 @@ const CoachReqestToEnrollPackage = [
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Payment Types Types
+              Payment Types
             </Typography>
             <List
               style={{
@@ -913,11 +1014,7 @@ const CoachReqestToEnrollPackage = [
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={[
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-              ]}
+              dataSource={["Online Payment"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -977,43 +1074,70 @@ const CoachReqestToEnrollPackage = [
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  Open Time : {openTime}
+                </div>
+              </List.Item>
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    &#8226;
+                  </span>
+                  Close Time : {closeTime}
+                </div>
+              </List.Item>
+            </List>
           </div>
         </Col>
       </Row>
@@ -1171,6 +1295,9 @@ const CoachReqestToEnrollPackage = [
               color: " #0E458E",
               fontSize: md ? "30px" : "20px",
               fontFamily: "Kanit",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
             }}
           >
             Book Our Zones
@@ -1224,6 +1351,12 @@ const CoachReqestToEnrollPackage = [
                 sport={zone.sport.sport_name}
                 sport_id={zone.sport.sport_id}
                 full={zone.full_zone_rate}
+                day={zone.zoneRejectDayAndTime.map((item) => item.day)}
+                timeForDay={zone.zoneRejectDayAndTime.map((item) => item.time)}
+                date={zone.zoneRejectDateAndTime.map((item) => item.date)}
+                timeForDate={zone.zoneRejectDateAndTime.map(
+                  (item) => item.time
+                )}
               />
             </Col>
           ))}
@@ -1277,7 +1410,7 @@ const CoachReqestToEnrollPackage = [
               fontFamily: "Kanit",
             }}
           >
-            Our Packages
+            Our Packages For You
           </Typography>
           <div
             style={{
@@ -1659,6 +1792,8 @@ const CoachReqestToEnrollPackage = [
                       email={booking.user.email}
                       status={booking.status}
                       full_amount={booking.full_amount}
+                      user_id={booking.user.user_id}
+                      arcade_id={ArcadeId}
                     />
                   ))
               )}
@@ -2005,6 +2140,8 @@ const CoachReqestToEnrollPackage = [
                 coach_id={booking.coach_id}
                 status={booking.status}
                 full_amount={booking.full_amount}
+                player_id={booking.player_id}
+                arcade_id={ArcadeId}
               />
             ))
         ) : (
@@ -2370,6 +2507,168 @@ const CoachReqestToEnrollPackage = [
         style={{
           width: "100%",
           display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={10}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={11}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={12}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Assigned
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
@@ -2539,15 +2838,15 @@ const CoachReqestToEnrollPackage = [
           >
             Reviews
           </Typography>
-              <Row
-             style={{
+          {/* <Row
+            style={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-              }}
-             >
-              <Col
+            }}
+          >
+            <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2558,10 +2857,10 @@ const CoachReqestToEnrollPackage = [
               md={12}
               lg={8}
               xl={8}
-             >
+            >
               <ReviewCard />
-             </Col>
-             <Col
+            </Col>
+            <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2572,11 +2871,11 @@ const CoachReqestToEnrollPackage = [
               md={12}
               lg={8}
               xl={8}
-             >
+            >
               {" "}
               <ReviewCard />
-             </Col>
-             <Col
+            </Col>
+            <Col
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -2587,65 +2886,110 @@ const CoachReqestToEnrollPackage = [
               md={12}
               lg={8}
               xl={8}
-             >
-              {" "}
-              <ReviewCard />
-             </Col>
-             </Row>
-             <Row
-             style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-             }}
-             >
-             <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-             >
-              <ReviewCard />
-             </Col>
-              <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-             >
-              {" "}
-              <ReviewCard />
-             </Col>
-             <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-             >
+            >
               {" "}
               <ReviewCard />
             </Col>
           </Row>
-          
+          <Row
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={12}
+              lg={8}
+              xl={8}
+            >
+              {" "}
+              <ReviewCard />
+            </Col>
+          </Row> */}
+
+          <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
+          </Row>
         </Col>
       </Row>
       <Row
@@ -2674,7 +3018,8 @@ const CoachReqestToEnrollPackage = [
         </Col>
       </Row>
       <Row>
-        <Col span={24}
+        <Col
+          span={24}
           style={{
             display: "flex",
             justifyContent: "center",

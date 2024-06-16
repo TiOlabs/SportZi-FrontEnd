@@ -37,6 +37,7 @@ import AppFooter from "../../components/footer";
 import NavbarLogin from "../../components/NavBarLogin";
 import PackageEnrollmentDetailsInPlayerProfile from "../../components/packageEnrollDetailsInPlayerProfile";
 import { Option } from "antd/es/mentions";
+import Notification from "../../components/notification";
 
 const requestList = [
   <CoachRequstRow />,
@@ -67,6 +68,7 @@ const PlayerProfile = () => {
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
   const [user_image, setUser_image] = useState(userDetails?.user_image);
+  const [loading, setLoading] = useState(false);
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     if (achivements) {
@@ -96,6 +98,7 @@ const PlayerProfile = () => {
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
   console.log(userDetails.id);
   useEffect(() => {
+    setLoading(true);
     axios
       .get(
         process.env.REACT_APP_API_URL +
@@ -128,9 +131,11 @@ const PlayerProfile = () => {
             );
           }
         });
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
       });
   }, [userDetails, value2]);
   useEffect(() => {
@@ -280,6 +285,8 @@ const PlayerProfile = () => {
         return booking.zone_booking_id.includes(filterValue);
       } else if (filterBy === "status") {
         return booking.status.includes(filterValue);
+      } else if (filterBy === "rate") {
+        return booking.full_amount.toString().includes(filterValue);
       }
       return true;
     }
@@ -360,19 +367,30 @@ const PlayerProfile = () => {
                   width: "80%",
                 }}
               >
-                <h1
-                  style={{
-                    color: "#000",
-                    fontSize: "32px",
-                    fontStyle: "normal",
-                    fontWeight: "500",
-                    fontFamily: "kanit",
-                    lineHeight: "normal",
-                    marginBottom: "0px",
-                  }}
-                >
-                  {firstname} {lastname}
-                </h1>
+                {" "}
+                <Row>
+                  <Col>
+                    <h1
+                      style={{
+                        color: "#000",
+                        fontSize: "32px",
+                        fontStyle: "normal",
+                        fontWeight: "500",
+                        fontFamily: "kanit",
+                        lineHeight: "normal",
+                        marginBottom: "0px",
+                      }}
+                    >
+                      {firstname} {lastname}
+                    </h1>
+                  </Col>
+                  <Col span={2}></Col>
+                  <Col>
+                    <h1>
+                      <Notification userType="player" id={userDetails?.id} />
+                    </h1>
+                  </Col>
+                </Row>
                 <p
                   style={{
                     margin: "0px",
@@ -954,6 +972,9 @@ const PlayerProfile = () => {
               arcade_email={booking.arcade.arcade_email}
               status={booking.status}
               full_amount={booking.full_amount}
+              player_id={booking.player_id}
+              coach_id={booking.coach_id}
+              arcade_id={booking.arcade_id}
             />
           ))
         ) : (
@@ -1311,6 +1332,8 @@ const PlayerProfile = () => {
                       }
                       status={booking.status}
                       full_amount={booking.full_amount}
+                      user_id={booking.user.user_id}
+                      arcade_id={booking.zone.arcade.arcade_id}
                     />
                   ) : null // Return null for bookings that are not of type "zone"
               )

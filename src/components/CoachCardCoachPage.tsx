@@ -1,4 +1,4 @@
-import { Button, Rate } from "antd";
+import { Button, Rate, message } from "antd";
 import "../styles/CoachCard.css";
 import { getTwoToneColor, setTwoToneColor } from "@ant-design/icons";
 import { AdvancedImage } from "@cloudinary/react";
@@ -6,6 +6,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CoachBookingContext } from "../context/coachBooking.context";
+import { useUser } from "../context/userContext";
 
 const CoachCardCoachPage = (props: any) => {
   const { setCoachId } = useContext(CoachBookingContext);
@@ -13,9 +14,10 @@ const CoachCardCoachPage = (props: any) => {
   setTwoToneColor("blue");
   getTwoToneColor();
   const navigate = useNavigate();
+  const { userDetails } = useUser();
 
   const handleClick = () => {
-    navigate(`/CoachUser/:${props.coach_id}`);
+    navigate(`/CoachUser/${props.coach_id}`);
   };
   localStorage.setItem("coachId", props.coach_id);
   console.log(props.coach_id);
@@ -39,8 +41,10 @@ const CoachCardCoachPage = (props: any) => {
 
             <div className="ratings">
               <Rate
+                allowHalf
                 disabled
                 defaultValue={3}
+                value={props.coach_avgRate}
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>
@@ -69,27 +73,30 @@ const CoachCardCoachPage = (props: any) => {
                   fontWeight: "500",
                 }}
               >
-                Rs.{props.coach_rate}
+                LKR {props.coach_rate}
               </p>
               <p style={{ fontWeight: "275", fontSize: "16px" }}>per hour</p>
             </div>
             <div className="buttonfeild">
-              <Link to="/CoachBookingForm">
-                <Button
-                  type="primary"
-                  size="small"
-                  style={{
-                    fontSize: "10px",
-                    background: "#5587CC",
-                    fontWeight: "400",
-                  }}
-                  onClick={() => {
+              <Button
+                type="primary"
+                size="small"
+                style={{
+                  fontSize: "10px",
+                  background: "#5587CC",
+                  fontWeight: "400",
+                }}
+                onClick={() => {
+                  if (props.role === "PLAYER") {
                     localStorage.setItem("coachId", props.coach_id);
-                  }}
-                >
-                  Book Coach
-                </Button>
-              </Link>
+                    navigate("/CoachBookingForm");
+                  } else {
+                    message.error("You are not a player");
+                  }
+                }}
+              >
+                Book Coach
+              </Button>
             </div>
           </div>
         </div>

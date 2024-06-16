@@ -97,6 +97,9 @@ const AvailableCoachBookingsArcade = (props: any) => {
           booking_date: props.date,
           booking_time: props.time,
           zone_name: props.zoneName,
+          coach_id: props.coach_id,
+          arcade_id: props.arcade_id,
+          player_id: props.player_id,
         }
       );
       setIsConfirmModalOpen(false);

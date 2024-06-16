@@ -24,11 +24,17 @@ import { AdvancedImage } from "@cloudinary/react";
 import axios from "axios";
 import { useUser } from "../context/userContext";
 import PaymentModal from "./paymentCheckout";
+
 import {
   CoachAssignDetails,
   CoachEnrollDetailsForPackages,
   User,
 } from "../types";
+
+
+import DisabledContext from "antd/es/config-provider/DisabledContext";
+import axiosInstance from "../axiosInstance";
+
 
 const ArcadePackageUserView = (props: any) => {
   const { userDetails } = useUser();
@@ -56,6 +62,9 @@ const ArcadePackageUserView = (props: any) => {
   const showModal = () => {
     setIsModalOpen(true);
   };
+  const showError = () => {
+    message.error("You have to login to enroll to the package");
+  };
   const handleConfirmDelete = () => {
     window.location.reload();
   };
@@ -80,6 +89,7 @@ const ArcadePackageUserView = (props: any) => {
         setIsModalOpen(false);
         setLoading(false);
         setIsButtonVisible(false);
+        message.success("Requested successfully");
       } catch (err) {
         console.log("err", err);
       }
@@ -104,6 +114,7 @@ const ArcadePackageUserView = (props: any) => {
       }
     }
   };
+
   useEffect(() => {
     if (userDetails?.role === "COACH") {
       try {
@@ -121,6 +132,7 @@ const ArcadePackageUserView = (props: any) => {
       }
     }
   }, [userDetails?.id]);
+
   useEffect(() => {
     if (userDetails?.role === "COACH") {
       try {
@@ -145,13 +157,20 @@ const ArcadePackageUserView = (props: any) => {
 
   useEffect(() => {
     try {
+      const id = props.player_id;
+      console.log("id", id);
       const fetchData = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getuser/${props.player_id}`
+          `${process.env.REACT_APP_API_URL}api/getplayer`
+        );
+        console.log("res", res.data);
+        const filteredData = res.data.filter(
+          (player: { player_id: string }) => player.player_id === id
         );
         const data = await res.data;
+        console.log("filteredData", filteredData);
 
-        setPaymentDetails(data);
+        setPaymentDetails(filteredData);
       };
       fetchData();
     } catch (e) {
@@ -164,10 +183,32 @@ const ArcadePackageUserView = (props: any) => {
     (entry) => entry.arcade.arcade_id === props.arcade_id
   );
 
+  const isCoachInThePackage = coachisInArcade.some((entry) =>
+    entry.coach.coachApplyDetailsForPackage.some(
+      (stts) => stts.status === "success"
+    )
+  );
+  console.log(coachisInArcade);
+  const isCoachApplyToThePackage = coachisInArcade.some((entry) =>
+    entry.coach.coachApplyDetailsForPackage.some(
+      (stts) => stts.status === "pending"
+    )
+  );
+  console.log(isCoachApplyToThePackage);
+  console.log(isCoachInArcade);
+  console.log(isCoachInThePackage);
   const handleJoinClick = () => {
     if (isCoachInArcade) {
       // If the coach is in the arcade, show the modal
-      showModal();
+      if (isCoachInThePackage) {
+        message.warning("You have already joined to the package.");
+        return;
+      } else if (isCoachApplyToThePackage) {
+        message.warning("You have already applied to the package.");
+        return;
+      } else {
+        showModal();
+      }
     } else {
       // If the coach is not in the arcade, show the message
       message.warning("You have to apply to the arcade first.");
@@ -368,7 +409,7 @@ const ArcadePackageUserView = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  Rs.{props.rate}
+                  LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{
@@ -389,6 +430,7 @@ const ArcadePackageUserView = (props: any) => {
                   alignItems: "center",
                 }}
               >
+
                 {isButtonVisible &&
                   (userDetails?.role === "COACH" ||
                     userDetails?.role === "PLAYER" ||
@@ -421,6 +463,7 @@ const ArcadePackageUserView = (props: any) => {
                       )}
                     </>
                   )}
+
                 {userDetails?.role === "PLAYER" ||
                 userDetails?.role === "MANAGER" ? (
                   <Modal
@@ -497,7 +540,7 @@ const ArcadePackageUserView = (props: any) => {
                             first_name={paymentDetails?.firstname}
                             last_name={paymentDetails?.lastname}
                             email={paymentDetails?.email}
-                            phone={paymentDetails?.Phone}
+                            phone={paymentDetails?.phone[0]?.phone_number}
                             address={paymentDetails?.address}
                             city={paymentDetails?.city}
                             country={paymentDetails?.country}
@@ -508,7 +551,7 @@ const ArcadePackageUserView = (props: any) => {
                             pcount={1}
                             userId={userDetails?.id}
                             zoneId={props.zone_id}
-                            arcade_id={props.arcade_id}
+                            arcadeId={props.arcade_id}
                             package_id={props.package_id}
                             // reservation_type={zone}
                             // avaiableParticipantCount={

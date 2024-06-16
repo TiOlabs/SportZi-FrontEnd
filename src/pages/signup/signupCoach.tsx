@@ -123,21 +123,27 @@ const SignupCoach = () => {
       timeslot: `${slot.startTime}-${slot.endTime}`,
     }));
     const rateint = parseInt(rate);
-    console.log(rateint);
+
     try {
       const response = await axiosInstance
-        .post("/api/addcoach", {
-          firstname: firstname,
-          lastname: lastname,
-          email: email,
-          password: password,
-          phone_number: phone,
-          DOB: selectedDateString,
-          gender: gender,
-          rate: rateint,
-          sport_id: sport,
-          combinedTimeslot: combinedTimeslot,
-        })
+        .post(
+          "/api/addcoach",
+          {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: password,
+            phone_number: phone,
+            DOB: selectedDateString,
+            gender: gender,
+            rate: rateint,
+            sport_id: sport,
+            combinedTimeslot: combinedTimeslot,
+          },
+          {
+            timeout: 10000, // Increase timeout to 10 seconds
+          }
+        )
         .then((res) => {
           console.log(res);
           alert("Form submitted successfully!");
@@ -175,7 +181,9 @@ const SignupCoach = () => {
     }
     return Promise.reject("Invalid phone number");
   };
-
+  const sortedSports = [...sportDetails].sort((a, b) =>
+    a.sport_name.toString().localeCompare(b.sport_name.toString())
+  );
   return (
     <>
       <Row className="signupContainer">
@@ -606,16 +614,22 @@ const SignupCoach = () => {
                 ]}
               >
                 <Select
-                  placeholder="select your Sport"
+                  placeholder="Select your Sport"
                   onChange={(value) => setSport(value)}
                   style={{
                     ...commonInputStyle,
                     border: "1px solid #ccc",
                     padding: "4px",
                   }}
+                  dropdownRender={(menu) => (
+                    <div style={{ maxHeight: "150px", overflowY: "auto" }}>
+                      {menu}
+                    </div>
+                  )}
                 >
-                  {sportDetails.map((sport) => (
+                  {sortedSports.map((sport) => (
                     <Option
+                      key={sport.sport_id as string}
                       value={sport.sport_id}
                       style={{ ...commonInputStyle, border: "1px solid #ccc" }}
                     >

@@ -6,6 +6,8 @@ import { Col, Row, Empty, Menu, Dropdown } from "antd";
 import axios from "axios";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { UserContext } from "../context/userContext";
+import axiosInstance from "../axiosInstance";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const PhotoCollage = () => {
   const { ArcadeId } = useParams();
@@ -19,18 +21,24 @@ const PhotoCollage = () => {
         let res;
 
         if (userDetails.role === "PLAYER") {
-          res = await axios.get(
+          res = await axiosInstance.get(
             `${process.env.REACT_APP_API_URL}api/getuser/${userDetails.id}`
           );
         } else if (userDetails.role === "COACH") {
           res = await axios.get(
             `${process.env.REACT_APP_API_URL}api/getcoache/${userDetails.id}`
           );
-        } 
+        }
 
         if (res) {
           const data = res.data;
-          setUserPhotos(data.arcadephoto);
+          console.log(res.data);
+          if (res.data.role === "PLAYER") {
+            setUserPhotos(data.userphoto);
+          } else if (res.data.user.role === "COACH") {
+            setUserPhotos(data.user.userphoto);
+          }
+          console.log(data.userphoto);
         }
       } catch (e) {
         console.log(e);
@@ -39,6 +47,7 @@ const PhotoCollage = () => {
 
     fetchData();
   }, [userDetails]);
+  console.log(userPhotos);
 
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -52,6 +61,21 @@ const PhotoCollage = () => {
     if (e.key === "delete") {
       // Implement delete functionality here
       console.log("Delete photo", userPhotos[index]);
+      try {
+        const res = axios.delete(
+          `${process.env.REACT_APP_API_URL}api/deleteUserPhoto`,
+          {
+            data: {
+              user_id: userPhotos[index].user_id,
+              image: userPhotos[index].image,
+            },
+          }
+        );
+        console.log(res);
+        window.location.reload();
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -82,7 +106,7 @@ const PhotoCollage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Replace this with your three-dot icon */}
-            ...
+            <DeleteOutlined />
           </span>
         </Dropdown>
         <AdvancedImage
