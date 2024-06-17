@@ -109,8 +109,10 @@ const AdminRoute = ({children}: any) => {
     const checkAuthentication = async () => {
       try {
         const response = await axiosInstance.get("/api/auth/check-admin", {});
+        console.log(response);
         setIsAuthenticated(true);
       } catch (error) {
+        console.log(error);
       }
       setIsLoading(false);
     };
@@ -120,8 +122,32 @@ const AdminRoute = ({children}: any) => {
   if (isLoading) {
     return <div>Loading...</div>; 
   }
+  console.log(isAuthenticated);
   return <>{isAuthenticated ? <>{children}</>:<Login/>}</>
 };
+
+// const SuperAdminRoute = ({children}: any) => {
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [isLoading, setIsLoading] = useState(true);
+
+//   useEffect(() => {
+//     const checkAuthentication = async () => {
+//       try {
+//         const response = await axiosInstance.get("/api/auth/check-superAdmin", {});
+//         setIsAuthenticated(true);
+//       } catch (error) {
+//       }
+//       setIsLoading(false);
+//     };
+//     checkAuthentication();
+//   }, []);
+
+//   if (isLoading) {
+//     return <div>Loading...</div>; 
+//   }
+//   return <>{isAuthenticated ? <>{children}</>:<Login/>}</>
+// };
+
 
 export {
   Auth,
@@ -130,4 +156,5 @@ export {
   CoachRoute,
   ManagerRoute,
   AdminRoute,
+  // SuperAdminRoute
 };

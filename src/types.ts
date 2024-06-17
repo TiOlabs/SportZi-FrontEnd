@@ -147,6 +147,7 @@ export interface User {
   achivement: achivement;
   Manager: ArcadeManager;
   natificationForUser: NotificationForUser[];
+  is_active: String;
 }
 export interface achivement {
   user_id: String;
