@@ -12,6 +12,7 @@ import {
   Row,
   Select,
   Typography,
+  Rate
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -38,6 +39,9 @@ import axios from "axios";
 import { Option } from "antd/es/mentions";
 import ReportGenarationForCoach from "../../components/reportGenarationForCoach";
 import CoachEdit from "../../components/coachEdit";
+
+import Notification from "../../components/notification";
+import { CoachFeedback } from "../../types";
 
 interface AvailableTime {
   day: string;
@@ -293,6 +297,59 @@ const CoachProfile = () => {
       {} as { [key: string]: string[] }
     );
   }
+
+
+  //for display reviews
+  const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getcoachfeedbacks/${coachId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, [coachId]);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbycoachId/${coachId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [coachId]);
+
+
   return (
     <>
       <NavbarProfile />
@@ -300,6 +357,7 @@ const CoachProfile = () => {
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
+
       <Row>
         <Col
           xs={24}
@@ -444,7 +502,7 @@ const CoachProfile = () => {
               />
             </div>
 
-            <div>
+<!--             <div>
               <h1
                 style={{
                   zIndex: "999",
@@ -458,7 +516,35 @@ const CoachProfile = () => {
                 }}
               >
                 {firstname} {lastname}
-              </h1>
+              </h1> -->
+
+            {" "}
+            <div>
+              <Row>
+                <Col>
+                  <h1
+                    style={{
+                      color: "#000",
+                      fontSize: "32px",
+                      fontStyle: "capitalize",
+                      fontWeight: "500",
+                      fontFamily: "kanit",
+                      lineHeight: "normal",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    {Details?.firstname} {Details?.lastname}
+                  </h1>
+                </Col>
+                <Col span={1}></Col>
+                <Col>
+                  <h1>
+                    <Notification userType="coach" id={coachDetails?.id} />
+                  </h1>
+                </Col>
+              </Row>
+
+
               <p
                 style={{
                   margin: "0px",
@@ -494,7 +580,7 @@ const CoachProfile = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -529,11 +615,25 @@ const CoachProfile = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
                     </div>
                     <p
                       style={{
@@ -547,13 +647,12 @@ const CoachProfile = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      ({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
               </Row>
             </div>
-
             <Typography
               style={{
                 color: "#000",
@@ -568,7 +667,6 @@ const CoachProfile = () => {
             >
               Qlifications
             </Typography>
-
             <List
               style={{
                 padding: "0px",
@@ -615,7 +713,6 @@ const CoachProfile = () => {
                 </List.Item>
               )}
             />
-
             <Typography
               style={{
                 color: "#000",
@@ -630,7 +727,6 @@ const CoachProfile = () => {
             >
               Expertise
             </Typography>
-
             <List
               style={{
                 padding: "0px",
@@ -1160,6 +1256,9 @@ const CoachProfile = () => {
               arcade_name={booking.arcade.arcade_name}
               status={booking.status}
               full_amount={booking.full_amount}
+              player_id={booking.player_id}
+              arcade_id={booking.arcade_id}
+              coach_id={booking.coach_id}
             />
           ))
         ) : (
@@ -1442,6 +1541,8 @@ const CoachProfile = () => {
         )}
       </Row>
 
+
+{/* Reviews */}
       <Row
         style={{
           minWidth: "100%",
@@ -1476,7 +1577,9 @@ const CoachProfile = () => {
           >
             Reviews
           </Typography>
-          <Row
+
+
+          {/* <Row
             style={{
               display: "flex",
               justifyContent: "center",
@@ -1581,9 +1684,58 @@ const CoachProfile = () => {
               {" "}
               <ReviewCard />
             </Col>
+          </Row> */}
+
+<Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
+
         </Col>
       </Row>
+
+
       <Row
         style={{
           width: "100%",

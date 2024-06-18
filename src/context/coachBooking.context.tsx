@@ -33,7 +33,7 @@ const CoachBookingProvider = ({ children }: any) => {
   }, [coachId]);
 
   const handleFinish = async () => {
-    console.log(date, time, pcount);
+    console.log(date, time, pcount);  
     if (parseInt(pcount) <= 0) {
       message.error("Participant count must be more than 0");
       return; // Stop further execution

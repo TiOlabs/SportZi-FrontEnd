@@ -19,7 +19,7 @@ import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
-import { Auth, ProtectedRoute } from "../middlewares/auth";
+import { AdminRoute, Auth, ProtectedRoute } from "../middlewares/auth";
 import ChooseArcade from "../pages/login/chooseArcade";
 
 const AppRoutes = () => {
@@ -73,7 +73,16 @@ const AppRoutes = () => {
           element={<ArcadeProfileArcade />}
         />
         <Route path="arcadeProfile/:ArcadeId" element={<ArcadeProfileUser />} />
-        <Route path="admin" element={<Admin />} />
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="coachBookingForm"
           element={
