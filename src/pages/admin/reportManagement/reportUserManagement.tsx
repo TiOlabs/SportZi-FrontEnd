@@ -45,6 +45,31 @@ const ReportUserManagement = () => {
     setismodelopenForReport(false);
   };
 
+  const handleDeactivateUser = async (id:any) => {
+    confirm({
+      title: "Are you sure Deactivate the User?",
+      icon: <ExclamationCircleFilled />,
+      content: "This may affect the user.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      okCancel: true,
+      async onOk() {
+        try {
+          await axios.put(
+            `${process.env.REACT_APP_API_URL}api/deactivateuser/${id}`
+          );
+        } catch (error) {
+          console.log("error");
+          console.log(error);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
   const handleRemoveForReport = async () => {
     confirm({
       title: "Are you sure Remove the User?",
@@ -233,8 +258,8 @@ const ReportUserManagement = () => {
             <Modal
               visible={isModalOpenForReport}
               onCancel={handleCancelForReport}
-              okText="Remove"
-              onOk={handleRemoveForReport}
+              okText="Deactivate User"
+              onOk={() => handleDeactivateUser(report.victim_user.user_id)} // Pass the userId here
             >
               <Row>
                 <Col span={12}>

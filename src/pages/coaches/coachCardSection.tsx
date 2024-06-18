@@ -49,7 +49,8 @@ const CoachCardSection = () => {
 
       // Filter the data to include only items with status "active"
       const successCoaches = sortedArcades.filter(
-        (coach: { status: string }) => coach.status === "active"
+        (coach: { user: any; status: string }) =>
+          coach.status === "active" && coach.user.is_active === "active"
       );
 
       // Set the filtered data to state

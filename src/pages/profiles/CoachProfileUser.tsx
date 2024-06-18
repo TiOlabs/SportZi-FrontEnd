@@ -42,7 +42,6 @@ import { CoachFeedback } from "../../types";
 import { any } from "prop-types";
 import NavbarLogin from "../../components/NavBarLogin";
 
-
 interface FeedbackData {
   feedback: string;
   rating: number;
@@ -182,7 +181,7 @@ const CoachProfileUser = () => {
         }
       );
       console.log(res.data);
-      alert("Reported Successfully");
+      message.info("Reported Successfully");
     } catch (e) {
       console.log(e);
     }
@@ -857,7 +856,6 @@ const CoachProfileUser = () => {
       >
         <Col
           style={{
-           
             backgroundSize: "cover",
             backgroundPosition: "center",
             minHeight: "650px",
