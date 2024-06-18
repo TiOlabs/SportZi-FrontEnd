@@ -1,7 +1,9 @@
-import { Col, Row, Button, Modal, Form, message, Input } from "antd";
+import { Col, Row, Button, Modal, Form, message, Input, Radio } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Admin } from "../../../types";
+import { Admin, User } from "../../../types";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const agreebtnLayout = {
   wrapperCol: {
@@ -20,17 +22,23 @@ const SignUpAdmin = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [adminData, setAdminData] = useState<Admin[]>([]);
+  const [adminData, setAdminData] = useState<User[]>([]);
   const [isShowDetailsModal, setIsShowDetailsModal] = useState(false);
-  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const [selectedAdmin, setSelectedAdmin] = useState<User | null>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [role, setRole] = useState("ADMIN");
 
   const showModal = () => {
     setIsModalOpen(true);
   };
+  const token = Cookies.get("token");
+  console.log(token);
+  const data: any = jwtDecode(token as string);
+  console.log(data.userId);
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -38,7 +46,7 @@ const SignUpAdmin = () => {
 
   const generatePassword = () => {
     const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*+";
     let password = "";
     for (let i = 0; i < 8; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
@@ -59,6 +67,7 @@ const SignUpAdmin = () => {
           email: email,
           phone_number: phone,
           password: generatedPassword,
+          role: role,
         }
       );
       message.success("Added Successfully!");
@@ -100,7 +109,10 @@ const SignUpAdmin = () => {
           `${process.env.REACT_APP_API_URL}api/getadmin`
         );
         console.log(res);
-        setAdminData(res.data);
+        const filteredData = res.data.filter(
+          (admin: User) => admin.is_active === "active"
+        );
+        setAdminData(filteredData);
       } catch (e) {
         console.log(e);
       }
@@ -108,12 +120,12 @@ const SignUpAdmin = () => {
     fetchData();
   }, []);
 
-  const showDetailsModal = (admin: Admin) => {
+  const showDetailsModal = (admin: User) => {
     setSelectedAdmin(admin);
-    setFirstname(admin.user.firstname as string);
-    setLastname(admin.user.lastname as string);
-    setEmail(admin.user.email as string);
-    setPhone(admin.user.phone[0].phone_number as string);
+    setFirstname(admin.firstname as string);
+    setLastname(admin.lastname as string);
+    setEmail(admin.email as string);
+    setPhone(admin.phone[0].phone_number as string);
     setIsShowDetailsModal(true);
   };
 
@@ -124,11 +136,12 @@ const SignUpAdmin = () => {
       email,
       phone,
       password: "",
+      role: selectedAdmin?.role,
     };
     console.log(updatedData);
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}api/updateadmin/${selectedAdmin?.admin_id}`,
+        `${process.env.REACT_APP_API_URL}api/updateadmin/${selectedAdmin?.user_id}`,
         updatedData
       );
       message.success("Updated Successfully!");
@@ -152,7 +165,8 @@ const SignUpAdmin = () => {
       email,
       phone,
       password: newPassword,
-      currentPassword:currentPassword // Add the 'password' property with an initial value
+      currentPassword: currentPassword, // Add the 'password' property with an initial value
+      role: selectedAdmin?.role,
     };
     if (newPassword && newPassword === confirmPassword) {
       updatedData["password"] = newPassword;
@@ -160,7 +174,7 @@ const SignUpAdmin = () => {
 
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}api/updateadmin/${selectedAdmin?.admin_id}`,
+        `${process.env.REACT_APP_API_URL}api/updateadmin/${selectedAdmin?.user_id}`,
         updatedData
       );
       message.success("Updated Successfully!");
@@ -180,6 +194,39 @@ const SignUpAdmin = () => {
     }
   };
 
+  const filteredAdmins = adminData.filter(
+    (admin) =>
+      admin.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      admin.lastname.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const isremoveAdminModel = (id: string) => {
+    Modal.confirm({
+      title: "Do you want to remove this admin?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        axios
+          .put(`${process.env.REACT_APP_API_URL}api/removeadmin`, {
+            id: id,
+            status: "inactive",
+          })
+          .then((res) => {
+            message.success("Admin Removed Successfully!");
+            const newAdminData = adminData.map((admin) =>
+              admin.user_id === id ? { ...admin, is_active: "inactive" } : admin
+            );
+            setAdminData(newAdminData);
+          })
+          .catch((e) => {
+            message.error("Failed to remove admin!");
+            console.log(e);
+          });
+      },
+    });
+  };
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -190,10 +237,11 @@ const SignUpAdmin = () => {
       </Row>
       <Row>
         <Col span={24}>
-          <input
+          <Input
             style={{ width: "100%", height: "40px" }}
             type="search"
             placeholder="Search here"
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Col>
       </Row>
@@ -204,127 +252,138 @@ const SignUpAdmin = () => {
       >
         <Col span={21}></Col>
         <Col span={3}>
-          <Button
-            onClick={showModal}
-            style={{
-              backgroundColor: "#EFF4FA",
-              color: "#0E458E",
-              borderRadius: "3px",
-              fontFamily: "kanit",
-              borderColor: "#0E458E",
+          {data.role === "SUPERADMIN" && (
+            <Button
+              onClick={showModal}
+              style={{
+                backgroundColor: "#EFF4FA",
+                color: "#0E458E",
+                borderRadius: "3px",
+                fontFamily: "kanit",
+                borderColor: "#0E458E",
 
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            add +
-          </Button>
-        </Col>
-      </Row>
-
-      {adminData.map((admin) => (
-        <Row
-          key={admin.admin_id as string}
-          style={{
-            backgroundColor: "white",
-            padding: "1%",
-            marginTop: "50px",
-          }}
-        >
-          <Col></Col>
-          <Col span={6} style={{}}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "left",
-                alignItems: "center",
-                textAlign: "center",
-                height: "80px",
-                fontSize: "16px",
-              }}
-            >
-              {admin.user.firstname} {admin.user.lastname}
-            </div>
-          </Col>
-
-          <Col span={6} style={{}}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "left",
-                alignItems: "center",
-                textAlign: "center",
-                height: "80px",
-                fontSize: "16px",
-              }}
-            >
-              {admin.user.email}
-            </div>
-          </Col>
-          <Col span={6} style={{}}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "left",
-                alignItems: "center",
-                textAlign: "center",
-                height: "80px",
-                fontSize: "16px",
-              }}
-            >
-              {admin.user.phone[0].phone_number}
-            </div>
-          </Col>
-          <Col span={6} style={{}}>
-            <div
-              style={{
-                height: "80px",
-                fontSize: "16px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                flexDirection: "row",
               }}
             >
-              <Button
-                type="primary"
-                style={{ width: "100px", backgroundColor: "#0E458E" }}
-                onClick={() => showDetailsModal(admin)}
-              >
+              add +
+            </Button>
+          )}
+        </Col>
+      </Row>
+
+      {filteredAdmins.map(
+        (admin) => (
+          console.log(admin),
+          (
+            <Row
+              key={admin.user_id as string}
+              style={{
+                backgroundColor: "white",
+                padding: "1%",
+                marginTop: "50px",
+              }}
+            >
+              <Col></Col>
+              <Col span={6} style={{}}>
                 <div
                   style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {admin.firstname} {admin.lastname}
+                </div>
+              </Col>
+
+              <Col span={6} style={{}}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {admin.email}
+                </div>
+              </Col>
+              <Col span={6} style={{}}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {admin.phone[0].phone_number}
+                </div>
+              </Col>
+              <Col span={6} style={{}}>
+                <div
+                  style={{
+                    height: "80px",
                     fontSize: "16px",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    textAlign: "center",
                   }}
                 >
-                  Details
+                  <Button
+                    disabled={admin.user_id !== data.userId}
+                    type="primary"
+                    style={{ width: "100px", backgroundColor: "#0E458E" }}
+                    onClick={() => showDetailsModal(admin)}
+                  >
+                    <div
+                      style={{
+                        fontSize: "16px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      Details
+                    </div>
+                  </Button>
+                  {data.role === "SUPERADMIN" && (
+                    <Button
+                      type="primary"
+                      onClick={() => isremoveAdminModel(admin.user_id as string)}
+                      ghost
+                      style={{ width: "100px", marginLeft: "20px" }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "16px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          textAlign: "center",
+                        }}
+                      >
+                        Remove
+                      </div>
+                    </Button>
+                  )}
                 </div>
-              </Button>
-              <Button
-                type="primary"
-                ghost
-                style={{ width: "100px", marginLeft: "20px" }}
-              >
-                <div
-                  style={{
-                    fontSize: "16px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                  }}
-                >
-                  Remove
-                </div>
-              </Button>
-            </div>
-          </Col>
-        </Row>
-      ))}
+              </Col>
+            </Row>
+          )
+        )
+      )}
 
       <Modal visible={isModalOpen} onCancel={handleCancel} footer={null}>
         <Form
@@ -342,6 +401,13 @@ const SignUpAdmin = () => {
           >
             Admin SignUp Form
           </div>
+          <Form.Item name="role" label="Role">
+            <Radio.Group onChange={(e) => setRole(e.target.value)} value={role}>
+              <Radio value="ADMIN">Admin</Radio>
+              <Radio value="SUPERADMIN">Super Admin</Radio>
+            </Radio.Group>
+          </Form.Item>
+
           <Form.Item
             name="firstname"
             label="First Name"
