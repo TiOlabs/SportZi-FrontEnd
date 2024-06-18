@@ -102,9 +102,7 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
-
-  },[]);
-  console.log("arcade",ArcadeId); 
+  }, []);
 
   useEffect(() => {
     try {
@@ -248,7 +246,7 @@ const ArcadeProfileArcade = () => {
   //   setCoachBookings([]);
   //   // Logic to change value2
   // };
-  console.log("valueForCoachRequest", valueForCoachRequest);
+
   useEffect(() => {
     axios
       .get(
@@ -288,9 +286,7 @@ const ArcadeProfileArcade = () => {
       .catch((err) => {
         console.log(err);
       });
-
   }, [ArcadeId, valueForCoachRequest]);
-
 
   useEffect(() => {
     axios
@@ -392,8 +388,7 @@ const ArcadeProfileArcade = () => {
     } else {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
-  }
-  console.log("in the arcade", ArcadeId);
+  };
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
@@ -535,11 +530,8 @@ const ArcadeProfileArcade = () => {
     }
   }, [arcadeDetails]);
 
-  console.log("arcadeDetails", arcadeDetails);
-
-  console.log(arcadeDetails?.arcade_name);
   // const arcadeName = arcadeDetails?.arcade_name;
-  console.log(arcadeDetails);
+
   const [cloudName] = useState("dle0txcgt");
 
   //For display reviews and averageRate
@@ -3031,7 +3023,6 @@ const ArcadeProfileArcade = () => {
         </Col>
       </Row>
       <AppFooter />
-
     </>
   );
 };

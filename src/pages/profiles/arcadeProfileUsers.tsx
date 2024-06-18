@@ -52,6 +52,7 @@ import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import PhotoCollageForArcadeUsers from "../../components/photoCollageForArcadeUserViee";
 import { ArcadeFeedback } from "../../types";
 import { UserContext } from "../../context/userContext";
+import React from "react";
 
 const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
@@ -285,14 +286,21 @@ const ArcadeProfileUser = () => {
   const handleCancel = () => {
     setismodelopen(false);
   };
-  console.log(userDetails);
-  console.log(managerDetails);
-  console.log(coachDetails);
-  console.log(userDetails.id);
-  console.log(
-    userDetails.id === "" || managerDetails.id === "" || coachDetails.id === ""
-  );
-  console.log(coachesInArcade);
+
+  const [sport, setSport] = useState<string[]>([]);
+  useEffect(() => {
+    if (arcade?.zone) {
+      const sports = Array.from(
+        new Set(
+          arcade.zone.map((zoneItem) => zoneItem.sport.sport_name.toString())
+        )
+      );
+      setSport(sports);
+    }
+  }, [arcadeDetails1]);
+  console.log("sport", sport);
+  console.log("arcade", arcade);
+  console.log("arcadeDetails1", arcadeDetails1);
   return (
     <>
       {userDetails.id === "" ? <NavbarLogin /> : <NavbarProfile />}
@@ -536,14 +544,14 @@ const ArcadeProfileUser = () => {
                   lineHeight: "normal",
                 }}
               >
-                cricket, baseball,Swimming
+                Manager : {arcadeDetails1?.manager.user.firstname}{" "}
+                {arcadeDetails1?.manager.user.lastname}
               </p>
               <p
                 style={{
                   margin: "0px",
                   color: "#000",
                   fontFamily: "kanit",
-
                   fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "300",
@@ -551,7 +559,32 @@ const ArcadeProfileUser = () => {
                   width: "150px",
                 }}
               >
-                39/11/A Galle road bambalapitiya colombo 04
+                {arcadeDetails1?.address &&
+                  arcadeDetails1?.address
+
+                    .split(",")
+                    .map(
+                      (
+                        line:
+                          | string
+                          | number
+                          | boolean
+                          | React.ReactElement<
+                              any,
+                              string | React.JSXElementConstructor<any>
+                            >
+                          | Iterable<React.ReactNode>
+                          | React.ReactPortal
+                          | null
+                          | undefined,
+                        index: React.Key | null | undefined
+                      ) => (
+                        <React.Fragment key={index}>
+                          {line}
+                          <br />
+                        </React.Fragment>
+                      )
+                    )}
               </p>
             </div>
             <div
@@ -662,68 +695,6 @@ const ArcadeProfileUser = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Qulifications
-            </Typography>
-
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "1",
-              }}
-              itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
-                    }}
-                  >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
-
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
               Expertise
             </Typography>
 
@@ -736,7 +707,7 @@ const ArcadeProfileUser = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
+              dataSource={sport}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -796,11 +767,7 @@ const ArcadeProfileUser = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={[
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-              ]}
+              dataSource={["Online payment"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -860,43 +827,70 @@ const ArcadeProfileUser = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  Open Time : {arcadeDetails1?.open_time}
+                </div>
+              </List.Item>
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    &#8226;
+                  </span>
+                  Close Time : {arcadeDetails1?.close_time}
+                </div>
+              </List.Item>
+            </List>
           </div>
         </Col>
       </Row>
@@ -1232,7 +1226,6 @@ const ArcadeProfileUser = () => {
       {/* feedbacks */}
 
       <Row
-
         style={{
           minWidth: "100%",
           minHeight: "650px",
