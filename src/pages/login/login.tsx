@@ -48,7 +48,7 @@ const Login = () => {
       console.log(user.role);
     
 
-      if (user.role==="ADMIN") {
+      if (user.role==="ADMIN" || user.role==="SUPERADMIN") {
         navigate("/admin", {
           replace: true,
           state: { loggedIn: true },

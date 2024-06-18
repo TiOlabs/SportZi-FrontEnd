@@ -181,7 +181,7 @@ const CoachProfileUser = () => {
         }
       );
       console.log(res.data);
-      alert("Reported Successfully");
+      message.info("Reported Successfully");
     } catch (e) {
       console.log(e);
     }

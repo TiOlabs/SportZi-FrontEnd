@@ -34,7 +34,7 @@ const ArcadeProvider = ({ children }: any) => {
         if (id) {
           // Check if t is not null
           axiosInstance
-            .get(`http://localhost:8000/api/getarcadeDetailsById/${id}`)
+            .get(`${process.env.REACT_APP_API_URL}api/getarcadeDetailsById/${id}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
               console.log("dataArcede", res.data.arcade);

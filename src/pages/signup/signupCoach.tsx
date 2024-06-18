@@ -118,11 +118,11 @@ const SignupCoach = () => {
   };
 
   const onFinish = async () => {
-    const combinedTimeslot = timeSlots.map((slot) => ({
-      day: slot.day,
-      timeslot: `${slot.startTime}-${slot.endTime}`,
-    }));
-    const rateint = parseInt(rate);
+    // const combinedTimeslot = timeSlots.map((slot) => ({
+    //   day: slot.day,
+    //   timeslot: `${slot.startTime}-${slot.endTime}`,
+    // }));
+    // const rateint = parseInt(rate);
 
     try {
       const response = await axiosInstance
@@ -134,11 +134,11 @@ const SignupCoach = () => {
             email: email,
             password: password,
             phone_number: phone,
-            DOB: selectedDateString,
-            gender: gender,
-            rate: rateint,
+            // DOB: selectedDateString,
+            // gender: gender,
+            // rate: rateint,
             sport_id: sport,
-            combinedTimeslot: combinedTimeslot,
+            // combinedTimeslot: combinedTimeslot,
           },
           {
             timeout: 10000, // Increase timeout to 10 seconds
@@ -436,7 +436,7 @@ const SignupCoach = () => {
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 name="rate"
                 label="Add your hourly rate"
                 rules={[
@@ -463,10 +463,10 @@ const SignupCoach = () => {
                   style={{ width: "100%" }}
                   onChange={(value) => setrate(value?.toString() || "")}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               {/* birthday field */}
-              <Form.Item
+              {/* <Form.Item
                 name="DOB"
                 label="DOB"
                 rules={[
@@ -489,10 +489,10 @@ const SignupCoach = () => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               {/* gender field */}
-              <Form.Item
+              {/* <Form.Item
                 name="gender"
                 label="Gender"
                 rules={[{ required: true, message: "Please select gender!" }]}
@@ -519,10 +519,10 @@ const SignupCoach = () => {
                     Female
                   </Option>
                 </Select>
-              </Form.Item>
-              <div>Select Availiable Time Slots</div>
+              </Form.Item> */}
+              {/* <div>Select Availiable Time Slots (enter at least one)</div> */}
               {/* Day and Time Slot Selection */}
-              {timeSlots.map((slot, index) => (
+              {/* {timeSlots.map((slot, index) => (
                 <Space
                   key={index}
                   direction="vertical"
@@ -600,7 +600,7 @@ const SignupCoach = () => {
                 <div style={{ fontSize: "15px" }}>
                   Add Another Availiavle Time
                 </div>
-              </Button>
+              </Button> */}
 
               <Form.Item
                 name="sport"

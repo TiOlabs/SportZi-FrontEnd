@@ -66,12 +66,12 @@ const SignupPlayer = () => {
             firstname: firstname,
             lastname: lastname,
             email: email,
-            DOB: selectedDateString,
-            gender: gender,
+            // DOB: selectedDateString,
+            // gender: gender,
             role: "PLAYER",
             password: password,
             phone_number: phone_number,
-            accountNumber: "123456789789",
+            // accountNumber: "123456789789",
           },
           {
             timeout: 10000, // Increase timeout to 10 seconds
@@ -375,7 +375,7 @@ const SignupPlayer = () => {
               </Form.Item>
 
               {/* birthday field */}
-              <Form.Item
+              {/* <Form.Item
                 name="dob"
                 label="DOB"
                 rules={[
@@ -399,10 +399,10 @@ const SignupPlayer = () => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               {/* gender field */}
-              <Form.Item
+              {/* <Form.Item
                 name="gender"
                 label="Gender"
                 rules={[{ required: true, message: "Please select gender!" }]}
@@ -429,7 +429,7 @@ const SignupPlayer = () => {
                     Female
                   </Option>
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item
                 name="agreement"
