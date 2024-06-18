@@ -124,6 +124,7 @@ export interface Coach {
   user: User;
   sport: Sport;
   coachFeedbacks: CoachFeedbacks;
+  availability: Availiability;
 }
 export interface User {
   user_id: String;
@@ -145,6 +146,7 @@ export interface User {
   achivement: achivement;
 }
 export interface achivement {
+  [x: string]: any;
   user_id: String;
   achivement_details: String;
 }
