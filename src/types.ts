@@ -125,6 +125,7 @@ export interface Coach {
   status: String;
   sport: Sport;
   coachFeedbacks: CoachFeedbacks;
+  availability: Availiability;
   coachApplyDetailsForPackage: CoachEnrollDetailsForPackages[];
 }
 export interface User {
@@ -149,6 +150,7 @@ export interface User {
   natificationForUser: NotificationForUser[];
 }
 export interface achivement {
+  [x: string]: any;
   user_id: String;
   achivement_details: String;
 }
@@ -337,7 +339,6 @@ export interface ZoneRejectDayAndTime {
   time: String;
   zone: Zone;
 }
-
 
 export interface Availiability {
   coach_id: String;
