@@ -100,8 +100,8 @@ const SignupArcadeManager: React.FC = () => {
   const [form] = Form.useForm();
 
   const onFinish = async () => {
-    console.log("selectedLocation", selectedLocation);
-    const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
+    // console.log("selectedLocation", selectedLocation);
+    // const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
     try {
       const res = await axiosInstance
         .post("api/addarcadeManager", {
@@ -110,12 +110,12 @@ const SignupArcadeManager: React.FC = () => {
           email: email,
           password: password,
           phone: phone,
-          gender: gender,
+          // gender: gender,
           arcade_name: arcadename,
           arcade_email: arcadeemail,
-          location: location,
-          open_time: opentime,
-          close_time: closetime,
+          // location: location,
+          // open_time: opentime,
+          // close_time: closetime,
         })
         .then((res) => {
           console.log(res);
@@ -412,7 +412,7 @@ const SignupArcadeManager: React.FC = () => {
               </Form.Item>
 
               {/* gender field */}
-              <Form.Item
+              {/* <Form.Item
                 name="gender"
                 label="Gender"
                 rules={[{ required: true, message: "Please select gender!" }]}
@@ -439,7 +439,7 @@ const SignupArcadeManager: React.FC = () => {
                     Female
                   </Option>
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
               {/* arcade name */}
               <Form.Item
@@ -483,7 +483,7 @@ const SignupArcadeManager: React.FC = () => {
               </Form.Item>
 
               {/* location */}
-              <Form.Item
+              {/* <Form.Item
                 name="location"
                 label="Location"
                 rules={[
@@ -493,9 +493,9 @@ const SignupArcadeManager: React.FC = () => {
                 ]}
               >
                 <MapForSignUpForm />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* <Form.Item
                 name="opentime"
                 label="Open Time"
                 rules={[
@@ -516,9 +516,9 @@ const SignupArcadeManager: React.FC = () => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* <Form.Item
                 name="closetime"
                 label="Closed Time"
                 rules={[
@@ -539,7 +539,7 @@ const SignupArcadeManager: React.FC = () => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item
                 name="agreement"

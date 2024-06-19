@@ -73,7 +73,7 @@ const CoachProfile = () => {
   const [showMore, setShowMore] = useState(true);
 
   const [Details, setDetails] = useState<any>(null);
-  console.log("coach detailsssss", coachDetails.id);
+
   const coachId = coachDetails?.id;
   useEffect(() => {
     axiosInstance
@@ -277,7 +277,7 @@ const CoachProfile = () => {
   useEffect(() => {
     setLastName(coachDetails?.lastname);
   }, []);
-  console.log(lastname);
+
   const QulificationsGetToArry = (qulifications: string) => {
     if (qulifications) {
       return qulifications.split(",");
@@ -445,7 +445,6 @@ const CoachProfile = () => {
                 }}
               >
                 {discription}
-                {qulifications}
               </Typography>
             </Col>
           </Row>
