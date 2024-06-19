@@ -116,10 +116,15 @@ function DataRow(props: any) {
       }}
     >
       <Col></Col>
-      <Col span={8} style={{}}>
+      <Col span={10} style={{}}>
         <AdvancedImage
           onClick={handleClick}
-          style={{ width: "80px", height: "80px", borderRadius: "50%" }}
+          style={{
+            borderRadius: "50%",
+            position: "absolute",
+            width: "80px",
+            height: "80px",
+          }}
           cldImg={
             cld.image(coachdetails.user.user_image)
             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
@@ -132,8 +137,7 @@ function DataRow(props: any) {
         <div
           style={{
             display: "flex",
-            justifyContent: "left",
-            marginLeft: "100px",
+            justifyContent: "center",
             alignItems: "center",
             textAlign: "center",
             height: "80px",
@@ -145,7 +149,7 @@ function DataRow(props: any) {
         </div>
       </Col>
 
-      <Col span={8}>
+      <Col span={6}>
         <div
           style={{
             display: "flex",

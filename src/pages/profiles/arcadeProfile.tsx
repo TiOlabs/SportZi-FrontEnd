@@ -34,11 +34,11 @@ import {
   Arcade,
   CoachAssignDetails,
   CoachBookingDetails,
+  CoachEnrollDetailsForPackages,
   Package,
   PackageEnroolDetailsForPlayer,
   Zone,
   ZoneBookingDetails,
-  PackageEnrollDetailsForCoach,
 } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
@@ -66,7 +66,7 @@ const ArcadeProfileArcade = () => {
     PackageEnroolDetailsForPlayer[]
   >([]);
   const [packageEnrollmentForCoach, setPackageEnrollmentForCoach] = useState<
-    PackageEnrollDetailsForCoach[]
+    CoachEnrollDetailsForPackages[]
   >([]);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
@@ -105,7 +105,6 @@ const ArcadeProfileArcade = () => {
   }, []);
 
   console.log("arcade", ArcadeId);
-
 
   useEffect(() => {
     try {
@@ -356,14 +355,14 @@ const ArcadeProfileArcade = () => {
   ];
   const CoachReqestToEnrollPackage = [
     (packageEnrollmentForCoach || []).map(
-      (coachEnrollDetails: PackageEnrollDetailsForCoach) => (
+      (coachEnrollDetails: CoachEnrollDetailsForPackages) => (
         <ArcadePackageCoachEnrollAccept
           package_name={coachEnrollDetails.package.package_name}
           package_image={coachEnrollDetails.package.package_image}
           zone_name={coachEnrollDetails.package.zone.zone_name}
-          rate={coachEnrollDetails.rate}
+          rate={coachEnrollDetails.package.rate_per_person}
           duration={coachEnrollDetails.duration}
-          enrolled_date={coachEnrollDetails.enrolled_date}
+          enrolled_date={coachEnrollDetails.applied_date}
           arcade_name={arcade?.arcade_name}
           coach_name={`${coachEnrollDetails.coach.user.firstname} ${coachEnrollDetails.coach.user.lastname}`}
           coach_image={coachEnrollDetails.coach.user.user_image}
@@ -394,7 +393,6 @@ const ArcadeProfileArcade = () => {
   };
 
   console.log("in the arcade", ArcadeId);
-
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
