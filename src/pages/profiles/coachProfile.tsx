@@ -12,7 +12,7 @@ import {
   Row,
   Select,
   Typography,
-  Rate
+  Rate,
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -298,7 +298,6 @@ const CoachProfile = () => {
     );
   }
 
-
   //for display reviews
   const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
   const [averageRating, setAverageRating] = useState(0.0);
@@ -348,7 +347,6 @@ const CoachProfile = () => {
 
     fetchRatings();
   }, [coachId]);
-
 
   return (
     <>
@@ -500,10 +498,12 @@ const CoachProfile = () => {
                 expertice={expertice}
                 setExpertice={setExpertice}
                 coachId={coachDetails?.id}
+                startTime={coachDetails?.start_time}
+                closeTime={coachDetails?.close_time}
+                day={coachDetails?.day}
               />
             </div>
-
-{/* <!--             <div>
+            {/* <!--             <div>
               <h1
                 style={{
                   zIndex: "999",
@@ -517,9 +517,7 @@ const CoachProfile = () => {
                 }}
               >
                 {firstname} {lastname}
-              </h1> --> */}
-
-            {" "}
+              </h1> --> */}{" "}
             <div>
               <Row>
                 <Col>
@@ -544,7 +542,6 @@ const CoachProfile = () => {
                   </h1>
                 </Col>
               </Row>
-
 
               <p
                 style={{
@@ -1542,8 +1539,7 @@ const CoachProfile = () => {
         )}
       </Row>
 
-
-{/* Reviews */}
+      {/* Reviews */}
       <Row
         style={{
           minWidth: "100%",
@@ -1578,7 +1574,6 @@ const CoachProfile = () => {
           >
             Reviews
           </Typography>
-
 
           {/* <Row
             style={{
@@ -1687,7 +1682,7 @@ const CoachProfile = () => {
             </Col>
           </Row> */}
 
-<Row
+          <Row
             style={{
               width: "100%",
               minHeight: "300px",
@@ -1732,10 +1727,8 @@ const CoachProfile = () => {
               ))
             )}
           </Row>
-
         </Col>
       </Row>
-
 
       <Row
         style={{

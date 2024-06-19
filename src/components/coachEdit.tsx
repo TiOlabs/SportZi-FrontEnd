@@ -48,6 +48,9 @@ interface PlayerEditProps {
   expertice: string;
   setExpertice: (value: string) => void;
   coachId: any;
+  startTime: any;
+  closeTime: any;
+  day: any;
   //   address: string;
   //   setAddress: (value: string) => void;
   //   openTime: string;
@@ -69,6 +72,9 @@ const CoachEdit = ({
   expertice,
   setExpertice,
   coachId,
+  startTime,
+  closeTime,
+  day,
 }: // address,
 // setAddress,
 // openTime,
@@ -445,6 +451,7 @@ PlayerEditProps) => {
             >
               <Select
                 placeholder="select your Sport"
+                defaultValue={expertice}
                 onChange={(value) => setExpertice(value)}
                 style={{
                   ...commonInputStyle,
@@ -495,6 +502,10 @@ PlayerEditProps) => {
                   label={`Select Start Time ${index + 1}`}
                   rules={[
                     {
+                      type: "object",
+                      message: "Please select a start time!",
+                    },
+                    {
                       required: true,
                       message: "Please select a start time!",
                     },
@@ -510,6 +521,10 @@ PlayerEditProps) => {
                   name={`endTime-${index}`}
                   label={`Select End Time ${index + 1}`}
                   rules={[
+                    {
+                      type: "object",
+                      message: "Please select a start time!",
+                    },
                     {
                       required: true,
                       message: "Please select an end time!",
