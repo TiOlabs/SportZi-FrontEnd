@@ -888,9 +888,7 @@ const CoachProfile = () => {
               ))}
             </div>
           </div>
-          </div>
         </Col>
-                      
       </Row>
 
       <Row
