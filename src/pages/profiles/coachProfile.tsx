@@ -502,21 +502,6 @@ const CoachProfile = () => {
                 day={coachDetails?.day}
               />
             </div>
-            {/* <!--             <div>
-              <h1
-                style={{
-                  zIndex: "999",
-                  color: "#000",
-                  fontSize: "32px",
-                  fontStyle: "capitalize",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {firstname} {lastname}
-              </h1> --> */}{" "}
             <div>
               <Row>
                 <Col>
@@ -903,7 +888,9 @@ const CoachProfile = () => {
               ))}
             </div>
           </div>
+          </div>
         </Col>
+                      
       </Row>
 
       <Row
