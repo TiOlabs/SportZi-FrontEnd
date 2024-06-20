@@ -12,7 +12,7 @@ import {
   Row,
   Select,
   Typography,
-  Rate
+  Rate,
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -73,7 +73,7 @@ const CoachProfile = () => {
   const [showMore, setShowMore] = useState(true);
 
   const [Details, setDetails] = useState<any>(null);
-  console.log("coach detailsssss", coachDetails.id);
+
   const coachId = coachDetails?.id;
   useEffect(() => {
     axiosInstance
@@ -277,7 +277,7 @@ const CoachProfile = () => {
   useEffect(() => {
     setLastName(coachDetails?.lastname);
   }, []);
-  console.log(lastname);
+
   const QulificationsGetToArry = (qulifications: string) => {
     if (qulifications) {
       return qulifications.split(",");
@@ -297,7 +297,6 @@ const CoachProfile = () => {
       {} as { [key: string]: string[] }
     );
   }
-
 
   //for display reviews
   const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
@@ -348,7 +347,6 @@ const CoachProfile = () => {
 
     fetchRatings();
   }, [coachId]);
-
 
   return (
     <>
@@ -447,7 +445,6 @@ const CoachProfile = () => {
                 }}
               >
                 {discription}
-                {qulifications}
               </Typography>
             </Col>
           </Row>
@@ -500,26 +497,11 @@ const CoachProfile = () => {
                 expertice={expertice}
                 setExpertice={setExpertice}
                 coachId={coachDetails?.id}
+                startTime={coachDetails?.start_time}
+                closeTime={coachDetails?.close_time}
+                day={coachDetails?.day}
               />
             </div>
-
-             <div>
-              <h1
-                style={{
-                  zIndex: "999",
-                  color: "#000",
-                  fontSize: "32px",
-                  fontStyle: "capitalize",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {firstname} {lastname}
-              </h1> 
-
-            {" "}
             <div>
               <Row>
                 <Col>
@@ -544,7 +526,6 @@ const CoachProfile = () => {
                   </h1>
                 </Col>
               </Row>
-
 
               <p
                 style={{
@@ -1544,8 +1525,7 @@ const CoachProfile = () => {
         )}
       </Row>
 
-
-{/* Reviews */}
+      {/* Reviews */}
       <Row
         style={{
           minWidth: "100%",
@@ -1580,7 +1560,6 @@ const CoachProfile = () => {
           >
             Reviews
           </Typography>
-
 
           {/* <Row
             style={{
@@ -1689,7 +1668,7 @@ const CoachProfile = () => {
             </Col>
           </Row> */}
 
-<Row
+          <Row
             style={{
               width: "100%",
               minHeight: "300px",
@@ -1734,10 +1713,8 @@ const CoachProfile = () => {
               ))
             )}
           </Row>
-
         </Col>
       </Row>
-
 
       <Row
         style={{

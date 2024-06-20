@@ -8,10 +8,9 @@ import {
   Button,
   ConfigProvider,
   Empty,
-  Form,
   Input,
   Select,
-  Rate
+  Rate,
 } from "antd";
 import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
@@ -48,7 +47,6 @@ import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
-import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
 import ArcadeEdit from "../../components/arcadeEdit";
@@ -59,10 +57,10 @@ import { ArcadeFeedback } from "../../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
-
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
   const [packageDetail, setPackageDetail] = useState<Arcade>();
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
@@ -105,8 +103,13 @@ const ArcadeProfileArcade = () => {
       console.log(e);
     }
   }, []);
+
+  console.log("arcade", ArcadeId);
+
+
   useEffect(() => {
     try {
+      //some kinda error in here
       const fetchData = async () => {
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
@@ -134,7 +137,7 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
 
   useEffect(() => {
     axios
@@ -255,6 +258,7 @@ const ArcadeProfileArcade = () => {
       )
       .then((res) => {
         // Filter data where status is "success"
+        console.log("res.data", res.data);
         const filteredData = res.data.filter(
           (item: { status: string }) => item.status === "pending"
         );
@@ -262,12 +266,30 @@ const ArcadeProfileArcade = () => {
           (item: { status: string }) => item.status === "success"
         );
         setArcadeCoaches(filteredAssignedCoaches);
-        setCoachAssignRequest(filteredData);
+        console.log("res.data", res.data);
+        const filteredDataForCoachRequest = res.data.filter(
+          (item: { status: string }) => {
+            console.log("item", item);
+            if (valueForCoachRequest === 10) {
+              return item.status === "pending";
+            } else if (valueForCoachRequest === 11) {
+              return item.status === "success";
+            } else if (valueForCoachRequest === 12) {
+              return (
+                item.status === "canceled_By_Arcade" ||
+                item.status === "canceled_By_Coach"
+              );
+            }
+            return false;
+          }
+        );
+        console.log("filteredDataForCoachRequest", filteredDataForCoachRequest);
+        setCoachAssignRequest(filteredDataForCoachRequest);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [ArcadeId]);
+  }, [ArcadeId, valueForCoachRequest]);
 
   useEffect(() => {
     axios
@@ -362,8 +384,17 @@ const ArcadeProfileArcade = () => {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
   };
+  const toggleItems2 = () => {
+    setShowMore(!showMore);
+    if (showMore) {
+      setNumberOfItemsShown(CoachReqestToEnrollPackage.length); // Show all items
+    } else {
+      setNumberOfItemsShown(4); // Show only the first 5 items
+    }
+  };
 
   console.log("in the arcade", ArcadeId);
+
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
@@ -505,13 +536,9 @@ const ArcadeProfileArcade = () => {
     }
   }, [arcadeDetails]);
 
-  console.log("arcadeDetails", arcadeDetails);
-
-  console.log(arcadeDetails?.arcade_name);
   // const arcadeName = arcadeDetails?.arcade_name;
-  console.log(arcadeDetails);
-  const [cloudName] = useState("dle0txcgt");
 
+  const [cloudName] = useState("dle0txcgt");
 
   //For display reviews and averageRate
   const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
@@ -563,12 +590,16 @@ const ArcadeProfileArcade = () => {
     fetchRatings();
   }, [ArcadeId]);
 
-
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
+
+  const onChangeCoachRequests = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValueForCoachRequest(e.target.value);
+  };
 
   return (
     <>
@@ -748,10 +779,10 @@ const ArcadeProfileArcade = () => {
               <p
                 style={{
                   color: "#000",
+                  fontFamily: "kanit",
                   fontSize: "18px",
                   fontStyle: "normal",
                   fontWeight: "350",
-                  fontFamily: "kanit",
                   lineHeight: "normal",
                   marginBottom: "0px",
                   marginTop: "0px",
@@ -876,8 +907,7 @@ const ArcadeProfileArcade = () => {
                           fillOpacity: "0.8",
                           borderBlockEnd: "dashed",
                         }}
-                      />  
-
+                      />
                     </div>
                     <p
                       style={{
@@ -1737,38 +1767,56 @@ const ArcadeProfileArcade = () => {
             </Col>
           )}
         </Row>
-        {filteredArcadeBookings.length > 0 ? (
-          (console.log(filteredArcadeBookings),
-          (
-            <>
-              {filteredArcadeBookings.map((zone) =>
-                (zone.zoneBookingDetails || [])
-                  .filter((booking) => booking.booking_type === "zone")
-                  .map((booking) => (
-                    <AvailableBookingsArcade
-                      key={booking.zone_booking_id}
-                      user_image={booking.user.user_image}
-                      booking_id={booking.zone_booking_id}
-                      booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                      zoneName={zone.zone_name}
-                      time={booking.time}
-                      date={booking.date}
-                      rate={zone.rate}
-                      zoneImage={zone.zone_image}
-                      arcade_name={arcadeName}
-                      email={booking.user.email}
-                      status={booking.status}
-                      full_amount={booking.full_amount}
-                      user_id={booking.user.user_id}
-                      arcade_id={ArcadeId}
-                    />
-                  ))
-              )}
-            </>
-          ))
-        ) : (
-          <Empty />
-        )}
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredArcadeBookings.length > 0 ? (
+              (console.log(filteredArcadeBookings),
+              (
+                <>
+                  {filteredArcadeBookings.map((zone) =>
+                    (zone.zoneBookingDetails || [])
+                      .filter((booking) => booking.booking_type === "zone")
+                      .map((booking) => (
+                        <AvailableBookingsArcade
+                          key={booking.zone_booking_id}
+                          user_image={booking.user.user_image}
+                          booking_id={booking.zone_booking_id}
+                          booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                          zoneName={zone.zone_name}
+                          time={booking.time}
+                          date={booking.date}
+                          rate={zone.rate}
+                          zoneImage={zone.zone_image}
+                          arcade_name={arcadeName}
+                          email={booking.user.email}
+                          status={booking.status}
+                          full_amount={booking.full_amount}
+                          user_id={booking.user.user_id}
+                          arcade_id={ArcadeId}
+                        />
+                      ))
+                  )}
+                </>
+              ))
+            ) : (
+              <Empty />
+            )}
+          </div>
+        </div>
       </Row>
       <Row
         style={{
@@ -2067,53 +2115,71 @@ const ArcadeProfileArcade = () => {
             Coach
           </Col>
         </Row>
-        {coachBookings.length > 0 ? (
-          coachBookings
-            .filter((booking) => {
-              if (filterBy === "date") {
-                return booking.date.includes(filterValue);
-              } else if (filterBy === "time") {
-                return booking.time.includes(filterValue);
-              } else if (filterBy === "rate") {
-                return booking.zone.rate.toString().includes(filterValue);
-              } else if (filterBy === "zoneName") {
-                return booking.zone.zone_name.includes(filterValue);
-              } else if (filterBy === "booked_by") {
-                return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
-                  filterValue
-                );
-              } else if (filterBy === "booking_id") {
-                return booking.booking_id.includes(filterValue);
-              } else if (filterBy === "status") {
-                return booking.status.includes(filterValue);
-              }
-              return true;
-            })
-            .map((booking) => (
-              <AvailableCoachBookingsArcade
-                key={booking.booking_id}
-                user_image={booking.player.user.user_image}
-                booking_id={booking.booking_id}
-                booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
-                zoneName={booking.zone.zone_name}
-                time={booking.time}
-                date={booking.date}
-                rate={booking.zone.rate}
-                zoneImage={booking.zone.zone_image}
-                booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-                player_email={booking.player.user.email}
-                coach_email={booking.coach.user.email}
-                coach_image={booking.coach.user.user_image}
-                coach_id={booking.coach_id}
-                status={booking.status}
-                full_amount={booking.full_amount}
-                player_id={booking.player_id}
-                arcade_id={ArcadeId}
-              />
-            ))
-        ) : (
-          <Empty />
-        )}
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {coachBookings.length > 0 ? (
+              coachBookings
+                .filter((booking) => {
+                  if (filterBy === "date") {
+                    return booking.date.includes(filterValue);
+                  } else if (filterBy === "time") {
+                    return booking.time.includes(filterValue);
+                  } else if (filterBy === "rate") {
+                    return booking.zone.rate.toString().includes(filterValue);
+                  } else if (filterBy === "zoneName") {
+                    return booking.zone.zone_name.includes(filterValue);
+                  } else if (filterBy === "booked_by") {
+                    return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
+                      filterValue
+                    );
+                  } else if (filterBy === "booking_id") {
+                    return booking.booking_id.includes(filterValue);
+                  } else if (filterBy === "status") {
+                    return booking.status.includes(filterValue);
+                  }
+                  return true;
+                })
+                .map((booking) => (
+                  <AvailableCoachBookingsArcade
+                    key={booking.booking_id}
+                    user_image={booking.player.user.user_image}
+                    booking_id={booking.booking_id}
+                    booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
+                    zoneName={booking.zone.zone_name}
+                    time={booking.time}
+                    date={booking.date}
+                    rate={booking.zone.rate}
+                    zoneImage={booking.zone.zone_image}
+                    booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                    player_email={booking.player.user.email}
+                    coach_email={booking.coach.user.email}
+                    coach_image={booking.coach.user.user_image}
+                    coach_id={booking.coach_id}
+                    status={booking.status}
+                    full_amount={booking.full_amount}
+                    player_id={booking.player_id}
+                    arcade_id={ArcadeId}
+                  />
+                ))
+            ) : (
+              <Empty />
+            )}
+          </div>
+        </div>
       </Row>
       {/* Package Enrollments Section */}
       <Row
@@ -2379,7 +2445,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Date
+            Rate
           </Col>
           <Col
             style={{
@@ -2420,30 +2486,48 @@ const ArcadeProfileArcade = () => {
             </Col>
           )}
         </Row>
-        {filteredPackageEnrollments.length > 0 ? (
-          <>
-            {filteredPackageEnrollments.map(
-              (enroll: PackageEnroolDetailsForPlayer) => (
-                <PackageEnrollmentDetailsInArcadeProfile
-                  key={enroll.enrolled_date} // Make sure to provide a unique key
-                  package_id={enroll.package_id}
-                  package_image={enroll.package.package_image}
-                  package_name={enroll.package.package_name}
-                  enroll_date={enroll.enrolled_date}
-                  venue={enroll.package.arcade.arcade_name}
-                  rate={enroll.rate}
-                  duration={enroll.duration}
-                  zone_name={enroll.package.zone.zone_name}
-                  player_id={enroll.player_id}
-                  email={enroll.player.user.email}
-                  role={"ARCADE"}
-                />
-              )
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredPackageEnrollments.length > 0 ? (
+              <>
+                {filteredPackageEnrollments.map(
+                  (enroll: PackageEnroolDetailsForPlayer) => (
+                    <PackageEnrollmentDetailsInArcadeProfile
+                      key={enroll.enrolled_date} // Make sure to provide a unique key
+                      package_id={enroll.package_id}
+                      package_image={enroll.package.package_image}
+                      package_name={enroll.package.package_name}
+                      enroll_date={enroll.enrolled_date}
+                      venue={enroll.package.arcade.arcade_name}
+                      rate={enroll.rate}
+                      duration={enroll.duration}
+                      zone_name={enroll.package.zone.zone_name}
+                      player_id={enroll.player_id}
+                      email={enroll.player.user.email}
+                      role={"ARCADE"}
+                    />
+                  )
+                )}
+              </>
+            ) : (
+              <Empty description="No Package Enrollments Yet" />
             )}
-          </>
-        ) : (
-          <Empty description="No Package Enrollments Yet" />
-        )}
+          </div>
+        </div>
       </Row>
 
       <Row
@@ -2474,29 +2558,209 @@ const ArcadeProfileArcade = () => {
         style={{
           width: "100%",
           display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={10}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={11}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={12}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Assigned
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        {Array.isArray(CoachReqestToArchade) &&
-          CoachReqestToArchade.slice(0, numberOfItemsShown).map(
-            (request, index) => (
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                key={index}
-              >
-                {request}
-              </div>
-            )
-          )}
-
+        {" "}
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {Array.isArray(CoachReqestToArchade) &&
+              CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+                (request, index) => (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    key={index}
+                  >
+                    {request}
+                  </div>
+                )
+              )}
+          </div>
+        </div>
         {showMore ? (
           <Button
             style={{
@@ -2560,24 +2824,41 @@ const ArcadeProfileArcade = () => {
           alignItems: "center",
         }}
       >
-        {Array.isArray(CoachReqestToEnrollPackage) &&
-          CoachReqestToEnrollPackage.slice(0, numberOfItemsShown).map(
-            (request, index) => (
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                key={index}
-              >
-                {request}
-              </div>
-            )
-          )}
-
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {Array.isArray(CoachReqestToEnrollPackage) &&
+              CoachReqestToEnrollPackage.slice(0, numberOfItemsShown).map(
+                (request, index) => (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    key={index}
+                  >
+                    {request}
+                  </div>
+                )
+              )}
+          </div>
+        </div>
         {showMore ? (
           <Button
             style={{
@@ -2588,7 +2869,7 @@ const ArcadeProfileArcade = () => {
               fontSize: "18px",
             }}
             type="link"
-            onClick={toggleItems}
+            onClick={toggleItems2}
           >
             See More
           </Button>
@@ -2602,7 +2883,7 @@ const ArcadeProfileArcade = () => {
               fontSize: "18px",
             }}
             type="link"
-            onClick={toggleItems}
+            onClick={toggleItems2}
           >
             See Less
           </Button>

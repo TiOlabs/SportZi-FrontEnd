@@ -21,11 +21,16 @@ import {
 } from "react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
-import UpdatePackage from "./UpdatePackage";
 import axios from "axios";
 import { useUser } from "../context/userContext";
 import PaymentModal from "./paymentCheckout";
-import { CoachAssignDetails, User } from "../types";
+
+import {
+  CoachAssignDetails,
+  CoachEnrollDetailsForPackages,
+  User,
+} from "../types";
+
 import DisabledContext from "antd/es/config-provider/DisabledContext";
 import axiosInstance from "../axiosInstance";
 
@@ -35,9 +40,13 @@ const ArcadePackageUserView = (props: any) => {
   const [paymentDetails, setPaymentDetails] = useState<User>();
   const [duration, setDuration] = useState("");
   const [coachPackageDescription, setCoachPackageDescription] = useState("");
+  const [CoachDetailsForPackageEnroll, setCoachDetailsForPackageEnroll] =
+    useState<CoachEnrollDetailsForPackages[]>([]);
   const [coachisInArcade, setcoachisInArcade] = useState<CoachAssignDetails[]>(
     []
   );
+  console.log("props", CoachDetailsForPackageEnroll[0]?.package_id);
+  console.log("props", props.package_id);
   const { useBreakpoint } = Grid;
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -59,9 +68,16 @@ const ArcadePackageUserView = (props: any) => {
   };
   const { lg } = useBreakpoint();
   const fullAmount = props.rate * parseInt(duration);
+  const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [loading, setLoading] = useState(false);
   const handleFinish = async () => {
+    setLoading(true);
     if (userDetails?.role === "COACH") {
       try {
+        console.log("coachPackageDescription", coachPackageDescription);
+        console.log("duration", duration);
+        console.log("props.package_id", props.package_id);
+        console.log("userDetails?.id", userDetails?.id);
         const res = await axios.post(
           `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentCoachDetails`,
           {
@@ -73,6 +89,8 @@ const ArcadePackageUserView = (props: any) => {
         );
         console.log(res.data);
         setIsModalOpen(false);
+        setLoading(false);
+        setIsButtonVisible(false);
         message.success("Requested successfully");
       } catch (err) {
         console.log("err", err);
@@ -88,6 +106,7 @@ const ArcadePackageUserView = (props: any) => {
             player_id: userDetails?.id,
             duration: parseInt(duration),
             rate: fullAmount,
+            arcade_id: props.arcade_id,
           }
         );
         console.log("res", res);
@@ -108,6 +127,28 @@ const ArcadePackageUserView = (props: any) => {
           const data = await res.data;
           console.log(data);
           setcoachisInArcade(data);
+        };
+        fetchData();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [userDetails?.id]);
+
+  useEffect(() => {
+    if (userDetails?.role === "COACH") {
+      try {
+        const fetchData = async () => {
+          const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentCoachDetailsById/${userDetails?.id}`
+          );
+          console.log("res", res.data);
+          const data = await res.data;
+          const filteredData = data.filter(
+            (item: { package: any; arcade_id: any }) =>
+              item.package.arcade_id === props.arcade_id
+          );
+          setCoachDetailsForPackageEnroll(filteredData);
         };
         fetchData();
       } catch (e) {
@@ -391,47 +432,43 @@ const ArcadePackageUserView = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                {userDetails?.role === "COACH" ? (
-                  <Button
-                    style={{
-                      backgroundColor: "#EFF4FA",
-                      color: "#0E458E",
-                      borderRadius: "3px",
-                      fontFamily: "kanit",
-                      borderColor: "#0E458E",
-                    }}
-                    onClick={handleJoinClick}
-                  >
-                    Join Now
-                  </Button>
-                ) : userDetails?.role === "PLAYER" ||
-                  userDetails?.role === "MANAGER" ? (
-                  <Button
-                    style={{
-                      backgroundColor: "#EFF4FA",
-                      color: "#0E458E",
-                      borderRadius: "3px",
-                      fontFamily: "kanit",
-                      borderColor: "#0E458E",
-                    }}
-                    onClick={showModal}
-                  >
-                    Enroll
-                  </Button>
-                ) : (
-                  <Button
-                    style={{
-                      backgroundColor: "#EFF4FA",
-                      color: "#0E458E",
-                      borderRadius: "3px",
-                      fontFamily: "kanit",
-                      borderColor: "#0E458E",
-                    }}
-                    onClick={showError}
-                  >
-                    Enroll
-                  </Button>
-                )}
+                {isButtonVisible &&
+                  (userDetails?.role === "COACH" ||
+                    userDetails?.role === "PLAYER" ||
+                    userDetails?.role === "MANAGER") && (
+                    <>
+                      {CoachDetailsForPackageEnroll.find(
+                        (item) => item.package_id === props.package_id
+                      )?.status === "pending" ? (
+                        <p style={{ color: "orange" }}> Request Pending</p>
+                      ) : CoachDetailsForPackageEnroll.find(
+                          (item) => item.package_id === props.package_id
+                        )?.status === "success" ? (
+                        <p style={{ color: "green" }}>Successfully joined</p>
+                      ) : CoachDetailsForPackageEnroll.find(
+                          (item) => item.package_id === props.package_id
+                        )?.status === "canceled_By_Arcade" ? (
+                        <p style={{ color: "red" }}>You are rejected</p>
+                      ) : (
+                        <Button
+                          style={{
+                            backgroundColor: "#EFF4FA",
+                            color: "#0E458E",
+                            borderRadius: "3px",
+                            fontFamily: "kanit",
+                            borderColor: "#0E458E",
+                          }}
+                          onClick={handleJoinClick}
+                          loading={loading}
+                        >
+                          {userDetails?.role === "COACH"
+                            ? "Join Now"
+                            : "Enroll"}
+                        </Button>
+                      )}
+                    </>
+                  )}
+
                 {userDetails?.role === "PLAYER" ||
                 userDetails?.role === "MANAGER" ? (
                   <Modal
@@ -508,7 +545,7 @@ const ArcadePackageUserView = (props: any) => {
                             first_name={paymentDetails?.firstname}
                             last_name={paymentDetails?.lastname}
                             email={paymentDetails?.email}
-                            phone={paymentDetails?.phone[0]?.phone_number}
+                            phone={paymentDetails?.email}
                             address={paymentDetails?.address}
                             city={paymentDetails?.city}
                             country={paymentDetails?.country}

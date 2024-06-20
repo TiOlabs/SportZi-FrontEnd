@@ -34,14 +34,13 @@ import NavbarProfile from "../../components/NavBarProfile";
 import axiosInstance from "../../axiosInstance";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { Coach, User } from "../../types";
+import { Coach, User, achivement } from "../../types";
 import { UserContext } from "../../context/userContext";
 import PhotoCollageForUsers from "../../components/photoCollageForUsers";
 import { CoachFeedback } from "../../types";
 
 import { any } from "prop-types";
 import NavbarLogin from "../../components/NavBarLogin";
-
 
 interface FeedbackData {
   feedback: string;
@@ -182,7 +181,7 @@ const CoachProfileUser = () => {
         }
       );
       console.log(res.data);
-      alert("Reported Successfully");
+      message.info("Reported Successfully");
     } catch (e) {
       console.log(e);
     }
@@ -210,6 +209,56 @@ const CoachProfileUser = () => {
     }
   };
   const navigate = useNavigate();
+  const QulificationsGetToArry = (qulifications: string) => {
+    if (qulifications) {
+      return qulifications.split(",");
+    }
+    return [];
+  };
+
+  const [qulifications, setQulifications] = useState<any>();
+  //const [achiv, setachiv] = useState<any>();
+  const [AvailableTimes, setAvailableTimes] = useState<any>();
+  const [expertice, setExpertice] = useState<any>();
+
+  interface AvailableTime {
+    day: string;
+    time: string;
+  }
+  useEffect(() => {
+    setAvailableTimes(coachDetails?.availability);
+    // setachiv(coachDetails?.user?.achivement);
+    setExpertice(coachDetails?.sport?.sport_name);
+  }, [coachDetails]);
+  console.log("AvailableTimes", AvailableTimes);
+  useEffect(() => {
+    //
+
+    const achiv = coachDetails?.user?.achivement;
+    if (achiv) {
+      let achiveArr: string[] = [];
+      achiv.map((item: any) => {
+        achiveArr.push(item.achivement_details as string);
+      });
+      console.log(achiveArr);
+      let achivArrString = achiveArr.join(",");
+      setQulifications(achivArrString);
+    }
+  }, [coachDetails]);
+  console.log(qulifications);
+  let groupedByDay: { [key: string]: string[] } = {};
+  if (AvailableTimes) {
+    groupedByDay = AvailableTimes.reduce(
+      (acc: { [key: string]: string[] }, { day, time }: AvailableTime) => {
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+        acc[day].push(time);
+        return acc;
+      },
+      {} as { [key: string]: string[] }
+    );
+  }
   return (
     <>
       <style>
@@ -588,7 +637,7 @@ const CoachProfileUser = () => {
                 lineHeight: "1",
               }}
               itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
+              dataSource={QulificationsGetToArry(qulifications)}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -650,43 +699,39 @@ const CoachProfileUser = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "none",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  {expertice}
+                </div>
+              </List.Item>
+            </List>
             <Typography
               style={{
                 color: "#000",
@@ -760,52 +805,68 @@ const CoachProfileUser = () => {
             >
               Available Times
             </Typography>
-            <List
+            <div
               style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
               }}
-              itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              {Object.keys(groupedByDay).map((day) => (
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
+                    flexDirection: "row",
+                    width: "100%",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
+                  key={day}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: lg ? "24px" : "18px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                      width: "1%",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
+                    &#8226;
+                  </span>
+                  <Typography
+                    style={{
+                      color: "#000",
+                      fontFamily: "kanit",
+                      width: "30%",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "normal",
+                      marginTop: "5px",
+                      fontSize: lg ? "24px" : "18px",
+                    }}
+                  >
+                    {day}
+                  </Typography>
+                  <div
+                    style={{
+                      marginTop: "5px",
+                      fontSize: lg ? "18px" : "14px",
+                      fontFamily: "kanit",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "40%",
+                      fontWeight: "300",
+                      justifyContent: "flex-start",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    {groupedByDay[day].map((time, index) => (
+                      <div key={index}>{time}</div>
+                    ))}
                   </div>
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </div>
           </div>
         </Col>
       </Row>
@@ -857,7 +918,6 @@ const CoachProfileUser = () => {
       >
         <Col
           style={{
-           
             backgroundSize: "cover",
             backgroundPosition: "center",
             minHeight: "650px",

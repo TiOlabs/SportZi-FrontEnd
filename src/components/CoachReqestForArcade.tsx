@@ -15,6 +15,7 @@ const CoachReqestForArcade = (props: any) => {
   const { lg, md, sm, xs } = useBreakpoint();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -27,7 +28,13 @@ const CoachReqestForArcade = (props: any) => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setIsRejectModalOpen(false);
   };
+  const handlReject = () => {
+    setIsModalOpen(false);
+    setIsRejectModalOpen(true);
+    
+  }
   const handleAccept = () => {
     try {
       const fetchData = async () => {
@@ -41,12 +48,38 @@ const CoachReqestForArcade = (props: any) => {
             coach_name: props.coach_name,
             email: props.coach_Email,
             arcade_name: props.arcade_name,
+            role:"ARCADE"
           }
         );
         console.log(res.data);
       };
       fetchData();
       message.success("Coach Assigned Successfully");
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleOkRehect = () => {
+    setIsRejectModalOpen(false);
+    try {
+      const fetchData = async () => {
+        const res = await axios.put(
+          `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
+          {
+            coach_id: props.coach_id,
+            coachId: props.coach_id,
+            arcade_id: ArcadeId,
+            status: "canceled_By_Arcade",
+            coach_name: props.coach_name,
+            email: props.coach_Email,
+            arcade_name: props.arcade_name,
+          }
+        );
+        console.log(res.data);
+      };
+      fetchData();
+      message.success("Coach Rejected Successfully");
     } catch (e) {
       console.log(e);
     }
@@ -213,7 +246,7 @@ const CoachReqestForArcade = (props: any) => {
               }}
               key="submit"
               type="primary"
-              onClick={handleOk}
+              onClick={showModal}
             >
               Reject
             </Button>
@@ -250,7 +283,7 @@ const CoachReqestForArcade = (props: any) => {
               fontFamily: "kanit",
             }}
             key="back"
-            onClick={handleCancel}
+            onClick={handlReject}
           >
             Reject
           </Button>,
@@ -379,6 +412,17 @@ const CoachReqestForArcade = (props: any) => {
             {props.description}
           </Col>
         </Row>
+      </Modal>
+      <Modal
+        title="Reject Coach"
+        visible={isRejectModalOpen}
+        onOk={handleOkRehect}
+        onCancel={handleCancel}
+      >
+        <p>Are you sure you want to reject this coach?</p>
+
+
+
       </Modal>
     </>
   );

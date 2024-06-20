@@ -1,28 +1,22 @@
 import { Col, Row } from "antd";
-import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import axios from "axios";
-import { ZoneBookingDetails } from "../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
 const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
   console.log(props);
   const { useBreakpoint } = Grid;
-  const { lg, md, sm, xs } = useBreakpoint();
-
+  const { lg } = useBreakpoint();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const showModal = () => {
     setIsModalOpen(true);
   };
-
   const handleOk = () => {
     setIsModalOpen(false);
   };
-
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -34,10 +28,8 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
           status: "canceled_By_Player",
         }
       );
-
       // Close modal
       setIsModalOpen(false);
-
       // Update zone booking details
       //   props.setZoneBookingDetails((prev: any) => {
       //     return prev.filter(
@@ -66,7 +58,6 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
           height: "auto",
           display: "flex",
           justifyContent: "center",
-
           border: "1px solid #EFF4FA",
           alignItems: "center",
         }}

@@ -98,23 +98,27 @@ const AddPhotoButton = () => {
   const imgObject = cld.image(publicId);
 
   useEffect(() => {
+    console.log(publicId);
+    console.log(userDetails.id);
     async function fetchData() {
-      try {
-        const res = await axios.post(
-          `${process.env.REACT_APP_API_URL}api/addUserPhoto`,
-          {
-            image: publicId,
-            user_id: userDetails.id,
-          }
-        );
-        message.success("Photo uploaded successfully");
-        window.location.reload();
-      } catch (e) {
-        console.log(e);
+      if (ArcadeId === undefined || ArcadeId === null) {
+        try {
+          const res = await axios.post(
+            `${process.env.REACT_APP_API_URL}api/addUserPhoto`,
+            {
+              image: publicId,
+              user_id: userDetails.id,
+            }
+          );
+          message.success("Photo uploaded successfully");
+          window.location.reload();
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
     fetchData();
-  }, [publicId]);
+  }, [publicId, userDetails.id]);
   useEffect(() => {
     async function fetchData() {
       try {

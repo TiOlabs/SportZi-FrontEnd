@@ -9,6 +9,7 @@ import {
   Input,
   InputNumber,
   message,
+  Calendar,
 } from "antd";
 import BookingFormPicture from "../../assets/BookingFormPicture.png";
 import Calender from "../../components/calender";
@@ -22,7 +23,7 @@ import { jwtDecode } from "jwt-decode";
 import { UserIdContext } from "../../context/userId.context";
 import { useLocation } from "react-router-dom";
 import NavbarProfile from "../../components/NavBarProfile";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { count } from "console";
 import { max } from "moment";
 import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
@@ -58,7 +59,7 @@ const BookingForm = () => {
   >([]);
   const [packageDetails, setPackageDetails] = useState<Arcade>();
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedDay, setSelectedDay] = useState("");
 
   // payment_id: "",
   // oder_id: "",
@@ -478,18 +479,38 @@ const BookingForm = () => {
   console.log(capacity);
   console.log(timeParticipantCounts1);
   console.log(packageDetails);
-
-  const handleDateChange = (
-    date: React.SetStateAction<null>,
-    day: React.SetStateAction<null>
-    // Change the type to string
-  ) => {
+  const handleDateSelect = (datee: any) => {
+    const day = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+    }).format(datee);
+    console.log(day);
     setTime("");
-    setSelectedDate(date);
-    setDate(date as unknown as string);
     setSelectedDay(day);
-    form.setFieldsValue({ date });
-    console.log("Selected Day:", day); // Log the selected day name
+  };
+  // const handleDateChange = (
+  //   date: React.SetStateAction<null>,
+  //   day: React.SetStateAction<null>
+  //   // Change the type to string
+  // ) => {
+  //   setTime("");
+  //   setSelectedDate(date);
+  //   setDate(date as unknown as string);
+  //   setSelectedDay(day);
+  //   form.setFieldsValue({ date });
+  //   console.log("Selected Day:", day); // Log the selected day name
+  // };
+  const handleDateChange = (datee: any) => {
+    // Extract the date part from the Day.js object
+    const formattedDate = datee.format("YYYY-MM-DD");
+    console.log(formattedDate);
+
+    // Set the formatted date using setDatee
+    setSelectedDate(formattedDate);
+  };
+  const disabledDate = (current: Dayjs | null): boolean => {
+    // Can not select days before today
+    const today = dayjs().startOf("day");
+    return current ? current.isBefore(today, "day") : false;
   };
   console.log(selectedDay);
   console.log(selectedDate);
@@ -600,7 +621,7 @@ const BookingForm = () => {
         isZoneTime(buttonId, zonedate.time as string)
     );
   };
-
+  console.log(paymentDetails);
   return (
     <>
       <NavbarProfile />
@@ -641,7 +662,12 @@ const BookingForm = () => {
                   </Col>
                   <Col style={{}} xs={24} md={12} lg={24}>
                     <div style={{ display: "Flex", justifyContent: "center" }}>
-                      <Calender onSelect={handleDateChange} />
+                      <Calendar
+                        style={{ width: "94%", marginLeft: "3%" }}
+                        onChange={handleDateChange}
+                        onSelect={handleDateSelect}
+                        disabledDate={disabledDate} // Add this line to disable past dates
+                      />
                     </div>
                   </Col>
                   <Form.Item
@@ -656,7 +682,10 @@ const BookingForm = () => {
                   >
                     <Select
                       placeholder="Reservation Type"
-                      onChange={(value) => setZone(value)}
+                      onChange={(value) => {
+                        setZone(value);
+                        setTime("");
+                      }}
                       allowClear
                       style={{
                         height: "50px",
@@ -714,12 +743,6 @@ const BookingForm = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
-                      max={
-                        Number(capacity) -
-                        (timeParticipantCounts1.find(
-                          (item) => item.time === time
-                        )?.totalParticipantCount || 0)
-                      }
                       onChange={(value) => setPcount(value?.toString() || "")}
                     />
                   </Form.Item>
@@ -727,7 +750,10 @@ const BookingForm = () => {
               </div>
             </Col>
             <Col
-              style={{ display: "flex", justifyContent: "center" }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
               xs={24}
               lg={14}
             >
@@ -738,6 +764,7 @@ const BookingForm = () => {
                   width: "90%",
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 {/* <Form.Item
@@ -752,6 +779,7 @@ const BookingForm = () => {
                     maxHeight: "800px",
                     display: "flex",
                     justifyContent: "center",
+                    width: "100%",
                   }}
                 >
                   <Form.Item
@@ -761,7 +789,6 @@ const BookingForm = () => {
                       flexDirection: "column",
                       rowGap: "20px",
                       width: "80%",
-
                       // Set a maximum height for the container
                     }}
                   >
@@ -787,6 +814,15 @@ const BookingForm = () => {
                       const isZoneRejectDayTime = isZoneRejectDay(button.id);
                       const isZoneRejectDateTime = isZoneRejectDate(button.id);
 
+                      const participantCount =
+                        timeParticipantCounts1.find(
+                          (item) => item.time === button.id
+                        )?.totalParticipantCount || 0;
+
+                      const occupancyPercentage = Math.round(
+                        (participantCount / Number(capacity)) * 100
+                      );
+
                       const buttonBackgroundColor = isBookedSuccessfully
                         ? "#0F70AE"
                         : button.id === time
@@ -806,13 +842,9 @@ const BookingForm = () => {
                               booking.time === button.id &&
                               booking.status === "success"
                           )
-                        ? `linear-gradient(to right, #0F70AE ${
-                            ((timeParticipantCounts1.find(
-                              (item) => item.time === button.id
-                            )?.totalParticipantCount || 0) /
-                              Number(capacity)) *
-                            100
-                          }%, ${button.id === time ? "#1677FF" : "white"} 0%)`
+                        ? `linear-gradient(to right, #0d96ff ${occupancyPercentage}%, ${
+                            button.id === time ? "#1677FF" : "white"
+                          } 0%)`
                         : "none";
 
                       const isDisabled =
@@ -828,7 +860,7 @@ const BookingForm = () => {
 
                       return (
                         <button
-                          disabled={isDisabled as boolean} // Update the type of isDisabled to boolean
+                          disabled={isDisabled as boolean}
                           key={button.id}
                           id={button.id.toString()}
                           type="button"
@@ -838,6 +870,9 @@ const BookingForm = () => {
                             padding: "5%",
                             backgroundColor: buttonBackgroundColor,
                             backgroundImage: gradientBackground,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
                           }}
                         >
                           {isBookedSuccessfully || isFullyBooked
@@ -849,6 +884,13 @@ const BookingForm = () => {
                             : isZoneRejectDateTime
                             ? `${button.time.toString()} - Zone Closed`
                             : button.time.toString()}
+                          {participantCount > 0 && (
+                            <span
+                              style={{ fontSize: "12px", marginTop: "5px" }}
+                            >
+                              {occupancyPercentage}% occupied
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -909,7 +951,7 @@ const BookingForm = () => {
                   first_name={paymentDetails?.firstname}
                   last_name={paymentDetails?.lastname}
                   email={paymentDetails?.email}
-                  phone={paymentDetails?.phone[0].phone_number}
+                  phone={paymentDetails?.email}
                   address={paymentDetails?.address}
                   city={paymentDetails?.city}
                   country={paymentDetails?.country}
