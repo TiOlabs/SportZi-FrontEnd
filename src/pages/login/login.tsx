@@ -1,6 +1,6 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
-import { Form, Input, Row, Col, Button, message } from "antd";
+import { Form, Input, Row, Col, Button, message,Modal,message as antMessage } from "antd";
 // import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { useEffect, useState } from "react";
@@ -52,6 +52,33 @@ const Login = () => {
           : "Login failed"
       );
     }
+  };
+
+
+
+  //for forget password button
+  const [isModalVisible,setIsModalVisible] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  }
+  
+  const handleOk = async () => {
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}api/forgot-password`, { email: resetEmail });
+      antMessage.success('Password reset email sent successfully');
+      setIsModalVisible(false);
+    } catch (error:any) {
+      console.log('Error sending password reset email::',error);
+      antMessage.error("Something Error!");
+      setIsModalVisible(false);
+    }
+  };
+  
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
   return (
@@ -149,9 +176,16 @@ const Login = () => {
               />
             </Form.Item>
             <Form.Item style={{ textAlign: "right" }}>
-              <a className="login-form-forgot" href="">
+              <Button
+              onClick={showModal}
+              style={{
+                border:"none",
+                fontSize:"14px"
+            
+            }}
+              >
                 Forgot password
-              </a>
+              </Button>
             </Form.Item>
             <Form.Item>
               <Button
@@ -179,6 +213,37 @@ const Login = () => {
           </Form>
         </Col>
       </Row>
+
+
+      <Modal
+        title="Reset Password"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Reset Password"
+        cancelText="Cancel"
+      >
+        <Form layout="vertical">
+          <Form.Item
+            label="Email"
+            rules={[
+              {
+                type: "email",
+                message: "The input is not valid E-mail!",
+              },
+              {
+                required: true,
+                message: "Please input your E-mail!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Enter the email"
+              onChange={(e) => setResetEmail(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
       <AppFooter />
     </>
   );

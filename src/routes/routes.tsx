@@ -21,6 +21,7 @@ import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
 import { AdminRoute, Auth, ProtectedRoute } from "../middlewares/auth";
 import ChooseArcade from "../pages/login/chooseArcade";
+import ResetPassword from "../pages/login/resetPassword";
 
 const AppRoutes = () => {
   return (
@@ -95,6 +96,9 @@ const AppRoutes = () => {
         />
         <Route path="profile" element={<PlayerProfile />} />
         <Route path="ChooseArchade" element={<ChooseArcade />} />
+
+        <Route path="resetPassword/:token" element={<ResetPassword/>} />
+
       </Routes>
     </>
   );
