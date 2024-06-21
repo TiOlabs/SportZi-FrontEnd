@@ -33,15 +33,27 @@ const MapSection: React.FC = () => {
         if (!Array.isArray(data)) {
           throw new Error("Unexpected data format");
         }
-        const parsedLocations = data.map((arcade: any) => {
-          // Add type annotation for arcade
-          const location = JSON.parse(arcade.location);
-          return {
-            lat: location.lat as number,
-            lng: location.lng as number,
-            name: arcade.arcade_name as string,
-          };
-        });
+        const parsedLocations = data.reduce((acc, arcade) => {
+          try {
+            const location = JSON.parse(arcade.location);
+            if (
+              typeof location.lat === "number" &&
+              typeof location.lng === "number" &&
+              typeof arcade.arcade_name === "string"
+            ) {
+              acc.push({
+                lat: location.lat,
+                lng: location.lng,
+                name: arcade.arcade_name,
+              });
+            } else {
+              console.warn("Invalid arcade location data", arcade);
+            }
+          } catch (e) {
+            console.error("Error parsing location for arcade", arcade, e);
+          }
+          return acc;
+        }, [] as { lat: number; lng: number; name: string }[]);
 
         setLocationData(parsedLocations);
         setFilteredArcades(parsedLocations); // Initialize filteredArcades

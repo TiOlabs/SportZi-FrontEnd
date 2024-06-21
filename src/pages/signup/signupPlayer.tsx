@@ -1,6 +1,6 @@
 import "../../styles/signup.css";
 
-import { Flex } from "antd";
+import { Flex, message } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
@@ -79,7 +79,7 @@ const SignupPlayer = () => {
         )
         .then((res) => {
           console.log(res);
-          alert("Form submitted successfully!");
+          message.success("Form submitted successfully!");
           form.resetFields();
         })
         .catch((err) => {
