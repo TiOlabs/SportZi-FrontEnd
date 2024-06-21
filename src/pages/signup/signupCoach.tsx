@@ -75,6 +75,7 @@ const SignupCoach = () => {
           `${process.env.REACT_APP_API_URL}api/getSportDetails`
         );
         setSportDetails(response.data);
+        console.log(response.data);
       } catch (err) {
         console.log(err);
       }
