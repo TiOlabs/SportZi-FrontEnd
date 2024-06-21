@@ -1,4 +1,4 @@
-import { Col, Form, Row } from "antd";
+import { Col, Form, Row, message } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
@@ -76,9 +76,14 @@ const AvailableMetingstoPlayer = (props: any) => {
           arcade_id: props.arcade_id,
         }
       );
-
+      message.success(
+        "Booking cancelation successfull!"
+      );
       // Close modal
       setIsModalOpen(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
 
       // Update zone booking details
       props.setZoneBookingDetails((prev: any) => {

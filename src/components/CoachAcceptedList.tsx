@@ -1,4 +1,4 @@
-import { Col, Form, Row } from "antd";
+import { Col, Form, Row, message } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
@@ -66,6 +66,12 @@ const CoachAccepteLst = (props: any) => {
           status: "canceled_By_Coach",
         }
       );
+      message.success("Booking cancelation successfull!");
+      // Close modal
+      setIsModalOpen(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     } catch (e) {
       console.log(e);
     }

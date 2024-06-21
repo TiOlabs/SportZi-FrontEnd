@@ -1,4 +1,4 @@
-import { Col, Form, Row } from "antd";
+import { Col, Form, Row, message } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
@@ -82,6 +82,12 @@ const AvailableBookingsArcade = (props: any) => {
       );
 
       setIsConfirmModalOpen(false);
+      message.success("Booking cancelation successfull!");
+      // Close modal
+      setIsModalOpen(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       console.log("error");
       console.log(error);

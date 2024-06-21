@@ -1266,32 +1266,49 @@ const CoachProfile = () => {
             Venue
           </Col>
         </Row>
-        {filteredBookings.length > 0 ? (
-          filteredBookings.map((booking: CoachBookingDetails) => (
-            <CoachAccepteLst
-              key={booking.booking_id} // Make sure to provide a unique key
-              booking_id={booking.booking_id}
-              booked_by={booking.player.user.firstname}
-              image={booking.player.user.user_image}
-              date={booking.date}
-              time={booking.time}
-              venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
-              coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-              role="COACH"
-              email={booking.player.user.email}
-              arcade_email={booking.arcade.arcade_email}
-              arcade_name={booking.arcade.arcade_name}
-              status={booking.status}
-              full_amount={booking.full_amount}
-              player_id={booking.player_id}
-              arcade_id={booking.arcade_id}
-              coach_id={booking.coach_id}
-            />
-          ))
-        ) : (
-          <Empty description="No Bookings Available" />
-        )}
-
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking: CoachBookingDetails) => (
+                <CoachAccepteLst
+                  key={booking.booking_id} // Make sure to provide a unique key
+                  booking_id={booking.booking_id}
+                  booked_by={booking.player.user.firstname}
+                  image={booking.player.user.user_image}
+                  date={booking.date}
+                  time={booking.time}
+                  venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
+                  coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                  role="COACH"
+                  email={booking.player.user.email}
+                  arcade_email={booking.arcade.arcade_email}
+                  arcade_name={booking.arcade.arcade_name}
+                  status={booking.status}
+                  full_amount={booking.full_amount}
+                  player_id={booking.player_id}
+                  arcade_id={booking.arcade_id}
+                  coach_id={booking.coach_id}
+                />
+              ))
+            ) : (
+              <Empty description="No Bookings Available" />
+            )}
+          </div>
+        </div>
         {/* {showMore ? (
         <Button
           style={{
@@ -1511,6 +1528,24 @@ const CoachProfile = () => {
           >
             Date
           </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Duration
+          </Col>
           {lg && (
             <Col
               style={{
@@ -1557,6 +1592,7 @@ const CoachProfile = () => {
               image={booking.arcade.arcade_image}
               date={booking.assigned_date}
               time={booking.created_at}
+              duration={booking.duration}
               coach_name={coachDetails.firstName + " " + coachDetails.lastName}
               role="COACH"
               arcade_email={booking.arcade.arcade_email}
