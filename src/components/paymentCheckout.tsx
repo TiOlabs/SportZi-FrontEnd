@@ -146,7 +146,15 @@ const PaymentModal = (props: any): JSX.Element | null => {
         arcade_name: props.arcade_name,
       })
       .then(() => {
-        window.location.reload();
+        // Display success message
+        message.success(
+          "Booking successful! you can see your bookings in your profile."
+        );
+
+        // Wait for 3 seconds before reloading the page
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       })
       .catch((error) => {
         console.log(error);
