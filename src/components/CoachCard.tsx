@@ -63,9 +63,9 @@ const CoachCard = (props: any) => {
               <Rate
                 allowHalf
                 disabled
-                defaultValue={3}
+                defaultValue={0}
                 value={roundedAvgRate}
-                style={{ color: "#FFD700", fontSize: "12px" }}
+                style={{ color: "#5587CC", fontSize: "12px" }}
               />
             </div>
             <div>
