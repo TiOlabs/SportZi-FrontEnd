@@ -80,6 +80,7 @@ const CoachBookingForm: React.FC = () => {
   const currentCoachId = useRef(coachId);
 
   const handleDateChange = (datee: any) => {
+    console.log(datee);
     // Extract the date part from the Day.js object
     const formattedDate = datee.format("YYYY-MM-DD");
     console.log(formattedDate);
@@ -1076,7 +1077,7 @@ const CoachBookingForm: React.FC = () => {
                                   <div
                                     style={{ fontSize: "12px", color: "#000" }}
                                   >
-                                   ( {percentageOccupied}% Occupied )
+                                    ( {percentageOccupied}% Occupied )
                                   </div>
                                 )}
                               </Button>

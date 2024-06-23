@@ -208,6 +208,7 @@ const SideBarAdminPage = () => {
           padding: "2%",
           height: "220vh",
           overflowY: "hidden",
+          position: "fixed",
         }}
       >
         <Row>
@@ -281,7 +282,8 @@ const SideBarAdminPage = () => {
       {stts === "SportManagement" && <SportManagement />}
       {stts === "ArcadeReports" && <ReportManagement />}
       {stts === "UserReports" && <ReportUserManagement />}
-      <AdminPannel />
+      {stts === "" && <AdminPannel />}
+      {/* <AdminPannel /> */}
     </Row>
   );
 };
