@@ -27,6 +27,7 @@ const PlayerProvider = ({ children }: any) => {
 
   console.log("decodedValues", decodedValues?.userId);
   const t = decodedValues?.userId;
+  console.log("t", t);
 
   useEffect(() => {
     try {
@@ -34,11 +35,14 @@ const PlayerProvider = ({ children }: any) => {
         if (t) {
           // Check if t is not null
           axiosInstance
-            .get(`${process.env.REACT_APP_API_URL}api/auth/getplayerdetails/${t}`)
+            .get(
+              `${process.env.REACT_APP_API_URL}api/auth/getplayerdetails/${t}`
+            )
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);
               setUserDetails({
                 id: res.data.user_id,
+                is_active: res.data.is_active,
                 firstName: res.data.firstname,
                 lastName: res.data.lastname,
                 role: res.data.role,

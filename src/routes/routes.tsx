@@ -19,8 +19,9 @@ import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
-import { Auth, ProtectedRoute } from "../middlewares/auth";
+import { AdminRoute, Auth, ProtectedRoute } from "../middlewares/auth";
 import ChooseArcade from "../pages/login/chooseArcade";
+import ResetPassword from "../pages/login/resetPassword";
 
 const AppRoutes = () => {
   return (
@@ -73,7 +74,16 @@ const AppRoutes = () => {
           element={<ArcadeProfileArcade />}
         />
         <Route path="arcadeProfile/:ArcadeId" element={<ArcadeProfileUser />} />
-        <Route path="admin" element={<Admin />} />
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="coachBookingForm"
           element={
@@ -86,6 +96,9 @@ const AppRoutes = () => {
         />
         <Route path="profile" element={<PlayerProfile />} />
         <Route path="ChooseArchade" element={<ChooseArcade />} />
+
+        <Route path="resetPassword/:token" element={<ResetPassword/>} />
+
       </Routes>
     </>
   );

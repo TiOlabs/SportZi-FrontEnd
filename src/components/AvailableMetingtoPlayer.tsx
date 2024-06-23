@@ -72,6 +72,8 @@ const AvailableMetingstoPlayer = (props: any) => {
           booking_time: props.booking_time,
           arcade_name: props.venue,
           reason: reason,
+          user_id: props.user_id,
+          arcade_id: props.arcade_id,
         }
       );
 
@@ -386,7 +388,7 @@ const AvailableMetingstoPlayer = (props: any) => {
             lg={6}
             xl={6}
           >
-            Rate: Rs.{props.full_amount}
+            Rate: LKR {props.full_amount}
           </Col>
         </Row>
       </Modal>

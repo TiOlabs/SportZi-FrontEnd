@@ -1,13 +1,16 @@
-import { Col, Row, Button, Empty, Modal } from "antd";
+import { Col, Row, Button, Empty, Modal, Input } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Report, ReportArcade } from "../../../types";
+import { ReportArcade } from "../../../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import confirm from "antd/es/modal/confirm";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+
 const ReportManagement = () => {
   const [reportsArcade, setReportsArcade] = useState<ReportArcade[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,24 +25,30 @@ const ReportManagement = () => {
     };
     fetchData();
   }, []);
+
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
       cloudName,
     },
   });
-  const [isModalOpenForReport, setismodelopenForReport] = useState(false);
+
+  const [isModalOpenForReport, setIsModalOpenForReport] = useState(false);
   const [showConfirmModelForRemoveUser, setShowConfirmModelForRemoveUser] =
     useState(false);
+
   const showModalForReport = () => {
-    setismodelopenForReport(true);
+    setIsModalOpenForReport(true);
   };
+
   const handleOkForReport = () => {
-    setismodelopenForReport(false);
+    setIsModalOpenForReport(false);
   };
+
   const handleCancelForReport = () => {
-    setismodelopenForReport(false);
+    setIsModalOpenForReport(false);
   };
+
   const handleRemoveForReport = async () => {
     confirm({
       title: "Are you sure Remove the Arcade?",
@@ -88,6 +97,17 @@ const ReportManagement = () => {
       },
     });
   };
+
+  const filteredReports = reportsArcade.filter(
+    (reportArcade) =>
+      reportArcade.victim_arcade.arcade_name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      reportArcade.report_reason
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
       <Row>NAV</Row>
@@ -98,20 +118,23 @@ const ReportManagement = () => {
       </Row>
       <Row>
         <Col span={24}>
-          <input
+          <Input
             style={{ width: "100%", height: "40px" }}
             type="search"
             placeholder="Search here"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Col>
       </Row>
-      {reportsArcade.length === 0 ? (
+      {filteredReports.length === 0 ? (
         <div>
           <Empty description={"No Reports For Arcade"} />
         </div>
       ) : (
-        reportsArcade.map((reportArcade: ReportArcade) => (
+        filteredReports.map((reportArcade: ReportArcade) => (
           <Row
+            key={reportArcade.report_id as string}
             style={{
               backgroundColor: "white",
               padding: "1%",
@@ -127,11 +150,9 @@ const ReportManagement = () => {
                   width: "80px",
                   height: "80px",
                 }}
-                cldImg={
-                  cld.image(reportArcade.reporter_user.user_image as string)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
+                cldImg={cld.image(
+                  reportArcade.reporter_user.user_image as string
+                )}
               />
               <div
                 style={{
@@ -170,11 +191,9 @@ const ReportManagement = () => {
                   width: "80px",
                   height: "80px",
                 }}
-                cldImg={
-                  cld.image(reportArcade.victim_arcade.arcade_image as string)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
+                cldImg={cld.image(
+                  reportArcade.victim_arcade.arcade_image as string
+                )}
               />
               <div
                 style={{
@@ -246,7 +265,6 @@ const ReportManagement = () => {
             >
               <Row>
                 <Col span={12}>
-                  {" "}
                   <b>Reporter</b> :{" "}
                   {reportArcade.reporter_user.firstname +
                     "" +
@@ -258,7 +276,6 @@ const ReportManagement = () => {
               </Row>
               <Row>
                 <Col span={12}>
-                  {" "}
                   <b>Victim</b> : {reportArcade.victim_arcade.arcade_name}
                 </Col>
                 <Col span={12}>
@@ -267,13 +284,11 @@ const ReportManagement = () => {
               </Row>
               <Row>
                 <Col span={12}>
-                  {" "}
                   <b>Reason</b> : {reportArcade.report_reason}
                 </Col>
               </Row>
               <Row>
                 <Col span={24}>
-                  {" "}
                   <b>Description</b> : {reportArcade.description}
                 </Col>
               </Row>

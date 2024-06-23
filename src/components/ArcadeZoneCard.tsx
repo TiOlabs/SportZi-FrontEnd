@@ -5,8 +5,11 @@ import { useState } from "react";
 import axios from "axios";
 import UpdateZone from "./UpdateZone";
 const ArcadeZoneCard = (props: any) => {
+
   console.log("lol ", props);
+  
   const [cloudName] = useState("dle0txcgt");
+
   const cld = new Cloudinary({
     cloud: {
       cloudName,
@@ -141,7 +144,7 @@ const ArcadeZoneCard = (props: any) => {
                     color: "#5587CC",
                   }}
                 >
-                  Rs.{props.rate}
+                  LKR {props.rate}
                 </Typography>
                 <Typography
                   style={{
@@ -174,6 +177,10 @@ const ArcadeZoneCard = (props: any) => {
                   capacity={props.capacity}
                   sport={props.sport}
                   sport_id={props.sport_id}
+                  day={props.day}
+                  timeForDay={props.timeForDay}
+                  date={props.date}
+                  timeForDate={props.timeForDate}
                 />
 
                 <Button

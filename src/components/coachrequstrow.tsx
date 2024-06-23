@@ -74,6 +74,7 @@ const CoachRequstRow = (props: any) => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      okCancel: true,
 
       async onOk() {
         let created_at, player_id;
@@ -102,6 +103,9 @@ const CoachRequstRow = (props: any) => {
               booking_time: props.booking_time,
               arcade_email: props.arcade_email,
               reason: reason,
+              coach_id: props.coach_id,
+              arcade_id: props.arcade_id,
+              player_id: props.player_id,
             }
           );
           try {
@@ -451,7 +455,7 @@ const CoachRequstRow = (props: any) => {
             lg={6}
             xl={6}
           >
-            Rate: Rs.{props.full_amount}
+            Rate: LKR {props.full_amount}
           </Col>
         </Row>
       </Modal>

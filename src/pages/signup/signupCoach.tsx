@@ -1,6 +1,6 @@
 import "../../styles/signup.css";
 
-import { Flex, InputNumber, Space, TimePicker } from "antd";
+import { Flex, InputNumber, Space, TimePicker, message } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
@@ -75,6 +75,7 @@ const SignupCoach = () => {
           `${process.env.REACT_APP_API_URL}api/getSportDetails`
         );
         setSportDetails(response.data);
+        console.log(response.data);
       } catch (err) {
         console.log(err);
       }
@@ -118,29 +119,35 @@ const SignupCoach = () => {
   };
 
   const onFinish = async () => {
-    const combinedTimeslot = timeSlots.map((slot) => ({
-      day: slot.day,
-      timeslot: `${slot.startTime}-${slot.endTime}`,
-    }));
-    const rateint = parseInt(rate);
-    console.log(rateint);
+    // const combinedTimeslot = timeSlots.map((slot) => ({
+    //   day: slot.day,
+    //   timeslot: `${slot.startTime}-${slot.endTime}`,
+    // }));
+    // const rateint = parseInt(rate);
+
     try {
       const response = await axiosInstance
-        .post("/api/addcoach", {
-          firstname: firstname,
-          lastname: lastname,
-          email: email,
-          password: password,
-          phone_number: phone,
-          DOB: selectedDateString,
-          gender: gender,
-          rate: rateint,
-          sport_id: sport,
-          combinedTimeslot: combinedTimeslot,
-        })
+        .post(
+          "/api/addcoach",
+          {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: password,
+            phone_number: phone,
+            // DOB: selectedDateString,
+            // gender: gender,
+            // rate: rateint,
+            sport_id: sport,
+            // combinedTimeslot: combinedTimeslot,
+          },
+          {
+            timeout: 10000, // Increase timeout to 10 seconds
+          }
+        )
         .then((res) => {
           console.log(res);
-          alert("Form submitted successfully!");
+          message.success("Form submitted successfully!");
           form.resetFields();
         })
         .catch((err) => {
@@ -175,7 +182,9 @@ const SignupCoach = () => {
     }
     return Promise.reject("Invalid phone number");
   };
-
+  const sortedSports = [...sportDetails].sort((a, b) =>
+    a.sport_name.toString().localeCompare(b.sport_name.toString())
+  );
   return (
     <>
       <Row className="signupContainer">
@@ -428,7 +437,7 @@ const SignupCoach = () => {
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 name="rate"
                 label="Add your hourly rate"
                 rules={[
@@ -455,10 +464,10 @@ const SignupCoach = () => {
                   style={{ width: "100%" }}
                   onChange={(value) => setrate(value?.toString() || "")}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               {/* birthday field */}
-              <Form.Item
+              {/* <Form.Item
                 name="DOB"
                 label="DOB"
                 rules={[
@@ -481,10 +490,10 @@ const SignupCoach = () => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               {/* gender field */}
-              <Form.Item
+              {/* <Form.Item
                 name="gender"
                 label="Gender"
                 rules={[{ required: true, message: "Please select gender!" }]}
@@ -511,10 +520,10 @@ const SignupCoach = () => {
                     Female
                   </Option>
                 </Select>
-              </Form.Item>
-              <div>Select Availiable Time Slots</div>
+              </Form.Item> */}
+              {/* <div>Select Availiable Time Slots (enter at least one)</div> */}
               {/* Day and Time Slot Selection */}
-              {timeSlots.map((slot, index) => (
+              {/* {timeSlots.map((slot, index) => (
                 <Space
                   key={index}
                   direction="vertical"
@@ -592,7 +601,7 @@ const SignupCoach = () => {
                 <div style={{ fontSize: "15px" }}>
                   Add Another Availiavle Time
                 </div>
-              </Button>
+              </Button> */}
 
               <Form.Item
                 name="sport"
@@ -606,16 +615,22 @@ const SignupCoach = () => {
                 ]}
               >
                 <Select
-                  placeholder="select your Sport"
+                  placeholder="Select your Sport"
                   onChange={(value) => setSport(value)}
                   style={{
                     ...commonInputStyle,
                     border: "1px solid #ccc",
                     padding: "4px",
                   }}
+                  dropdownRender={(menu) => (
+                    <div style={{ maxHeight: "150px", overflowY: "auto" }}>
+                      {menu}
+                    </div>
+                  )}
                 >
-                  {sportDetails.map((sport) => (
+                  {sortedSports.map((sport) => (
                     <Option
+                      key={sport.sport_id as string}
                       value={sport.sport_id}
                       style={{ ...commonInputStyle, border: "1px solid #ccc" }}
                     >

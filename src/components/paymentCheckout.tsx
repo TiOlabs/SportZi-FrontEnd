@@ -3,7 +3,7 @@ import md5 from "crypto-js/md5";
 import { Button, message } from "antd";
 import axios from "axios";
 import { ZoneBookingsContext } from "../context/zoneBookings.context";
-import { full } from "@cloudinary/url-gen/qualifiers/fontHinting";
+import { Arcade } from "../types";
 
 declare global {
   interface Window {
@@ -12,16 +12,13 @@ declare global {
 }
 
 const PaymentModal = (props: any): JSX.Element | null => {
-  console.log(props);
   const zoneBookings = useContext(ZoneBookingsContext);
-  console.log(zoneBookings);
-  console.log(zoneBookings.zoneBookings.date);
-  console.log(props.first);
-  console.log(props.first_name + " " + props.last_name)
-
-  // Put the payment variables here
-  const [messageApi, contextHolder] = message.useMessage();
-  const key = "updatable";
+  const [arcadesofCoache, setarcadesofCoache] = useState<Arcade>();
+  const [isZoneIntheArcade, setIsZoneIntheArcade] = useState(false);
+  const [
+    isZonehasSelectedReservationType,
+    setIsZonehasSelectedReservationType,
+  ] = useState(false);
   const orderId = props.orderId;
   const name = props.item;
   const amount = props.amount;
@@ -29,7 +26,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
   const merchantSecret = "MTAwNjUyOTg1MTY5MDY1NjIyNjE3MzMzOTk1MzEzOTAzNjI3NTAw";
 
   const hashedSecret = md5(merchantSecret).toString().toUpperCase();
-  let amountFormated = parseFloat(amount)
+  const amountFormated = parseFloat(amount)
     .toLocaleString("en-us", { minimumFractionDigits: 2 })
     .replaceAll(",", "");
   const currency = props.currency || "LKR";
@@ -39,10 +36,46 @@ const PaymentModal = (props: any): JSX.Element | null => {
   )
     .toString()
     .toUpperCase();
+  console.log(props.arcadeId);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetailsByArcadeId/${props.arcadeId}`
+        );
+        const data = await res.json();
+        setarcadesofCoache(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [props.arcadeId]);
 
-  var payment = {
-    sandbox: true, // if the account is sandbox or real
-    merchant_id: "1226243", // Replace your Merchant ID
+  useEffect(() => {
+    if (arcadesofCoache) {
+      const zoneFound = !!arcadesofCoache.zone.find(
+        (zone) => zone.zone_id === props.zoneId
+      );
+      setIsZoneIntheArcade(zoneFound);
+    }
+  }, [arcadesofCoache, props.zoneId]);
+
+  useEffect(() => {
+    if (arcadesofCoache) {
+      const zoneFound = !!arcadesofCoache.zone.find(
+        (zone) =>
+          (zone.zone_id === props.zoneId &&
+            zone.way_of_booking === props.reservation_type) ||
+          zone.way_of_booking === "Both"
+      );
+      setIsZonehasSelectedReservationType(zoneFound);
+    }
+  }, [arcadesofCoache, props.zoneId, props.reservation_type]);
+
+  const payment = {
+    sandbox: true,
+    merchant_id: "1226243",
     return_url: "http://localhost:3000/bookings",
     cancel_url: "http://sample.com/cancel",
     notify_url: "http://sample.com/notify",
@@ -59,19 +92,8 @@ const PaymentModal = (props: any): JSX.Element | null => {
     country: props.country,
     hash: hash,
   };
-
-  // Called when user completed the payment. It can be a successful payment or failure
+  console.log(payment);
   window.payhere.onCompleted = function onCompleted(paymentId: string) {
-    console.log("-----------befoe");
-    console.log(zoneBookings);
-    console.log(zoneBookings.zoneBookings.date);
-    console.log(zoneBookings.zoneBookings.time);
-    console.log(zoneBookings.zoneBookings.participant_count);
-    console.log(zoneBookings.zoneBookings.user_id);
-    console.log(zoneBookings.zoneBookings.zone_id);
-    console.log(zoneBookings.zoneBookings.way_of_booking);
-    console.log(zoneBookings.zoneBookings.booking_type);
-    console.log(props.first_name + " " + props.last_name)
     axios
       .post(`${process.env.REACT_APP_API_URL}api/addarcadebooking`, {
         status: "success",
@@ -79,7 +101,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         time: zoneBookings.zoneBookings.time,
         full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
-        user_id: zoneBookings.zoneBookings.user_id,
+        user_id: zoneBookings.zoneBookings.user_id, 
         zone_id: zoneBookings.zoneBookings.zone_id,
         way_of_booking: zoneBookings.zoneBookings.way_of_booking,
         booking_type: zoneBookings.zoneBookings.booking_type,
@@ -87,27 +109,18 @@ const PaymentModal = (props: any): JSX.Element | null => {
         arcade_email: props.arcade_email,
         arcade_name: props.arcade_name,
         role: props.role,
-        reservation_type:props.reservation_type,
+        reservation_type: props.reservation_type,
         zone_name: props.zone_name,
-        user_name:props.first_name + " " + props.last_name,
-        email:props.email,
+        user_name: props.first_name + " " + props.last_name,
+        email: props.email,
+        arcadeId: props.arcadeId,
       })
-      .then((res) => {
-        console.log("Payment completed.");
+      .then(() => {
         window.location.reload();
       })
       .catch((error) => {
         console.log(error);
-        console.log(`-------error is ${error}`);
       });
-    console.log(zoneBookings.zoneBookings.date);
-    console.log(zoneBookings.zoneBookings.time);
-    console.log(zoneBookings.zoneBookings.participant_count);
-    console.log(zoneBookings.zoneBookings.user_id);
-    console.log(zoneBookings.zoneBookings.zone_id);
-    console.log(props.coach_id);
-    console.log(props.arcadeId);
-    console.log(zoneBookings.zoneBookings.created_at);
 
     axios
       .post(`${process.env.REACT_APP_API_URL}api/addCoachBooking`, {
@@ -116,7 +129,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         time: zoneBookings.zoneBookings.time,
         full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
-        player_id: zoneBookings.zoneBookings.user_id,
+        player_id: props.userId,
         zone_id: zoneBookings.zoneBookings.zone_id,
         coach_id: props.coach_id,
         arcade_id: props.arcadeId,
@@ -124,82 +137,53 @@ const PaymentModal = (props: any): JSX.Element | null => {
         coach_email: props.coach_email,
         coach_name: props.coach_name,
         role: props.role,
-        reservation_type:props.reservation_type,
+        reservation_type: props.reservation_type,
         zone_name: props.zone_name,
-        user_name:props.first_name + " " + props.last_name,
-        email:props.email,
-        arcade_name:props.arcade_name,
+        user_name: props.first_name + " " + props.last_name,
+        email: props.email,
+        arcade_name: props.arcade_name,
       })
-      .then((res) => {
-        console.log("Payment completed.");
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log(`-------error is ${error}`);
-      });
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentPlayerDetails`,
-        {
-          player_id: props.userId,
-          package_id: props.package_id,
-          status: "success",
-          rate: props.amount,
-          duration: props.duration,
-        }
-      )
-      .then((res) => {
-        console.log("Payment completed.");
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log(`-------error is ${error}`);
-      });
+      .then(() => {
+        // Display success message
+        message.success(
+          "Booking successful! you can see your bookings in your profile."
+        );
 
-    console.log("-----------After");
+        // Wait for 3 seconds before reloading the page
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  // Called when user closes the payment without completing
   window.payhere.onDismissed = function onDismissed() {
-    //Note: Prompt user to pay again or show an error page
     console.log("Payment dismissed");
   };
 
-  // Called when error happens when initializing payment such as invalid parameters
   window.payhere.onError = function onError(error: string) {
-    // Note: show an error page
     console.log("Error:" + error);
   };
 
-  function pay() {
-    console.log("before");
+  const pay = () => {
     window.payhere.startPayment(payment);
-    console.log("after");
-  }
-  const isDay = props.date;
-  const isTime = props.time;
-  const isParticipantCount = props.pcount;
-  const isUserId = props.userId;
-  const isZoneId = props.zoneId;
-  const isReservationType = props.reservation_type;
+  };
 
   const handlePayment = () => {
-    console.log(props.avaiableParticipantCount);
-    console.log(props.pcount);
     if (props.item === "Zone Booking") {
-      if (isDay === null) {
+      if (!props.date) {
         message.warning("Please select a Day.");
-      } else if (isReservationType === "") {
-        message.warning("Please select Reservatin Type.");
-      } else if (isTime === "") {
+      } else if (!props.reservation_type) {
+        message.warning("Please select Reservation Type.");
+      } else if (!props.time) {
         message.warning("Please select a Time Slot.");
-      } else if (isParticipantCount === "") {
+      } else if (!props.pcount) {
         message.warning("Please select Participant Count.");
-      } else if (isUserId === "") {
+      } else if (!props.userId) {
         message.warning("Please Login First.");
-      } else if (isZoneId === "") {
+      } else if (!props.zoneId) {
         message.warning("Please select a zone.");
       } else if (props.pcount > props.avaiableParticipantCount) {
         message.warning(
@@ -209,27 +193,34 @@ const PaymentModal = (props: any): JSX.Element | null => {
         pay();
       }
     } else if (props.item === "Coach Booking") {
-      if (isDay === null) {
+      if (!props.date) {
         message.warning("Please select a Day.");
-      } else if (isUserId === "") {
+      } else if (!props.userId) {
         message.warning("Please Login First.");
-      } else if (isZoneId === "") {
+      } else if (!props.zoneId) {
         message.warning("Please select a zone.");
-      } else if (isTime === "") {
+      } else if (!props.time) {
         message.warning("Please select a Time Slot.");
-      } else if (isParticipantCount === "") {
+      } else if (!props.pcount) {
         message.warning("Please select Participant Count.");
-      } else if (isReservationType === "") {
-        message.warning("Please select Reservatin Type.");
+      } else if (!props.reservation_type) {
+        message.warning("Please select Reservation Type.");
       } else if (props.pcount > props.avaiableParticipantCount) {
         message.warning(
           "Participant count is more than available participant count."
+        );
+      } else if (!isZoneIntheArcade) {
+        message.warning("Zone is not in the selected Arcade.");
+      } else if (!isZonehasSelectedReservationType) {
+        message.warning(
+          "Selected Zone does not support selected reservation type."
         );
       } else {
         pay();
       }
     }
   };
+
   return (
     <>
       <Button
@@ -242,25 +233,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
           justifyContent: "center",
           alignItems: "center",
         }}
-        // disabled={
-        //   props.sportId === ""
-        //     ? props.date === "" ||
-        //       props.time === "" ||
-        //       props.pcount === "" ||
-        //       props.userId === "" ||
-        //       props.zoneId === "" ||
-        //       props.pcount > props.avaiableParticipantCount ||
-        //       props.reservation_type === ""
-        //     : props.date === "" ||
-        //       props.time === "" ||
-        //       props.pcount === "" ||
-        //       props.userId === "" ||
-        //       props.zoneId === "" ||
-        //       props.pcount > props.avaiableParticipantCount ||
-        //       props.reservation_type === ""
-        // }
         onClick={handlePayment}
-        // onClick={pay}
       >
         Pay with Payhere
       </Button>

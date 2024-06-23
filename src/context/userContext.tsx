@@ -34,7 +34,7 @@ const UserProvider = ({ children }: any) => {
       const fetchData = async () => {
         if (t) {
           // Check if t is not null
-          axios
+          axiosInstance
             .get(`${process.env.REACT_APP_API_URL}api/getuser/${t}`)
             .then((res) => {
               console.log("dataaaaaaaaaa", res.data);

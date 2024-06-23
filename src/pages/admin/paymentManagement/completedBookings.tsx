@@ -279,7 +279,7 @@ const CompletedBookings = () => {
                   }}
                 >
                   {" "}
-                  Rs.{" "}
+                  LKR {" "}
                   {String(
                     Number(booking.participant_count) *
                       Number(booking.zone.rate)

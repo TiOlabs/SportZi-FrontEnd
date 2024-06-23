@@ -8,9 +8,9 @@ import {
   Button,
   ConfigProvider,
   Empty,
-  Form,
   Input,
   Select,
+  Rate,
 } from "antd";
 import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
@@ -34,6 +34,7 @@ import {
   Arcade,
   CoachAssignDetails,
   CoachBookingDetails,
+  CoachEnrollDetailsForPackages,
   Package,
   PackageEnroolDetailsForPlayer,
   Zone,
@@ -41,20 +42,31 @@ import {
 } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
+import { useArcadeEdit } from "../../context/ArcadeEdit.context";
 import type { RadioChangeEvent } from "antd";
 import PhotoCollageForArcade from "../../components/photoCollageForArcade";
 import AvailableCoachBookingsArcade from "../../components/AvailableCoachBookingsArcade";
 import NavbarProfile from "../../components/NavBarProfile";
-import PhotoCollage from "../../components/photoCollage";
 import PackageEnrollmentDetailsInArcadeProfile from "../../components/packageEnrollmentDetailsForArcadeProfile";
 import { Option } from "antd/es/mentions";
+import ArcadeEdit from "../../components/arcadeEdit";
+import ArcadePackageCoachEnrollAccept from "../../components/arcadePackageCoachEnrollAccept";
+import ReportGenarationForArcade from "../../components/reportGenarationForArcade";
+import Notification from "../../components/notification";
+import { ArcadeFeedback } from "../../types";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
   const [packageDetail, setPackageDetail] = useState<Arcade>();
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
+  >([]);
+  const [packageEnrollmentForCoach, setPackageEnrollmentForCoach] = useState<
+    CoachEnrollDetailsForPackages[]
   >([]);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
@@ -66,7 +78,9 @@ const ArcadeProfileArcade = () => {
   };
   console.log("value", value);
   const { ArcadeId } = useParams();
+  console.log("ArcadeId", ArcadeId);
   const { managerDetails } = useArcade();
+  //const { arcadeEditDetails } = useArcadeEdit();
   const [arcade, setArcade] = useState<Arcade>();
   const [arcadeBookings, setArcadeBookings] = useState<Zone[]>([]);
   const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
@@ -76,6 +90,25 @@ const ArcadeProfileArcade = () => {
   const [arcadeCoaches, setArcadeCoaches] = useState<CoachAssignDetails[]>([]);
   useEffect(() => {
     try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentCoachDetails`
+        );
+        const data = await res.data;
+        console.log(data);
+        setPackageEnrollmentForCoach(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  console.log("arcade", ArcadeId);
+
+  useEffect(() => {
+    try {
+      //some kinda error in here
       const fetchData = async () => {
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
@@ -103,7 +136,7 @@ const ArcadeProfileArcade = () => {
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [ArcadeId]);
 
   useEffect(() => {
     axios
@@ -224,6 +257,7 @@ const ArcadeProfileArcade = () => {
       )
       .then((res) => {
         // Filter data where status is "success"
+        console.log("res.data", res.data);
         const filteredData = res.data.filter(
           (item: { status: string }) => item.status === "pending"
         );
@@ -231,12 +265,30 @@ const ArcadeProfileArcade = () => {
           (item: { status: string }) => item.status === "success"
         );
         setArcadeCoaches(filteredAssignedCoaches);
-        setCoachAssignRequest(filteredData);
+        console.log("res.data", res.data);
+        const filteredDataForCoachRequest = res.data.filter(
+          (item: { status: string }) => {
+            console.log("item", item);
+            if (valueForCoachRequest === 10) {
+              return item.status === "pending";
+            } else if (valueForCoachRequest === 11) {
+              return item.status === "success";
+            } else if (valueForCoachRequest === 12) {
+              return (
+                item.status === "canceled_By_Arcade" ||
+                item.status === "canceled_By_Coach"
+              );
+            }
+            return false;
+          }
+        );
+        console.log("filteredDataForCoachRequest", filteredDataForCoachRequest);
+        setCoachAssignRequest(filteredDataForCoachRequest);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [ArcadeId]);
+  }, [ArcadeId, valueForCoachRequest]);
 
   useEffect(() => {
     axios
@@ -301,10 +353,40 @@ const ArcadeProfileArcade = () => {
       )
     ),
   ];
+  const CoachReqestToEnrollPackage = [
+    (packageEnrollmentForCoach || []).map(
+      (coachEnrollDetails: CoachEnrollDetailsForPackages) => (
+        <ArcadePackageCoachEnrollAccept
+          package_name={coachEnrollDetails.package.package_name}
+          package_image={coachEnrollDetails.package.package_image}
+          zone_name={coachEnrollDetails.package.zone.zone_name}
+          rate={coachEnrollDetails.package.rate_per_person}
+          duration={coachEnrollDetails.duration}
+          enrolled_date={coachEnrollDetails.applied_date}
+          arcade_name={arcade?.arcade_name}
+          coach_name={`${coachEnrollDetails.coach.user.firstname} ${coachEnrollDetails.coach.user.lastname}`}
+          coach_image={coachEnrollDetails.coach.user.user_image}
+          coach_id={coachEnrollDetails.coach_id}
+          package_id={coachEnrollDetails.package_id}
+          email={coachEnrollDetails.coach.user.email}
+          status={coachEnrollDetails.status}
+        />
+      )
+    ),
+  ];
+
   const toggleItems = () => {
     setShowMore(!showMore);
     if (showMore) {
       setNumberOfItemsShown(AvailableBookings.length); // Show all items
+    } else {
+      setNumberOfItemsShown(4); // Show only the first 5 items
+    }
+  };
+  const toggleItems2 = () => {
+    setShowMore(!showMore);
+    if (showMore) {
+      setNumberOfItemsShown(CoachReqestToEnrollPackage.length); // Show all items
     } else {
       setNumberOfItemsShown(4); // Show only the first 5 items
     }
@@ -314,19 +396,22 @@ const ArcadeProfileArcade = () => {
 
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
-    axiosInstance
-      .get("/api/auth/getarchadedetails", {
-        params: {
-          ArcadeId: ArcadeId,
-        },
-      })
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`,
+        {}
+      )
       .then((res) => {
+        console.log("arcadeDetails", res.data);
         setArcadeDetails(res.data);
+
+        //  console.log("arcadeDetails", arcadeEditDetails);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [ArcadeId]);
+
   console.log("arcadeDetails", packageDetail);
   const [filterBy, setFilterBy] = useState("date");
   const [filterValue, setFilterValue] = useState("");
@@ -423,8 +508,97 @@ const ArcadeProfileArcade = () => {
       }
     }
   );
-  console.log(arcadeDetails?.arcade_name);
-  const arcadeName = arcadeDetails?.arcade_name;
+
+  const [arcadeName, setArcadeName] = useState<any>();
+  const [discription, setDiscription] = useState<any>();
+  const [address, setAddress] = useState<any>();
+  const [sport, setSport] = useState<any[]>([]);
+  const [openTime, setOpenTime] = useState<any>();
+  const [closeTime, setCloseTime] = useState<any>();
+  const [managerName, setmanagerName] = useState<Arcade>();
+
+  useEffect(() => {
+    if (arcadeDetails) {
+      setArcadeName(arcadeDetails.arcade_name);
+      setDiscription(arcadeDetails.distription);
+      setAddress(arcadeDetails.address);
+      setOpenTime(arcadeDetails.open_time);
+      setCloseTime(arcadeDetails.close_time);
+
+      if (arcade?.zone) {
+        const sports = Array.from(
+          new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
+        );
+        setSport(sports);
+      }
+    }
+  }, [arcadeDetails]);
+
+  // const arcadeName = arcadeDetails?.arcade_name;
+
+  const [cloudName] = useState("dle0txcgt");
+
+  //For display reviews and averageRate
+  const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getarcadefeedbacks/${ArcadeId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbyarcadeId/${ArcadeId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:::", averageRate);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [ArcadeId]);
+
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+
+  const onChangeCoachRequests = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValueForCoachRequest(e.target.value);
+  };
+
   return (
     <>
       <NavbarProfile />
@@ -448,7 +622,7 @@ const ArcadeProfileArcade = () => {
           }}
         >
           {" "}
-          {arcadeBookings.length === 0 ? <Empty /> : null}
+          {/* {arcadeBookings.length === 0 ? <Empty /> : null} */}
           <Row
             style={{
               width: "100%",
@@ -471,10 +645,13 @@ const ArcadeProfileArcade = () => {
               lg={24}
               xl={24}
             >
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(arcade?.arcade_image.toString())
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
@@ -517,7 +694,7 @@ const ArcadeProfileArcade = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {arcadeDetails && arcadeDetails.distription}
+                {discription}
               </Typography>
             </Col>
           </Row>
@@ -543,41 +720,76 @@ const ArcadeProfileArcade = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
+            <div
+              style={{
+                width: "80%",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                position: "absolute",
+                height: "0px",
+              }}
+            >
+              <ArcadeEdit
+                firstname={arcadeName}
+                setFirstname={setArcadeName}
+                discription={discription}
+                setDiscription={setDiscription}
+                address={address}
+                setAddress={setAddress}
+                openTime={openTime}
+                setopenTime={setOpenTime}
+                closeTime={closeTime}
+                setCloseTime={setCloseTime}
+                id={ArcadeId}
+              />
+            </div>
             <div>
-              <h1
-                style={{
-                  color: "#000",
+              <Row>
+                <Col>
+                  <h1
+                    style={{
+                      color: "#000",
 
-                  fontSize: "32px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {arcadeDetails && arcadeDetails.arcade_name}
-              </h1>
+                      fontSize: "32px",
+                      fontStyle: "normal",
+                      fontWeight: "500",
+                      fontFamily: "kanit",
+                      lineHeight: "normal",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    {arcade && arcade?.arcade_name}
+                  </h1>
+                </Col>
+                <Col span={2}></Col>
+                <Col>
+                  <h1>
+                    <Notification userType="arcade" id={ArcadeId as string} />
+                  </h1>
+                </Col>
+              </Row>
               <p
                 style={{
-                  margin: "0px",
                   color: "#000",
                   fontFamily: "kanit",
-
                   fontSize: "18px",
                   fontStyle: "normal",
-                  fontWeight: "400",
+                  fontWeight: "350",
                   lineHeight: "normal",
+                  marginBottom: "0px",
+                  marginTop: "0px",
                 }}
               >
-                cricket, baseball,Swimming
+                Manager : {arcadeDetails?.manager.user.firstname}{" "}
+                {arcadeDetails?.manager.user.lastname}
               </p>
+
               <p
                 style={{
                   margin: "0px",
@@ -590,8 +802,9 @@ const ArcadeProfileArcade = () => {
                   width: "150px",
                 }}
               >
-                {arcadeDetails?.arcade_address &&
-                  arcadeDetails.arcade_address
+                {address &&
+                  address
+
                     .split(",")
                     .map(
                       (
@@ -637,7 +850,8 @@ const ArcadeProfileArcade = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {/* 5.0 */}
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -672,11 +886,26 @@ const ArcadeProfileArcade = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        defaultValue={0}
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
                     </div>
                     <p
                       style={{
@@ -690,7 +919,8 @@ const ArcadeProfileArcade = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      {/* 120 Feedbacks */}
+                      {totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -701,69 +931,6 @@ const ArcadeProfileArcade = () => {
               style={{
                 color: "#000",
                 fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Qulifications
-            </Typography>
-
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "1",
-              }}
-              itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
-                    }}
-                  >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
-
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
                 fontStyle: "normal",
                 fontWeight: "400",
                 lineHeight: "normal",
@@ -783,12 +950,11 @@ const ArcadeProfileArcade = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
+              dataSource={sport}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -832,7 +998,7 @@ const ArcadeProfileArcade = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Payment Types Types
+              Payment Types
             </Typography>
             <List
               style={{
@@ -843,11 +1009,7 @@ const ArcadeProfileArcade = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={[
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-                "Cricket net for 30 MINS $100",
-              ]}
+              dataSource={["Online Payment"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -907,43 +1069,70 @@ const ArcadeProfileArcade = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  Open Time : {openTime}
+                </div>
+              </List.Item>
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "dotted",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "kanit",
+                    fontSize: "20px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    &#8226;
+                  </span>
+                  Close Time : {closeTime}
+                </div>
+              </List.Item>
+            </List>
           </div>
         </Col>
       </Row>
@@ -1076,7 +1265,7 @@ const ArcadeProfileArcade = () => {
 
         <AddPhotoButton />
       </div>
-      <PhotoCollage />
+      <PhotoCollageForArcade arcade_id={ArcadeId} />
       <Row
         style={{
           paddingTop: "100px",
@@ -1101,6 +1290,9 @@ const ArcadeProfileArcade = () => {
               color: " #0E458E",
               fontSize: md ? "30px" : "20px",
               fontFamily: "Kanit",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
             }}
           >
             Book Our Zones
@@ -1154,6 +1346,12 @@ const ArcadeProfileArcade = () => {
                 sport={zone.sport.sport_name}
                 sport_id={zone.sport.sport_id}
                 full={zone.full_zone_rate}
+                day={zone.zoneRejectDayAndTime.map((item) => item.day)}
+                timeForDay={zone.zoneRejectDayAndTime.map((item) => item.time)}
+                date={zone.zoneRejectDateAndTime.map((item) => item.date)}
+                timeForDate={zone.zoneRejectDateAndTime.map(
+                  (item) => item.time
+                )}
               />
             </Col>
           ))}
@@ -1185,7 +1383,6 @@ const ArcadeProfileArcade = () => {
       <Row
         style={{
           paddingTop: "100px",
-
           width: "100%",
           background: "white",
           minHeight: "600px",
@@ -1208,7 +1405,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "Kanit",
             }}
           >
-            Our Packages
+            Our Packages For You
           </Typography>
           <div
             style={{
@@ -1568,36 +1765,56 @@ const ArcadeProfileArcade = () => {
             </Col>
           )}
         </Row>
-        {filteredArcadeBookings.length > 0 ? (
-          (console.log(filteredArcadeBookings),
-          (
-            <>
-              {filteredArcadeBookings.map((zone) =>
-                (zone.zoneBookingDetails || [])
-                  .filter((booking) => booking.booking_type === "zone")
-                  .map((booking) => (
-                    <AvailableBookingsArcade
-                      key={booking.zone_booking_id}
-                      user_image={booking.user.user_image}
-                      booking_id={booking.zone_booking_id}
-                      booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                      zoneName={zone.zone_name}
-                      time={booking.time}
-                      date={booking.date}
-                      rate={zone.rate}
-                      zoneImage={zone.zone_image}
-                      arcade_name={arcadeName}
-                      email={booking.user.email}
-                      status={booking.status}
-                      full_amount={booking.full_amount}
-                    />
-                  ))
-              )}
-            </>
-          ))
-        ) : (
-          <Empty />
-        )}
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredArcadeBookings.length > 0 ? (
+              (console.log(filteredArcadeBookings),
+              (
+                <>
+                  {filteredArcadeBookings.map((zone) =>
+                    (zone.zoneBookingDetails || [])
+                      .filter((booking) => booking.booking_type === "zone")
+                      .map((booking) => (
+                        <AvailableBookingsArcade
+                          key={booking.zone_booking_id}
+                          user_image={booking.user.user_image}
+                          booking_id={booking.zone_booking_id}
+                          booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                          zoneName={zone.zone_name}
+                          time={booking.time}
+                          date={booking.date}
+                          rate={zone.rate}
+                          zoneImage={zone.zone_image}
+                          arcade_name={arcadeName}
+                          email={booking.user.email}
+                          status={booking.status}
+                          full_amount={booking.full_amount}
+                          user_id={booking.user.user_id}
+                          arcade_id={ArcadeId}
+                        />
+                      ))
+                  )}
+                </>
+              ))
+            ) : (
+              <Empty />
+            )}
+          </div>
+        </div>
       </Row>
       <Row
         style={{
@@ -1896,51 +2113,71 @@ const ArcadeProfileArcade = () => {
             Coach
           </Col>
         </Row>
-        {coachBookings.length > 0 ? (
-          coachBookings
-            .filter((booking) => {
-              if (filterBy === "date") {
-                return booking.date.includes(filterValue);
-              } else if (filterBy === "time") {
-                return booking.time.includes(filterValue);
-              } else if (filterBy === "rate") {
-                return booking.zone.rate.toString().includes(filterValue);
-              } else if (filterBy === "zoneName") {
-                return booking.zone.zone_name.includes(filterValue);
-              } else if (filterBy === "booked_by") {
-                return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
-                  filterValue
-                );
-              } else if (filterBy === "booking_id") {
-                return booking.booking_id.includes(filterValue);
-              } else if (filterBy === "status") {
-                return booking.status.includes(filterValue);
-              }
-              return true;
-            })
-            .map((booking) => (
-              <AvailableCoachBookingsArcade
-                key={booking.booking_id}
-                user_image={booking.player.user.user_image}
-                booking_id={booking.booking_id}
-                booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
-                zoneName={booking.zone.zone_name}
-                time={booking.time}
-                date={booking.date}
-                rate={booking.zone.rate}
-                zoneImage={booking.zone.zone_image}
-                booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-                player_email={booking.player.user.email}
-                coach_email={booking.coach.user.email}
-                coach_image={booking.coach.user.user_image}
-                coach_id={booking.coach_id}
-                status={booking.status}
-                full_amount={booking.full_amount}
-              />
-            ))
-        ) : (
-          <Empty />
-        )}
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {coachBookings.length > 0 ? (
+              coachBookings
+                .filter((booking) => {
+                  if (filterBy === "date") {
+                    return booking.date.includes(filterValue);
+                  } else if (filterBy === "time") {
+                    return booking.time.includes(filterValue);
+                  } else if (filterBy === "rate") {
+                    return booking.zone.rate.toString().includes(filterValue);
+                  } else if (filterBy === "zoneName") {
+                    return booking.zone.zone_name.includes(filterValue);
+                  } else if (filterBy === "booked_by") {
+                    return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
+                      filterValue
+                    );
+                  } else if (filterBy === "booking_id") {
+                    return booking.booking_id.includes(filterValue);
+                  } else if (filterBy === "status") {
+                    return booking.status.includes(filterValue);
+                  }
+                  return true;
+                })
+                .map((booking) => (
+                  <AvailableCoachBookingsArcade
+                    key={booking.booking_id}
+                    user_image={booking.player.user.user_image}
+                    booking_id={booking.booking_id}
+                    booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
+                    zoneName={booking.zone.zone_name}
+                    time={booking.time}
+                    date={booking.date}
+                    rate={booking.zone.rate}
+                    zoneImage={booking.zone.zone_image}
+                    booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                    player_email={booking.player.user.email}
+                    coach_email={booking.coach.user.email}
+                    coach_image={booking.coach.user.user_image}
+                    coach_id={booking.coach_id}
+                    status={booking.status}
+                    full_amount={booking.full_amount}
+                    player_id={booking.player_id}
+                    arcade_id={ArcadeId}
+                  />
+                ))
+            ) : (
+              <Empty />
+            )}
+          </div>
+        </div>
       </Row>
       {/* Package Enrollments Section */}
       <Row
@@ -2206,7 +2443,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Date
+            Rate
           </Col>
           <Col
             style={{
@@ -2247,30 +2484,48 @@ const ArcadeProfileArcade = () => {
             </Col>
           )}
         </Row>
-        {filteredPackageEnrollments.length > 0 ? (
-          <>
-            {filteredPackageEnrollments.map(
-              (enroll: PackageEnroolDetailsForPlayer) => (
-                <PackageEnrollmentDetailsInArcadeProfile
-                  key={enroll.enrolled_date} // Make sure to provide a unique key
-                  package_id={enroll.package_id}
-                  package_image={enroll.package.package_image}
-                  package_name={enroll.package.package_name}
-                  enroll_date={enroll.enrolled_date}
-                  venue={enroll.package.arcade.arcade_name}
-                  rate={enroll.rate}
-                  duration={enroll.duration}
-                  zone_name={enroll.package.zone.zone_name}
-                  player_id={enroll.player_id}
-                  email={enroll.player.user.email}
-                  role={"ARCADE"}
-                />
-              )
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredPackageEnrollments.length > 0 ? (
+              <>
+                {filteredPackageEnrollments.map(
+                  (enroll: PackageEnroolDetailsForPlayer) => (
+                    <PackageEnrollmentDetailsInArcadeProfile
+                      key={enroll.enrolled_date} // Make sure to provide a unique key
+                      package_id={enroll.package_id}
+                      package_image={enroll.package.package_image}
+                      package_name={enroll.package.package_name}
+                      enroll_date={enroll.enrolled_date}
+                      venue={enroll.package.arcade.arcade_name}
+                      rate={enroll.rate}
+                      duration={enroll.duration}
+                      zone_name={enroll.package.zone.zone_name}
+                      player_id={enroll.player_id}
+                      email={enroll.player.user.email}
+                      role={"ARCADE"}
+                    />
+                  )
+                )}
+              </>
+            ) : (
+              <Empty description="No Package Enrollments Yet" />
             )}
-          </>
-        ) : (
-          <Empty description="No Package Enrollments Yet" />
-        )}
+          </div>
+        </div>
       </Row>
 
       <Row
@@ -2301,29 +2556,209 @@ const ArcadeProfileArcade = () => {
         style={{
           width: "100%",
           display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={10}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={11}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangeCoachRequests}
+              value={valueForCoachRequest}
+            >
+              <Radio value={12}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Availiable
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Assigned
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        {Array.isArray(CoachReqestToArchade) &&
-          CoachReqestToArchade.slice(0, numberOfItemsShown).map(
-            (request, index) => (
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                key={index}
-              >
-                {request}
-              </div>
-            )
-          )}
-
+        {" "}
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {Array.isArray(CoachReqestToArchade) &&
+              CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+                (request, index) => (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    key={index}
+                  >
+                    {request}
+                  </div>
+                )
+              )}
+          </div>
+        </div>
         {showMore ? (
           <Button
             style={{
@@ -2349,6 +2784,104 @@ const ArcadeProfileArcade = () => {
             }}
             type="link"
             onClick={toggleItems}
+          >
+            See Less
+          </Button>
+        )}
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          {" "}
+          Coach Request For Enroll Package
+        </Typography>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {Array.isArray(CoachReqestToEnrollPackage) &&
+              CoachReqestToEnrollPackage.slice(0, numberOfItemsShown).map(
+                (request, index) => (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    key={index}
+                  >
+                    {request}
+                  </div>
+                )
+              )}
+          </div>
+        </div>
+        {showMore ? (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems2}
+          >
+            See More
+          </Button>
+        ) : (
+          <Button
+            style={{
+              alignItems: "center",
+              color: "#062C60",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: "18px",
+            }}
+            type="link"
+            onClick={toggleItems2}
           >
             See Less
           </Button>
@@ -2391,7 +2924,7 @@ const ArcadeProfileArcade = () => {
           >
             Reviews
           </Typography>
-          <Row
+          {/* <Row
             style={{
               display: "flex",
               justifyContent: "center",
@@ -2499,7 +3032,92 @@ const ArcadeProfileArcade = () => {
               {" "}
               <ReviewCard />
             </Col>
+          </Row> */}
+
+          <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            Report Genaration
+          </Typography>
+        </Col>
+      </Row>
+      <Row>
+        <Col
+          span={24}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+            marginBottom: "100px",
+          }}
+        >
+          <ReportGenarationForArcade />
         </Col>
       </Row>
       <AppFooter />

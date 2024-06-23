@@ -76,6 +76,8 @@ const AvailableBookingsArcade = (props: any) => {
           booking_date: props.date,
           booking_time: props.time,
           zone_name: props.zoneName,
+          user_id: props.user_id,
+          arcade_id: props.arcade_id,
         }
       );
 
@@ -395,7 +397,7 @@ const AvailableBookingsArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            Rate: Rs.{props.full_amount}
+            Rate: LKR {props.full_amount}
           </Col>
         </Row>
       </Modal>

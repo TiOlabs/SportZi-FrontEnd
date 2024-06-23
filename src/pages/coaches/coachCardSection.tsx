@@ -11,7 +11,7 @@ import {
 } from "antd";
 import CoachCardCoachPage from "../../components/CoachCardCoachPage";
 import { useEffect, useState } from "react";
-import { Coach } from "../../types";
+import { Coach, User } from "../../types";
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import {
@@ -21,11 +21,13 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { SearchProps } from "antd/es/input";
+import { useUser } from "../../context/userContext";
 
 const CoachCardSection = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>("");
+  const { userDetails } = useUser();
 
   const fetchData = async () => {
     setLoading(true);
@@ -34,6 +36,7 @@ const CoachCardSection = () => {
         `${process.env.REACT_APP_API_URL}api/getcoach`
       );
       const data = await res.data;
+      console.log(data);
       let sortedArcades = [...data];
 
       if (search !== "") {
@@ -46,7 +49,8 @@ const CoachCardSection = () => {
 
       // Filter the data to include only items with status "active"
       const successCoaches = sortedArcades.filter(
-        (coach: { status: string }) => coach.status === "active"
+        (coach: { user: any; status: string }) =>
+          coach.status === "active" && coach.user.is_active === "active"
       );
 
       // Set the filtered data to state
@@ -65,22 +69,32 @@ const CoachCardSection = () => {
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}api/getcoach`);
       const data = await res.json();
-      let sortedArcades = [...data];
+      const fiteredData = data.filter(
+        (coach: User) => coach.Coach.status === "success"
+      );
+      let sortedArcades = [fiteredData];
       switch (e.key) {
         case "1":
           sortedArcades.sort((a: Coach, b: Coach) => {
-            const rateA = Number(a.coach_rating || 0);
-            const rateB = Number(b.coach_rating || 0);
+            const rateA = Number(a.averageRate || 0);
+            const rateB = Number(b.averageRate || 0);
             return rateB - rateA; // Sort in descending order of rate
           });
           break;
         case "2":
-          sortedArcades.sort((a: Coach, b: Coach) => {
+          sortedArcades.sort((b: Coach, a: Coach) => {
             const nameA = a.user.firstname.toLowerCase();
             const nameB = b.user.firstname.toLowerCase();
             if (nameA < nameB) return -1;
             if (nameA > nameB) return 1;
             return 0;
+          });
+          break;
+        case "3":
+          sortedArcades.sort((a: Coach, b: Coach) => {
+            const rateA = Number(a.rate || 0);
+            const rateB = Number(b.rate || 0);
+            return rateA - rateB; // Sort in ascending order of rate
           });
           break;
 
@@ -113,12 +127,12 @@ const CoachCardSection = () => {
       key: "2",
       icon: <SortAscendingOutlined />,
     },
-    // {
-    //   label: "Near Me",
-    //   key: "3",
-    //   icon: <UserOutlined />,
-    //   danger: true,
-    // },
+    {
+      label: "Hourly rate",
+      key: "3",
+      icon: <UserOutlined />,
+      danger: true,
+    },
   ];
 
   const menuProps = {
@@ -173,6 +187,8 @@ const CoachCardSection = () => {
           marginBottom: "5%",
           width: "100%",
           marginTop: "3%",
+          overflowY: "scroll",
+
         }}
       >
         {loading ? (
@@ -199,6 +215,7 @@ const CoachCardSection = () => {
                   marginTop: "0vh",
                   marginRight: "10vh",
                   marginBottom: "3vh",
+
                 }}
               >
                 <CoachCardCoachPage
@@ -206,10 +223,11 @@ const CoachCardSection = () => {
                   coach_image={coach.user.user_image}
                   coach_name={`${coach.user.firstname} ${coach.user.lastname}`}
                   coach_sport={coach.sport.sport_name}
-                  coach_rating={coach.coachFeedbacks.rate}
+                  coach_avgRate={coach.averageRate}
                   coach_short_description={coach.short_desctiption}
                   coach_rate={coach.rate}
                   sport={coach.sport.sport_name}
+                  role={userDetails?.role}
                 />
               </div>
             </Col>

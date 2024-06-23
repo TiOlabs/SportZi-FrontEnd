@@ -37,6 +37,7 @@ import AppFooter from "../../components/footer";
 import NavbarLogin from "../../components/NavBarLogin";
 import PackageEnrollmentDetailsInPlayerProfile from "../../components/packageEnrollDetailsInPlayerProfile";
 import { Option } from "antd/es/mentions";
+import Notification from "../../components/notification";
 
 const requestList = [
   <CoachRequstRow />,
@@ -67,6 +68,7 @@ const PlayerProfile = () => {
   const [discription, setDiscription] = useState(userDetails?.discription);
   const [achivements, setAchivements] = useState(userDetails?.achivements);
   const [user_image, setUser_image] = useState(userDetails?.user_image);
+  const [loading, setLoading] = useState(false);
   // achivements gets to string and spilt them
   const AchivementsGetToArry = (achivements: string) => {
     if (achivements) {
@@ -96,6 +98,7 @@ const PlayerProfile = () => {
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
   console.log(userDetails.id);
   useEffect(() => {
+    setLoading(true);
     axios
       .get(
         process.env.REACT_APP_API_URL +
@@ -128,9 +131,11 @@ const PlayerProfile = () => {
             );
           }
         });
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
       });
   }, [userDetails, value2]);
   useEffect(() => {
@@ -280,6 +285,8 @@ const PlayerProfile = () => {
         return booking.zone_booking_id.includes(filterValue);
       } else if (filterBy === "status") {
         return booking.status.includes(filterValue);
+      } else if (filterBy === "rate") {
+        return booking.full_amount.toString().includes(filterValue);
       }
       return true;
     }
@@ -360,19 +367,30 @@ const PlayerProfile = () => {
                   width: "80%",
                 }}
               >
-                <h1
-                  style={{
-                    color: "#000",
-                    fontSize: "32px",
-                    fontStyle: "normal",
-                    fontWeight: "500",
-                    fontFamily: "kanit",
-                    lineHeight: "normal",
-                    marginBottom: "0px",
-                  }}
-                >
-                  {firstname} {lastname}
-                </h1>
+                {" "}
+                <Row>
+                  <Col>
+                    <h1
+                      style={{
+                        color: "#000",
+                        fontSize: "32px",
+                        fontStyle: "normal",
+                        fontWeight: "500",
+                        fontFamily: "kanit",
+                        lineHeight: "normal",
+                        marginBottom: "0px",
+                      }}
+                    >
+                      {firstname} {lastname}
+                    </h1>
+                  </Col>
+                  <Col span={2}></Col>
+                  <Col>
+                    <h1>
+                      <Notification userType="player" id={userDetails?.id} />
+                    </h1>
+                  </Col>
+                </Row>
                 <p
                   style={{
                     margin: "0px",
@@ -927,38 +945,60 @@ const PlayerProfile = () => {
             Venue
           </Col>
         </Row>
-
-        {filteredBookings && filteredBookings.length > 0 ? (
-          filteredBookings.map((booking: CoachBookingDetails) => (
-            <CoachRequstRow
-              key={booking.booking_id} // Make sure to provide a unique key
-              booking_id={booking.booking_id}
-              coach_image={booking.coach.user.user_image}
-              coach_name={
-                booking.coach.user.firstname + " " + booking.coach.user.lastname
-              }
-              booking_date={booking.date}
-              booking_time={booking.time}
-              venue={booking.arcade.arcade_name}
-              user_id={booking.player.user.user_id}
-              created_at={booking.created_at}
-              setZoneBookingDetails={setZoneBookingDetails1}
-              email={booking.coach.user.email}
-              role={booking.player.user.role}
-              player_name={
-                booking.player.user.firstname +
-                " " +
-                booking.player.user.lastname
-              }
-              zone_name={booking.zone.zone_name}
-              arcade_email={booking.arcade.arcade_email}
-              status={booking.status}
-              full_amount={booking.full_amount}
-            />
-          ))
-        ) : (
-          <Empty description="No Bookings Available" />
-        )}
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredBookings && filteredBookings.length > 0 ? (
+              filteredBookings.map((booking: CoachBookingDetails) => (
+                <CoachRequstRow
+                  key={booking.booking_id} // Make sure to provide a unique key
+                  booking_id={booking.booking_id}
+                  coach_image={booking.coach.user.user_image}
+                  coach_name={
+                    booking.coach.user.firstname +
+                    " " +
+                    booking.coach.user.lastname
+                  }
+                  booking_date={booking.date}
+                  booking_time={booking.time}
+                  venue={booking.arcade.arcade_name}
+                  user_id={booking.player.user.user_id}
+                  created_at={booking.created_at}
+                  setZoneBookingDetails={setZoneBookingDetails1}
+                  email={booking.coach.user.email}
+                  role={booking.player.user.role}
+                  player_name={
+                    booking.player.user.firstname +
+                    " " +
+                    booking.player.user.lastname
+                  }
+                  zone_name={booking.zone.zone_name}
+                  arcade_email={booking.arcade.arcade_email}
+                  status={booking.status}
+                  full_amount={booking.full_amount}
+                  player_id={booking.player_id}
+                  coach_id={booking.coach_id}
+                  arcade_id={booking.arcade_id}
+                />
+              ))
+            ) : (
+              <Empty description="No Bookings Available" />
+            )}
+          </div>
+        </div>
 
         {showMore ? (
           <Button
@@ -1273,50 +1313,60 @@ const PlayerProfile = () => {
             Venue
           </Col>
         </Row>
-
         <div
           style={{
             width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
+            maxHeight: "500px",
+            overflowY: "scroll",
           }}
         >
-          {filteredBookingsForArcade && filteredBookingsForArcade.length > 0 ? (
-            // Sort the bookings by date and time in descending order
-            filteredBookingsForArcade
-              .sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
-                const dateTimeA: Date = new Date(`${a.date}T${a.time}`);
-                const dateTimeB: Date = new Date(`${b.date}T${b.time}`);
-                return dateTimeB.getTime() - dateTimeA.getTime(); // For descending order
-              })
-              .map(
-                (booking: ZoneBookingDetails) =>
-                  // Check if booking type is "zone"
-                  booking.booking_type === "zone" ? (
-                    <AvailableMetingstoPlayer
-                      key={booking.zone_booking_id} // Make sure to provide a unique key
-                      booking_id={booking.zone_booking_id}
-                      zone_image={booking.zone.zone_image}
-                      zone_name={booking.zone.zone_name}
-                      booking_date={booking.date}
-                      booking_time={booking.time}
-                      venue={booking.zone.arcade.arcade_name}
-                      setZoneBookingDetails={setZoneBookingDetails1}
-                      email={booking.zone.arcade.arcade_email}
-                      role="PLAYER"
-                      player_name={
-                        userDetails.firstName + " " + userDetails.lastName
-                      }
-                      status={booking.status}
-                      full_amount={booking.full_amount}
-                    />
-                  ) : null // Return null for bookings that are not of type "zone"
-              )
-          ) : (
-            <Empty description="No Bookings Available" />
-          )}
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredBookingsForArcade &&
+            filteredBookingsForArcade.length > 0 ? (
+              // Sort the bookings by date and time in descending order
+              filteredBookingsForArcade
+                .sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+                  const dateTimeA: Date = new Date(`${a.date}T${a.time}`);
+                  const dateTimeB: Date = new Date(`${b.date}T${b.time}`);
+                  return dateTimeB.getTime() - dateTimeA.getTime(); // For descending order
+                })
+                .map(
+                  (booking: ZoneBookingDetails) =>
+                    // Check if booking type is "zone"
+                    booking.booking_type === "zone" ? (
+                      <AvailableMetingstoPlayer
+                        key={booking.zone_booking_id} // Make sure to provide a unique key
+                        booking_id={booking.zone_booking_id}
+                        zone_image={booking.zone.zone_image}
+                        zone_name={booking.zone.zone_name}
+                        booking_date={booking.date}
+                        booking_time={booking.time}
+                        venue={booking.zone.arcade.arcade_name}
+                        setZoneBookingDetails={setZoneBookingDetails1}
+                        email={booking.zone.arcade.arcade_email}
+                        role="PLAYER"
+                        player_name={
+                          userDetails.firstName + " " + userDetails.lastName
+                        }
+                        status={booking.status}
+                        full_amount={booking.full_amount}
+                        user_id={booking.user.user_id}
+                        arcade_id={booking.zone.arcade.arcade_id}
+                      />
+                    ) : null // Return null for bookings that are not of type "zone"
+                )
+            ) : (
+              <Empty description="No Bookings Available" />
+            )}
+          </div>
         </div>
 
         {showMore ? (

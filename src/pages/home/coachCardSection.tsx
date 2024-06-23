@@ -6,11 +6,13 @@ import { Coach } from "../../types";
 import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
 import axios from "axios";
+import { useUser } from "../../context/userContext";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<Coach[]>([]);
   const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
+  const { userDetails } = useUser();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -27,10 +29,12 @@ const CoachCardSection = () => {
           `${process.env.REACT_APP_API_URL}api/getcoach`
         );
         const data = await res.data;
+        console.log(data);
 
         // Filter the data to include only items with status "active"
         const successCoaches = data.filter(
-          (coach: { status: string }) => coach.status === "active"
+          (coach: { user: any; status: string }) =>
+            coach.status === "active" && coach.user.is_active === "active"
         );
         setCoachAssignDetails(successCoaches);
       } catch (error) {
@@ -133,10 +137,12 @@ const CoachCardSection = () => {
                         coach_last_name={coach.user.lastname}
                         short_description={coach.short_desctiption} // Corrected the typo
                         rate={coach.rate}
+                        averageRate={coach.averageRate}
                         // duration={coachAssignDetail.duration}
                         coach_image={coach.user.user_image}
                         coach_id={coach.coach_id}
                         sport={coach.sport.sport_name}
+                        role={userDetails.role}
                       />
                     </Col>
                   ))

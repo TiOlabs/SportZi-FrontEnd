@@ -175,6 +175,8 @@ const NavbarLogin: React.FC = () => {
     }
     if (pathname === "/about") {
       return scrolling ? "rgba(11, 42, 84, 0.9)" : "transparent";
+    } else {
+      return scrolling ? "rgba(11, 42, 84, 0.9)" : "transparent";
     }
   };
   const fontColor = () => {
@@ -189,6 +191,8 @@ const NavbarLogin: React.FC = () => {
     }
     if (pathname === "/about") {
       return scrolling ? "white" : "#1B5DB7";
+    } else {
+      return scrolling ? "white" : "#1B5DB7";
     }
   };
   const logoChange = () => {
@@ -202,6 +206,8 @@ const NavbarLogin: React.FC = () => {
       return scrolling ? logo : logo2;
     }
     if (pathname === "/about") {
+      return scrolling ? logo : logo2;
+    } else {
       return scrolling ? logo : logo2;
     }
   };

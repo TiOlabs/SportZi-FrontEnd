@@ -129,7 +129,7 @@ const PackageEnrollmentDetailsInArcadeProfile = (props: any) => {
           lg={6}
           xl={6}
         >
-          Rs.{props.rate}
+          LKR {props.rate}
         </Col>
         <Col
           style={{
