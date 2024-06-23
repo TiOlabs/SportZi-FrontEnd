@@ -234,6 +234,7 @@ const ArcadeCardSection = () => {
           marginTop: "2%",
         }}
       >
+
         <Row
           style={{
             display: "flex",
@@ -283,6 +284,7 @@ const ArcadeCardSection = () => {
           ) : (
             <Col span={24} style={{ textAlign: "center", marginTop: "20px" }}>
               <Empty description={"No search results found."} />
+
             </Col>
           )}
         </Row>

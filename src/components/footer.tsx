@@ -78,8 +78,8 @@ const AppFooter = () => {
                 color: "#0E458E",
                 fontFamily: "Kanit, sans-serif",
                 fontWeight: 300,
-
                 marginTop: "10%",
+                marginRight: "3%",
               }}
             >
               {" "}
@@ -91,7 +91,7 @@ const AppFooter = () => {
           </Col>
 
           <Col sm={0} lg={6}></Col>
-          <Col xs={24} sm={24} lg={8}>
+          <Col xs={23} sm={22} lg={8}>
             <h1
               style={{
                 display: "flex",
@@ -104,7 +104,8 @@ const AppFooter = () => {
                 fontWeight: 500,
                 lineHeight: 1.1,
                 marginTop: "10%",
-                marginBottom: "6%",
+                marginBottom: "5%",
+                marginLeft: "8%",
               }}
             >
               <b>Subscribe For Our Newsletter</b>
@@ -131,6 +132,7 @@ const AppFooter = () => {
                   border: "none",
                   borderRadius: 0,
                   height: 34,
+                  marginLeft: "2%",
                 }}
               />
 
@@ -148,7 +150,9 @@ const AppFooter = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: "-5%",
+            marginTop: "-4%",
+            
+            
           }}
         >
           <Col sm={0} lg={12}></Col>
@@ -159,10 +163,11 @@ const AppFooter = () => {
             style={{
               display: "flex",
               justifyContent: "center",
+              
             }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.3 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.3}}>
                 {" "}
                 Company
               </h4>
@@ -173,7 +178,7 @@ const AppFooter = () => {
                 <div
                   style={{ fontSize: 14, cursor: "pointer", lineHeight: 1.5 }}
                 >
-                  <b>About us</b>
+                  About us
                 </div>
               </a>
 
@@ -185,14 +190,14 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Coaches</b>
+               Coaches
                 </div>
               </a>
 
               <a href="/Arcades" style={{ color: "#646464" }}>
                 <div style={{ fontSize: 14, cursor: "pointer" }}>
                   {" "}
-                  <b>Arcades</b>{" "}
+                  Arcades{" "}
                 </div>
               </a>
 
@@ -204,7 +209,7 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Home</b>
+                 Home
                 </div>
               </a>
             </div>
@@ -217,7 +222,7 @@ const AppFooter = () => {
             style={{ display: "flex", justifyContent: "center" }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.5 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.5 }}>
                 {" "}
                 Resources
               </h4>
@@ -227,9 +232,10 @@ const AppFooter = () => {
                     fontSize: 14,
                     cursor: "pointer",
                     lineHeight: 1.5,
+                   
                   }}
                 >
-                  <b> FAQ</b>
+                FAQ
                 </div>
               </a>
 
@@ -238,7 +244,7 @@ const AppFooter = () => {
                   style={{ fontSize: 14, cursor: "pointer", lineHeight: 1.5 }}
                 >
                   {" "}
-                  <b>Blog</b>{" "}
+                  Blog{" "}
                 </div>
               </a>
 
@@ -250,7 +256,7 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Updates</b>
+                Updates
                 </div>
               </a>
             </div>
@@ -262,7 +268,7 @@ const AppFooter = () => {
             style={{ display: "flex", justifyContent: "center" }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.5 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.5 }}>
                 {" "}
                 Support
               </h4>
@@ -274,14 +280,14 @@ const AppFooter = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <b> Our story</b>
+                 Our story
                 </div>
               </a>
 
               <a href="/Contact" style={{ color: "#646464" }}>
                 <div style={{ fontSize: 14, cursor: "pointer" }}>
                   {" "}
-                  <b>Contact</b>{" "}
+                 Contact{" "}
                 </div>
               </a>
 
@@ -294,7 +300,7 @@ const AppFooter = () => {
                   }}
                 >
                   {" "}
-                  <b> News</b>
+                  News
                 </div>
               </a>
 
@@ -303,7 +309,7 @@ const AppFooter = () => {
                   style={{ fontSize: 14, cursor: "pointer", lineHeight: 1.5 }}
                 >
                   {" "}
-                  <b> Team</b>{" "}
+                  Team{" "}
                 </div>
               </a>
             </div>
@@ -316,7 +322,7 @@ const AppFooter = () => {
             style={{ display: "flex", justifyContent: "center" }}
           >
             <div>
-              <h4 style={{ fontSize: 16, color: "000000", lineHeight: 0.5 }}>
+              <h4 style={{ fontSize: 16, color: "#646464", lineHeight: 0.5 }}>
                 {" "}
                 Site Map
               </h4>
@@ -329,13 +335,13 @@ const AppFooter = () => {
                   }}
                 >
                   {" "}
-                  <b> Packages</b>
+                 Packages
                 </div>
               </a>
 
               <a href="/Meetings" style={{ color: "#646464" }}>
                 <div style={{ fontSize: 14, cursor: "pointer" }}>
-                  <b> Meetings</b>
+              Meetings
                 </div>
               </a>
             </div>

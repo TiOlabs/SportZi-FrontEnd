@@ -387,6 +387,7 @@ const CoachProfileUser = () => {
                     fontFamily: "kanit",
                     borderColor: "#0E458E",
                     marginTop: "20px",
+                    marginBottom: "55%",
                   }}
                   onClick={() => {
                     if (userDetails.id === "") {

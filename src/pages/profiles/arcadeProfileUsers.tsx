@@ -414,8 +414,10 @@ const ArcadeProfileUser = () => {
                     borderRadius: "3px",
                     fontFamily: "kanit",
                     borderColor: "#0E458E",
-                    marginTop: "20px",
-                    marginBottom: "80px",
+                    marginTop: "10px",
+                    marginBottom: "45%",
+
+             
                   }}
                   onClick={() => {
                     if (userDetails.id === "") {
@@ -423,6 +425,7 @@ const ArcadeProfileUser = () => {
                     } else {
                       showModalForReport();
                     }
+
                   }}
                 >
                   Report User
@@ -1244,8 +1247,10 @@ const ArcadeProfileUser = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            marginBottom: "5%",
             paddingBottom: "100px",
             // backgroundColor:"#453245"
+
           }}
           xs={24}
           sm={24}
@@ -1260,6 +1265,7 @@ const ArcadeProfileUser = () => {
               fontWeight: md ? "400" : "300",
               fontSize: md ? "32px" : "24px",
               color: "#0E458E",
+             
             }}
           >
             Reviews
