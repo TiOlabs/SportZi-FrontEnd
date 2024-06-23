@@ -27,6 +27,9 @@ const CoachCardCoachPage = (props: any) => {
       cloudName,
     },
   });
+
+  const roundedAvgRate = Math.round(props.coach_avgRate * 2) / 2;
+
   setCoachId(props.coach_id);
   return (
     <>
@@ -44,7 +47,7 @@ const CoachCardCoachPage = (props: any) => {
                 allowHalf
                 disabled
                 defaultValue={3}
-                value={props.coach_avgRate}
+                value={roundedAvgRate}
                 style={{ color: "#FFD700", fontSize: "12px" }}
               />
             </div>

@@ -74,6 +74,7 @@ const ArcadeRatingCardsSection = () => {
                 arcadeRating={arcade.averageRate}
                 arcadeName={arcade.arcade_name}
                 arcade_id={arcade.arcade_id}
+                arcadeAverageRate={arcade.averageRate}
               />
             </Col>
           ))
