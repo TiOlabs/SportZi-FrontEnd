@@ -932,8 +932,12 @@ const CoachProfile = () => {
                 </div>
               ))}
             </div>
-          </div>
+
+           </div>
         </Col>
+
+                      
+
       </Row>
 
       <Row
@@ -2124,6 +2128,8 @@ const CoachProfile = () => {
       </Row>
       <AppFooter />
     </>
+
+
   );
 };
 
