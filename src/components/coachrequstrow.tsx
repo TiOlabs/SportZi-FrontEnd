@@ -74,7 +74,7 @@ const CoachRequstRow = (props: any) => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      
+      okCancel: true,
 
       async onOk() {
         let created_at, player_id;
@@ -126,7 +126,6 @@ const CoachRequstRow = (props: any) => {
               zone_booking_id:
                 zoneBookingDetalsByCreateTime[0]?.zone_booking_id,
               status: "canceled_By_Player",
-              
             }
           );
 

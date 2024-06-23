@@ -269,7 +269,9 @@ const ArcadeProfileUser = () => {
 
       setComment("");
       setRating(0);
-      alert("feedback was submitted successfully");
+      // alert("feedback was submitted successfully");
+      message.success("feedback submitted successfully")
+      setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
       console.error("Error submitting feedback:", error);

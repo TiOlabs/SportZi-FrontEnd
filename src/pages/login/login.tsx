@@ -1,6 +1,15 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
-import { Form, Input, Row, Col, Button, message,Modal,message as antMessage } from "antd";
+import {
+  Form,
+  Input,
+  Row,
+  Col,
+  Button,
+  message,
+  Modal,
+  message as antMessage,
+} from "antd";
 // import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { useEffect, useState } from "react";
@@ -44,11 +53,10 @@ const Login = () => {
         content: "Successfully Login!",
       });
 
-      const user:any=jwtDecode(res.data.token);
+      const user: any = jwtDecode(res.data.token);
       console.log(user.role);
-    
 
-      if (user.role==="ADMIN" || user.role==="SUPERADMIN") {
+      if (user.role === "ADMIN" || user.role === "SUPERADMIN") {
         navigate("/admin", {
           replace: true,
           state: { loggedIn: true },
@@ -68,28 +76,28 @@ const Login = () => {
     }
   };
 
-
-
   //for forget password button
-  const [isModalVisible,setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
 
   const showModal = () => {
     setIsModalVisible(true);
-  }
-  
+  };
+
   const handleOk = async () => {
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}api/forgot-password`, { email: resetEmail });
-      antMessage.success('Password reset email sent successfully');
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/forgot-password`,
+        { email: resetEmail }
+      );
+      antMessage.success("Password reset email sent successfully");
       setIsModalVisible(false);
-    } catch (error:any) {
-      console.log('Error sending password reset email::',error);
+    } catch (error: any) {
+      console.log("Error sending password reset email::", error);
       antMessage.error("Something Error!");
       setIsModalVisible(false);
     }
   };
-  
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -191,12 +199,11 @@ const Login = () => {
             </Form.Item>
             <Form.Item style={{ textAlign: "right" }}>
               <Button
-              onClick={showModal}
-              style={{
-                border:"none",
-                fontSize:"14px"
-            
-            }}
+                onClick={showModal}
+                style={{
+                  border: "none",
+                  fontSize: "14px",
+                }}
               >
                 Forgot password
               </Button>
@@ -227,7 +234,6 @@ const Login = () => {
           </Form>
         </Col>
       </Row>
-
 
       <Modal
         title="Reset Password"
