@@ -260,8 +260,7 @@ const CoachProfile = () => {
       setLastName(Details?.lastname);
       setDiscription(Details?.Discription);
       setAvailableTimes(Details?.Coach?.availability);
-      setExpertice(Details?.Coach?.sport?.sport_name);
-      console.log(Details);
+      setExpertice(Details?.Coach?.sport?.sport_id);
       const achiv = Details?.achivement;
       if (achiv) {
         let achiveArr: string[] = [];
@@ -284,6 +283,7 @@ const CoachProfile = () => {
     }
     return [];
   };
+  console.log("AvailableTimes:", AvailableTimes);
   let groupedByDay: { [key: string]: string[] } = {};
   if (AvailableTimes) {
     groupedByDay = AvailableTimes.reduce(
@@ -497,9 +497,7 @@ const CoachProfile = () => {
                 expertice={expertice}
                 setExpertice={setExpertice}
                 coachId={coachDetails?.id}
-                startTime={coachDetails?.start_time}
-                closeTime={coachDetails?.close_time}
-                day={coachDetails?.day}
+                availability={AvailableTimes}
               />
             </div>
             {/* <!--             <div>
@@ -662,7 +660,7 @@ const CoachProfile = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Qlifications
+              Qulifications
             </Typography>
             <List
               style={{
