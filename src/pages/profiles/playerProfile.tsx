@@ -11,7 +11,7 @@ import {
   RadioChangeEvent,
   Select,
   Input,
-  Typography,
+  Typography
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -38,6 +38,7 @@ import NavbarLogin from "../../components/NavBarLogin";
 import PackageEnrollmentDetailsInPlayerProfile from "../../components/packageEnrollDetailsInPlayerProfile";
 import { Option } from "antd/es/mentions";
 import Notification from "../../components/notification";
+import { Divider} from 'antd';
 
 const requestList = [
   <CoachRequstRow />,
@@ -307,7 +308,7 @@ const PlayerProfile = () => {
           lg={10}
           xl={10}
           style={{
-            marginTop: "30px",
+            marginTop: "8%",
             backgroundImage: `url(${profileBackground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -619,6 +620,16 @@ const PlayerProfile = () => {
           </div> */}
         </Col>
       </Row>
+
+
+
+
+
+
+
+
+
+
       <div
         style={{
           width: "100%",
@@ -642,6 +653,16 @@ const PlayerProfile = () => {
           Photos
         </p>
       </div>
+
+
+
+
+
+
+
+
+
+
       <div
         style={{
           width: "95%",
@@ -652,15 +673,18 @@ const PlayerProfile = () => {
       >
         <AddPhotoButton />
       </div>
+
+
       <PhotoCollage />
 
       <div
         style={{
-          width: "100%",
+          width:"100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          border: "4px solid black",
         }}
       >
         <p
@@ -672,24 +696,44 @@ const PlayerProfile = () => {
             fontWeight: "500",
             fontSize: "32px",
             paddingBottom: "10px",
+            marginBottom:"3%",
+            border: "4px solid green",
           }}
         >
           Request for Coaching
         </p>
-        <Row
+
+
+
+
+
+
+
+
+
+
+
+
+        <Row 
           style={{
             width: "100%",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            border: "4px solid red",
           }}
         >
+          <Col xs={0} sm={3} md={3} lg={1}></Col>
           <Col
-            span={2}
+            xs={8}
+            sm={6}
+            md={4}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              border: "4px solid green",
             }}
           >
             <ConfigProvider
@@ -707,11 +751,15 @@ const PlayerProfile = () => {
           </Col>
 
           <Col
-            span={2}
+           xs={8}
+           sm={6}
+           md={4}
+           lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              border: "4px solid green",
             }}
           >
             <ConfigProvider
@@ -728,11 +776,15 @@ const PlayerProfile = () => {
             </ConfigProvider>
           </Col>
           <Col
-            span={2}
+            xs={8}
+            sm={6}
+            md={4}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              border: "4px solid green",
             }}
           >
             <ConfigProvider
@@ -749,18 +801,38 @@ const PlayerProfile = () => {
             </ConfigProvider>
           </Col>
 
-          <Col span={16}></Col>
+          <Col xs={0} sm={3} md={3} lg={17}></Col>
         </Row>
-        <Row
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 24 }}
           style={{
             width: "100%",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            marginBottom: "1%",
+            border: "4px solid #0E4",
           }}
         >
+            <Col span={6}></Col>
           <Col
-            span={2}
+            span={4}
             style={{
               display: "flex",
               alignItems: "center",
@@ -783,7 +855,7 @@ const PlayerProfile = () => {
             </Typography>
           </Col>
           <Col
-            span={2}
+            span={4}
             style={{
               display: "flex",
               alignItems: "center",
@@ -807,7 +879,7 @@ const PlayerProfile = () => {
           </Col>
 
           <Col
-            span={2}
+            span={4}
             style={{
               display: "flex",
               alignItems: "center",
@@ -829,11 +901,14 @@ const PlayerProfile = () => {
               Canceled
             </Typography>
           </Col>
-          <Col span={8}></Col>
+          <Col span={6}></Col>
+
+
+
           <Col span={8}>
             <Select
               defaultValue="date"
-              style={{ width: 120, height: "40px" }}
+              style={{ width: 120, height: "40px",marginLeft: "10px"}}
               onChange={(value) => setFilterBy(value)}
             >
               <Option value="date">Date</Option>
@@ -861,7 +936,12 @@ const PlayerProfile = () => {
             </Button>
           </Col>
         </Row>
-        <Row
+
+
+
+
+
+        <Row 
           style={{
             borderRadius: "3px 3px 0px 0px",
             width: "90%",
@@ -945,6 +1025,9 @@ const PlayerProfile = () => {
             Venue
           </Col>
         </Row>
+
+
+
         <div
           style={{
             width: "100%",
@@ -1000,6 +1083,9 @@ const PlayerProfile = () => {
           </div>
         </div>
 
+
+
+
         {showMore ? (
           <Button
             style={{
@@ -1030,6 +1116,20 @@ const PlayerProfile = () => {
           </Button>
         )}
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       <div
         style={{
           width: "100%",
@@ -1037,6 +1137,8 @@ const PlayerProfile = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          border: "4px solid yellow",
+         
         }}
       >
         <p
@@ -1048,16 +1150,20 @@ const PlayerProfile = () => {
             fontWeight: "500",
             fontSize: "32px",
             paddingBottom: "10px",
+            marginBottom:"3%",
           }}
         >
           Available Meetings For You
         </p>
+
+
         <Row
           style={{
             width: "100%",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+           
           }}
         >
           {/* Radio button section */}
@@ -1071,11 +1177,13 @@ const PlayerProfile = () => {
           >
             <ConfigProvider
               theme={{
-                token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+                token: { colorBorder: "#0E458E", 
+                        colorPrimary: "#0E458E"
+                       },
               }}
             >
               <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-                <Radio value={4}></Radio>
+                <Radio value={1}></Radio>
               </Radio.Group>
             </ConfigProvider>
           </Col>
@@ -1090,11 +1198,12 @@ const PlayerProfile = () => {
           >
             <ConfigProvider
               theme={{
-                token: { colorBorder: "#05a30a", colorPrimary: "#05a30a" },
+                token: { colorBorder: "#05a30a", 
+                        colorPrimary: "#05a30a" },
               }}
             >
               <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-                <Radio value={5}></Radio>
+                <Radio value={2}></Radio>
               </Radio.Group>
             </ConfigProvider>
           </Col>
@@ -1113,49 +1222,24 @@ const PlayerProfile = () => {
               }}
             >
               <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-                <Radio value={6}></Radio>
+                <Radio value={3}></Radio>
               </Radio.Group>
             </ConfigProvider>
           </Col>
-          <Col span={8}></Col>
-          <Col span={8}>
-            <Select
-              defaultValue="date"
-              style={{ width: 120, height: "40px" }}
-              onChange={(value) => setFilterBy(value)}
-            >
-              <Option value="date">Date</Option>
-              <Option value="time">Time</Option>
-              <Option value="rate">Rate</Option>
-              <Option value="zone_name">Zone Name</Option>
-              <Option value="arcade_name">Arcade Name</Option>
-              <Option value="status">Status</Option>
-            </Select>
-            <Input
-              placeholder="Enter filter value"
-              style={{ width: 200, marginLeft: 10, height: "40px" }}
-              onChange={(e) => handleFilterChange1(e.target.value)}
-            />
-            <Button
-              style={{ marginLeft: 10, height: "40px" }}
-              ghost
-              type="primary"
-              onClick={() => {
-                setFilterValue("");
-                setFilterBy("date");
-              }}
-            >
-              Clear
-            </Button>
-          </Col>
+          <Col span={16}></Col>
+
         </Row>
 
-        <Row
+
+
+        <Row gutter={{ xs: 8, sm: 16, md: 0, lg: 24 }}
           style={{
             width: "100%",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            marginBottom: "1%",
+           
           }}
         >
           <Col
@@ -1227,8 +1311,43 @@ const PlayerProfile = () => {
               Canceled
             </Typography>
           </Col>
-          <Col span={16}></Col>
+          <Col span={8}></Col>
+
+          <Col span={8}>
+            <Select
+              defaultValue="date"
+              style={{ width: 120, height: "40px" ,marginLeft: "10px"}}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="date">Date</Option>
+              <Option value="time">Time</Option>
+              <Option value="rate">Rate</Option>
+              <Option value="zone_name">Zone Name</Option>
+              <Option value="arcade_name">Arcade Name</Option>
+              <Option value="status">Status</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{ width: 200, marginLeft: 10, height: "40px" }}
+              onChange={(e) => handleFilterChange1(e.target.value)}
+            />
+            <Button
+              style={{ marginLeft: 10, height: "40px" }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
+
         </Row>
+
+
+
         <Row
           style={{
             borderRadius: "3px 3px 0px 0px",
@@ -1399,6 +1518,7 @@ const PlayerProfile = () => {
           </Button>
         )}
       </div>
+
       <div
         style={{
           width: "100%",
@@ -1406,6 +1526,7 @@ const PlayerProfile = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          border: "4px solid red",
         }}
       >
         <p
@@ -1588,7 +1709,21 @@ const PlayerProfile = () => {
           </Button>
         )}
       </div>
+      <Row>
+        <Col sm={24}xs={24} 
+        style={{
+        display:"flex",        
+        justifyContent:"center",
+        alignItems:"center",
+        backgroundSize: "cover",
+        width:200,
+        marginRight: "10%",
+        border: "4px solid #0E45",	
+       
+        }}>
       <AppFooter />
+      </Col>
+      </Row>
     </>
   );
 };
