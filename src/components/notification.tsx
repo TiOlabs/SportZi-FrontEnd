@@ -87,7 +87,7 @@ const Notification: React.FC<NotificationProps> = ({ userType, id }) => {
   };
 
   const menu = (
-    <Menu>
+    <Menu style={{ overflowY: "scroll", maxHeight: "200px" }}>
       {notifications.map((notification, index) => (
         <Menu.Item key={index}>
           {" "}
