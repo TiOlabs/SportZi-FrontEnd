@@ -250,19 +250,14 @@ const ArcadePackages = (props: any) => {
                 <Modal
                   visible={open}
                   onOk={async (e) => {
-                    const url = `${process.env.REACT_APP_API_URL}api/deletePackageDetails/${props.package_id}`;
+                    const res = await axios.put(
+                      `${process.env.REACT_APP_API_URL}api/updatePackageDetails/${props.package_id}`,
+                      {
+                        status: "Closed",
+                      }
 
-                    axios
-                      .delete(url)
-                      .then((response) => {
-                        alert("Package Deleted Successfully");
-                        if (response.status === 200) {
-                          console.log("success");
-                        } else {
-                          console.log("error");
-                        }
-                      })
-                      .catch((e) => console.log(e));
+                    );
+                    console.log(res);
                     handleConfirmDelete();
                   }}
                   onCancel={handleCancel}
