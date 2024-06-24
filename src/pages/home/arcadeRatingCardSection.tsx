@@ -47,6 +47,7 @@ const ArcadeRatingCardsSection = () => {
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
+        marginTop: "2%",
       }}
     >
       <h1
@@ -59,6 +60,7 @@ const ArcadeRatingCardsSection = () => {
           justifyContent: "center",
           display: "flex",
           alignItems: "center",
+          marginBottom: "2%",
         }}
       >
         Arcade ratings

@@ -228,7 +228,7 @@ const SignUpAdmin = () => {
   };
 
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
+    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}>
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
@@ -361,7 +361,9 @@ const SignUpAdmin = () => {
                   {data.role === "SUPERADMIN" && (
                     <Button
                       type="primary"
-                      onClick={() => isremoveAdminModel(admin.user_id as string)}
+                      onClick={() =>
+                        isremoveAdminModel(admin.user_id as string)
+                      }
                       ghost
                       style={{ width: "100px", marginLeft: "20px" }}
                     >

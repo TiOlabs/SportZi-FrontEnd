@@ -422,6 +422,10 @@ const ArcadeProfileUser = () => {
                   onClick={() => {
                     if (userDetails.id === "") {
                       message.error("Please Login First");
+                    } else if (
+                      userDetails.id === arcadeDetails1?.manager.user_id
+                    ) {
+                      message.error("You can't report your own arcade");
                     } else {
                       showModalForReport();
                     }

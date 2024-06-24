@@ -52,7 +52,7 @@ const CoachesManagement = () => {
   }, []);
 
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
+    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" ,marginLeft:"21%" }}>
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
@@ -112,7 +112,8 @@ function DataRow(props: any) {
       style={{
         backgroundColor: "white",
         padding: "1%",
-        marginTop: "20px",
+        marginTop: "20px"
+       
       }}
     >
       <Col></Col>
