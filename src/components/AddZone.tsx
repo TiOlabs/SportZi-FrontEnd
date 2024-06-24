@@ -17,7 +17,6 @@ import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { useParams } from "react-router-dom";
 import { Sport } from "../types";
-import { tif } from "@cloudinary/url-gen/qualifiers/format";
 
 const AddZone = () => {
   const { ArcadeId } = useParams();

@@ -61,7 +61,8 @@ const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
   const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
-  const [packageDetail, setPackageDetail] = useState<Arcade>();
+  const [packageDetail, setPackageDetail] = useState<Package[]>([]);
+  console.log("packageDetail", packageDetail);
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
@@ -130,7 +131,10 @@ const ArcadeProfileArcade = () => {
         );
         const data = await res.data;
         console.log(data);
-        setPackageDetail(data);
+        const filteredData = data.package.filter(
+          (item: Package) => item.status === "open"
+        );
+        setPackageDetail(filteredData);
       };
       fetchData();
     } catch (e) {
@@ -699,7 +703,7 @@ const ArcadeProfileArcade = () => {
             </Col>
           </Row>
         </Col>
-        
+
         <Col
           xs={24}
           sm={24}
@@ -1317,7 +1321,8 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          {arcade?.zone.map((zone: Zone) => (
+          {arcade?.zone.filter((zone) => zone.status === "open").
+          map((zone: Zone) => (
             <Col
               xs={24}
               sm={12}
@@ -1427,9 +1432,8 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          {packageDetail?.package.map((pkg: Package) => (
+          {packageDetail?.map((pkg: Package) => (
             <Col
-              key={pkg.package_id.toString()}
               xs={24}
               sm={12}
               md={12}
@@ -1455,6 +1459,7 @@ const ArcadeProfileArcade = () => {
                 zone_id={pkg.zone.zone_id}
                 day={pkg.packageDayAndTime.map((item) => item.day)}
                 time={pkg.packageDayAndTime.map((item) => item.time)}
+                status={pkg.status}
               />
             </Col>
           ))}
@@ -2904,7 +2909,6 @@ const ArcadeProfileArcade = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            
           }}
           xs={24}
           sm={24}
@@ -2919,7 +2923,6 @@ const ArcadeProfileArcade = () => {
               fontWeight: md ? "400" : "300",
               fontSize: md ? "32px" : "24px",
               color: "#0E458E",
-              
             }}
           >
             Reviews
