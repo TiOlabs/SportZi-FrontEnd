@@ -13,6 +13,7 @@ import {
   TimePicker,
   Typography,
   Upload,
+  message,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useCallback, useContext, useState } from "react";
@@ -50,6 +51,7 @@ interface PlayerEditProps {
   id: any;
   accNumber: any;
   setAccNumber: (value: string) => void;
+  user_image: String;
 }
 
 const ArcadeEdit = ({
@@ -66,8 +68,19 @@ const ArcadeEdit = ({
   id,
   accNumber,
   setAccNumber,
+  user_image,
 }: PlayerEditProps) => {
-  
+  console.log(
+    firstname,
+    discription,
+    address,
+    openTime,
+    closeTime,
+    id,
+    accNumber,
+    user_image
+  );
+
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
   const [publicId, setPublicId] = useState("");
@@ -121,6 +134,16 @@ const ArcadeEdit = ({
   };
 
   const onFinish = () => {
+    console.log(
+      firstname,
+      discription,
+      address,
+      openTime,
+      closeTime,
+      accNumber,
+      publicId,
+      selectedLocation
+    );
     // {"lat":6.795160823938917,"lng":79.89616736106872}
     form
       .validateFields()
@@ -134,7 +157,7 @@ const ArcadeEdit = ({
             .put(`/api/auth/updatearchadedetails/${id}`, {
               arcade_name: firstname,
               discription: discription,
-              address:address,
+              address: address,
               open_time: openTime,
               close_time: closeTime,
               location: location,
@@ -145,6 +168,8 @@ const ArcadeEdit = ({
             .then((res) => {
               setOpen(false);
               console.log("inside then", res.data);
+              message.success("Profile Updated Successfully");
+              window.location.reload();
             })
             .catch(() => {
               setOpen(false);
@@ -335,7 +360,7 @@ const ArcadeEdit = ({
 
             <Form.Item
               name="Discription"
-              label="Discription"
+              label="Description"
               initialValue={discription}
               rules={[
                 {
@@ -344,7 +369,7 @@ const ArcadeEdit = ({
                   whitespace: true,
                 },
                 {
-                  min: 100,
+                  max: 100,
                   message: "Description must be at least 100 characters",
                 },
               ]}
@@ -400,7 +425,7 @@ const ArcadeEdit = ({
             <Form.Item
               name="TimeClose"
               label="Add Arcade Close Time"
-              initialValue={dayjs(closeTime, "HH:mm")}
+              initialValue={closeTime ? dayjs(closeTime, "HH:mm") : null}
               rules={[
                 {
                   required: true,
@@ -462,7 +487,7 @@ const ArcadeEdit = ({
               label="Upload profile picture"
               rules={[
                 {
-               //   required: true,
+                  //   required: true,
                   message: "upload profile picture",
                   whitespace: true,
                 },

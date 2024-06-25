@@ -44,6 +44,8 @@ import CoachEdit from "../../components/coachEdit";
 import Notification from "../../components/notification";
 import { CoachFeedback } from "../../types";
 import PackageEnrollListForCoach from "../../components/packageEnrolllistInCoachProfile";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 interface AvailableTime {
   day: string;
@@ -263,6 +265,7 @@ const CoachProfile = () => {
   const [qulifications, setQulifications] = useState<any>();
   const [expertice, setExpertice] = useState<any>();
   const [AccNumber, setAccNumber] = useState<any>();
+  const [user_image, setUser_image] = useState<any>();
   const [packageEnrollmentCoach, setPackageEnrollmentCoach] = useState<
     CoachEnrollDetailsForPackages[]
   >([]);
@@ -274,6 +277,7 @@ const CoachProfile = () => {
       setAvailableTimes(Details?.Coach?.availability);
       setExpertice(Details?.Coach?.sport?.sport_id);
       setAccNumber(Details?.accountNumber);
+      setUser_image(Details?.user_image);
       const achiv = Details?.achivement;
       if (achiv) {
         let achiveArr: string[] = [];
@@ -394,7 +398,12 @@ const CoachProfile = () => {
       }
     }
   );
-
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <NavbarProfile />
@@ -444,10 +453,13 @@ const CoachProfile = () => {
               xl={24}
             >
               {" "}
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(user_image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
@@ -547,6 +559,7 @@ const CoachProfile = () => {
                 availability={AvailableTimes}
                 AccNumber={AccNumber}
                 setAccNumber={setAccNumber}
+                user_image={user_image}
               />
             </div>
             <div>
@@ -943,8 +956,6 @@ const CoachProfile = () => {
             </Typography>
           </div>
         </Col>
-
-                     
       </Row>
 
       <Row
@@ -2171,8 +2182,6 @@ const CoachProfile = () => {
       </Row>
       <AppFooter />
     </>
-
-
   );
 };
 

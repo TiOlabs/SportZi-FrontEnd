@@ -44,7 +44,7 @@ const PrintableContent = React.forwardRef<
       bookingData,
       COLORS,
       tableColumns,
-      tableColumnsForZone,
+      tableColumnsForZone,     
     },
     ref
   ) => (
@@ -141,7 +141,7 @@ const PrintableContent = React.forwardRef<
         <h2 style={{ color: "#0E458E", textAlign: "center" }}>
           Package Enrollments
         </h2>
-       
+
         <Row>
           <Col span={16}>
             <PieChart width={500} height={400}>
@@ -181,7 +181,7 @@ const PrintableContent = React.forwardRef<
       </div>
 
       <div style={{ marginBottom: "4rem" }}>
-      <hr />
+        <hr />
         <h2 style={{ color: "#0E458E", textAlign: "center" }}>
           Booking Details
         </h2>
@@ -198,7 +198,7 @@ const PrintableContent = React.forwardRef<
                 bottom: 5,
               }}
             >
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="2 3" />
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
@@ -261,22 +261,6 @@ const ReportGenarationForArcade = () => {
   }, []);
 
   useEffect(() => {
-    const fetchZoneDetails = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`
-        );
-        const data = await res.json();
-        setZoneDetails(data);
-        console.log(data);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchZoneDetails();
-  }, []);
-
-  useEffect(() => {
     const fetchCoachBookings = async () => {
       try {
         const res = await fetch(
@@ -312,6 +296,22 @@ const ReportGenarationForArcade = () => {
     fetchPackageEnrollment();
   }, []);
 
+  useEffect(() => {
+    const fetchZoneDetails = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}api/getarcadeDetails/${ArcadeId}`
+        );
+        const data = await res.json();
+        setZoneDetails(data);
+        console.log(data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchZoneDetails();
+  }, []);
+
   const bookingStatusCounts = {
     success: 0,
     canceled_By_Player: 0,
@@ -332,10 +332,6 @@ const ReportGenarationForArcade = () => {
     canceled_By_Admin: 0,
     canceled_By_Coach: 0,
   };
-  const zonebookingStatusCounts: { [key: string]: number } = {};
-  zoneDetails?.zone.forEach((zone) => {
-    zonebookingStatusCounts[zone.zone_id.toString()] = 0;
-  });
 
   zoneBookings.forEach((booking) => {
     if (booking.status.toString() in bookingStatusCounts) {
@@ -343,16 +339,6 @@ const ReportGenarationForArcade = () => {
         booking.status.toString() as keyof typeof bookingStatusCounts
       ]++;
     }
-  });
-
-  zoneDetails?.zone.forEach((zone) => {
-    zone.zoneBookingDetails.forEach((booking) => {
-      if (booking.zone.zone_id.toString() in zonebookingStatusCounts) {
-        zonebookingStatusCounts[
-          booking.zone.zone_id.toString() as keyof typeof zonebookingStatusCounts
-        ]++;
-      }
-    });
   });
 
   coachBookings.forEach((booking) => {
@@ -370,7 +356,20 @@ const ReportGenarationForArcade = () => {
       ]++;
     }
   });
+  const zonebookingStatusCounts: { [key: string]: number } = {};
+  zoneDetails?.zone.forEach((zone) => {
+    zonebookingStatusCounts[zone.zone_id.toString()] = 0;
+  });
 
+  zoneDetails?.zone.forEach((zone) => {
+    zone.zoneBookingDetails.forEach((booking) => {
+      if (booking.zone.zone_id.toString() in zonebookingStatusCounts) {
+        zonebookingStatusCounts[
+          booking.zone.zone_id.toString() as keyof typeof zonebookingStatusCounts
+        ]++;
+      }
+    });
+  });
   const zoneData = [
     { name: "Success", value: bookingStatusCounts.success },
     {

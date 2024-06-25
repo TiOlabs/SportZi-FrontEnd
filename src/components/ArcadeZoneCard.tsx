@@ -5,9 +5,8 @@ import { useState } from "react";
 import axios from "axios";
 import UpdateZone from "./UpdateZone";
 const ArcadeZoneCard = (props: any) => {
-
   console.log("lol ", props);
-  
+
   const [cloudName] = useState("dle0txcgt");
 
   const cld = new Cloudinary({
@@ -181,6 +180,8 @@ const ArcadeZoneCard = (props: any) => {
                   timeForDay={props.timeForDay}
                   date={props.date}
                   timeForDate={props.timeForDate}
+                  discount_percentage={props.discount_percentage}
+                  discount_description={props.discount_description}
                 />
 
                 <Button
