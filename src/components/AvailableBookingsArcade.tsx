@@ -7,6 +7,7 @@ import axios from "axios";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import TextArea from "antd/es/input/TextArea";
+import { useNavigate } from "react-router-dom";
 
 const AvailableBookingsArcade = (props: any) => {
   console.log(props);
@@ -109,6 +110,10 @@ const AvailableBookingsArcade = (props: any) => {
       cloudName,
     },
   });
+  const navigate = useNavigate();
+  const Click = () => {
+    navigate(`/PlayerUser/${props.booked_id}`); // replace 'props.id' with the unique id you want to use
+  };
   return (
     <>
       <Row
@@ -129,6 +134,7 @@ const AvailableBookingsArcade = (props: any) => {
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <AdvancedImage
+                onClick={Click}
                 style={{
                   width: "90px",
                   height: "90px",
@@ -145,6 +151,7 @@ const AvailableBookingsArcade = (props: any) => {
               />
             </Col>
             <Col
+              onClick={Click}
               style={{
                 color: "#000",
                 fontFamily: "kanit",
