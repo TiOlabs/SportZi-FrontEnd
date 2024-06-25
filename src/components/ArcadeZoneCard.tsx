@@ -196,19 +196,12 @@ const ArcadeZoneCard = (props: any) => {
                 <Modal
                   visible={open}
                   onOk={async (e) => {
-                    const url = `${process.env.REACT_APP_API_URL}api/deleteZoneDetails/${props.id}`;
-
-                    axios
-                      .delete(url)
-                      .then((response) => {
-                        console.log(response);
-                        if (response.status === 200) {
-                          console.log("success");
-                        } else {
-                          console.log("error");
-                        }
-                      })
-                      .catch((e) => console.log(e));
+                    const res = await axios.put(
+                      `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
+                      {
+                        status: "closed",
+                      }
+                    );
                     handleConfirmDelete();
                   }}
                   onCancel={handleCancel}

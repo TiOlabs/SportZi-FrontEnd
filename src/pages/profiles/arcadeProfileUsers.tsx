@@ -267,7 +267,9 @@ const ArcadeProfileUser = () => {
 
       setComment("");
       setRating(0);
-      alert("feedback was submitted successfully");
+      // alert("feedback was submitted successfully");
+      message.success("feedback submitted successfully")
+      setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
       console.error("Error submitting feedback:", error);
@@ -410,15 +412,22 @@ const ArcadeProfileUser = () => {
                     borderRadius: "3px",
                     fontFamily: "kanit",
                     borderColor: "#0E458E",
-                    marginTop: "20px",
-                    marginBottom: "80px",
+                    marginTop: "10px",
+                    marginBottom: "45%",
+
+             
                   }}
                   onClick={() => {
                     if (userDetails.id === "") {
                       message.error("Please Login First");
+                    } else if (
+                      userDetails.id === arcadeDetails1?.manager.user_id
+                    ) {
+                      message.error("You can't report your own arcade");
                     } else {
                       showModalForReport();
                     }
+
                   }}
                 >
                   Report User
@@ -1240,8 +1249,10 @@ const ArcadeProfileUser = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            marginBottom: "5%",
             paddingBottom: "100px",
             // backgroundColor:"#453245"
+
           }}
           xs={24}
           sm={24}
@@ -1256,6 +1267,7 @@ const ArcadeProfileUser = () => {
               fontWeight: md ? "400" : "300",
               fontSize: md ? "32px" : "24px",
               color: "#0E458E",
+             
             }}
           >
             Reviews

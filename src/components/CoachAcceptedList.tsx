@@ -1,4 +1,4 @@
-import { Col, Form, Row } from "antd";
+import { Col, Form, Row, message } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
@@ -8,6 +8,8 @@ import axios from "axios";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import TextArea from "antd/es/input/TextArea";
+import confirm from "antd/es/modal/confirm";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 const CoachAccepteLst = (props: any) => {
   console.log(props);
@@ -46,68 +48,89 @@ const CoachAccepteLst = (props: any) => {
     setIsResonModalOpen(false);
   };
   const handleOkWarning = async () => {
-    let created_at, user_id;
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/getCoachBookinByBookingId/${props.booking_id}`
-      );
-      created_at = res.data.created_at;
-      user_id = res.data.player_id;
-      console.log(created_at);
-      console.log(user_id);
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
-      const res = await axios.put(
-        `${process.env.REACT_APP_API_URL}api/updateArcadeBookingByCreatedTime/${created_at}/${user_id}`,
-        {
-          status: "canceled_By_Coach",
+    confirm({
+      title: "Are you sure cancel this task?",
+      icon: <ExclamationCircleFilled />,
+      content: "This may affect to the user and the arcade.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      okCancel: true,
+      async onOk() {
+        let created_at, user_id;
+        try {
+          const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}api/getCoachBookinByBookingId/${props.booking_id}`
+          );
+          created_at = res.data.created_at;
+          user_id = res.data.player_id;
+          console.log(created_at);
+          console.log(user_id);
+        } catch (error) {
+          console.log(error);
         }
-      );
-    } catch (e) {
-      console.log(e);
-    }
 
-    try {
-      const res = await axios.put(
-        `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
-        {
-          status: "canceled_By_Coach",
-          email: props.email,
-          arcade_email: props.arcade_email,
-          role: props.role,
-          coach_name: props.coach_name,
-          player_name: props.booked_by,
-          booking_date: props.date,
-          booking_time: props.time,
-          arcade_name: props.arcade_name,
-          reason: reason,
-          coach_id: props.coach_id,
-          arcade_id: props.arcade_id,
-          player_id: props.player_id,
+        try {
+          const res = await axios.put(
+            `${process.env.REACT_APP_API_URL}api/updateArcadeBookingByCreatedTime/${created_at}/${user_id}`,
+            {
+              status: "canceled_By_Coach",
+            }
+          );
+          message.success("Booking cancelation successfull!");
+          // Close modal
+          setIsModalOpen(false);
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        } catch (e) {
+          console.log(e);
         }
-      );
-    } catch (e) {
-      console.log(e);
-    }
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/addbookingcancelarcade`,
-        {
-          booking_id: props.booking_id,
-          reason: reason,
-        }
-      );
-      // Close modal
-      setIsResonModalOpen(false);
 
-      // Update zone booking details
-    } catch (error) {
-      console.log("error");
-      console.log(error);
-    }
+        try {
+          const res = await axios.put(
+            `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
+            {
+              status: "canceled_By_Coach",
+              email: props.email,
+              arcade_email: props.arcade_email,
+              role: props.role,
+              coach_name: props.coach_name,
+              player_name: props.booked_by,
+              booking_date: props.date,
+              booking_time: props.time,
+              arcade_name: props.arcade_name,
+              reason: reason,
+              coach_id: props.coach_id,
+              arcade_id: props.arcade_id,
+              player_id: props.player_id,
+            }
+          );
+        } catch (e) {
+          console.log(e);
+        }
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}api/addbookingcancelarcade`,
+            {
+              booking_id: props.booking_id,
+              reason: reason,
+            }
+          );
+          // Close modal
+          setIsResonModalOpen(false);
+
+          // Update zone booking details
+        } catch (error) {
+          console.log("error");
+          console.log(error);
+        }
+      },
+
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
 
     setIsModalOpen(false);
     setIsModalOpenWarning(false);

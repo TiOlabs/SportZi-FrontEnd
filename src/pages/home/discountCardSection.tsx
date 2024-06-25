@@ -29,10 +29,11 @@ const DiscoutCardsSection = () => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
+        marginTop:"2%"
       }}
     >
       <h1
-        style={{ color: "#24338a", display: "flex", justifyContent: "center" }}
+        style={{ color: "#24338a", display: "flex", justifyContent: "center" ,marginBottom:"2%"}}
       >
         Special discounts for you
       </h1>

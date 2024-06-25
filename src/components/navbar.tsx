@@ -198,25 +198,38 @@ const Navbar: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          {userDetails.role === "PLAYER" && (
-            <Link to={`/profile/`}>
-              <AdvancedImage
+          {userDetails.role === "PLAYER" ? (
+            userDetails?.is_active === "inactive" ? (
+              <div
                 style={{
-                  width: "50px",
-                  height: "50px",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                  borderRadius: "50%",
-                  border: "1px solid black",
+                  borderStyle: "solid",
+                  color: "black",
+                  border: "3px dashed red",
                 }}
-                cldImg={
-                  cld.image(userDetails?.image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
-            </Link>
-          )}
+              >
+                Your account is suspended <br></br> please contact an admin to
+                reactivate your account
+              </div>
+            ) : (
+              <Link to={`/profile/`}>
+                <AdvancedImage
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                  cldImg={
+                    cld.image(userDetails?.image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
+              </Link>
+            )
+          ) : null}
           {managerDetails.role === "MANAGER" && (
             <Link to={`/ChooseArchade/`}>
               <AdvancedImage
@@ -237,25 +250,37 @@ const Navbar: React.FC = () => {
             </Link>
           )}
 
-          {coachDetails.role === "COACH" && (
-            <Link to={`/coachProfile/`}>
-              <AdvancedImage
+          {coachDetails.role === "COACH" &&
+            (coachDetails?.is_active === "inactive" ? (
+              <div
                 style={{
-                  width: "50px",
-                  height: "50px",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                  borderRadius: "50%",
-                  border: "1px solid black",
+                  borderStyle: "solid",
+                  color: "black",
+                  border: "3px dashed red",
                 }}
-                cldImg={
-                  cld.image(coachDetails?.image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
-            </Link>
-          )}
+              >
+                Your account is suspended <br></br> please contact an admin to
+                reactivate your account
+              </div>
+            ) : (
+              <Link to={`/coachProfile/`}>
+                <AdvancedImage
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                  cldImg={
+                    cld.image(coachDetails?.image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
+              </Link>
+            ))}
         </div>
         <div
           className="NavBarUserProfileNameLaptop"
@@ -905,13 +930,14 @@ const Navbar: React.FC = () => {
                       id={userDetails?.id}
                     />
                   )}
-                  {managerDetails.role === "MANAGER" && (
-                    console.log(managerDetails),
-                    <NotificationDot
-                      userType={managerDetails.role.toLowerCase()}
-                      id={managerDetails?.id}
-                    />
-                  )}
+                  {managerDetails.role === "MANAGER" &&
+                    (console.log(managerDetails),
+                    (
+                      <NotificationDot
+                        userType={managerDetails.role.toLowerCase()}
+                        id={managerDetails?.id}
+                      />
+                    ))}
                   {coachDetails.role === "COACH" && (
                     <NotificationDot
                       userType={coachDetails.role.toLowerCase()}

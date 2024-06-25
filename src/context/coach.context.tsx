@@ -40,6 +40,7 @@ const CoachProvider = ({ children }: any) => {
               setCoachDetails({
                 id: res.data.user_id,
                 firstName: res.data.firstname,
+                is_active: res.data.is_active,
                 lastName: res.data.lastname,
                 role: res.data.role,
                 image: res.data.user_image,

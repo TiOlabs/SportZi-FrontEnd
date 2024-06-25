@@ -12,7 +12,7 @@ import {
   Typography,
   Rate,
   ConfigProvider,
-  message,
+  message as antMessage,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import {
@@ -181,7 +181,7 @@ const CoachProfileUser = () => {
         }
       );
       console.log(res.data);
-      message.info("Reported Successfully");
+      antMessage.info("Reported Successfully");
     } catch (e) {
       console.log(e);
     }
@@ -201,7 +201,9 @@ const CoachProfileUser = () => {
 
       setComment("");
       setRating(0);
-      alert("feedback was submitted successfully");
+      // alert("feedback was submitted successfully");
+      antMessage.success("feedback submitted successfully")
+      setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
       console.error("Error submitting feedback=====================", error);
@@ -369,7 +371,7 @@ const CoachProfileUser = () => {
                     localStorage.setItem("coachId", formattedCoachId as string);
                     navigate("/CoachBookingForm");
                   } else {
-                    message.error("You are not a player");
+                    antMessage.error("You are not a player");
                   }
                 }}
               >
@@ -385,10 +387,11 @@ const CoachProfileUser = () => {
                     fontFamily: "kanit",
                     borderColor: "#0E458E",
                     marginTop: "20px",
+                    marginBottom: "55%",
                   }}
                   onClick={() => {
                     if (userDetails.id === "") {
-                      message.error("Please Login First");
+                      antMessage.error("Please Login First");
                     } else {
                       showModalForReport();
                     }
@@ -1101,7 +1104,7 @@ const CoachProfileUser = () => {
                 }}
                 onClick={() => {
                   if (userDetails.id === "") {
-                    message.error("Please Login First");
+                    antMessage.error("Please Login First");
                   } else {
                     showModal();
                   }

@@ -186,8 +186,9 @@ const CoachCardSection = () => {
           backgroundColor: "#EFF4FA",
           marginBottom: "5%",
           width: "100%",
-
+          marginTop: "3%",
           overflowY: "scroll",
+
         }}
       >
         {loading ? (
@@ -201,17 +202,20 @@ const CoachCardSection = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: "2%",
+                marginTop: "4%",
+                marginLeft: "10%",
               }}
               lg={8}
               xs={24}
+              sm={24}
               md={12}
             >
               <div
                 style={{
                   marginTop: "0vh",
                   marginRight: "10vh",
-                  marginBottom: "0vh",
+                  marginBottom: "3vh",
+
                 }}
               >
                 <CoachCardCoachPage

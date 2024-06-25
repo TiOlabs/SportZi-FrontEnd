@@ -19,6 +19,8 @@ const ArcadeRatingCard = (props: any) => {
     navigate(`/arcadeProfile/${props.arcade_id}`);
   };
   const { md } = useBreakpoint();
+
+  const roundedAvgRate = Math.round(props.arcadeAverageRate * 2) / 2;
   return (
     <Row>
       <div
@@ -114,8 +116,10 @@ const ArcadeRatingCard = (props: any) => {
               }}
             >
               <Rate
+                allowHalf
                 disabled
-                defaultValue={props.arcadeRating}
+                defaultValue={0}
+                value={roundedAvgRate}
                 style={{ color: "#5587CC", fontSize: "12px" }}
               />
             </div>

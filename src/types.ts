@@ -6,6 +6,7 @@ export interface Discount {
   zone: Zone;
 }
 export interface Zone {
+  status: string;
   zone_name: String;
   zone_id: String;
   rate: Number;
@@ -60,17 +61,17 @@ export interface PackageEnroolDetailsForPlayer {
   player: Player;
   package: Package;
 }
-export interface PackageEnrollDetailsForCoach {
-  coach_id: String;
-  package_id: String;
-  status: String;
-  enrolled_date: String;
-  canceled_at: String;
-  rate: Number;
-  duration: Number;
-  coach: Coach;
-  package: Package;
-}
+// export interface PackageEnrollDetailsForCoach {
+//   coach_id: String;
+//   package_id: String;
+//   status: String;
+//   enrolled_date: String;
+//   canceled_at: String;
+//   rate: Number;
+//   duration: Number;
+//   coach: Coach;
+//   package: Package;
+// }
 export interface PackageDayAndTime {
   package_id: string;
   day: string;
@@ -185,6 +186,7 @@ export interface ArcadeBookings {
 }
 
 export interface Arcade {
+  find(arg0: (item: any) => boolean): unknown;
   packageDayAndTime: any;
   lng: number | (() => number);
   lat: number | (() => number);
