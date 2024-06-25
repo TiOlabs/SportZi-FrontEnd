@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Col, Row } from "antd";
 import { Grid } from "antd";
 import React, { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ const arcadePackageCoachEnrollAccept = (props: any) => {
     setIsModalOpen(false);
   };
   console.log(props);
-  const handleCancel = async () => {
+  const handleAccept = async () => {
     try {
         const response = await axios.put(
           `${process.env.REACT_APP_API_URL}api/updatePackageEnrollmentCoachDetails/${props.coach_id}/${props.package_id}`,
@@ -247,7 +248,7 @@ const arcadePackageCoachEnrollAccept = (props: any) => {
             fontSize: "18px",
           }}
           key="back"
-          onClick={handleCancel}
+          onClick={handleAccept}
         >
           Accept Request
         </Button>,

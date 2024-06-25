@@ -34,11 +34,11 @@ import {
   Arcade,
   CoachAssignDetails,
   CoachBookingDetails,
+  CoachEnrollDetailsForPackages,
   Package,
   PackageEnroolDetailsForPlayer,
   Zone,
   ZoneBookingDetails,
-  PackageEnrollDetailsForCoach,
 } from "../../types";
 import axios from "axios";
 import { useArcade } from "../../context/Arcade.context";
@@ -61,12 +61,13 @@ const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
   const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
-  const [packageDetail, setPackageDetail] = useState<Arcade>();
+  const [packageDetail, setPackageDetail] = useState<Package[]>([]);
+  console.log("packageDetail", packageDetail);
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
   const [packageEnrollmentForCoach, setPackageEnrollmentForCoach] = useState<
-    PackageEnrollDetailsForCoach[]
+    CoachEnrollDetailsForPackages[]
   >([]);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
@@ -130,7 +131,10 @@ const ArcadeProfileArcade = () => {
         );
         const data = await res.data;
         console.log(data);
-        setPackageDetail(data);
+        const filteredData = data.package.filter(
+          (item: Package) => item.status === "open"
+        );
+        setPackageDetail(filteredData);
       };
       fetchData();
     } catch (e) {
@@ -355,14 +359,14 @@ const ArcadeProfileArcade = () => {
   ];
   const CoachReqestToEnrollPackage = [
     (packageEnrollmentForCoach || []).map(
-      (coachEnrollDetails: PackageEnrollDetailsForCoach) => (
+      (coachEnrollDetails: CoachEnrollDetailsForPackages) => (
         <ArcadePackageCoachEnrollAccept
           package_name={coachEnrollDetails.package.package_name}
           package_image={coachEnrollDetails.package.package_image}
           zone_name={coachEnrollDetails.package.zone.zone_name}
-          rate={coachEnrollDetails.rate}
+          rate={coachEnrollDetails.package.rate_per_person}
           duration={coachEnrollDetails.duration}
-          enrolled_date={coachEnrollDetails.enrolled_date}
+          enrolled_date={coachEnrollDetails.applied_date}
           arcade_name={arcade?.arcade_name}
           coach_name={`${coachEnrollDetails.coach.user.firstname} ${coachEnrollDetails.coach.user.lastname}`}
           coach_image={coachEnrollDetails.coach.user.user_image}
@@ -665,7 +669,6 @@ const ArcadeProfileArcade = () => {
               style={{
                 position: "absolute",
                 display: "flex",
-
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
@@ -695,6 +698,7 @@ const ArcadeProfileArcade = () => {
             </Col>
           </Row>
         </Col>
+
         <Col
           xs={24}
           sm={24}
@@ -1327,7 +1331,8 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          {arcade?.zone.map((zone: Zone) => (
+          {arcade?.zone.filter((zone) => zone.status === "open").
+          map((zone: Zone) => (
             <Col
               xs={24}
               sm={12}
@@ -1437,9 +1442,8 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          {packageDetail?.package.map((pkg: Package) => (
+          {packageDetail?.map((pkg: Package) => (
             <Col
-              key={pkg.package_id.toString()}
               xs={24}
               sm={12}
               md={12}
@@ -1465,6 +1469,7 @@ const ArcadeProfileArcade = () => {
                 zone_id={pkg.zone.zone_id}
                 day={pkg.packageDayAndTime.map((item) => item.day)}
                 time={pkg.packageDayAndTime.map((item) => item.time)}
+                status={pkg.status}
               />
             </Col>
           ))}
@@ -2938,6 +2943,7 @@ const ArcadeProfileArcade = () => {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              
             }}
           >
             <Col
@@ -2991,6 +2997,7 @@ const ArcadeProfileArcade = () => {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              
             }}
           >
             <Col
@@ -3027,6 +3034,7 @@ const ArcadeProfileArcade = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignContent: "center",
+              
               }}
               xs={24}
               sm={12}

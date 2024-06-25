@@ -33,6 +33,7 @@ import {
   Arcade,
   CoachAssignDetails,
   CoachBookingDetails,
+  CoachEnrollDetailsForPackages,
   Zone,
 } from "../../types";
 import axios from "axios";
@@ -42,6 +43,7 @@ import CoachEdit from "../../components/coachEdit";
 
 import Notification from "../../components/notification";
 import { CoachFeedback } from "../../types";
+import PackageEnrollListForCoach from "../../components/packageEnrolllistInCoachProfile";
 
 interface AvailableTime {
   day: string;
@@ -58,8 +60,13 @@ const CoachProfile = () => {
     console.log("radio checked", e.target.value);
     setValue2(e.target.value);
   };
+  const onChangePackageEnroll = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValuepackageEnroll(e.target.value);
+  };
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [valuepackageEnroll, setValuepackageEnroll] = useState(13);
   const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
   const [coachAssignDetails, setCoachAssignDetails] = useState<
     CoachAssignDetails[]
@@ -75,6 +82,7 @@ const CoachProfile = () => {
   const [Details, setDetails] = useState<any>(null);
 
   const coachId = coachDetails?.id;
+  console.log("Coach ID:", coachId);
   useEffect(() => {
     axiosInstance
       .get(
@@ -255,7 +263,9 @@ const CoachProfile = () => {
   const [qulifications, setQulifications] = useState<any>();
   const [expertice, setExpertice] = useState<any>();
   const [AccNumber, setAccNumber] = useState<any>();
-
+  const [packageEnrollmentCoach, setPackageEnrollmentCoach] = useState<
+    CoachEnrollDetailsForPackages[]
+  >([]);
   useEffect(() => {
     if (Details) {
       setFirstName(Details?.firstname);
@@ -326,6 +336,23 @@ const CoachProfile = () => {
   }, [coachId]);
 
   useEffect(() => {
+    const fetchPackageEnrollmentCoach = async () => {
+      console.log("coachId:", coachId);
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentCoachDetailsById/${coachId}`
+        );
+        console.log("response:", response.data);
+        setPackageEnrollmentCoach(response.data);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchPackageEnrollmentCoach();
+  }, [coachId]);
+
+  useEffect(() => {
     const fetchRatings = async () => {
       try {
         const response = await axiosInstance.get(
@@ -350,6 +377,23 @@ const CoachProfile = () => {
 
     fetchRatings();
   }, [coachId]);
+
+  const filteredEnrollmentCoach = packageEnrollmentCoach.filter(
+    (enrollment) => {
+      if (valuepackageEnroll === 13) {
+        return enrollment.status === "pending";
+      } else if (valuepackageEnroll === 14) {
+        return enrollment.status === "success";
+      } else if (valuepackageEnroll === 15) {
+        return (
+          enrollment.status === "canceled_By_Coach" ||
+          enrollment.status === "canceled_By_Arcade"
+        );
+      } else {
+        return true;
+      }
+    }
+  );
 
   return (
     <>
@@ -505,21 +549,6 @@ const CoachProfile = () => {
                 setAccNumber={setAccNumber}
               />
             </div>
-            {/* <!--             <div>
-              <h1
-                style={{
-                  zIndex: "999",
-                  color: "#000",
-                  fontSize: "32px",
-                  fontStyle: "capitalize",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {firstname} {lastname}
-              </h1> --> */}{" "}
             <div>
               <Row>
                 <Col>
@@ -914,6 +943,8 @@ const CoachProfile = () => {
             </Typography>
           </div>
         </Col>
+
+                     
       </Row>
 
       <Row
@@ -1246,32 +1277,49 @@ const CoachProfile = () => {
             Venue
           </Col>
         </Row>
-        {filteredBookings.length > 0 ? (
-          filteredBookings.map((booking: CoachBookingDetails) => (
-            <CoachAccepteLst
-              key={booking.booking_id} // Make sure to provide a unique key
-              booking_id={booking.booking_id}
-              booked_by={booking.player.user.firstname}
-              image={booking.player.user.user_image}
-              date={booking.date}
-              time={booking.time}
-              venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
-              coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-              role="COACH"
-              email={booking.player.user.email}
-              arcade_email={booking.arcade.arcade_email}
-              arcade_name={booking.arcade.arcade_name}
-              status={booking.status}
-              full_amount={booking.full_amount}
-              player_id={booking.player_id}
-              arcade_id={booking.arcade_id}
-              coach_id={booking.coach_id}
-            />
-          ))
-        ) : (
-          <Empty description="No Bookings Available" />
-        )}
-
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking: CoachBookingDetails) => (
+                <CoachAccepteLst
+                  key={booking.booking_id} // Make sure to provide a unique key
+                  booking_id={booking.booking_id}
+                  booked_by={booking.player.user.firstname}
+                  image={booking.player.user.user_image}
+                  date={booking.date}
+                  time={booking.time}
+                  venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
+                  coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                  role="COACH"
+                  email={booking.player.user.email}
+                  arcade_email={booking.arcade.arcade_email}
+                  arcade_name={booking.arcade.arcade_name}
+                  status={booking.status}
+                  full_amount={booking.full_amount}
+                  player_id={booking.player_id}
+                  arcade_id={booking.arcade_id}
+                  coach_id={booking.coach_id}
+                />
+              ))
+            ) : (
+              <Empty description="No Bookings Available" />
+            )}
+          </div>
+        </div>
         {/* {showMore ? (
         <Button
           style={{
@@ -1491,6 +1539,24 @@ const CoachProfile = () => {
           >
             Date
           </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Duration
+          </Col>
           {lg && (
             <Col
               style={{
@@ -1537,10 +1603,335 @@ const CoachProfile = () => {
               image={booking.arcade.arcade_image}
               date={booking.assigned_date}
               time={booking.created_at}
+              duration={booking.duration}
               coach_name={coachDetails.firstName + " " + coachDetails.lastName}
               role="COACH"
               arcade_email={booking.arcade.arcade_email}
               arcade_name={booking.arcade.arcade_name}
+            />
+          ))
+        ) : (
+          <Empty />
+        )}
+      </Row>
+      {/* package Enrollments */}
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          Package Enrollment
+        </Typography>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangePackageEnroll}
+              value={valuepackageEnroll}
+            >
+              <Radio value={13}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#05a30a", colorPrimary: "#05a30a" },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangePackageEnroll}
+              value={valuepackageEnroll}
+            >
+              <Radio value={14}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangePackageEnroll}
+              value={valuepackageEnroll}
+            >
+              <Radio value={15}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Available
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Assigned
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Package Name
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Percentage
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Arcade
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            ></Col>
+          )}
+          {sm && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            ></Col>
+          )}
+        </Row>
+        {filteredEnrollmentCoach.length > 0 ? (
+          filteredEnrollmentCoach.map((enrollment) => (
+            <PackageEnrollListForCoach
+              key={enrollment.package_id}
+              package_id={enrollment.package_id}
+              package_name={enrollment.package.package_name}
+              date={enrollment.applied_date}
+              percentage={enrollment.package.percentageForCoach}
+              arcade={enrollment.package.arcade.arcade_name}
+              image={enrollment.package.package_image}
+              role="COACH"
+              arcade_email={enrollment.package.arcade.arcade_email}
+              coach_id={enrollment.coach_id}
             />
           ))
         ) : (
@@ -1780,6 +2171,8 @@ const CoachProfile = () => {
       </Row>
       <AppFooter />
     </>
+
+
   );
 };
 

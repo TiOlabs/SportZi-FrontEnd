@@ -1,4 +1,4 @@
-import { Col, Form, Row } from "antd";
+import { Col, Form, Row, message } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
@@ -7,6 +7,8 @@ import axios from "axios";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import TextArea from "antd/es/input/TextArea";
+import confirm from "antd/es/modal/confirm";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 const AvailableBookingsArcade = (props: any) => {
   console.log(props);
@@ -63,45 +65,67 @@ const AvailableBookingsArcade = (props: any) => {
     setIsResonModalOpen(false);
   };
   const showDelete = async () => {
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${props.booking_id}`,
-        {
-          zone_booking_id: props.booking_id,
-          status: "canceled_By_Arcade",
-          email: props.email,
-          arcade_name: props.arcade_name,
-          player_name: props.booked_by,
-          role: "ARCADE",
-          booking_date: props.date,
-          booking_time: props.time,
-          zone_name: props.zoneName,
-          user_id: props.user_id,
-          arcade_id: props.arcade_id,
-        }
-      );
+    confirm({
+      title: "Are you sure cancel this task?",
+      icon: <ExclamationCircleFilled />,
+      content: "This may affect to the user and the arcade.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      okCancel: true,
+      async onOk() {
+        try {
+          const response = await axios.put(
+            `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${props.booking_id}`,
+            {
+              zone_booking_id: props.booking_id,
+              status: "canceled_By_Arcade",
+              email: props.email,
+              arcade_name: props.arcade_name,
+              player_name: props.booked_by,
+              role: "ARCADE",
+              booking_date: props.date,
+              booking_time: props.time,
+              zone_name: props.zoneName,
+              user_id: props.user_id,
+              arcade_id: props.arcade_id,
+              reason: reason,
+            }
+          );
 
-      setIsConfirmModalOpen(false);
-    } catch (error) {
-      console.log("error");
-      console.log(error);
-    }
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/addbookingcancelarcade`,
-        {
-          booking_id: props.booking_id,
-          reason: reason,
+          setIsConfirmModalOpen(false);
+          message.success("Booking cancelation successfull!");
+          // Close modal
+          setIsModalOpen(false);
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        } catch (error) {
+          console.log("error");
+          console.log(error);
         }
-      );
-      // Close modal
-      setIsResonModalOpen(false);
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}api/addbookingcancelarcade`,
+            {
+              booking_id: props.booking_id,
+              reason: reason,
+            }
+          );
+          // Close modal
+          setIsResonModalOpen(false);
 
-      // Update zone booking details
-    } catch (error) {
-      console.log("error");
-      console.log(error);
-    }
+          // Update zone booking details
+        } catch (error) {
+          console.log("error");
+          console.log(error);
+        }
+        message.success("Booking cancelation successfull!");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({

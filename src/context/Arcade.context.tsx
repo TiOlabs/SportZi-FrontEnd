@@ -41,7 +41,7 @@ const ArcadeProvider = ({ children }: any) => {
 
               try {
                 setManagerDetails({
-                  id: res.data.manager_id,
+                  id: res.data.manager_id,      
                   firstName: res.data.user.firstname,
                   lastName: res.data.user.lastname,
                   role: res.data.user.role,

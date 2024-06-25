@@ -6,7 +6,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import axios from "axios";
 import { CoachAssignDetails } from "../types";
 
-const CoachReqestList = (props: any) => {
+const PackageEnrollListForCoach = (props: any) => {
   console.log(props);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -28,7 +28,6 @@ const CoachReqestList = (props: any) => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setIsModalOpenWarning(false);
   };
 
   const showModalWarning = () => {
@@ -41,8 +40,30 @@ const CoachReqestList = (props: any) => {
   };
 
   const handleCancelWarning = async () => {
-    console.log(props.coach_id, props.arcade_id);
-
+    setIsModalOpenWarning(false);
+    setIsModalOpen(false);
+  };
+  const handleClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    handleacceptWarning(props.package_id);
+  };
+  const handleacceptWarning = async (package_id: any) => {
+    console.log(props.coach_id, package_id);
+    try {
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}api/updatePackageEnrollmentCoachDetails/${props.coach_id}/${package_id}`,
+        {
+          // coach_id: props.coach_id,
+          // arcade_id: props.arcade_id,
+          status: "canceled_By_Coach",
+          // arcade_email: props.arcade_email,
+          // role: props.role,
+          // arcade_name: props.arcade,
+          // coach_name: props.coach_name,
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${props.coach_id}`
@@ -52,31 +73,6 @@ const CoachReqestList = (props: any) => {
       const successData = res.data.filter(
         (item: { status: string }) => item.status === "success"
       );
-
-      const ispendingrequest = res.data.filter(
-        (item: { status: string; arcade_id: String }) =>
-          item.status === "pending" && item.arcade_id === props.arcade_id
-      );
-
-      if (!ispendingrequest) {
-        try {
-          const res = await axios.put(
-            `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
-            {
-              coach_id: props.coach_id,
-              arcade_id: props.arcade_id,
-              status: "canceled_By_Coach",
-              arcade_email: props.arcade_email,
-              role: props.role,
-              arcade_name: props.arcade,
-              coach_name: props.coach_name,
-              ispendingrequest: "notPending",
-            }
-          );
-        } catch (e) {
-          console.log(e);
-        }
-      }
 
       // Set filtered data to setCoachAssignArcadeValues
       setCoachAssignArcadeValues(successData);
@@ -100,6 +96,56 @@ const CoachReqestList = (props: any) => {
     setIsModalOpen(false);
   };
 
+  // const handleCancelWarning = async () => {
+  //   console.log(props.coach_id, props.arcade_id);
+  //   try {
+  //     const res = await axios.put(
+  //       `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
+  //       {
+  //         coach_id: props.coach_id,
+  //         arcade_id: props.arcade_id,
+  //         status: "canceled_By_Coach",
+  //         arcade_email: props.arcade_email,
+  //         role: props.role,
+  //         arcade_name: props.arcade,
+  //         coach_name: props.coach_name,
+  //       }
+  //     );
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  //   try {
+  //     const res = await axios.get(
+  //       `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${props.coach_id}`
+  //     );
+
+  //     // Filter data with status "success"
+  //     const successData = res.data.filter(
+  //       (item: { status: string }) => item.status === "success"
+  //     );
+
+  //     // Set filtered data to setCoachAssignArcadeValues
+  //     setCoachAssignArcadeValues(successData);
+
+  //     console.log("successData", successData);
+  //     // Check if coachAssignArcadeValues is empty
+  //     if (successData.length === 0) {
+  //       // If empty, update status to "pending"
+  //       await axios.put(
+  //         `${process.env.REACT_APP_API_URL}api/updateCoach/${props.coach_id}`,
+  //         {
+  //           status: "pending",
+  //         }
+  //       );
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+
+  //   setIsModalOpenWarning(false);
+  //   setIsModalOpen(false);
+  // };
+
   const showModalAccept = () => {
     setIsModalOpenAccept(true);
   };
@@ -118,10 +164,6 @@ const CoachReqestList = (props: any) => {
       cloudName,
     },
   });
-  const [date, timeWithZ] = props.date.split('T');
-
-// Remove the 'Z' from the time
-const time = timeWithZ.replace('Z', '');
   return (
     <>
       <Row
@@ -136,7 +178,7 @@ const time = timeWithZ.replace('Z', '');
           alignItems: "center",
         }}
       >
-        <Col xs={8} sm={8} md={8} lg={6} xl={6} onClick={showModal}>
+        <Col xs={8} sm={8} md={8} lg={6} xl={6} onClick={() => showModal()}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <AdvancedImage
@@ -171,7 +213,7 @@ const time = timeWithZ.replace('Z', '');
               lg={12}
               xl={12}
             >
-              {props.arcade}
+              {props.package_name}
             </Col>
           </Row>
         </Col>
@@ -192,15 +234,16 @@ const time = timeWithZ.replace('Z', '');
           lg={6}
           xl={6}
         >
-          {date} {" / "} {time}
+          {props.date}
         </Col>
         {lg && (
           <Col
+            onClick={showModal}
             style={{
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "300",
-              fontSize: "18px",
+              fontSize: md ? "18px" : "16px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -211,16 +254,17 @@ const time = timeWithZ.replace('Z', '');
             lg={6}
             xl={6}
           >
-            For {props.duration} month
+            {props.percentage}%
           </Col>
         )}
         {sm && (
           <Col
+            onClick={showModal}
             style={{
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "300",
-              fontSize: "18px",
+              fontSize: md ? "18px" : "16px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -231,17 +275,7 @@ const time = timeWithZ.replace('Z', '');
             lg={6}
             xl={6}
           >
-            <Button
-              style={{
-                borderColor: "#5587CC",
-                borderRadius: "3px",
-                fontFamily: "kanit",
-                color: "#5587CC",
-              }}
-              onClick={showModalWarning}
-            >
-              Reject Meeting
-            </Button>
+            {props.arcade}
           </Col>
         )}
       </Row>
@@ -263,18 +297,6 @@ const time = timeWithZ.replace('Z', '');
             onClick={showModalWarning}
           >
             Deny Meeting
-          </Button>,
-          <Button
-            style={{
-              backgroundColor: "#0E458E",
-
-              fontFamily: "kanit",
-            }}
-            key="submit"
-            type="primary"
-            onClick={showModalAccept}
-          >
-            Accept Meeting
           </Button>,
         ]}
       >
@@ -320,7 +342,7 @@ const time = timeWithZ.replace('Z', '');
                 lg={12}
                 xl={12}
               >
-                {props.arcade}
+                {props.package_name}
               </Col>
             </Row>
           </Col>
@@ -373,7 +395,7 @@ const time = timeWithZ.replace('Z', '');
             lg={12}
             xl={12}
           >
-            Time
+            {props.percentage}
           </Col>
 
           <Col
@@ -393,7 +415,7 @@ const time = timeWithZ.replace('Z', '');
             lg={12}
             xl={12}
           >
-            Venue
+            {props.arcade}
           </Col>
         </Row>
       </Modal>
@@ -402,7 +424,7 @@ const time = timeWithZ.replace('Z', '');
         title="Warning"
         open={isModalOpenWarning}
         onOk={handleOkWarning}
-        onCancel={handleCancel}
+        onCancel={handleCancelWarning}
         footer={[
           <Button
             style={{
@@ -412,7 +434,7 @@ const time = timeWithZ.replace('Z', '');
               fontFamily: "kanit",
             }}
             key="back"
-            onClick={handleCancel}
+            onClick={handleCancelWarning}
           >
             Cancel
           </Button>,
@@ -424,13 +446,15 @@ const time = timeWithZ.replace('Z', '');
             }}
             key="submit"
             type="primary"
-            onClick={handleCancelWarning}
+            onClick={handleClick}
           >
             Reject Meeting
           </Button>,
         ]}
       >
-        <Typography>Are you sure reject the meeting?</Typography>
+        <Typography>
+          Are you shure reject the meeting in this student
+        </Typography>
       </Modal>
 
       <Modal
@@ -470,4 +494,4 @@ const time = timeWithZ.replace('Z', '');
     </>
   );
 };
-export default CoachReqestList;
+export default PackageEnrollListForCoach;

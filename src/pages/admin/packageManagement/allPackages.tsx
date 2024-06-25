@@ -6,15 +6,12 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
 const AllPackagers = () => {
-
   const [packages, setPackages] = useState<Package[]>([]);
   useEffect(() => {
-
-
     const fetchPackages = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}getPackageDetails`
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails`
         );
         setPackages(response.data);
         console.log(response.data);
@@ -26,7 +23,7 @@ const AllPackagers = () => {
     fetchPackages();
   }, []);
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
+    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}>
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
@@ -54,7 +51,7 @@ const AllPackagers = () => {
 
 export default AllPackagers;
 
-function DataRow(props:any) {
+function DataRow(props: any) {
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
     cloud: {
@@ -73,176 +70,203 @@ function DataRow(props:any) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-return(
-  
-  <Row
-  key={props.packagedetails.package_id}
-           style={{
-          backgroundColor: "white",
-          padding: "1%",
-          marginTop: "50px",
-        }}
-      >
-        <Col></Col>
-        <Col span={8} style={{}}>
-          <div
+  return (
+    <Row
+      key={props.packagedetails.package_id}
+      style={{
+        backgroundColor: "white",
+        padding: "1%",
+        marginTop: "50px",
+      }}
+    >
+      <Col></Col>
+      <Col span={8} style={{}}>
+        <div
+          style={{
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            width: "80px",
+            height: "80px",
+            backgroundColor: "#000",
+          }}
+        >
+          {" "}
+          <AdvancedImage
             style={{
               borderRadius: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
               position: "absolute",
               width: "80px",
               height: "80px",
-              backgroundColor: "#000",
             }}
-          >   <AdvancedImage
-          style={{ height: "100%", width: "100%" }}
-          cldImg={cld.image(props.packagedetails.package_image
-          )}
-        /></div>
-          <div
+            cldImg={cld.image(props.packagedetails.package_image)}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            height: "80px",
+            fontSize: "16px",
+          }}
+        >
+          {props.packagedetails.package_name}
+        </div>
+      </Col>
+      <Col span={2} style={{}}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "left",
+            alignItems: "center",
+            textAlign: "center",
+            height: "80px",
+            fontSize: "16px",
+          }}
+        >
+          {" "}
+          LKR {props.packagedetails.rate_per_person}
+        </div>
+      </Col>
+      <Col span={8}>
+        <div
+          style={{
+            borderRadius: "50%",
+            position: "absolute",
+            width: "80px",
+            height: "80px",
+            backgroundColor: "#000",
+          }}
+        >
+          <AdvancedImage
             style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
+              borderRadius: "50%",
+              position: "absolute",
+              width: "80px",
               height: "80px",
-              fontSize: "16px",
             }}
+            cldImg={cld.image(props.packagedetails.arcade.arcade_image)}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            height: "80px",
+            fontSize: "16px",
+          }}
+        >
+          {props.packagedetails.arcade.arcade_name}
+        </div>
+      </Col>
+      <Col span={6} style={{}}>
+        <div
+          style={{
+            height: "80px",
+            fontSize: "16px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            type="primary"
+            style={{ width: "100px", backgroundColor: "#0E458E" }}
+            onClick={showModal}
           >
-            {props.packagedetails.package_name}
-            
-          </div>
-        </Col>
-        <Col span={2} style={{}}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "left",
-              alignItems: "center",
-              textAlign: "center",
-              height: "80px",
-              fontSize: "16px",
-            }}
-          >
-            {" "}
-            LKR {props.packagedetails.rate_per_person}
-          </div>
-        </Col>
-        <Col span={8}>
-                    <div
-                      style={{
-                        borderRadius: "50%",
-                        position: "absolute",
-                        width: "80px",
-                        height: "80px",
-                        backgroundColor: "#000",
-                      }}
-                    >
-                      <AdvancedImage
-                        style={{ height: "100%", width: "100%" }}
-                        cldImg={cld.image(props.packagedetails.arcade.arcade_image
-                        )}
-                      />
-                    </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-              height: "80px",
-              fontSize: "16px",
-            }}
-          >
-            {props.packagedetails.arcade.arcade_name}
-          </div>
-        </Col>
-        <Col span={6} style={{}}>
-          <div
-            style={{
-              height: "80px",
-              fontSize: "16px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              type="primary"
-              style={{ width: "100px", backgroundColor: "#0E458E" }}
-              onClick={showModal}
+            <div
+              style={{
+                fontSize: "16px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
             >
-              <div
-                style={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
-                More Details
-              </div>
-            </Button>
-            <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800}>
+              More Details
+            </div>
+          </Button>
+          <Modal
+            open={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            width={800}
+          >
             <div style={{ lineHeight: 3.0, fontSize: "160px" }}>
               <Row>
-              <div style={{ fontSize: "28px", color: "#0E458E" }}>
+                <div style={{ fontSize: "28px", color: "#0E458E" }}>
                   Arcade Details
                 </div>
-                </Row>
+              </Row>
               <Row>
                 <Col span={12}>
                   <Col>
-                  <b>Package Name : </b> { props.packagedetails.package_name}
+                    <b>Package Name : </b> {props.packagedetails.package_name}
                   </Col>
                   <Col>
-                  <b>Package Id :  </b> { props.packagedetails.package_id}
+                    <b>Package Id : </b> {props.packagedetails.package_id}
                   </Col>
                   <Col>
-                  <b>Package Rate : </b> {props.packagedetails.rate_per_person}
+                    <b>Package Rate : </b>{" "}
+                    {props.packagedetails.rate_per_person}
                   </Col>
                   <Col>
-                  <b>Package Rate : </b> {props.packagedetails.rate_per_person}
+                    <b>Coach Percentage : </b>{" "}
+                    {props.packagedetails.percentageForCoach}%
                   </Col>
                   <Col>
-                  <b>Package Discription : </b> {props.packagedetails.description}
+                    <b>Package Discription : </b>{" "}
+                    {props.packagedetails.description}
                   </Col>
-                
                 </Col>
                 <Col span={12}>
                   <Col>
-                  <b>Arcade Name : </b> { props.packagedetails.arcade.arcade_name}
+                    <b>Arcade Name : </b>{" "}
+                    {props.packagedetails.arcade.arcade_name}
                   </Col>
                   <Col>
-                  <b>Zone Name : </b> { props.packagedetails.zone.zone_name}
+                    <b>Zone Name : </b> {props.packagedetails.zone.zone_name}
+                  </Col>
+                  <Col>
+                    <b>Enrolled Coaches : </b>{" "}
+                    {props.packagedetails.coachApplyDetailsForPackage.map(
+                      (coach: any) => (
+                        <div>
+                          {coach.coach_id} - {coach.coach.user.firstname}{" "}
+                          {coach.coach.user.lastname} - {coach.status}
+                        </div>
+                      )
+                    )}
                   </Col>
                 </Col>
               </Row>
             </div>
           </Modal>
-            <Button
-              type="primary"
-              ghost
-              style={{ width: "100px", marginLeft: "20px" }}
+          <Button
+            type="primary"
+            ghost
+            style={{ width: "100px", marginLeft: "20px" }}
+          >
+            <div
+              style={{
+                fontSize: "16px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
             >
-              <div
-                style={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
-                Cancel
-              </div>
-            </Button>
-          </div>
-        </Col>
-      </Row>
-)
-
+              Cancel
+            </div>
+          </Button>
+        </div>
+      </Col>
+    </Row>
+  );
 }
