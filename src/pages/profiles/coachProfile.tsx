@@ -262,6 +262,7 @@ const CoachProfile = () => {
   const [AvailableTimes, setAvailableTimes] = useState<any>();
   const [qulifications, setQulifications] = useState<any>();
   const [expertice, setExpertice] = useState<any>();
+  const [AccNumber, setAccNumber] = useState<any>();
   const [packageEnrollmentCoach, setPackageEnrollmentCoach] = useState<
     CoachEnrollDetailsForPackages[]
   >([]);
@@ -271,8 +272,8 @@ const CoachProfile = () => {
       setLastName(Details?.lastname);
       setDiscription(Details?.Discription);
       setAvailableTimes(Details?.Coach?.availability);
-      setExpertice(Details?.Coach?.sport?.sport_name);
-      console.log(Details);
+      setExpertice(Details?.Coach?.sport?.sport_id);
+      setAccNumber(Details?.accountNumber);
       const achiv = Details?.achivement;
       if (achiv) {
         let achiveArr: string[] = [];
@@ -295,6 +296,7 @@ const CoachProfile = () => {
     }
     return [];
   };
+  console.log("AvailableTimes:", AvailableTimes);
   let groupedByDay: { [key: string]: string[] } = {};
   if (AvailableTimes) {
     groupedByDay = AvailableTimes.reduce(
@@ -542,9 +544,9 @@ const CoachProfile = () => {
                 expertice={expertice}
                 setExpertice={setExpertice}
                 coachId={coachDetails?.id}
-                startTime={coachDetails?.start_time}
-                closeTime={coachDetails?.close_time}
-                day={coachDetails?.day}
+                availability={AvailableTimes}
+                AccNumber={AccNumber}
+                setAccNumber={setAccNumber}
               />
             </div>
             <div>
@@ -642,12 +644,6 @@ const CoachProfile = () => {
                         width: "100%",
                       }}
                     >
-                      {/* <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
-
                       <Rate
                         allowHalf
                         disabled
@@ -692,7 +688,7 @@ const CoachProfile = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Qlifications
+              Qulifications
             </Typography>
             <List
               style={{
@@ -932,12 +928,23 @@ const CoachProfile = () => {
                 </div>
               ))}
             </div>
-
-           </div>
+            <Typography
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontStyle: "normal",
+                fontWeight: "200",
+                lineHeight: "normal",
+                marginTop: "5px",
+                fontSize: lg ? "24px" : "18px",
+              }}
+            >
+              Acc Number :{AccNumber}
+            </Typography>
+          </div>
         </Col>
 
-                      
-
+                     
       </Row>
 
       <Row
