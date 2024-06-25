@@ -106,7 +106,6 @@ const ArcadeProfileArcade = () => {
 
   console.log("arcade", ArcadeId);
 
-
   useEffect(() => {
     try {
       //some kinda error in here
@@ -395,7 +394,6 @@ const ArcadeProfileArcade = () => {
 
   console.log("in the arcade", ArcadeId);
 
-
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
   useEffect(() => {
     axios
@@ -518,6 +516,7 @@ const ArcadeProfileArcade = () => {
   const [openTime, setOpenTime] = useState<any>();
   const [closeTime, setCloseTime] = useState<any>();
   const [managerName, setmanagerName] = useState<Arcade>();
+  const [accNumber, setAccNumber] = useState<any>();
 
   useEffect(() => {
     if (arcadeDetails) {
@@ -526,7 +525,7 @@ const ArcadeProfileArcade = () => {
       setAddress(arcadeDetails.address);
       setOpenTime(arcadeDetails.open_time);
       setCloseTime(arcadeDetails.close_time);
-
+      setAccNumber(arcadeDetails.manager.user.accountNumber);
       if (arcade?.zone) {
         const sports = Array.from(
           new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
@@ -535,16 +534,11 @@ const ArcadeProfileArcade = () => {
       }
     }
   }, [arcadeDetails]);
-
-  // const arcadeName = arcadeDetails?.arcade_name;
-
   const [cloudName] = useState("dle0txcgt");
-
   //For display reviews and averageRate
   const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
   const [averageRating, setAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
-
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
@@ -563,7 +557,6 @@ const ArcadeProfileArcade = () => {
 
     fetchFeedbacks();
   }, []);
-
   useEffect(() => {
     const fetchRatings = async () => {
       try {
@@ -749,6 +742,8 @@ const ArcadeProfileArcade = () => {
                 closeTime={closeTime}
                 setCloseTime={setCloseTime}
                 id={ArcadeId}
+                accNumber={accNumber}
+                setAccNumber={setAccNumber}
               />
             </div>
             <div>
@@ -1135,6 +1130,19 @@ const ArcadeProfileArcade = () => {
                 </div>
               </List.Item>
             </List>
+            <Typography
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontStyle: "normal",
+                fontWeight: "200",
+                lineHeight: "normal",
+                marginTop: "5px",
+                fontSize: lg ? "24px" : "18px",
+              }}
+            >
+              Acc Number :{accNumber}
+            </Typography>
           </div>
         </Col>
       </Row>

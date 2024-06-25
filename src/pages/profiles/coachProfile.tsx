@@ -254,6 +254,8 @@ const CoachProfile = () => {
   const [AvailableTimes, setAvailableTimes] = useState<any>();
   const [qulifications, setQulifications] = useState<any>();
   const [expertice, setExpertice] = useState<any>();
+  const [AccNumber, setAccNumber] = useState<any>();
+
   useEffect(() => {
     if (Details) {
       setFirstName(Details?.firstname);
@@ -261,6 +263,7 @@ const CoachProfile = () => {
       setDiscription(Details?.Discription);
       setAvailableTimes(Details?.Coach?.availability);
       setExpertice(Details?.Coach?.sport?.sport_id);
+      setAccNumber(Details?.accountNumber);
       const achiv = Details?.achivement;
       if (achiv) {
         let achiveArr: string[] = [];
@@ -498,6 +501,8 @@ const CoachProfile = () => {
                 setExpertice={setExpertice}
                 coachId={coachDetails?.id}
                 availability={AvailableTimes}
+                AccNumber={AccNumber}
+                setAccNumber={setAccNumber}
               />
             </div>
             {/* <!--             <div>
@@ -610,12 +615,6 @@ const CoachProfile = () => {
                         width: "100%",
                       }}
                     >
-                      {/* <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
-
                       <Rate
                         allowHalf
                         disabled
@@ -900,6 +899,19 @@ const CoachProfile = () => {
                 </div>
               ))}
             </div>
+            <Typography
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontStyle: "normal",
+                fontWeight: "200",
+                lineHeight: "normal",
+                marginTop: "5px",
+                fontSize: lg ? "24px" : "18px",
+              }}
+            >
+              Acc Number :{AccNumber}
+            </Typography>
           </div>
         </Col>
       </Row>

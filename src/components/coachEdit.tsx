@@ -53,6 +53,8 @@ interface PlayerEditProps {
   setExpertice: (value: string) => void;
   coachId: any;
   availability: any;
+  AccNumber: any;
+  setAccNumber: (value: string) => void;
 }
 
 const CoachEdit = ({
@@ -68,6 +70,8 @@ const CoachEdit = ({
   setExpertice,
   coachId,
   availability,
+  AccNumber,
+  setAccNumber,
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
@@ -277,6 +281,7 @@ const CoachEdit = ({
             sport_id: expertice,
             combinedTimeslot: combinedTimeslot,
             qulifications: qulifications.split(","),
+            accnumber: AccNumber,
           })
           .then((res) => {
             setOpen(false);
@@ -459,6 +464,10 @@ const CoachEdit = ({
                   message: "Input your Qulifications Using Comma Seprated",
                   whitespace: true,
                 },
+                {
+                  pattern: /^[A-Za-z,0-9]{3,}$/,
+                  message: "enter your qulifications using comma seprated,",
+                },
               ]}
               style={{}}
             >
@@ -502,6 +511,30 @@ const CoachEdit = ({
                   </Option>
                 ))}
               </Select>
+            </Form.Item>
+            <Form.Item
+              name="AccNumber"
+              label="Account Number"
+              initialValue={AccNumber}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Account Number",
+                  whitespace: true,
+                },
+                {
+                  pattern: /^\d+$/,
+                  message:
+                    "Account Number Should be a number and only contain 0-9",
+                },
+              ]}
+              style={{}}
+            >
+              <Input
+                placeholder="Enter your Account number"
+                value={AccNumber}
+                onChange={(e) => setAccNumber(e.target.value)}
+              />
             </Form.Item>
             {DecodeTimeSlot.map((slot: any, index: number) => (
               <Space
