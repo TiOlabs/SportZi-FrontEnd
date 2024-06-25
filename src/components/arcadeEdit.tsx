@@ -393,7 +393,7 @@ const ArcadeEdit = ({
                   whitespace: true,
                 },
                 {
-                  pattern: /^[A-Za-z,]+$/,
+                  pattern: /^[A-Za-z, ]+$/,
                   message: "Enter address using comma to separate the address",
                 },
               ]}
@@ -503,6 +503,7 @@ const ArcadeEdit = ({
                 style={{ maxWidth: "100px" }}
                 cldImg={imgObject}
                 plugins={[responsive(), placeholder()]}
+                defaultValue={publicId}
               />
             </Form.Item>
           </Form>
