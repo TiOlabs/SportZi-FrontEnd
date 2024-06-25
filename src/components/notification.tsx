@@ -106,6 +106,9 @@ const Notification: React.FC<NotificationProps> = ({ userType, id }) => {
           icon={<BellOutlined />}
           shape="circle"
           onClick={handleMenuClick}
+          style={{
+            border:"none"
+          }}
         />
       </Badge>
     </Dropdown>

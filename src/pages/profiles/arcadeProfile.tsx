@@ -1151,98 +1151,100 @@ const ArcadeProfileArcade = () => {
           </div>
         </Col>
       </Row>
-      <Row
-        style={{
-          marginTop: "40px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(27, 93, 183, 0.07)",
-          minHeight: "500px",
-        }}
-      >
+      {arcadeCoaches && (
         <Row
           style={{
-            width: "100%",
-            alignItems: "center",
-            textAlign: "center",
             marginTop: "40px",
-            position: "relative",
             display: "flex",
-            justifyContent: "center",
-            paddingTop: "20px",
-          }}
-        >
-          <Typography
-            style={{
-              color: " #0E458E",
-              fontSize: md ? "30px" : "20px",
-              fontFamily: "Kanit",
-              marginBottom: "30px",
-            }}
-          >
-            Our Best Coaches
-          </Typography>
-        </Row>
-
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            flexDirection: "column",
+            background: "rgba(27, 93, 183, 0.07)",
+            minHeight: "500px",
           }}
         >
           <Row
             style={{
-              overflowX: "hidden",
               width: "100%",
+              alignItems: "center",
+              textAlign: "center",
+              marginTop: "40px",
+              position: "relative",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
-              height: "450px",
-              overflowY: "scroll",
-              flexWrap: "nowrap",
+              paddingTop: "20px",
             }}
           >
-            {arcadeCoaches.map((coach: CoachAssignDetails) => (
-              <Col
-                lg={{ span: 5 }}
-                md={{ span: 8 }}
-                sm={{ span: 12 }}
-                xs={{ span: 24 }}
-                style={{
-                  display: "flex",
-                }}
-              >
-                <CoachCard
-                  coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
-                  coachImage={coach.coach.user.user_image}
-                  short_description={coach.description}
-                  date={coach.assigned_date}
-                  rate={coach.coach.rate}
-                  coach_id={coach.coach_id}
-                  sport={coach.coach.sport.sport_name}
-                />
-              </Col>
-            ))}
+            <Typography
+              style={{
+                color: " #0E458E",
+                fontSize: md ? "30px" : "20px",
+                fontFamily: "Kanit",
+                marginBottom: "30px",
+              }}
+            >
+              Our Best Coaches
+            </Typography>
           </Row>
-        </div>
-        <Button
-          style={{
-            color: "#1B5DB7",
-            background: "none",
-            border: "none",
-            fontFamily: "Kanit",
-            fontSize: "18px",
-            marginBottom: "30px",
-          }}
-        >
-          See More
-        </Button>
-      </Row>
+
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Row
+              style={{
+                overflowX: "hidden",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "450px",
+                overflowY: "scroll",
+                flexWrap: "nowrap",
+              }}
+            >
+              {arcadeCoaches.map((coach: CoachAssignDetails) => (
+                <Col
+                  lg={{ span: 5 }}
+                  md={{ span: 8 }}
+                  sm={{ span: 12 }}
+                  xs={{ span: 24 }}
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <CoachCard
+                    coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
+                    coachImage={coach.coach.user.user_image}
+                    short_description={coach.description}
+                    date={coach.assigned_date}
+                    rate={coach.coach.rate}
+                    coach_id={coach.coach_id}
+                    sport={coach.coach.sport.sport_name}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </div>
+          <Button
+            style={{
+              color: "#1B5DB7",
+              background: "none",
+              border: "none",
+              fontFamily: "Kanit",
+              fontSize: "18px",
+              marginBottom: "30px",
+            }}
+          >
+            See More
+          </Button>
+        </Row>
+      )}
       <div
         style={{
           width: "100%",
@@ -1815,6 +1817,7 @@ const ArcadeProfileArcade = () => {
                           user_image={booking.user.user_image}
                           booking_id={booking.zone_booking_id}
                           booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                          booked_id={booking.user.user_id}
                           zoneName={zone.zone_name}
                           time={booking.time}
                           date={booking.date}

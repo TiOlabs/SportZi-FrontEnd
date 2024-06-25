@@ -11,7 +11,7 @@ const ArcadeCardForMannager = (props: any) => {
     navigate(`/ArcadeforArcade/${props.arcade_id}`); // replace 'props.id' with the unique id you want to use
   };
   return (
-    <div style={{ display: "flex", justifyContent: "center", width:"90%"}}>
+    <div style={{ display: "flex", justifyContent: "center", width:"100%"}}>
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
@@ -56,7 +56,7 @@ const ArcadeCardForMannager = (props: any) => {
           ></div>
         </Col>
         <Col
-          xs={16}
+          xs={14}
           style={{
             display: "flex",
             alignItems: "center",
@@ -65,7 +65,7 @@ const ArcadeCardForMannager = (props: any) => {
           <p
             style={{
               fontSize: "16px",
-              fontWeight: "500",
+              fontWeight: "400",
               color: "#000",
               fontFamily: "kanit",
             }}
@@ -74,14 +74,15 @@ const ArcadeCardForMannager = (props: any) => {
           </p>
         </Col>
         <Col
-          xs={2}
+          xs={4}
           style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Notification userType="arcade" id={props.arcade_id} />
+          <Notification    
+          userType="arcade" id={props.arcade_id}  />
         </Col>
       </Row>
     </div>

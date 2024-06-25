@@ -402,9 +402,7 @@ const PlayerProfile = () => {
                     fontWeight: "400",
                     lineHeight: "normal",
                   }}
-                >
-                  {firstname}
-                </p>
+                ></p>
               </div>
               {/* edit button */}
               <div
