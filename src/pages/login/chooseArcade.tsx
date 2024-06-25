@@ -133,7 +133,8 @@ const ChooseArcade = () => {
           @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
           .page-background {
-            background: linear-gradient(135deg, #5587CC, #33ccff, #99ccff);
+            background: white;
+            opasity:0.5;
             width: 100%;
             height: 100vh;
             display: flex;
@@ -167,7 +168,7 @@ const ChooseArcade = () => {
             <div
               style={{
                 fontSize: "24px",
-                fontWeight: "500",
+                fontWeight: "400",
                 color: "#000",
                 fontFamily: "kanit",
                 marginBottom: "20px",
@@ -190,10 +191,14 @@ const ChooseArcade = () => {
 
             <Button
               type="primary"
-              shape="round"
               icon="+"
               onClick={showModal}
-              style={{ marginTop: "20px" }}
+              style={{ marginTop: "20px",
+                borderRadius:"3px",
+                width:"100%",
+                
+
+               }}
             />
 
             <Modal

@@ -142,8 +142,6 @@ const ArcadeProfileUser = () => {
         {}
       )
       .then((res) => {
-        // Filter data where status is "success"
-
         const filteredData = res.data.filter(
           (item: { status: string }) => item.status === "success"
         );
