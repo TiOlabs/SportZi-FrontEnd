@@ -3,6 +3,7 @@ import {
   Button,
   Calendar,
   CalendarProps,
+  Checkbox,
   Form,
   Input,
   InputNumber,
@@ -35,6 +36,7 @@ interface TimeSlotsForDate {
 }
 
 const UpdateZone = (props: any) => {
+  console.log(props);
   const { ArcadeId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -75,6 +77,10 @@ const UpdateZone = (props: any) => {
   const [zoneBookings, setZoneBookings] = useState<Zone[]>([]);
   const [reason, setReason] = useState("");
   const [arcadeDetails, setArcadeDetails] = useState<Arcade>();
+  const [discount, setdiscount] = useState(props.discount_percentage);
+  const [discountDiscription, setdiscountDiscription] = useState(
+    props.discount_description
+  );
   const emails: string[] = [];
   const user_names: string[] = [];
   const zoneBookingIds: string[] = [];
@@ -103,6 +109,7 @@ const UpdateZone = (props: any) => {
     folder: "Coaches-SportZi", //upload files to the specified folder
     resize: "fill",
   });
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [messageApi] = message.useMessage();
   const key = "updatable";
 
@@ -340,6 +347,8 @@ const UpdateZone = (props: any) => {
   };
 
   const updateZoneDetails = async () => {
+    console.log(discountDiscription);
+    console.log(discount)
     const combinedTimeslot = timeSlots.map((slot) => ({
       day: slot.day,
       timeslot: `${slot.startTime}-${slot.endTime}`,
@@ -357,6 +366,7 @@ const UpdateZone = (props: any) => {
       sportcc = props.sport_id;
     }
     try {
+      console.log(discount)
       console.log(sportcc);
       const res = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
@@ -373,6 +383,8 @@ const UpdateZone = (props: any) => {
           sport_id: sportcc,
           combinedTimeslot: combinedTimeslot,
           combinedTimeslotForDate: combinedTimeslotForDate,
+          discount_percentage: discount,
+          discountDiscription: discountDiscription,
           reason: reason,
         }
       );
@@ -399,7 +411,7 @@ const UpdateZone = (props: any) => {
             user_names: user_names,
             arcade_name: arcadeDetails?.arcade_name,
             arcade_id: ArcadeId,
-            user_ids: user_ids,       
+            user_ids: user_ids,
           }
         )
       );
@@ -590,6 +602,65 @@ const UpdateZone = (props: any) => {
               style={{ width: "100%" }}
               defaultValue={rate}
               onChange={(value) => setRate(value?.toString() || "")}
+            />
+          </Form.Item>
+          <Checkbox
+            checked={componentDisabled}
+            onChange={(e) => setComponentDisabled(e.target.checked)}
+          >
+            Add Discount
+          </Checkbox>
+
+          <Form.Item
+            name="discount"
+            label="discount persentage"
+            rules={[
+              {
+                type: "number",
+                message: "Please enter a valid number!",
+              },
+              {
+                required: true,
+                message: "Please input your number!",
+              },
+              {
+                validator: (_, value) => {
+                  if (value <= 0) {
+                    return Promise.reject("Rate should be greater than 0");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <InputNumber
+              defaultValue={discount}
+              disabled={!componentDisabled}
+              placeholder="discount persentage"
+              style={{ width: "100%" }}
+              onChange={(value) => setdiscount(value?.toString() || "")}
+            />
+          </Form.Item>
+          <Form.Item
+            name="discuntDiscription"
+            label="Add a description about discount"
+            rules={[
+              {
+                type: "string",
+                message: "Please enter a Zone description!",
+              },
+              {
+                required: true,
+                message: "Please input your Zone Descrition!",
+              },
+            ]}
+          >
+            <TextArea
+              defaultValue={discountDiscription}
+              disabled={!componentDisabled}
+              rows={2}
+              placeholder="descrition"
+              onChange={(e) => setdiscountDiscription(e.target.value)}
             />
           </Form.Item>
           <Form.Item

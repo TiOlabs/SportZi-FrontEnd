@@ -29,6 +29,7 @@ import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
 import { Sport } from "../types";
 import { decode } from "punycode";
+import { error } from "console";
 
 const { Option } = Select;
 
@@ -55,6 +56,7 @@ interface PlayerEditProps {
   availability: any;
   AccNumber: any;
   setAccNumber: (value: string) => void;
+  user_image: any;
 }
 
 const CoachEdit = ({
@@ -72,6 +74,7 @@ const CoachEdit = ({
   availability,
   AccNumber,
   setAccNumber,
+  user_image,
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
@@ -269,6 +272,8 @@ const CoachEdit = ({
   console.log("Decode Tims Slots", DecodeTimeSlot);
 
   useEffect(() => {
+    console.log("Form Submitted", formSubmitted);
+    console.log(publicId);
     if (formSubmitted) {
       try {
         console.log(combinedTimeslot);
@@ -282,6 +287,7 @@ const CoachEdit = ({
             combinedTimeslot: combinedTimeslot,
             qulifications: qulifications.split(","),
             accnumber: AccNumber,
+            user_image: publicId,
           })
           .then((res) => {
             setOpen(false);
@@ -439,7 +445,7 @@ const CoachEdit = ({
                   whitespace: true,
                 },
                 {
-                  min: 100,
+                  max: 100,
                   message: "Description must be at least 100 characters",
                 },
               ]}
