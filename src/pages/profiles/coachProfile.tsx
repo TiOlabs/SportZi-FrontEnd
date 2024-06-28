@@ -1231,7 +1231,7 @@ const CoachProfile = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{

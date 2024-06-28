@@ -1,4 +1,4 @@
-import { Col, Row, Button, Empty, Modal, Input } from "antd";
+import { Col, Row, Button, Empty, Modal, Input, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Report } from "../../../types";
@@ -10,6 +10,7 @@ import { ExclamationCircleFilled } from "@ant-design/icons";
 const ReportUserManagement = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +22,8 @@ const ReportUserManagement = () => {
         setReports(res.data);
       } catch (e) {
         console.log(e);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -45,7 +48,7 @@ const ReportUserManagement = () => {
     setismodelopenForReport(false);
   };
 
-  const handleDeactivateUser = async (id:any) => {
+  const handleDeactivateUser = async (id: any) => {
     confirm({
       title: "Are you sure Deactivate the User?",
       icon: <ExclamationCircleFilled />,
@@ -131,172 +134,177 @@ const ReportUserManagement = () => {
   );
 
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%",marginLeft:"21%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Report Management - Reported Users</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <Input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Col>
-      </Row>
-      {filteredReports.length === 0 ? (
-        <div>
-          <Empty description={"No Reports For Users"} />
-        </div>
-      ) : (
-        filteredReports.map((report: Report) => (
-          <Row
-            style={{
-              backgroundColor: "white",
-              padding: "1%",
-              marginTop: "50px",
-            }}
-            key={report.report_id as string}
-          >
-            <Col></Col>
-            <Col span={7}>
-              <AdvancedImage
-                style={{
-                  borderRadius: "50%",
-                  position: "absolute",
-                  width: "80px",
-                  height: "80px",
-                }}
-                cldImg={cld.image(report.reporter_user.user_image as string)}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  height: "80px",
-                  fontSize: "16px",
-                }}
-              >
-                {report.reporter_user.firstname +
-                  " " +
-                  report.reporter_user.lastname}
-              </div>
-            </Col>
-            <Col span={4}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  alignItems: "center",
-                  textAlign: "center",
-                  height: "80px",
-                  fontSize: "16px",
-                }}
-              >
-                {report.report_reason}
-              </div>
-            </Col>
-            <Col span={7}>
-              <AdvancedImage
-                style={{
-                  borderRadius: "50%",
-                  position: "absolute",
-                  width: "80px",
-                  height: "80px",
-                }}
-                cldImg={cld.image(report.victim_user.user_image as string)}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  height: "80px",
-                  fontSize: "16px",
-                }}
-              >
-                {report.victim_user.firstname +
-                  " " +
-                  report.victim_user.lastname}
-              </div>
-            </Col>
-            <Col span={6}>
-              <div
-                style={{
-                  height: "80px",
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "100px", backgroundColor: "#0E458E" }}
-                  onClick={showModalForReport}
-                >
-                  Details
-                </Button>
-                <Button
-                  type="primary"
-                  ghost
-                  style={{ width: "100px", marginLeft: "20px" }}
-                  onClick={() => showModalRejectConfirm(report.report_id)}
-                >
-                  Reject
-                </Button>
-              </div>
-            </Col>
-            <Modal
-              visible={isModalOpenForReport}
-              onCancel={handleCancelForReport}
-              okText="Deactivate User"
-              onOk={() => handleDeactivateUser(report.victim_user.user_id)} // Pass the userId here
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Report Management - Reported Users</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search by user name or reason"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </Col>
+        </Row>
+        {filteredReports.length === 0 ? (
+          <div>
+            <Empty description={"No Reports For Users"} />
+          </div>
+        ) : (
+          filteredReports.map((report: Report) => (
+            <Row
+              style={{
+                backgroundColor: "white",
+                padding: "1%",
+                marginTop: "50px",
+              }}
+              key={report.report_id as string}
             >
-              <Row>
-                <Col span={12}>
-                  <b>Reporter</b> :{" "}
+              <Col></Col>
+              <Col span={7}>
+                <AdvancedImage
+                  style={{
+                    borderRadius: "50%",
+                    position: "absolute",
+                    width: "80px",
+                    height: "80px",
+                  }}
+                  cldImg={cld.image(report.reporter_user.user_image as string)}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
                   {report.reporter_user.firstname +
                     " " +
                     report.reporter_user.lastname}
-                </Col>
-                <Col span={12}>
-                  <b>User ID</b> : {report.reporter_user.user_id}
-                </Col>
-              </Row>
-              <Row>
-                <Col span={12}>
-                  <b>Victim</b> :{" "}
+                </div>
+              </Col>
+              <Col span={4}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {report.report_reason}
+                </div>
+              </Col>
+              <Col span={7}>
+                <AdvancedImage
+                  style={{
+                    borderRadius: "50%",
+                    position: "absolute",
+                    width: "80px",
+                    height: "80px",
+                  }}
+                  cldImg={cld.image(report.victim_user.user_image as string)}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "80px",
+                    fontSize: "16px",
+                  }}
+                >
                   {report.victim_user.firstname +
                     " " +
                     report.victim_user.lastname}
-                </Col>
-                <Col span={12}>
-                  <b>User ID</b> : {report.victim_user.user_id}
-                </Col>
-              </Row>
-              <Row>
-                <Col span={12}>
-                  <b>Reason</b> : {report.report_reason}
-                </Col>
-              </Row>
-              <Row>
-                <Col span={24}>
-                  <b>Description</b> : {report.description}
-                </Col>
-              </Row>
-            </Modal>
-          </Row>
-        ))
-      )}
+                </div>
+              </Col>
+              <Col span={6}>
+                <div
+                  style={{
+                    height: "80px",
+                    fontSize: "16px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "100px", backgroundColor: "#0E458E" }}
+                    onClick={showModalForReport}
+                  >
+                    Details
+                  </Button>
+                  <Button
+                    type="primary"
+                    ghost
+                    style={{ width: "100px", marginLeft: "20px" }}
+                    onClick={() => showModalRejectConfirm(report.report_id)}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              </Col>
+              <Modal
+                visible={isModalOpenForReport}
+                onCancel={handleCancelForReport}
+                okText="Deactivate User"
+                onOk={() => handleDeactivateUser(report.victim_user.user_id)} // Pass the userId here
+              >
+                <Row>
+                  <Col span={12}>
+                    <b>Reporter</b> :{" "}
+                    {report.reporter_user.firstname +
+                      " " +
+                      report.reporter_user.lastname}
+                  </Col>
+                  <Col span={12}>
+                    <b>User ID</b> : {report.reporter_user.user_id}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <b>Victim</b> :{" "}
+                    {report.victim_user.firstname +
+                      " " +
+                      report.victim_user.lastname}
+                  </Col>
+                  <Col span={12}>
+                    <b>User ID</b> : {report.victim_user.user_id}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <b>Reason</b> : {report.report_reason}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={24}>
+                    <b>Description</b> : {report.description}
+                  </Col>
+                </Row>
+              </Modal>
+            </Row>
+          ))
+        )}
+      </Spin>
     </Col>
   );
 };

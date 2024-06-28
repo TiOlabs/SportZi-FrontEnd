@@ -348,7 +348,7 @@ const UpdateZone = (props: any) => {
 
   const updateZoneDetails = async () => {
     console.log(discountDiscription);
-    console.log(discount)
+    console.log(discount);
     const combinedTimeslot = timeSlots.map((slot) => ({
       day: slot.day,
       timeslot: `${slot.startTime}-${slot.endTime}`,
@@ -366,7 +366,7 @@ const UpdateZone = (props: any) => {
       sportcc = props.sport_id;
     }
     try {
-      console.log(discount)
+      console.log(discount);
       console.log(sportcc);
       const res = await axios.put(
         `${process.env.REACT_APP_API_URL}api/updateZoneDetails/${props.id}`,
@@ -605,6 +605,7 @@ const UpdateZone = (props: any) => {
             />
           </Form.Item>
           <Checkbox
+            defaultChecked={!!discount}
             checked={componentDisabled}
             onChange={(e) => setComponentDisabled(e.target.checked)}
           >

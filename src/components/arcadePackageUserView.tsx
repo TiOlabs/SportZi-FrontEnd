@@ -487,79 +487,72 @@ const ArcadePackageUserView = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                {isButtonVisible &&
-                  (userDetails?.role === "COACH" ||
-                    userDetails?.role === "PLAYER" ||
-                    userDetails?.role === "MANAGER") && (
-                    <>
-                      {CoachDetailsForPackageEnroll.find((item) => {
-                        console.log(
-                          "Checking CoachDetailsForPackageEnroll, package_id:",
-                          item.package_id,
-                          "props.package_id:",
-                          props.package_id
-                        );
-                        return item.package_id === props.package_id;
-                      })?.status === "pending" ? (
-                        <p style={{ color: "orange" }}>Request Pending</p>
-                      ) : CoachDetailsForPackageEnroll.find((item) => {
-                          console.log(
-                            "Checking CoachDetailsForPackageEnroll, package_id:",
-                            item.package_id,
-                            "props.package_id:",
-                            props.package_id
-                          );
-                          return item.package_id === props.package_id;
-                        })?.status === "success" ? (
-                        <p style={{ color: "green" }}>Successfully joined</p>
-                      ) : CoachDetailsForPackageEnroll.find((item) => {
-                          console.log(
-                            "Checking CoachDetailsForPackageEnroll, package_id:",
-                            item.package_id,
-                            "props.package_id:",
-                            props.package_id
-                          );
-                          return item.package_id === props.package_id;
-                        })?.status === "canceled_By_Arcade" ? (
-                        <p style={{ color: "red" }}>You are rejected</p>
-                      ) : playerPackageBooking?.some((item) => {
-                          console.log(
-                            "Checking playerPackageBooking for player_id, package_id:",
-                            item.package_id,
-                            "props.player_id:",
-                            props.player_id
-                          );
-                          return item.package_id === props.player_id;
-                        }) &&
-                        playerPackageBooking?.some((item) => {
-                          console.log(
-                            "Checking playerPackageBooking for package_id, package_id:",
-                            item.package_id,
-                            "props.package_id:",
-                            props.package_id
-                          );
-                          return item.package_id === props.package_id;
-                        }) ? (
-                        <p style={{ color: "green" }}>Successfully joined</p>
-                      ) : (
-                        <Button
-                          style={{
-                            backgroundColor: "#EFF4FA",
-                            color: "#0E458E",
-                            borderRadius: "3px",
-                            fontFamily: "kanit",
-                            borderColor: "#0E458E",
-                          }}
-                          onClick={() => handleJoinClick(props.package_id)}
-                          loading={loading}
-                        >
-                          {userDetails?.role === "COACH"
-                            ? "Join Now"
-                            : "Enroll"}
-                        </Button>
-                      )}
-                    </>
+                <>
+                  {CoachDetailsForPackageEnroll.find((item) => {
+                    console.log(
+                      "Checking CoachDetailsForPackageEnroll, package_id:",
+                      item.package_id,
+                      "props.package_id:",
+                      props.package_id
+                    );
+                    return item.package_id === props.package_id;
+                  })?.status === "pending" ? (
+                    <p style={{ color: "orange" }}>Request Pending</p>
+                  ) : CoachDetailsForPackageEnroll.find((item) => {
+                      console.log(
+                        "Checking CoachDetailsForPackageEnroll, package_id:",
+                        item.package_id,
+                        "props.package_id:",
+                        props.package_id
+                      );
+                      return item.package_id === props.package_id;
+                    })?.status === "success" ? (
+                    <p style={{ color: "green" }}>Successfully joined</p>
+                  ) : CoachDetailsForPackageEnroll.find((item) => {
+                      console.log(
+                        "Checking CoachDetailsForPackageEnroll, package_id:",
+                        item.package_id,
+                        "props.package_id:",
+                        props.package_id
+                      );
+                      return item.package_id === props.package_id;
+                    })?.status === "canceled_By_Arcade" ? (
+                    <p style={{ color: "red" }}>You are rejected</p>
+                  ) : playerPackageBooking?.some((item) => {
+                      console.log(
+                        "Checking playerPackageBooking for player_id, package_id:",
+                        item.package_id,
+                        "props.player_id:",
+                        props.player_id
+                      );
+                      return item.package_id === props.player_id;
+                    }) &&
+                    playerPackageBooking?.some((item) => {
+                      console.log(
+                        "Checking playerPackageBooking for package_id, package_id:",
+                        item.package_id,
+                        "props.package_id:",
+                        props.package_id
+                      );
+                      return item.package_id === props.package_id;
+                    }) ? (
+                    <p style={{ color: "green" }}>Successfully joined</p>
+                  ) : (
+                    <Button
+                      style={{
+                        backgroundColor: "#EFF4FA",
+                        color: "#0E458E",
+                        borderRadius: "3px",
+                        fontFamily: "kanit",
+                        borderColor: "#0E458E",
+                      }}
+                      onClick={() => handleJoinClick(props.package_id)}
+                      loading={loading}
+                    >
+                      {userDetails?.role === "COACH" ? "Join Now" : "Enroll"}
+                    </Button>
                   )}
+                </>
 
                 {userDetails?.role === "PLAYER" ||
                 userDetails?.role === "MANAGER" ? (

@@ -1,4 +1,4 @@
-import { Col, Row, Button,Modal } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -11,8 +11,8 @@ interface Arcade {
   manager_id: String;
   open_time: String;
   close_time: String;
-  manager:{
-    manager_id:String,
+  manager: {
+    manager_id: String;
     user: {
       user_id: string;
       role: string;
@@ -29,11 +29,12 @@ interface Arcade {
       city: String | null;
       country: String | null;
     };
-    
-  }
-};
+  };
+}
 
 const ArcadeManagement = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
   const [arcades, setArcades] = useState<Arcade[]>([]);
 
   useEffect(() => {
@@ -45,48 +46,59 @@ const ArcadeManagement = () => {
         setArcades(response.data);
       } catch (error) {
         console.error("Error fetching coaches:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchArcades();
   }, []);
-
+  const filteredArcades = arcades.filter(
+    (arcades) =>
+      arcades.arcade_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      arcades.arcade_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" ,marginLeft:"21%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Arcade details</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Arcade details</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Col>
+        </Row>
 
-      {arcades.map((arcadedetails) => (
-        <DataRow
-          arcadedetails = {arcadedetails}
-        />
-      ))}
+        {filteredArcades.length === 0 ? (
+          <div>
+            <Empty description={"No Arcade found"} />
+          </div>
+        ) : (
+          filteredArcades.map((arcade: Arcade) => (
+            <DataRow arcadedetails={arcade} />
+          ))
+        )}
+      </Spin>
     </Col>
   );
 };
 
 export default ArcadeManagement;
 
-
-
-
-
-
-function DataRow(props:any){
-
+function DataRow(props: any) {
   const { arcadedetails } = props;
   // console.log(arcadedetails);
 
@@ -103,95 +115,95 @@ function DataRow(props:any){
     setIsModalOpen(false);
   };
 
-
-
-
-  return(
+  return (
     <Row
-          key={arcadedetails.arcade_id}
-
+      key={arcadedetails.arcade_id}
+      style={{
+        backgroundColor: "white",
+        padding: "1%",
+        marginTop: "20px",
+      }}
+    >
+      <Col></Col>
+      <Col span={8} style={{}}>
+        <div
           style={{
-            backgroundColor: "white",
-            padding: "1%",
-            marginTop: "20px",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            width: "80px",
+            height: "80px",
+            backgroundColor: "#000",
+          }}
+        ></div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "left",
+            alignItems: "center",
+            marginLeft: "100px",
+            textAlign: "center",
+            height: "80px",
+            fontSize: "16px",
           }}
         >
-          <Col></Col>
-          <Col span={8} style={{}}>
+          {arcadedetails.arcade_name}
+          {/* Blue Feather */}
+        </div>
+      </Col>
+
+      <Col span={8}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            height: "80px",
+            fontSize: "16px",
+          }}
+        >
+          {" "}
+          {arcadedetails.arcade_email}
+          {/* bluefeather@gmail.com */}
+        </div>
+      </Col>
+      <Col span={8} style={{}}>
+        <div
+          style={{
+            height: "80px",
+            fontSize: "16px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            type="primary"
+            style={{ width: "100px", backgroundColor: "#0E458E" }}
+            onClick={showModal}
+          >
             <div
               style={{
-                borderRadius: "50%",
+                fontSize: "16px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                position: "absolute",
-                width: "80px",
-                height: "80px",
-                backgroundColor: "#000",
-              }}
-            ></div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "left",
-                alignItems: "center",
-                marginLeft: "100px",
                 textAlign: "center",
-                height: "80px",
-                fontSize: "16px",
               }}
             >
-              {arcadedetails.arcade_name}
-              {/* Blue Feather */}
+              Details
             </div>
-          </Col>
+          </Button>
 
-          <Col span={8}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                textAlign: "center",
-                height: "80px",
-                fontSize: "16px",
-              }}
-            >
-              {" "}
-              {arcadedetails.arcade_email}
-              {/* bluefeather@gmail.com */}
-            </div>
-          </Col>
-          <Col span={8} style={{}}>
-            <div
-              style={{
-                height: "80px",
-                fontSize: "16px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                type="primary"
-                style={{ width: "100px", backgroundColor: "#0E458E" }}
-                onClick={showModal}
-              >
-                <div
-                  style={{
-                    fontSize: "16px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                  }}
-                >
-                  Details
-                </div>
-              </Button>
-
-
-              <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800}>
+          <Modal
+            open={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            width={800}
+          >
             <div style={{ lineHeight: 3.0, fontSize: "160px" }}>
               {/* <Row>
                 <div style={{ fontSize: "28px", color: "#0E458E" }}>
@@ -227,86 +239,86 @@ function DataRow(props:any){
                 </Col>
               </Row> */}
               <Row>
-              <div style={{ fontSize: "28px", color: "#0E458E" }}>
+                <div style={{ fontSize: "28px", color: "#0E458E" }}>
                   Arcade Details
                 </div>
-                </Row>
+              </Row>
               <Row>
                 <Col span={12}>
                   <Col>
-                  <b>Manager ID : </b> { arcadedetails.manager_id}
+                    <b>Manager ID : </b> {arcadedetails.manager_id}
                   </Col>
                   <Col>
-                  <b>First Name :  </b> { arcadedetails.manager.user.firstname}
+                    <b>First Name : </b> {arcadedetails.manager.user.firstname}
                   </Col>
                   <Col>
-                  <b>Last Name : </b> {arcadedetails.manager.user.lastname}
+                    <b>Last Name : </b> {arcadedetails.manager.user.lastname}
                   </Col>
                   <Col>
-                  <b>Email :</b> {arcadedetails.manager.user.email}
+                    <b>Email :</b> {arcadedetails.manager.user.email}
                   </Col>
                   <Col>
-                  <b>Account Number :</b> {arcadedetails.manager.user.accountNumber || "N/A"}
+                    <b>Account Number :</b>{" "}
+                    {arcadedetails.manager.user.accountNumber || "N/A"}
                   </Col>
                   <Col>
-                  <b>Gender :</b> {arcadedetails.manager.user.gender}
+                    <b>Gender :</b> {arcadedetails.manager.user.gender}
                   </Col>
                   <Col>
-                  <b>City :</b> {arcadedetails.manager.user.city || "N/A"}
+                    <b>City :</b> {arcadedetails.manager.user.city || "N/A"}
                   </Col>
                   <Col>
-                  <b>Country :</b> {arcadedetails.manager.user.country || "N/A"}
+                    <b>Country :</b>{" "}
+                    {arcadedetails.manager.user.country || "N/A"}
                   </Col>
                 </Col>
                 <Col span={12}>
                   <Col>
-                  <b>Arcade ID : </b> { arcadedetails.arcade_id}
+                    <b>Arcade ID : </b> {arcadedetails.arcade_id}
                   </Col>
                   <Col>
-                  <b>Arcade Name :  </b> { arcadedetails.arcade_name}
+                    <b>Arcade Name : </b> {arcadedetails.arcade_name}
                   </Col>
                   <Col>
-                  <b>Arcade Email : </b> {arcadedetails.arcade_email}
+                    <b>Arcade Email : </b> {arcadedetails.arcade_email}
                   </Col>
                   <Col>
-                  <b>Address :</b> {arcadedetails.manager.user.address || "N/A"}
+                    <b>Address :</b>{" "}
+                    {arcadedetails.manager.user.address || "N/A"}
                   </Col>
                   <Col>
-                  <b>Location :</b> {arcadedetails.location}
+                    <b>Location :</b> {arcadedetails.location}
                   </Col>
                   <Col>
-                  <b>Open TIme :</b> {arcadedetails.open_time}
+                    <b>Open TIme :</b> {arcadedetails.open_time}
                   </Col>
                   <Col>
-                  <b>Close Time :</b> {arcadedetails.close_time}
+                    <b>Close Time :</b> {arcadedetails.close_time}
                   </Col>
-                  
                 </Col>
               </Row>
             </div>
           </Modal>
 
-
-
-              <Button
-                type="primary"
-                ghost
-                style={{ width: "100px", marginLeft: "20px" }}
-              >
-                <div
-                  style={{
-                    fontSize: "16px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                  }}
-                >
-                  Delete
-                </div>
-              </Button>
+          <Button
+            type="primary"
+            ghost
+            style={{ width: "100px", marginLeft: "20px" }}
+          >
+            <div
+              style={{
+                fontSize: "16px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              Delete
             </div>
-          </Col>
-        </Row>
+          </Button>
+        </div>
+      </Col>
+    </Row>
   );
 }

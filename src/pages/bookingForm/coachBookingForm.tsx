@@ -375,11 +375,6 @@ const CoachBookingForm: React.FC = () => {
     }
   };
 
-
-
-  
-
-
   // eslint-disable-next-line no-octal
   const openTimeStr = zoneDetails?.open_time ?? "";
   const closeTimeStr = zoneDetails?.close_time ?? "";
@@ -440,7 +435,8 @@ const CoachBookingForm: React.FC = () => {
 
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
-  let coachAmount = Number(coachData?.rate) * Number(pcount);
+  let coachAmount = Number(coachData?.rate) 
+  // * Number(pcount); --------------------------------------------------------
   let coachRate = Number(coachData?.rate);
   let zonerate = Number(zoneDetails?.rate);
   let fullAmount;
@@ -473,7 +469,7 @@ const CoachBookingForm: React.FC = () => {
     zoneDetails?.full_zone_rate !== 0 &&
     reservationType === "person_by_person"
   ) {
-    if (zoneDetails?.discount.discount_percentage === null) {
+    if (zoneDetails?.discount === null) {
       fullAmount = Number(zonerate) * Number(pcount);
     } else {
       fullAmount =
@@ -494,7 +490,10 @@ const CoachBookingForm: React.FC = () => {
           100;
     }
   }
-  let finalAmaount = Number(fullAmount) + coachAmount * timeStep;
+  console.log(fullAmount);
+  console.log(coachAmount);
+  
+  let finalAmaount = Number(fullAmount) + (coachAmount * timeStep);
 
   // let finalAmount;
   // if (zoneDetails?.discount === null) {
@@ -683,7 +682,6 @@ const CoachBookingForm: React.FC = () => {
                 justifyContent: "center",
                 textAlign: "center",
                 lineHeight: "2.5",
-           
               }}
             >
               Join Us and Unleash Your Potential with Our Expert Coaches
@@ -1189,8 +1187,6 @@ const CoachBookingForm: React.FC = () => {
             </Col>
           </Row>
 
-            
-
           <Row>
             <Col xs={24} lg={10}></Col>
             <Col xs={24} lg={14}>
@@ -1200,13 +1196,12 @@ const CoachBookingForm: React.FC = () => {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  
                 }}
               ></div>
             </Col>
           </Row>
           <Row>
-          <Col xs={1} md={3} lg={0}></Col>
+            <Col xs={1} md={3} lg={0}></Col>
             <Col xs={8} sm={8} md={7} lg={6}>
               <Button
                 htmlType="submit"
@@ -1218,14 +1213,12 @@ const CoachBookingForm: React.FC = () => {
                   alignItems: "center",
                   backgroundColor: "#BAE5EE",
                   marginBottom: "0.8%",
-                 
                 }}
               >
                 <LeftOutlined />
                 Back
               </Button>
             </Col>
-           
 
             <Col xs={0} md={0} lg={4}></Col>
             <Col xs={14} sm={12} md={12} lg={14}>
@@ -1285,7 +1278,6 @@ const CoachBookingForm: React.FC = () => {
                 />
               </div>
             </Col>
-          
           </Row>
         </Form>
         <div style={{ marginTop: "40px" }}></div>

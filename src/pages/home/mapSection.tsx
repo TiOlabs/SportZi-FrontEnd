@@ -4,7 +4,6 @@ import {
   GoogleMap,
   Marker,
   MarkerClusterer,
-  DirectionsService,
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
@@ -104,6 +103,7 @@ const MapSection: React.FC = () => {
           };
           setStartLocation(startLoc);
           setUserLocation(startLoc);
+          setDirections(null); // Clear existing directions before fetching new ones
           fetchDirections(startLoc, {
             lat: firstArcade.lat,
             lng: firstArcade.lng,

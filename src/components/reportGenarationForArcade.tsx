@@ -147,7 +147,7 @@ const PrintableContent = React.forwardRef<
             <PieChart width={500} height={400}>
               <Pie
                 data={packageData}
-                cx={100}
+                cx={200}
                 cy={150}
                 labelLine={false}
                 label={({ name, percent }) =>

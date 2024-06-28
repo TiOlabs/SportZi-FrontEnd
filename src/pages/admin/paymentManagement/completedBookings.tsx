@@ -179,7 +179,10 @@ const CompletedBookings = () => {
     onClick: handleMenuClick,
   };
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" ,marginLeft:"21%"}}>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
@@ -279,7 +282,7 @@ const CompletedBookings = () => {
                   }}
                 >
                   {" "}
-                  LKR {" "}
+                  LKR{" "}
                   {String(
                     Number(booking.participant_count) *
                       Number(booking.zone.rate)

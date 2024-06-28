@@ -1226,6 +1226,8 @@ const ArcadeProfileArcade = () => {
                     rate={coach.coach.rate}
                     coach_id={coach.coach_id}
                     sport={coach.coach.sport.sport_name}
+                    coach_image={coach.coach.user.user_image}
+                    averageRate={coach.coach.averageRate}
                   />
                 </Col>
               ))}
@@ -1357,8 +1359,12 @@ const ArcadeProfileArcade = () => {
                   rate={zone.rate}
                   zoneImage={zone.zone_image}
                   description={zone.description}
-                  discount_percentage={zone.discount.discount_percentage}
-                  discount_description={zone.discount.description}
+                  discount_percentage={
+                    zone.discount ? zone.discount.discount_percentage : 0
+                  }
+                  discount_description={
+                    zone.discount ? zone.discount.description : ""
+                  }
                   id={zone.zone_id}
                   capacity={zone.capacity}
                   open_time={zone.open_time}
@@ -1729,7 +1735,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{
@@ -2080,7 +2086,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{

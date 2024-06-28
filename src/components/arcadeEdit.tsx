@@ -83,7 +83,7 @@ const ArcadeEdit = ({
 
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
-  const [publicId, setPublicId] = useState("");
+  const [publicId, setPublicId] = useState(user_image);
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
   const [uwConfig] = useState({
@@ -123,7 +123,7 @@ const ArcadeEdit = ({
     },
   });
 
-  const imgObject = cld.image(publicId);
+  const imgObject = cld.image(publicId as string);
   console.log(imgObject);
 
   const showDrawer = () => {
@@ -178,6 +178,10 @@ const ArcadeEdit = ({
           setOpen(false);
           onClose();
           console.error("Error:", error);
+        } finally {
+          message.success("Profile Updated Successfully");
+          window.location.reload();
+          setOpen(false);
         }
       })
       .catch((info) => {
@@ -345,7 +349,7 @@ const ArcadeEdit = ({
                   whitespace: true,
                 },
                 {
-                  pattern: /^[A-Za-z]{3,}$/,
+                  
                   message: "First name letters and only contain A-Z and a-z",
                 },
               ]}
@@ -355,6 +359,7 @@ const ArcadeEdit = ({
                 placeholder="Enter your Arcade name"
                 value={userDetails?.firstName}
                 onChange={(e) => setFirstname(e.target.value)}
+                defaultValue={firstname}
               />
             </Form.Item>
 
@@ -380,6 +385,7 @@ const ArcadeEdit = ({
                 onChange={(e) => setDiscription(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 4 }}
+                defaultValue={discription}
               />
             </Form.Item>
             <Form.Item
@@ -420,6 +426,7 @@ const ArcadeEdit = ({
               <TimePicker
                 format="HH:mm"
                 onChange={(e) => setopenTime(e.format("HH:mm"))}
+                defaultValue={openTime ? dayjs(openTime, "HH:mm") : null}
               />
             </Form.Item>
             <Form.Item
@@ -436,6 +443,7 @@ const ArcadeEdit = ({
               <TimePicker
                 format="HH:mm"
                 onChange={(e) => setCloseTime(e.format("HH:mm"))}
+                defaultValue={closeTime ? dayjs(closeTime, "HH:mm") : null}
               />
             </Form.Item>
             <Form.Item
@@ -460,6 +468,7 @@ const ArcadeEdit = ({
                 placeholder="Enter your Account number"
                 value={accNumber}
                 onChange={(e) => setAccNumber(e.target.value)}
+                defaultValue={accNumber}
               />
             </Form.Item>
             <Form.Item name="Update Your Location" label="Update Your Location">
