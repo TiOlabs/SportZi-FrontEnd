@@ -616,7 +616,7 @@ const CoachProfile = () => {
                   lineHeight: "normal",
                 }}
               >
-                Rate (per Hour):{rate}
+                Rate (per hour):Rs.{rate}
               </p>
             </div>
             <div

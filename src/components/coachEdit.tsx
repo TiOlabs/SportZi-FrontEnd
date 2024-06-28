@@ -79,11 +79,10 @@ const CoachEdit = ({
   user_image,
   rate,
   setRate,
-
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
-  const [publicId, setPublicId] = useState("");
+  const [publicId, setPublicId] = useState(user_image);
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
   const [uwConfig] = useState({
@@ -292,14 +291,14 @@ const CoachEdit = ({
             accnumber: AccNumber,
             user_image: publicId,
             rate: rate,
-
           })
           .then((res) => {
             setOpen(false);
             alert("Form edited successfully!");
           })
-          .catch(() => {
+          .catch((error) => {
             setOpen(false);
+            console.log(error);
             alert("Form edited w!");
           });
       } catch (err) {
@@ -481,6 +480,7 @@ const CoachEdit = ({
               style={{}}
             >
               <Input
+                defaultValue={rate}
                 placeholder="Enter your Rate per hour "
                 value={rate}
                 onChange={(e) => setRate(Number(e.target.value))}
@@ -666,7 +666,7 @@ const CoachEdit = ({
               onClick={handleAddTimeSlot}
               style={{ width: "40%" }}
             >
-              <div style={{ fontSize: "15px" }}>Add Another Available Time</div>
+              <div style={{ fontSize: "15px" }}>Add Available Time</div>
             </Button>
 
             <Form.Item
