@@ -202,7 +202,7 @@ const CoachProfileUser = () => {
       setComment("");
       setRating(0);
       // alert("feedback was submitted successfully");
-      antMessage.success("feedback submitted successfully")
+      antMessage.success("feedback submitted successfully");
       setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
@@ -520,6 +520,19 @@ const CoachProfileUser = () => {
                 }}
               >
                 First class rugby coach
+              </p>
+              <p
+                style={{
+                  marginTop: "4px",
+                  color: "#0E458E",
+                  fontFamily: "kanit",
+                  fontSize: "22px",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                }}
+              >
+                Rate (per Hour):{coachDetails?.rate?.toString()}
               </p>
             </div>
             <div

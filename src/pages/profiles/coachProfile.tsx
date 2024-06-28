@@ -269,6 +269,7 @@ const CoachProfile = () => {
   const [packageEnrollmentCoach, setPackageEnrollmentCoach] = useState<
     CoachEnrollDetailsForPackages[]
   >([]);
+  const [rate, setRate] = useState<any>();
   useEffect(() => {
     if (Details) {
       setFirstName(Details?.firstname);
@@ -278,6 +279,7 @@ const CoachProfile = () => {
       setExpertice(Details?.Coach?.sport?.sport_id);
       setAccNumber(Details?.accountNumber);
       setUser_image(Details?.user_image);
+      setRate(Details?.Coach?.rate);
       const achiv = Details?.achivement;
       if (achiv) {
         let achiveArr: string[] = [];
@@ -560,6 +562,8 @@ const CoachProfile = () => {
                 AccNumber={AccNumber}
                 setAccNumber={setAccNumber}
                 user_image={user_image}
+                rate={rate}
+                setRate={setRate}
               />
             </div>
             <div>
@@ -576,7 +580,7 @@ const CoachProfile = () => {
                       marginBottom: "0px",
                     }}
                   >
-                    {Details?.firstname} {Details?.lastname}
+                    {firstname} {lastname}
                   </h1>
                 </Col>
                 <Col span={1}></Col>
@@ -600,6 +604,19 @@ const CoachProfile = () => {
                 }}
               >
                 First class {Details?.Coach?.sport?.sport_name} coach
+              </p>
+              <p
+                style={{
+                  marginTop: "4px",
+                  color: "#0E458E",
+                  fontFamily: "kanit",
+                  fontSize: "22px",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                }}
+              >
+                Rate (per Hour):{rate}
               </p>
             </div>
             <div
