@@ -268,7 +268,7 @@ const ArcadeProfileUser = () => {
       setComment("");
       setRating(0);
       // alert("feedback was submitted successfully");
-      message.success("feedback submitted successfully")
+      message.success("feedback submitted successfully");
       setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
@@ -414,8 +414,6 @@ const ArcadeProfileUser = () => {
                     borderColor: "#0E458E",
                     marginTop: "10px",
                     marginBottom: "45%",
-
-             
                   }}
                   onClick={() => {
                     if (userDetails.id === "") {
@@ -427,7 +425,6 @@ const ArcadeProfileUser = () => {
                     } else {
                       showModalForReport();
                     }
-
                   }}
                 >
                   Report User
@@ -1252,7 +1249,6 @@ const ArcadeProfileUser = () => {
             marginBottom: "5%",
             paddingBottom: "100px",
             // backgroundColor:"#453245"
-
           }}
           xs={24}
           sm={24}
@@ -1267,57 +1263,68 @@ const ArcadeProfileUser = () => {
               fontWeight: md ? "400" : "300",
               fontSize: md ? "32px" : "24px",
               color: "#0E458E",
-             
             }}
           >
             Reviews
           </Typography>
 
-          <Row
+          <div
             style={{
+              marginTop: "0vh",
+              marginRight: "10vh",
+              marginBottom: "10vh",
+              overflowY: "scroll",
+              maxHeight: "600px",
               width: "100%",
-              minHeight: "300px",
-              paddingBottom: "20px",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignContent: "center",
             }}
           >
-            {allFeedbacks.map((feedback: any) =>
-              feedback.feedback.feedbackComments.map((comment: any) => (
-                <Col
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: "3%",
-                  }}
-                  xl={6}
-                  lg={8}
-                  xs={24}
-                  md={12}
-                  key={feedback.feedback.feedbacks_id}
-                >
-                  <div
+            <Row
+              style={{
+                width: "100%",
+                minHeight: "300px",
+                paddingBottom: "20px",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+            >
+              {allFeedbacks.map((feedback: any) =>
+                feedback.feedback.feedbackComments.map((comment: any) => (
+                  <Col
                     style={{
-                      marginTop: "0vh",
-                      marginRight: "10vh",
-                      marginBottom: "10vh",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: "3%",
                     }}
+                    xl={6}
+                    lg={8}
+                    xs={24}
+                    md={12}
+                    key={feedback.feedback.feedbacks_id}
                   >
-                    <ReviewCard
-                      key={comment.feedback_id}
-                      image={feedback.feedback.user.user_image}
-                      rate={feedback.rate}
-                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
-                      comment={comment.comment}
-                    />
-                  </div>
-                </Col>
-              ))
-            )}
-          </Row>
+                    {" "}
+                    <div
+                      style={{
+                        marginTop: "0vh",
+                        marginRight: "10vh",
+                        marginBottom: "10vh",
+                      }}
+                    >
+                      <ReviewCard
+                        key={comment.feedback_id}
+                        image={feedback.feedback.user.user_image}
+                        rate={feedback.rate}
+                        userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                        comment={comment.comment}
+                      />
+                    </div>
+                  </Col>
+                ))
+              )}
+            </Row>
+          </div>
 
           <Row>
             {" "}

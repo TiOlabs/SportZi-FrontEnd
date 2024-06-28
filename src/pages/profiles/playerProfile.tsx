@@ -960,38 +960,44 @@ const PlayerProfile = () => {
             }}
           >
             {filteredBookings && filteredBookings.length > 0 ? (
-              filteredBookings.map((booking: CoachBookingDetails) => (
-                <CoachRequstRow
-                  key={booking.booking_id} // Make sure to provide a unique key
-                  booking_id={booking.booking_id}
-                  coach_image={booking.coach.user.user_image}
-                  coach_name={
-                    booking.coach.user.firstname +
-                    " " +
-                    booking.coach.user.lastname
-                  }
-                  booking_date={booking.date}
-                  booking_time={booking.time}
-                  venue={booking.arcade.arcade_name}
-                  user_id={booking.player.user.user_id}
-                  created_at={booking.created_at}
-                  setZoneBookingDetails={setZoneBookingDetails1}
-                  email={booking.coach.user.email}
-                  role={booking.player.user.role}
-                  player_name={
-                    booking.player.user.firstname +
-                    " " +
-                    booking.player.user.lastname
-                  }
-                  zone_name={booking.zone.zone_name}
-                  arcade_email={booking.arcade.arcade_email}
-                  status={booking.status}
-                  full_amount={booking.full_amount}
-                  player_id={booking.player_id}
-                  coach_id={booking.coach_id}
-                  arcade_id={booking.arcade_id}
-                />
-              ))
+              filteredBookings
+                .sort(
+                  (a, b) =>
+                    new Date(a.date.toString()).getTime() -
+                    new Date(b.date.toString()).getTime()
+                )
+                .map((booking: CoachBookingDetails) => (
+                  <CoachRequstRow
+                    key={booking.booking_id} // Make sure to provide a unique key
+                    booking_id={booking.booking_id}
+                    coach_image={booking.coach.user.user_image}
+                    coach_name={
+                      booking.coach.user.firstname +
+                      " " +
+                      booking.coach.user.lastname
+                    }
+                    booking_date={booking.date}
+                    booking_time={booking.time}
+                    venue={booking.arcade.arcade_name}
+                    user_id={booking.player.user.user_id}
+                    created_at={booking.created_at}
+                    setZoneBookingDetails={setZoneBookingDetails1}
+                    email={booking.coach.user.email}
+                    role={booking.player.user.role}
+                    player_name={
+                      booking.player.user.firstname +
+                      " " +
+                      booking.player.user.lastname
+                    }
+                    zone_name={booking.zone.zone_name}
+                    arcade_email={booking.arcade.arcade_email}
+                    status={booking.status}
+                    full_amount={booking.full_amount}
+                    player_id={booking.player_id}
+                    coach_id={booking.coach_id}
+                    arcade_id={booking.arcade_id}
+                  />
+                ))
             ) : (
               <Empty description="No Bookings Available" />
             )}

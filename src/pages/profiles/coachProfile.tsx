@@ -1322,27 +1322,33 @@ const CoachProfile = () => {
             }}
           >
             {filteredBookings.length > 0 ? (
-              filteredBookings.map((booking: CoachBookingDetails) => (
-                <CoachAccepteLst
-                  key={booking.booking_id} // Make sure to provide a unique key
-                  booking_id={booking.booking_id}
-                  booked_by={booking.player.user.firstname}
-                  image={booking.player.user.user_image}
-                  date={booking.date}
-                  time={booking.time}
-                  venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
-                  coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-                  role="COACH"
-                  email={booking.player.user.email}
-                  arcade_email={booking.arcade.arcade_email}
-                  arcade_name={booking.arcade.arcade_name}
-                  status={booking.status}
-                  full_amount={booking.full_amount}
-                  player_id={booking.player_id}
-                  arcade_id={booking.arcade_id}
-                  coach_id={booking.coach_id}
-                />
-              ))
+              filteredBookings
+                .sort(
+                  (a, b) =>
+                    new Date(a.date.toString()).getTime() -
+                    new Date(b.date.toString()).getTime()
+                )
+                .map((booking: CoachBookingDetails) => (
+                  <CoachAccepteLst
+                    key={booking.booking_id} // Make sure to provide a unique key
+                    booking_id={booking.booking_id}
+                    booked_by={booking.player.user.firstname}
+                    image={booking.player.user.user_image}
+                    date={booking.date}
+                    time={booking.time}
+                    venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
+                    coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                    role="COACH"
+                    email={booking.player.user.email}
+                    arcade_email={booking.arcade.arcade_email}
+                    arcade_name={booking.arcade.arcade_name}
+                    status={booking.status}
+                    full_amount={booking.full_amount}
+                    player_id={booking.player_id}
+                    arcade_id={booking.arcade_id}
+                    coach_id={booking.coach_id}
+                  />
+                ))
             ) : (
               <Empty description="No Bookings Available" />
             )}
@@ -2109,52 +2115,62 @@ const CoachProfile = () => {
               <ReviewCard />
             </Col>
           </Row> */}
-
-          <Row
+          <div
             style={{
+              marginTop: "0vh",
+              marginRight: "10vh",
+              marginBottom: "10vh",
+              overflowY: "scroll",
+              maxHeight: "600px",
               width: "100%",
-              minHeight: "300px",
-              paddingBottom: "20px",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignContent: "center",
             }}
           >
-            {allFeedbacks.map((feedback: any) =>
-              feedback.feedback.feedbackComments.map((comment: any) => (
-                <Col
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: "3%",
-                  }}
-                  xl={6}
-                  lg={8}
-                  xs={24}
-                  md={12}
-                  key={feedback.feedback.feedbacks_id}
-                >
-                  <div
+            <Row
+              style={{
+                width: "100%",
+                minHeight: "300px",
+                paddingBottom: "20px",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+            >
+              {allFeedbacks.map((feedback: any) =>
+                feedback.feedback.feedbackComments.map((comment: any) => (
+                  <Col
                     style={{
-                      marginTop: "0vh",
-                      marginRight: "10vh",
-                      marginBottom: "10vh",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: "3%",
                     }}
+                    xl={6}
+                    lg={8}
+                    xs={24}
+                    md={12}
+                    key={feedback.feedback.feedbacks_id}
                   >
-                    <ReviewCard
-                      key={comment.feedback_id}
-                      image={feedback.feedback.user.user_image}
-                      rate={feedback.rate}
-                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
-                      comment={comment.comment}
-                    />
-                  </div>
-                </Col>
-              ))
-            )}
-          </Row>
+                    <div
+                      style={{
+                        marginTop: "0vh",
+                        marginRight: "10vh",
+                        marginBottom: "10vh",
+                      }}
+                    >
+                      <ReviewCard
+                        key={comment.feedback_id}
+                        image={feedback.feedback.user.user_image}
+                        rate={feedback.rate}
+                        userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                        comment={comment.comment}
+                      />
+                    </div>
+                  </Col>
+                ))
+              )}
+            </Row>
+          </div>
         </Col>
       </Row>
 
