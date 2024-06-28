@@ -79,6 +79,7 @@ const CoachEdit = ({
   user_image,
   rate,
   setRate,
+
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
@@ -276,6 +277,8 @@ const CoachEdit = ({
   console.log("Decode Tims Slots", DecodeTimeSlot);
 
   useEffect(() => {
+    console.log("Form Submitted", formSubmitted);
+    console.log(publicId);
     if (formSubmitted) {
       try {
         axiosInstance
@@ -289,6 +292,7 @@ const CoachEdit = ({
             accnumber: AccNumber,
             user_image: publicId,
             rate: rate,
+
           })
           .then((res) => {
             setOpen(false);
@@ -495,7 +499,7 @@ const CoachEdit = ({
                   whitespace: true,
                 },
                 {
-                  pattern: /^[A-Za-z,0-9]{3,}$/,
+                  pattern: /^[A-Za-z .,0-9]{3,}$/,
                   message: "enter your qulifications using comma seprated,",
                 },
               ]}
@@ -686,6 +690,7 @@ const CoachEdit = ({
                 style={{ maxWidth: "100px" }}
                 cldImg={imgObject}
                 plugins={[responsive(), placeholder()]}
+                defaultValue={publicId}
               />
             </Form.Item>
           </Form>

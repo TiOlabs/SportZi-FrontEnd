@@ -776,21 +776,6 @@ const ArcadeProfileArcade = () => {
                   </h1>
                 </Col>
               </Row>
-              <p
-                style={{
-                  color: "#000",
-                  fontFamily: "kanit",
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "350",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                  marginTop: "0px",
-                }}
-              >
-                Manager : {arcadeDetails?.manager.user.firstname}{" "}
-                {arcadeDetails?.manager.user.lastname}
-              </p>
 
               <p
                 style={{
@@ -830,6 +815,21 @@ const ArcadeProfileArcade = () => {
                         </React.Fragment>
                       )
                     )}
+              </p>
+              <p
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+                  fontSize: "18px",
+                  fontStyle: "normal",
+                  fontWeight: "350",
+                  lineHeight: "normal",
+                  marginBottom: "0px",
+                  marginTop: "5px",
+                }}
+              >
+                Manager : {arcadeDetails?.manager.user.firstname}{" "}
+                {arcadeDetails?.manager.user.lastname}
               </p>
             </div>
             <div
