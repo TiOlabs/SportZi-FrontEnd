@@ -4,7 +4,7 @@ import { Flex, message } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axiosInstance from "../../axiosInstance";
@@ -48,7 +48,7 @@ const { Option } = Select;
 // function starting
 const SignupPlayer = () => {
   const [form] = Form.useForm();
-
+  const navigate = useNavigate();
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -81,6 +81,7 @@ const SignupPlayer = () => {
           console.log(res);
           message.success("Form submitted successfully!");
           form.resetFields();
+          navigate("/login");
         })
         .catch((err) => {
           console.log(err);

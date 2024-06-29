@@ -1,7 +1,7 @@
-import { Col, Row, Button, Modal } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useState, useEffect } from "react";
 // import axios from "axios";
-import axiosInstance from "../../../axiosInstance"
+import axiosInstance from "../../../axiosInstance";
 
 interface Player {
   player_id: string;
@@ -15,17 +15,18 @@ interface Player {
     accountNumber: string | null;
     is_active: string;
     user_image: string | null;
-    address:String | null;
-    city : String | null;
-    country : String | null;
+    address: String | null;
+    city: String | null;
+    country: String | null;
   };
 }
 
 const PlayerManagement = () => {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-
     // Fetch player data from the backend when the component mounts
     const fetchPlayers = async () => {
       try {
@@ -34,50 +35,64 @@ const PlayerManagement = () => {
         // console.log(response.data);
       } catch (error) {
         console.error("Error fetching players:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPlayers();
   }, []);
-
+  const filteredPlayers = players.filter(
+    (players) =>
+      players.player_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      players.user.firstname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      players.user.lastname.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      {" "}
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Players details</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Col>
+        </Row>
 
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Players details</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-
-      {players.map((playerdetails: Player) => (
-        <DataRow
-          // key={playerdetails.player_id} // Add key prop
-          playerdetails={playerdetails} // Pass playerdetails as prop
-        />
-      ))}
+      {filteredPlayers.length === 0 ? (
+        <div>
+          <Empty description={"No Player Found"} />
+        </div>
+      ) : (
+        filteredPlayers.map((player: Player) => (
+          <DataRow playerdetails={player} />
+        ))
+      )}
+      </Spin>
     </Col>
   );
 };
 
 export default PlayerManagement;
 
-
-
-
-
-function DataRow(props:any) {
-
- const { playerdetails } = props;
+function DataRow(props: any) {
+  const { playerdetails } = props;
   // console.log(playerdetails);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -126,7 +141,7 @@ function DataRow(props:any) {
             fontSize: "16px",
           }}
         >
-          {playerdetails.user.firstname} {playerdetails.user.lastname} 
+          {playerdetails.user.firstname} {playerdetails.user.lastname}
           {/* Mr.Ruchith Nusara */}
         </div>
       </Col>
@@ -170,17 +185,18 @@ function DataRow(props:any) {
                   <b>Player ID : </b> {playerdetails.player_id}
                 </Col>
                 <Col span={24}>
-                      <b>First Name :</b> {playerdetails.user.firstname}
+                  <b>First Name :</b> {playerdetails.user.firstname}
                 </Col>
                 <Col span={24}>
-                      <b>Last Name : </b> {playerdetails.user.lastname}
+                  <b>Last Name : </b> {playerdetails.user.lastname}
                 </Col>
                 <Col span={24}>
-                      <b>Email :</b> {playerdetails.user.email}
+                  <b>Email :</b> {playerdetails.user.email}
                 </Col>
                 <Col span={24}>
-                      <b>Account Number :</b>  {playerdetails.user.accountNumber || "N/A"}
-                </Col>           
+                  <b>Account Number :</b>{" "}
+                  {playerdetails.user.accountNumber || "N/A"}
+                </Col>
 
                 <Col span={24}>
                   <b>DOB :</b> {playerdetails.user.DOB}

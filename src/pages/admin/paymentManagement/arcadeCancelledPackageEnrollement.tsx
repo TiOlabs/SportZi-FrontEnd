@@ -1,4 +1,4 @@
-import { Col, Row, Modal, Button, Empty } from "antd";
+import { Col, Row, Modal, Button, Empty, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
@@ -47,52 +47,59 @@ const ArcadeCancelledPackageEnrollement = () => {
     }
   }, []);
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Arcade - Package Enrollment</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
-        {arcadeCanceled.length === 0 ? <Empty /> : null}
-        {arcadeCanceled.map(
-          (packageEnrollmentForPlayer: PackageEnroolDetailsForPlayer) => (
-            <DataRow
-              package_id={packageEnrollmentForPlayer.package_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-              booked_Arena={
-                packageEnrollmentForPlayer.package.arcade.arcade_name
-              }
-              booked_by={
-                packageEnrollmentForPlayer.player.user.firstname +
-                " " +
-                packageEnrollmentForPlayer.player.user.lastname
-              }
-              rate={Number(packageEnrollmentForPlayer.rate)}
-              user_id={packageEnrollmentForPlayer.player_id}
-              zone_id={packageEnrollmentForPlayer.package.zone_id}
-              arcade_id={packageEnrollmentForPlayer.package.arcade_id}
-              zone={packageEnrollmentForPlayer.package.zone.zone_name}
-              package_image={packageEnrollmentForPlayer.package.package_image}
-              // booking_date={packageEnrollmentForPlayer.date}
-              // booking_time={packageEnrollmentForPlayer.time}
-              // participant_count={packageEnrollmentForPlayer.participant_count}
-              created_at={packageEnrollmentForPlayer.enrolled_date}
-              canceled_at={packageEnrollmentForPlayer.canceled_at}
-              image={packageEnrollmentForPlayer.player.user.user_image}
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Cancelled By Arcade - Package Enrollment</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
             />
-          )
-        )}
-      </Col>
+          </Col>
+        </Row>
+        <Col
+          style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
+        >
+          {arcadeCanceled.length === 0 ? <Empty /> : null}
+          {arcadeCanceled.map(
+            (packageEnrollmentForPlayer: PackageEnroolDetailsForPlayer) => (
+              <DataRow
+                package_id={packageEnrollmentForPlayer.package_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+                booked_Arena={
+                  packageEnrollmentForPlayer.package.arcade.arcade_name
+                }
+                booked_by={
+                  packageEnrollmentForPlayer.player.user.firstname +
+                  " " +
+                  packageEnrollmentForPlayer.player.user.lastname
+                }
+                rate={Number(packageEnrollmentForPlayer.rate)}
+                user_id={packageEnrollmentForPlayer.player_id}
+                zone_id={packageEnrollmentForPlayer.package.zone_id}
+                arcade_id={packageEnrollmentForPlayer.package.arcade_id}
+                zone={packageEnrollmentForPlayer.package.zone.zone_name}
+                package_image={packageEnrollmentForPlayer.package.package_image}
+                // booking_date={packageEnrollmentForPlayer.date}
+                // booking_time={packageEnrollmentForPlayer.time}
+                // participant_count={packageEnrollmentForPlayer.participant_count}
+                created_at={packageEnrollmentForPlayer.enrolled_date}
+                canceled_at={packageEnrollmentForPlayer.canceled_at}
+                image={packageEnrollmentForPlayer.player.user.user_image}
+              />
+            )
+          )}
+        </Col>
+      </Spin>
     </Col>
   );
 };

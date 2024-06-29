@@ -47,6 +47,7 @@ const ArcadeRatingCardsSection = () => {
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
+        marginTop: "2%",
       }}
     >
       <h1
@@ -59,6 +60,7 @@ const ArcadeRatingCardsSection = () => {
           justifyContent: "center",
           display: "flex",
           alignItems: "center",
+          marginBottom: "2%",
         }}
       >
         Arcade ratings
@@ -74,6 +76,8 @@ const ArcadeRatingCardsSection = () => {
                 arcadeRating={arcade.averageRate}
                 arcadeName={arcade.arcade_name}
                 arcade_id={arcade.arcade_id}
+                arcadeAverageRate={arcade.averageRate}
+                arcade_image={arcade.arcade_image}
               />
             </Col>
           ))

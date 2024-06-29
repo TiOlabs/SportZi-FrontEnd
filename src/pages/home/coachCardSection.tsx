@@ -137,6 +137,7 @@ const CoachCardSection = () => {
                         coach_last_name={coach.user.lastname}
                         short_description={coach.short_desctiption} // Corrected the typo
                         rate={coach.rate}
+                        averageRate={coach.averageRate}
                         // duration={coachAssignDetail.duration}
                         coach_image={coach.user.user_image}
                         coach_id={coach.coach_id}

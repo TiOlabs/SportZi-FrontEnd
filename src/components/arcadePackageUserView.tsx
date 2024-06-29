@@ -23,21 +23,19 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import axios from "axios";
 import { useUser } from "../context/userContext";
-import PaymentModal from "./paymentCheckout";
 
 import {
   CoachAssignDetails,
   CoachEnrollDetailsForPackages,
-  User,
+  PackageEnroolDetailsForPlayer,
+  Player,
 } from "../types";
-
-import DisabledContext from "antd/es/config-provider/DisabledContext";
-import axiosInstance from "../axiosInstance";
+import PaymentModalForPackageBooking from "./paymentCheckOutForPackageBooking";
 
 const ArcadePackageUserView = (props: any) => {
   const { userDetails } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [paymentDetails, setPaymentDetails] = useState<User>();
+  const [paymentDetails, setPaymentDetails] = useState<Player[]>([]);
   const [duration, setDuration] = useState("");
   const [coachPackageDescription, setCoachPackageDescription] = useState("");
   const [CoachDetailsForPackageEnroll, setCoachDetailsForPackageEnroll] =
@@ -45,8 +43,15 @@ const ArcadePackageUserView = (props: any) => {
   const [coachisInArcade, setcoachisInArcade] = useState<CoachAssignDetails[]>(
     []
   );
-  console.log("props", CoachDetailsForPackageEnroll[0]?.package_id);
-  console.log("props", props.package_id);
+  const [playerPackageBooking, setPlayerPackageBooking] = useState<
+    PackageEnroolDetailsForPlayer[]
+  >([]);
+  console.log(
+    "props",
+    playerPackageBooking[0]?.player_id,
+    playerPackageBooking[0]?.package_id
+  );
+  console.log("props", props.player_id, props.package_id);
   const { useBreakpoint } = Grid;
   const [cloudName] = useState("dle0txcgt");
   const cld = new Cloudinary({
@@ -116,7 +121,21 @@ const ArcadePackageUserView = (props: any) => {
       }
     }
   };
-
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentPlayerDetails/${userDetails?.id}`
+        );
+        const data = await res.data;
+        console.log(data);
+        setPlayerPackageBooking(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [userDetails?.id]);
   useEffect(() => {
     if (userDetails?.role === "COACH") {
       try {
@@ -179,44 +198,79 @@ const ArcadePackageUserView = (props: any) => {
       console.log(e);
     }
   }, [props.player_id]);
-
+  console.log("coachisInArcade", props.player_id);
   const [messageApi, contextHolder] = message.useMessage();
   const isCoachInArcade = coachisInArcade.some(
     (entry) => entry.arcade.arcade_id === props.arcade_id
   );
+  console.log(isCoachInArcade);
 
-  const isCoachInThePackage = coachisInArcade.some((entry) =>
-    entry.coach.coachApplyDetailsForPackage.some(
-      (stts) => stts.status === "success"
-    )
-  );
+  const isCoachInThePackage = (package_id: any) =>
+    coachisInArcade.some((entry) =>
+      entry.coach.coachApplyDetailsForPackage.some(
+        (stts) => stts.status === "success" && stts.package_id === package_id
+      )
+    );
+  console.log(isCoachInThePackage);
   console.log(coachisInArcade);
-  const isCoachApplyToThePackage = coachisInArcade.some((entry) =>
-    entry.coach.coachApplyDetailsForPackage.some(
-      (stts) => stts.status === "pending"
-    )
-  );
+  const isCoachApplyToThePackage = (package_id: any) =>
+    coachisInArcade.some((entry) =>
+      entry.coach.coachApplyDetailsForPackage.some(
+        (stts) => stts.status === "pending" && stts.package_id === package_id
+      )
+    );
   console.log(isCoachApplyToThePackage);
   console.log(isCoachInArcade);
   console.log(isCoachInThePackage);
-  const handleJoinClick = () => {
-    if (isCoachInArcade) {
-      // If the coach is in the arcade, show the modal
-      if (isCoachInThePackage) {
-        message.warning("You have already joined to the package.");
-        return;
-      } else if (isCoachApplyToThePackage) {
-        message.warning("You have already applied to the package.");
-        return;
+  const handleJoinClick = (package_id: any) => {
+    console.log("Package ID:", package_id); // Log the package ID for debugging
+
+    if (userDetails?.role === "COACH") {
+      // Handle logic for coaches
+      if (isCoachInArcade) {
+        if (isCoachInThePackage(package_id)) {
+          message.warning("You have already joined the package.");
+          return;
+        } else if (isCoachApplyToThePackage(package_id)) {
+          message.warning("You have already applied to the package.");
+          return;
+        } else {
+          showModal();
+        }
       } else {
-        showModal();
+        message.warning("You have to apply to the arcade first.");
       }
     } else {
-      // If the coach is not in the arcade, show the message
-      message.warning("You have to apply to the arcade first.");
+      // Handle logic for players and managers
+      if (userDetails?.role === "PLAYER" || userDetails?.role === "MANAGER") {
+        showModal();
+      } else {
+        showError();
+      }
     }
   };
 
+  const handlePaymentSuccess = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentPlayerDetails`,
+        {
+          player_id: userDetails?.id,
+          package_id: props.package_id,
+          status: "success",
+          rate: props.rate,
+          duration: parseInt(duration),
+        }
+      );
+      console.log(res.data);
+      setIsModalOpen(false);
+      setLoading(false);
+      setIsButtonVisible(false);
+      message.success("Enrolled successfully");
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
   return (
     <>
       <Row
@@ -314,18 +368,19 @@ const ArcadePackageUserView = (props: any) => {
             >
               {props.packageDescription}
             </Typography>
-
-            <Typography
-              style={{
-                fontSize: lg ? "16px" : "14px",
-                fontWeight: "extra-light",
-                color: "red",
-                width: "80%",
-                fontFamily: "kanit",
-              }}
-            >
-              {props.coachPresentage}% of the rate will be given to the coach
-            </Typography>
+            {userDetails?.role === "COACH" && (
+              <Typography
+                style={{
+                  fontSize: lg ? "16px" : "14px",
+                  fontWeight: "extra-light",
+                  color: "red",
+                  width: "80%",
+                  fontFamily: "kanit",
+                }}
+              >
+                {props.coachPresentage}% of the rate will be given to the coach
+              </Typography>
+            )}
             <Row>
               <Col
                 xs={24}
@@ -432,42 +487,72 @@ const ArcadePackageUserView = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                {isButtonVisible &&
-                  (userDetails?.role === "COACH" ||
-                    userDetails?.role === "PLAYER" ||
-                    userDetails?.role === "MANAGER") && (
-                    <>
-                      {CoachDetailsForPackageEnroll.find(
-                        (item) => item.package_id === props.package_id
-                      )?.status === "pending" ? (
-                        <p style={{ color: "orange" }}> Request Pending</p>
-                      ) : CoachDetailsForPackageEnroll.find(
-                          (item) => item.package_id === props.package_id
-                        )?.status === "success" ? (
-                        <p style={{ color: "green" }}>Successfully joined</p>
-                      ) : CoachDetailsForPackageEnroll.find(
-                          (item) => item.package_id === props.package_id
-                        )?.status === "canceled_By_Arcade" ? (
-                        <p style={{ color: "red" }}>You are rejected</p>
-                      ) : (
-                        <Button
-                          style={{
-                            backgroundColor: "#EFF4FA",
-                            color: "#0E458E",
-                            borderRadius: "3px",
-                            fontFamily: "kanit",
-                            borderColor: "#0E458E",
-                          }}
-                          onClick={handleJoinClick}
-                          loading={loading}
-                        >
-                          {userDetails?.role === "COACH"
-                            ? "Join Now"
-                            : "Enroll"}
-                        </Button>
-                      )}
-                    </>
+                <>
+                  {CoachDetailsForPackageEnroll.find((item) => {
+                    console.log(
+                      "Checking CoachDetailsForPackageEnroll, package_id:",
+                      item.package_id,
+                      "props.package_id:",
+                      props.package_id
+                    );
+                    return item.package_id === props.package_id;
+                  })?.status === "pending" ? (
+                    <p style={{ color: "orange" }}>Request Pending</p>
+                  ) : CoachDetailsForPackageEnroll.find((item) => {
+                      console.log(
+                        "Checking CoachDetailsForPackageEnroll, package_id:",
+                        item.package_id,
+                        "props.package_id:",
+                        props.package_id
+                      );
+                      return item.package_id === props.package_id;
+                    })?.status === "success" ? (
+                    <p style={{ color: "green" }}>Successfully joined</p>
+                  ) : CoachDetailsForPackageEnroll.find((item) => {
+                      console.log(
+                        "Checking CoachDetailsForPackageEnroll, package_id:",
+                        item.package_id,
+                        "props.package_id:",
+                        props.package_id
+                      );
+                      return item.package_id === props.package_id;
+                    })?.status === "canceled_By_Arcade" ? (
+                    <p style={{ color: "red" }}>You are rejected</p>
+                  ) : playerPackageBooking?.some((item) => {
+                      console.log(
+                        "Checking playerPackageBooking for player_id, package_id:",
+                        item.package_id,
+                        "props.player_id:",
+                        props.player_id
+                      );
+                      return item.package_id === props.player_id;
+                    }) &&
+                    playerPackageBooking?.some((item) => {
+                      console.log(
+                        "Checking playerPackageBooking for package_id, package_id:",
+                        item.package_id,
+                        "props.package_id:",
+                        props.package_id
+                      );
+                      return item.package_id === props.package_id;
+                    }) ? (
+                    <p style={{ color: "green" }}>Successfully joined</p>
+                  ) : (
+                    <Button
+                      style={{
+                        backgroundColor: "#EFF4FA",
+                        color: "#0E458E",
+                        borderRadius: "3px",
+                        fontFamily: "kanit",
+                        borderColor: "#0E458E",
+                      }}
+                      onClick={() => handleJoinClick(props.package_id)}
+                      loading={loading}
+                    >
+                      {userDetails?.role === "COACH" ? "Join Now" : "Enroll"}
+                    </Button>
                   )}
+                </>
 
                 {userDetails?.role === "PLAYER" ||
                 userDetails?.role === "MANAGER" ? (
@@ -536,19 +621,19 @@ const ArcadePackageUserView = (props: any) => {
                         >
                           {contextHolder}
 
-                          <PaymentModal
+                          <PaymentModalForPackageBooking
                             htmlType="submit"
-                            item={"Zone Booking"}
+                            item={"Package Booking"}
                             orderId={5}
                             amount={fullAmount}
                             currency={"LKR"}
-                            first_name={paymentDetails?.firstname}
-                            last_name={paymentDetails?.lastname}
-                            email={paymentDetails?.email}
-                            phone={paymentDetails?.email}
-                            address={paymentDetails?.address}
-                            city={paymentDetails?.city}
-                            country={paymentDetails?.country}
+                            first_name={paymentDetails[0]?.user.firstname}
+                            last_name={paymentDetails[0]?.user.lastname}
+                            email={paymentDetails[0]?.user.email}
+                            phone={paymentDetails[0]?.user.phone}
+                            address={paymentDetails[0]?.user.address}
+                            city={paymentDetails[0]?.user.city}
+                            country={paymentDetails[0]?.user.country}
                             // date={props.created_at}
                             // time={time}
 
@@ -558,12 +643,7 @@ const ArcadePackageUserView = (props: any) => {
                             zoneId={props.zone_id}
                             arcadeId={props.arcade_id}
                             package_id={props.package_id}
-                            // reservation_type={zone}
-                            // avaiableParticipantCount={
-                            //   Number(capacity) -
-                            //   (timeParticipantCounts1.find((item) => item.time === time)
-                            //     ?.totalParticipantCount ?? 0)
-                            // }
+                            onPaymentSuccess={handlePaymentSuccess}
                           />
                         </div>
                       </Form.Item>

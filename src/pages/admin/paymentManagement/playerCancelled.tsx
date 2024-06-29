@@ -207,7 +207,7 @@ const PlayerCanceled = () => {
     onClick: handleMenuClick,
   };
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
+    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%",marginLeft:"21%" }}>
       <Spin spinning={loading}>
         <Row>NAV</Row>
         <Row>

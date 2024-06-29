@@ -23,6 +23,7 @@ const PlayerCanceledPackageEnrollment = () => {
   const [canceledByPlayer, setCanceledByPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -90,9 +91,29 @@ const PlayerCanceledPackageEnrollment = () => {
       setPlayerCanceled(above24Hours);
     }
   };
-
+  const filteredBookings = playerBookingDetails.filter(
+    (playerBookingDetails) =>
+      playerBookingDetails.package_id
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      playerBookingDetails.player.user.firstname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      playerBookingDetails.player.user.lastname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      playerBookingDetails.package.arcade.arcade_name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      playerBookingDetails.package.package_name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+  );
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
       <Spin spinning={loading}>
         <Row>NAV</Row>
         <Row>
@@ -106,6 +127,8 @@ const PlayerCanceledPackageEnrollment = () => {
               style={{ width: "100%", height: "40px" }}
               type="search"
               placeholder="Search here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Col>
         </Row>
@@ -121,8 +144,8 @@ const PlayerCanceledPackageEnrollment = () => {
         <Col
           style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
         >
-          {playerCanceled.length === 0 ? <Empty /> : null}
-          {playerCanceled.map(
+          {filteredBookings.length === 0 ? <Empty /> : null}
+          {filteredBookings.map(
             (packageEnrollmentForPlayer: PackageEnroolDetailsForPlayer) => (
               <DataRow
                 package_id={packageEnrollmentForPlayer.package_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails

@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import { useEffect, useState } from "react";
 import { Package } from "../../../types";
 import axios from "axios";
@@ -7,6 +7,8 @@ import { Cloudinary } from "@cloudinary/url-gen";
 
 const AllPackagers = () => {
   const [packages, setPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     const fetchPackages = async () => {
       try {
@@ -17,34 +19,57 @@ const AllPackagers = () => {
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching packages:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPackages();
   }, []);
+
+  const filteredpackages = packages.filter(
+    (packages) =>
+      packages.package_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      packages.arcade.arcade_name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      packages.package_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>All Packages</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-      {packages.map((packagedetails) => (
-        <DataRow
-          packagedetails={packagedetails}
-          key={packagedetails.package_id}
-        />
-      ))}
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>All Packages</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Col>
+        </Row>
+        {filteredpackages.length === 0 ? (
+          <Empty description={"No Package Found"} />
+        ) : (
+          <Row>
+            <Col span={24}>
+              {filteredpackages.map((packagedetails) => (
+                <DataRow packagedetails={packagedetails} />
+              ))}
+            </Col>
+          </Row>
+        )}
+      </Spin>
     </Col>
   );
 };
@@ -189,7 +214,7 @@ function DataRow(props: any) {
                 textAlign: "center",
               }}
             >
-              More Details
+              Details
             </div>
           </Button>
           <Modal

@@ -19,8 +19,6 @@ const PaymentModal = (props: any): JSX.Element | null => {
     isZonehasSelectedReservationType,
     setIsZonehasSelectedReservationType,
   ] = useState(false);
-
-  const [messageApi, contextHolder] = message.useMessage();
   const orderId = props.orderId;
   const name = props.item;
   const amount = props.amount;
@@ -94,7 +92,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
     country: props.country,
     hash: hash,
   };
-
+  console.log(payment);
   window.payhere.onCompleted = function onCompleted(paymentId: string) {
     axios
       .post(`${process.env.REACT_APP_API_URL}api/addarcadebooking`, {
@@ -103,7 +101,7 @@ const PaymentModal = (props: any): JSX.Element | null => {
         time: zoneBookings.zoneBookings.time,
         full_amount: props.amount,
         participant_count: zoneBookings.zoneBookings.participant_count,
-        user_id: zoneBookings.zoneBookings.user_id,
+        user_id: zoneBookings.zoneBookings.user_id, 
         zone_id: zoneBookings.zoneBookings.zone_id,
         way_of_booking: zoneBookings.zoneBookings.way_of_booking,
         booking_type: zoneBookings.zoneBookings.booking_type,
@@ -155,24 +153,6 @@ const PaymentModal = (props: any): JSX.Element | null => {
         setTimeout(() => {
           window.location.reload();
         }, 3000);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}api/addPackageEnrollmentPlayerDetails`,
-        {
-          player_id: props.userId,
-          package_id: props.package_id,
-          status: "success",
-          rate: props.amount,
-          duration: props.duration,
-        }
-      )
-      .then(() => {
-        window.location.reload();
       })
       .catch((error) => {
         console.log(error);

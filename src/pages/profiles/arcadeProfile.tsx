@@ -61,7 +61,8 @@ const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
   const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
-  const [packageDetail, setPackageDetail] = useState<Arcade>();
+  const [packageDetail, setPackageDetail] = useState<Package[]>([]);
+  console.log("packageDetail", packageDetail);
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
@@ -130,7 +131,10 @@ const ArcadeProfileArcade = () => {
         );
         const data = await res.data;
         console.log(data);
-        setPackageDetail(data);
+        const filteredData = data.package.filter(
+          (item: Package) => item.status === "open"
+        );
+        setPackageDetail(filteredData);
       };
       fetchData();
     } catch (e) {
@@ -516,6 +520,7 @@ const ArcadeProfileArcade = () => {
   const [openTime, setOpenTime] = useState<any>();
   const [closeTime, setCloseTime] = useState<any>();
   const [managerName, setmanagerName] = useState<Arcade>();
+  const [accNumber, setAccNumber] = useState<any>();
 
   useEffect(() => {
     if (arcadeDetails) {
@@ -524,7 +529,7 @@ const ArcadeProfileArcade = () => {
       setAddress(arcadeDetails.address);
       setOpenTime(arcadeDetails.open_time);
       setCloseTime(arcadeDetails.close_time);
-
+      setAccNumber(arcadeDetails.manager.user.accountNumber);
       if (arcade?.zone) {
         const sports = Array.from(
           new Set(arcade.zone.map((zoneItem) => zoneItem.sport.sport_name))
@@ -533,16 +538,11 @@ const ArcadeProfileArcade = () => {
       }
     }
   }, [arcadeDetails]);
-
-  // const arcadeName = arcadeDetails?.arcade_name;
-
   const [cloudName] = useState("dle0txcgt");
-
   //For display reviews and averageRate
   const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
   const [averageRating, setAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
-
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
@@ -561,7 +561,6 @@ const ArcadeProfileArcade = () => {
 
     fetchFeedbacks();
   }, []);
-
   useEffect(() => {
     const fetchRatings = async () => {
       try {
@@ -670,7 +669,6 @@ const ArcadeProfileArcade = () => {
               style={{
                 position: "absolute",
                 display: "flex",
-
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
@@ -700,6 +698,7 @@ const ArcadeProfileArcade = () => {
             </Col>
           </Row>
         </Col>
+
         <Col
           xs={24}
           sm={24}
@@ -747,6 +746,9 @@ const ArcadeProfileArcade = () => {
                 closeTime={closeTime}
                 setCloseTime={setCloseTime}
                 id={ArcadeId}
+                accNumber={accNumber}
+                setAccNumber={setAccNumber}
+                user_image={arcade?.arcade_image as string}
               />
             </div>
             <div>
@@ -774,21 +776,6 @@ const ArcadeProfileArcade = () => {
                   </h1>
                 </Col>
               </Row>
-              <p
-                style={{
-                  color: "#000",
-                  fontFamily: "kanit",
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "350",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                  marginTop: "0px",
-                }}
-              >
-                Manager : {arcadeDetails?.manager.user.firstname}{" "}
-                {arcadeDetails?.manager.user.lastname}
-              </p>
 
               <p
                 style={{
@@ -828,6 +815,21 @@ const ArcadeProfileArcade = () => {
                         </React.Fragment>
                       )
                     )}
+              </p>
+              <p
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+                  fontSize: "18px",
+                  fontStyle: "normal",
+                  fontWeight: "350",
+                  lineHeight: "normal",
+                  marginBottom: "0px",
+                  marginTop: "5px",
+                }}
+              >
+                Manager : {arcadeDetails?.manager.user.firstname}{" "}
+                {arcadeDetails?.manager.user.lastname}
               </p>
             </div>
             <div
@@ -1133,101 +1135,118 @@ const ArcadeProfileArcade = () => {
                 </div>
               </List.Item>
             </List>
+            <Typography
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontStyle: "normal",
+                fontWeight: "200",
+                lineHeight: "normal",
+                marginTop: "5px",
+                fontSize: lg ? "24px" : "18px",
+              }}
+            >
+              Acc Number :{accNumber}
+            </Typography>
           </div>
         </Col>
       </Row>
-      <Row
-        style={{
-          marginTop: "40px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(27, 93, 183, 0.07)",
-          minHeight: "500px",
-        }}
-      >
+      {arcadeCoaches && (
         <Row
           style={{
-            width: "100%",
-            alignItems: "center",
-            textAlign: "center",
             marginTop: "40px",
-            position: "relative",
             display: "flex",
-            justifyContent: "center",
-            paddingTop: "20px",
-          }}
-        >
-          <Typography
-            style={{
-              color: " #0E458E",
-              fontSize: md ? "30px" : "20px",
-              fontFamily: "Kanit",
-              marginBottom: "30px",
-            }}
-          >
-            Our Best Coaches
-          </Typography>
-        </Row>
-
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            flexDirection: "column",
+            background: "rgba(27, 93, 183, 0.07)",
+            minHeight: "500px",
           }}
         >
           <Row
             style={{
-              overflowX: "hidden",
               width: "100%",
+              alignItems: "center",
+              textAlign: "center",
+              marginTop: "40px",
+              position: "relative",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
-              height: "450px",
-              overflowY: "scroll",
-              flexWrap: "nowrap",
+              paddingTop: "20px",
             }}
           >
-            {arcadeCoaches.map((coach: CoachAssignDetails) => (
-              <Col
-                lg={{ span: 5 }}
-                md={{ span: 8 }}
-                sm={{ span: 12 }}
-                xs={{ span: 24 }}
-                style={{
-                  display: "flex",
-                }}
-              >
-                <CoachCard
-                  coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
-                  coachImage={coach.coach.user.user_image}
-                  short_description={coach.description}
-                  date={coach.assigned_date}
-                  rate={coach.coach.rate}
-                  coach_id={coach.coach_id}
-                  sport={coach.coach.sport.sport_name}
-                />
-              </Col>
-            ))}
+            <Typography
+              style={{
+                color: " #0E458E",
+                fontSize: md ? "30px" : "20px",
+                fontFamily: "Kanit",
+                marginBottom: "30px",
+              }}
+            >
+              Our Best Coaches
+            </Typography>
           </Row>
-        </div>
-        <Button
-          style={{
-            color: "#1B5DB7",
-            background: "none",
-            border: "none",
-            fontFamily: "Kanit",
-            fontSize: "18px",
-            marginBottom: "30px",
-          }}
-        >
-          See More
-        </Button>
-      </Row>
+
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Row
+              style={{
+                overflowX: "hidden",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "450px",
+                overflowY: "scroll",
+                flexWrap: "nowrap",
+              }}
+            >
+              {arcadeCoaches.map((coach: CoachAssignDetails) => (
+                <Col
+                  lg={{ span: 5 }}
+                  md={{ span: 8 }}
+                  sm={{ span: 12 }}
+                  xs={{ span: 24 }}
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <CoachCard
+                    coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
+                    coachImage={coach.coach.user.user_image}
+                    short_description={coach.description}
+                    date={coach.assigned_date}
+                    rate={coach.coach.rate}
+                    coach_id={coach.coach_id}
+                    sport={coach.coach.sport.sport_name}
+                    coach_image={coach.coach.user.user_image}
+                    averageRate={coach.coach.averageRate}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </div>
+          <Button
+            style={{
+              color: "#1B5DB7",
+              background: "none",
+              border: "none",
+              fontFamily: "Kanit",
+              fontSize: "18px",
+              marginBottom: "30px",
+            }}
+          >
+            See More
+          </Button>
+        </Row>
+      )}
       <div
         style={{
           width: "100%",
@@ -1317,44 +1336,54 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          {arcade?.zone.map((zone: Zone) => (
-            <Col
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginBottom: "20px",
-              }}
-            >
-              {" "}
-              <ArcadeZoneCard
-                zoneName={zone.zone_name}
-                rate={zone.rate}
-                zoneImage={zone.zone_image}
-                description={zone.description}
-                id={zone.zone_id}
-                capacity={zone.capacity}
-                open_time={zone.open_time}
-                close_time={zone.close_time}
-                way_of_booking={zone.way_of_booking}
-                sport={zone.sport.sport_name}
-                sport_id={zone.sport.sport_id}
-                full={zone.full_zone_rate}
-                day={zone.zoneRejectDayAndTime.map((item) => item.day)}
-                timeForDay={zone.zoneRejectDayAndTime.map((item) => item.time)}
-                date={zone.zoneRejectDateAndTime.map((item) => item.date)}
-                timeForDate={zone.zoneRejectDateAndTime.map(
-                  (item) => item.time
-                )}
-              />
-            </Col>
-          ))}
+          {arcade?.zone
+            .filter((zone) => zone.status === "open")
+            .map((zone: Zone) => (
+              <Col
+                xs={24}
+                sm={12}
+                md={12}
+                lg={8}
+                xl={8}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                {" "}
+                <ArcadeZoneCard
+                  zoneName={zone.zone_name}
+                  rate={zone.rate}
+                  zoneImage={zone.zone_image}
+                  description={zone.description}
+                  discount_percentage={
+                    zone.discount ? zone.discount.discount_percentage : 0
+                  }
+                  discount_description={
+                    zone.discount ? zone.discount.description : ""
+                  }
+                  id={zone.zone_id}
+                  capacity={zone.capacity}
+                  open_time={zone.open_time}
+                  close_time={zone.close_time}
+                  way_of_booking={zone.way_of_booking}
+                  sport={zone.sport.sport_name}
+                  sport_id={zone.sport.sport_id}
+                  full={zone.full_zone_rate}
+                  day={zone.zoneRejectDayAndTime.map((item) => item.day)}
+                  timeForDay={zone.zoneRejectDayAndTime.map(
+                    (item) => item.time
+                  )}
+                  date={zone.zoneRejectDateAndTime.map((item) => item.date)}
+                  timeForDate={zone.zoneRejectDateAndTime.map(
+                    (item) => item.time
+                  )}
+                />
+              </Col>
+            ))}
           <Col
             style={{
               width: "100%",
@@ -1427,9 +1456,8 @@ const ArcadeProfileArcade = () => {
             flexDirection: "row",
           }}
         >
-          {packageDetail?.package.map((pkg: Package) => (
+          {packageDetail?.map((pkg: Package) => (
             <Col
-              key={pkg.package_id.toString()}
               xs={24}
               sm={12}
               md={12}
@@ -1455,6 +1483,7 @@ const ArcadeProfileArcade = () => {
                 zone_id={pkg.zone.zone_id}
                 day={pkg.packageDayAndTime.map((item) => item.day)}
                 time={pkg.packageDayAndTime.map((item) => item.time)}
+                status={pkg.status}
               />
             </Col>
           ))}
@@ -1706,7 +1735,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{
@@ -1794,6 +1823,7 @@ const ArcadeProfileArcade = () => {
                           user_image={booking.user.user_image}
                           booking_id={booking.zone_booking_id}
                           booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                          booked_id={booking.user.user_id}
                           zoneName={zone.zone_name}
                           time={booking.time}
                           date={booking.date}
@@ -2056,7 +2086,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{
@@ -2928,6 +2958,7 @@ const ArcadeProfileArcade = () => {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              
             }}
           >
             <Col
@@ -2981,6 +3012,7 @@ const ArcadeProfileArcade = () => {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              
             }}
           >
             <Col
@@ -3017,6 +3049,7 @@ const ArcadeProfileArcade = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignContent: "center",
+              
               }}
               xs={24}
               sm={12}
