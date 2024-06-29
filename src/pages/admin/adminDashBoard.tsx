@@ -37,6 +37,7 @@ interface PrintableContentProps {
 const PrintableContent = React.forwardRef<
   HTMLDivElement,
   PrintableContentProps
+
 >(
   (
     {
@@ -142,6 +143,93 @@ const PrintableContent = React.forwardRef<
         </Row>
       </div>
       <hr />
+      <Row>
+        
+        <Col span={12}>
+          <PieChart width={500} height={300}>
+            <Pie
+              data={zoneData}
+              cx={150}
+              cy={150}
+              labelLine={false}
+              label={({ name, percent }) =>
+                `${name}: ${(percent * 100).toFixed(0)}%`
+              }
+              outerRadius={100}
+              fill="#8884d8"
+              dataKey="value"
+            >
+              {zoneData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend layout="vertical" verticalAlign="top" align="right" />
+          </PieChart>
+        </Col>
+
+        <Col span={12}>
+          <Table
+            columns={tableColumns}
+            dataSource={zoneData}
+            pagination={false}
+            bordered
+            title={() => <h3>Arena Booking Counts</h3>}
+          />
+        </Col>
+      </Row>
+    </div>
+    <hr />
+
+
+    {/* Coach Bookings Section */}
+    <div style={{ marginBottom: "2rem"}}>
+      <h3 style={{ color: "#0E458E", textAlign: "center" }}>Coach Bookings</h3>
+      <Row>
+        <Col span={12}>
+          <PieChart width={500} height={300}>
+            <Pie
+              data={coachData}
+              cx={200}
+              cy={150}
+              labelLine={false}
+              label={({ name, percent }) =>
+                `${name}: ${(percent * 100).toFixed(0)}%`
+              }
+              outerRadius={100}
+              fill="#8884d8"
+              dataKey="value"
+            >
+              {coachData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend layout="vertical" verticalAlign="top" align="right" />
+          </PieChart>
+        </Col>
+        <Col span={12}>
+          <Table
+            columns={tableColumns}
+            dataSource={coachData}
+            pagination={false}
+            bordered
+            title={() => <h3>Coach Booking Counts</h3>}
+          />
+        </Col>
+      </Row>
+    </div>
+
+
+    <hr />
+
+
       {/* Package Enrollments Section */}
       <div style={{ marginBottom: "2rem" }}>
         <h3 style={{ color: "#0E458E", textAlign: "center" }}>
@@ -201,6 +289,7 @@ const PrintableContent = React.forwardRef<
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
+
             <Tooltip />
             <Bar dataKey="value" fill="#82ca9d" />
           </BarChart>
