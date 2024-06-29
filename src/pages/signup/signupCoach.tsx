@@ -53,6 +53,7 @@ const { Option } = Select;
 // function starting
 const SignupCoach = () => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -119,6 +120,7 @@ const SignupCoach = () => {
   };
 
   const onFinish = async () => {
+    setLoading(true);
     // const combinedTimeslot = timeSlots.map((slot) => ({
     //   day: slot.day,
     //   timeslot: `${slot.startTime}-${slot.endTime}`,
@@ -147,16 +149,19 @@ const SignupCoach = () => {
         )
         .then((res) => {
           console.log(res);
-          message.success("Form submitted successfully!");
+          message.success(res.data.message);
           form.resetFields();
         })
         .catch((err) => {
           console.log(err);
-          alert(err.response.data.message);
+          message.error("An unexpected error occurred.");
         });
     } catch (err) {
       console.log(err);
-      alert(err);
+      message.error("An unexpected error occurred.");
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -663,6 +668,7 @@ const SignupCoach = () => {
                 <Button
                   htmlType="submit"
                   className="animated-button kanit-regular"
+                  loading={loading}
                   style={{
                     height: "40px",
                     fontSize: "16px",

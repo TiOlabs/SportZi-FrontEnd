@@ -22,6 +22,8 @@ import PlayerProfile from "../pages/profiles/playerProfile";
 import { AdminRoute, Auth, ProtectedRoute } from "../middlewares/auth";
 import ChooseArcade from "../pages/login/chooseArcade";
 import ResetPassword from "../pages/login/resetPassword";
+import VerifyEmail from "../components/VerifyEmail";
+import SendVerification from "../components/SendVerificationEmail";
 
 const AppRoutes = () => {
   return (
@@ -98,6 +100,8 @@ const AppRoutes = () => {
         <Route path="ChooseArchade" element={<ChooseArcade />} />
 
         <Route path="resetPassword/:token" element={<ResetPassword/>} />
+        <Route path="verify-email?" element={<VerifyEmail/>} />
+        <Route path="sendVerificationEmail" element={<SendVerification/>} />
 
       </Routes>
     </>
