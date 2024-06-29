@@ -1520,14 +1520,16 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Col
-          span={2}
+         xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -1545,11 +1547,12 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+         xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -1566,11 +1569,12 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+    xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -1587,7 +1591,8 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
 
-        <Col span={16}></Col>
+       {/* Spacer for larger screens */}
+       <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
       <Row
         style={{
@@ -1595,14 +1600,17 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",  // For wrapping in small viewports
+          marginTop: "2px", 
         }}
       >
         <Col
-          span={2}
+          xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
           }}
         >
           <Typography
@@ -1611,8 +1619,8 @@ const ArcadeProfileArcade = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1621,11 +1629,12 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
           }}
         >
           <Typography
@@ -1634,8 +1643,8 @@ const ArcadeProfileArcade = () => {
               color: "#05a30a",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1645,11 +1654,12 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+         xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
           }}
         >
           <Typography
@@ -1658,20 +1668,31 @@ const ArcadeProfileArcade = () => {
               color: "#ad0508",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               display: "flex",
             }}
           >
             Canceled
           </Typography>
         </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+
+         {/* Filter Section */}
+         <Col xs={24} sm={24} md={24} lg={8} 
+        style={{ marginBottom: "2%", 
+                 display: "flex", 
+                 justifyContent: "center", 
+                 alignItems: "center", 
+                 flexDirection: "row", 
+                 flexWrap: "wrap",
+                 marginTop:"3%"}}>
           <Select
             defaultValue="date"
-            style={{ width: 120, height: "40px" }}
+            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px"  }}
             onChange={(value) => setFilterBy(value)}
           >
             <Option value="date">Date</Option>
@@ -1684,11 +1705,11 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{ width: 200, marginLeft: 10, height: "40px" }}
+            style={{width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px" }}
             onChange={(e) => handleFilterChange2(e.target.value)}
           />
           <Button
-            style={{ marginLeft: 10, height: "40px" }}
+            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
             ghost
             type="primary"
             onClick={() => {
@@ -1700,6 +1721,9 @@ const ArcadeProfileArcade = () => {
           </Button>
         </Col>
       </Row>
+
+
+
       <Row
         style={{
           width: "100%",
@@ -1846,6 +1870,8 @@ const ArcadeProfileArcade = () => {
           </div>
         </div>
       </Row>
+
+
       <Row
         style={{
           width: "100%",
@@ -1878,15 +1904,17 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap", 
         }}
       >
         {/* Radio button section */}
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -1901,11 +1929,12 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -1920,16 +1949,18 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
             theme={{
-              token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+              token: { colorBorder: "#ad0508", 
+                       colorPrimary: "#ad0508" },
             }}
           >
             <Radio.Group onChange={onChangeCoachBookings} value={value2}>
@@ -1937,11 +1968,111 @@ const ArcadeProfileArcade = () => {
             </Radio.Group>
           </ConfigProvider>
         </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
+
+ {/* Spacer for larger screens */}
+ <Col xs={0} sm={0} md={0} lg={16}></Col>
+
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap",  // For wrapping in small viewports
+          marginTop: "2px",
+        }}
+      >
+        <Col
+           xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Available
+          </Typography>
+        </Col>
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",  
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+
+        {/* Filter Section */}
+        <Col xs={24} sm={24} md={24} lg={8} 
+        style={{ marginBottom: "2%", 
+                 display: "flex", 
+                 justifyContent: "center", 
+                 alignItems: "center", 
+                 flexDirection: "row", 
+                 flexWrap: "wrap",
+                 marginTop:"3%"}}>
           <Select
             defaultValue="date"
-            style={{ width: 120, height: "40px" }}
+            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
             onChange={(value) => setFilterBy(value)}
           >
             <Option value="date">Date</Option>
@@ -1954,11 +2085,11 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{ width: 200, marginLeft: 10, height: "40px" }}
+            style={{width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px"  }}
             onChange={(e) => handleFilterChange(e.target.value)}
           />
           <Button
-            style={{ marginLeft: 10, height: "40px" }}
+            style={{width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
             ghost
             type="primary"
             onClick={() => {
@@ -1969,86 +2100,6 @@ const ArcadeProfileArcade = () => {
             Clear
           </Button>
         </Col>
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#0E458E",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Available
-          </Typography>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#05a30a",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Completed
-          </Typography>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#ad0508",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Canceled
-          </Typography>
-        </Col>
-        <Col span={16}></Col>
       </Row>
 
       <Row
@@ -2217,6 +2268,7 @@ const ArcadeProfileArcade = () => {
           justifyContent: "center",
           alignItems: "center",
           marginTop: "60px",
+         
         }}
       >
         <Col>
@@ -2241,14 +2293,16 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Col
-          span={2}
+            xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2266,11 +2320,12 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2287,11 +2342,12 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2308,22 +2364,27 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
 
-        <Col span={16}></Col>
+         {/* Spacer for larger screens */}
+         <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",  // For wrapping in small viewports
+          marginTop: "2px",
         }}
       >
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",
           }}
         >
           <Typography
@@ -2342,11 +2403,12 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
           }}
         >
           <Typography
@@ -2366,11 +2428,12 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+            xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",
           }}
         >
           <Typography
@@ -2380,7 +2443,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "kanit",
               fontWeight: "400",
               fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -2388,11 +2451,22 @@ const ArcadeProfileArcade = () => {
             Canceled
           </Typography>
         </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+       {/* Filter Section */}
+       <Col xs={24} sm={24} md={24} lg={8} 
+        style={{ marginBottom: "2%", 
+                 display: "flex", 
+                 justifyContent: "center", 
+                 alignItems: "center", 
+                 flexDirection: "row", 
+                 flexWrap: "wrap",
+                 marginTop:"3%"}}>
           <Select
             defaultValue="enroll_date"
-            style={{ width: 120, height: "40px" }}
+            style={{width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
             onChange={(value) => setFilterByPackage(value)}
           >
             <Option value="package_name">Package Name</Option>
@@ -2404,11 +2478,11 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{ width: 200, marginLeft: 10, height: "40px" }}
+            style={{width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px"}}
             onChange={(e) => handleFilterChangePackage(e.target.value)}
           />
           <Button
-            style={{ marginLeft: 10, height: "40px" }}
+            style={{  width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px"  }}
             ghost
             type="primary"
             onClick={() => {
@@ -2420,6 +2494,7 @@ const ArcadeProfileArcade = () => {
           </Button>
         </Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
@@ -2588,14 +2663,16 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap", 
         }}
       >
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -2616,11 +2693,12 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -2640,11 +2718,12 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+          xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", 
           }}
         >
           <ConfigProvider
@@ -2663,7 +2742,10 @@ const ArcadeProfileArcade = () => {
             </Radio.Group>
           </ConfigProvider>
         </Col>
-        <Col span={16}></Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
+
       </Row>
       <Row
         style={{
@@ -2671,14 +2753,18 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",  // For wrapping in small viewports
+          marginTop: "2px",
+
         }}
       >
         <Col
-          span={2}
+          xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
           }}
         >
           <Typography
@@ -2688,7 +2774,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "kanit",
               fontWeight: "400",
               fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -2697,11 +2783,12 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+           xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
           }}
         >
           <Typography
@@ -2711,7 +2798,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "kanit",
               fontWeight: "400",
               fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -2720,11 +2807,12 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6} sm={6} md={6} lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", 
           }}
         >
           <Typography
@@ -2734,7 +2822,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "kanit",
               fontWeight: "400",
               fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -2742,7 +2830,13 @@ const ArcadeProfileArcade = () => {
             Canceled
           </Typography>
         </Col>
-        <Col span={16}></Col>
+       
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+
+
+
       </Row>
       <Row
         style={{
