@@ -39,6 +39,8 @@ import PackageEnrollmentDetailsInPlayerProfile from "../../components/packageEnr
 import { Option } from "antd/es/mentions";
 import Notification from "../../components/notification";
 
+
+
 const requestList = [
   <CoachRequstRow />,
   <CoachRequstRow />,
@@ -233,6 +235,7 @@ const PlayerProfile = () => {
         console.log(err);
       });
   }, [userDetails]);
+
 
   const setZoneBookingDetails1 = (
     updatedData: SetStateAction<ZoneBookingDetails[]>
@@ -670,11 +673,231 @@ const PlayerProfile = () => {
             fontWeight: "500",
             fontSize: "32px",
             paddingBottom: "10px",
+            marginBottom: "2%",
           }}
         >
           Request for Coaching
         </p>
+
+{/* ////////////////////////////////////////////////// */}
         <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap",  // For wrapping in small viewports
+        }}
+      >
+        {/* Available Radio Button */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%",  // Margin to help with wrapping in smaller viewports
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#0E458E",
+                colorPrimary: "#0E458E",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={1}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        {/* Completed Radio Button */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%"  // Margin to help with wrapping in smaller viewports
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#05a30a",
+                colorPrimary: "#05a30a",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={2}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        {/* Canceled Radio Button */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%"// Margin to help with wrapping in smaller viewports
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
+              },
+            }}
+          >
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={3}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap",  // For wrapping in small viewports
+          marginTop: "2px", // Space between the two rows
+        }}
+      >
+        {/* Available Label */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", // Margin to help with wrapping in smaller viewports
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Available
+          </Typography>
+        </Col>
+
+        {/* Completed Label */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",   // Margin to help with wrapping in smaller viewports
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+
+        {/* Canceled Label */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",  // Margin to help with wrapping in smaller viewports
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+        {/* Filter Section */}
+        <Col xs={24} sm={24} md={24} lg={8} 
+        style={{ marginBottom: "2%", 
+                 display: "flex", 
+                 justifyContent: "center", 
+                 alignItems: "center", 
+                 flexDirection: "row", 
+                 flexWrap: "wrap",
+                 marginTop:"3%"}}>
+          <Select
+            defaultValue="date"
+            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
+            onChange={(value) => setFilterBy(value)}
+          >
+            <Option value="date">Date</Option>
+            <Option value="time">Time</Option>
+            <Option value="coach_name">Coach Name</Option>
+            <Option value="venue">Venue</Option>
+            <Option value="booking_id">Booking ID</Option>
+            <Option value="status">Status</Option>
+          </Select>
+          <Input
+            placeholder="Enter filter value"
+            style={{ width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px" }}
+            onChange={(e) => handleFilterChange1(e.target.value)}
+          />
+          <Button
+            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
+            ghost
+            type="primary"
+            onClick={() => {
+              setFilterValue("");
+              setFilterBy("date");
+            }}
+          >
+            Clear
+          </Button>
+        </Col>
+      </Row>
+
+
+
+        {/* <Row
           style={{
             width: "100%",
             display: "flex",
@@ -749,6 +972,7 @@ const PlayerProfile = () => {
 
           <Col span={16}></Col>
         </Row>
+
         <Row
           style={{
             width: "100%",
@@ -810,6 +1034,7 @@ const PlayerProfile = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              
             }}
           >
             <Typography
@@ -820,7 +1045,7 @@ const PlayerProfile = () => {
                 fontWeight: "400",
                 fontSize: "16px",
                 paddingBottom: "10px",
-                marginBottom: "0px",
+                
                 display: "flex",
               }}
             >
@@ -828,10 +1053,10 @@ const PlayerProfile = () => {
             </Typography>
           </Col>
           <Col span={8}></Col>
-          <Col span={8}>
+          <Col span={8} style={{marginBottom:"5%"}}>
             <Select
               defaultValue="date"
-              style={{ width: 120, height: "40px" }}
+              style={{ width: 120, height: "40px", marginLeft:"10px" }}
               onChange={(value) => setFilterBy(value)}
             >
               <Option value="date">Date</Option>
@@ -858,7 +1083,9 @@ const PlayerProfile = () => {
               Clear
             </Button>
           </Col>
-        </Row>
+        </Row> */}
+
+
         <Row
           style={{
             borderRadius: "3px 3px 0px 0px",
@@ -1046,25 +1273,242 @@ const PlayerProfile = () => {
             fontWeight: "500",
             fontSize: "32px",
             paddingBottom: "10px",
+            marginBottom: "2%",
           }}
         >
           Available Meetings For You
         </p>
+
+
         <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap", // Ensures wrapping on smaller screens
+        }}
+      >
+        {/* Radio button section */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%", // Added margin for better spacing on smaller screens
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+            }}
+          >
+            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+              <Radio value={4}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%" // Added margin for better spacing on smaller screens
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#05a30a", 
+                       colorPrimary: "#05a30a" },
+            }}
+          >
+            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+              <Radio value={5}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-10%" : "5%" // Added margin for better spacing on smaller screens
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#ad0508", 
+                colorPrimary: "#ad0508" },
+            }}
+          >
+            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+              <Radio value={6}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+
+   {/* Spacer for larger screens */}
+   <Col xs={0} sm={0} md={0} lg={16}></Col>
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap", // Ensures wrapping on smaller screens
+          marginTop: "2px",  // Added margin for separation from the previous row
+        }}
+      >
+        {/* Available Label */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",  // Added margin for better spacing on smaller screens
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Available
+          </Typography>
+        </Col>
+
+        {/* Completed Label */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%", // Added margin for better spacing on smaller screens
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+
+        {/* Canceled Label */}
+        <Col
+          xs={6} sm={6} md={6} lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ?  "-5%" : "5%",// Added margin for better spacing on smaller screens
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+
+        {/* Spacer for alignment */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+
+{/* Filter section */}
+<Col
+          xs={24} sm={24} md={24} lg={8}
+          style={{
+            marginBottom: "2%", 
+            display: "flex", 
+            justifyContent: "center", 
+            alignItems: "center", 
+            flexDirection: "row", 
+            flexWrap: "wrap",
+            marginTop:"3%" // Added top margin for separation from the radio buttons
+          }}
+        >
+          <Select
+            defaultValue="date"
+            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px"}}
+            onChange={(value) => setFilterBy(value)}
+          >
+            <Option value="date">Date</Option>
+            <Option value="time">Time</Option>
+            <Option value="rate">Rate</Option>
+            <Option value="zone_name">Zone Name</Option>
+            <Option value="arcade_name">Arcade Name</Option>
+            <Option value="status">Status</Option>
+          </Select>
+          <Input
+            placeholder="Enter filter value"
+            style={{ width: "100%", maxWidth: "120px", height: "40px",marginLeft: "15px", marginBottom: "10px"}}
+            onChange={(e) => handleFilterChange1(e.target.value)}
+          />
+          <Button
+            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
+            ghost
+            type="primary"
+            onClick={() => {
+              setFilterValue("");
+              setFilterBy("date");
+            }}
+          >
+            Clear
+          </Button>
+        </Col>
+        
+      </Row>
+
+        {/* <Row
           style={{
             width: "100%",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexWrap:"wrap",
           }}
         >
-          {/* Radio button section */}
+  
           <Col
-            span={2}
+           xs={6} sm={6} md={6} lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg? "-10%":"5%",
             }}
           >
             <ConfigProvider
@@ -1079,11 +1523,12 @@ const PlayerProfile = () => {
           </Col>
 
           <Col
-            span={2}
+              xs={6} sm={6} md={6} lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg? "-10%":"5%",
             }}
           >
             <ConfigProvider
@@ -1098,16 +1543,18 @@ const PlayerProfile = () => {
           </Col>
 
           <Col
-            span={2}
+              xs={6} sm={6} md={6} lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg? "-10%":"5%",
             }}
           >
             <ConfigProvider
               theme={{
-                token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+                token: { colorBorder: "#ad0508", 
+                         colorPrimary: "#ad0508" },
               }}
             >
               <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
@@ -1115,11 +1562,13 @@ const PlayerProfile = () => {
               </Radio.Group>
             </ConfigProvider>
           </Col>
-          <Col span={8}></Col>
+        
+         
+
           <Col span={8}>
             <Select
               defaultValue="date"
-              style={{ width: 120, height: "40px" }}
+              style={{ width: 120, height: "40px",marginLeft:"10px" }}
               onChange={(value) => setFilterBy(value)}
             >
               <Option value="date">Date</Option>
@@ -1226,7 +1675,10 @@ const PlayerProfile = () => {
             </Typography>
           </Col>
           <Col span={16}></Col>
-        </Row>
+        </Row> 
+ */}
+
+
         <Row
           style={{
             borderRadius: "3px 3px 0px 0px",
