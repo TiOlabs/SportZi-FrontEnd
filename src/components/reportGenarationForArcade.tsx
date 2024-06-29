@@ -44,7 +44,7 @@ const PrintableContent = React.forwardRef<
       bookingData,
       COLORS,
       tableColumns,
-      tableColumnsForZone,     
+      tableColumnsForZone,
     },
     ref
   ) => (
@@ -81,6 +81,7 @@ const PrintableContent = React.forwardRef<
               <Legend layout="vertical" verticalAlign="bottom" align="right" />
             </PieChart>
           </Col>
+
           <Col span={8}>
             <Table
               columns={tableColumns}
