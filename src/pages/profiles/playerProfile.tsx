@@ -684,7 +684,7 @@ const PlayerProfile = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          border: "4px solid black",
+        
         }}
       >
         <p
@@ -697,7 +697,7 @@ const PlayerProfile = () => {
             fontSize: "32px",
             paddingBottom: "10px",
             marginBottom:"3%",
-            border: "4px solid green",
+         
           }}
         >
           Request for Coaching
@@ -720,20 +720,17 @@ const PlayerProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            border: "4px solid red",
+       
           }}
         >
-          <Col xs={0} sm={3} md={3} lg={1}></Col>
+        
           <Col
-            xs={8}
-            sm={6}
-            md={4}
-            lg={2}
+           span={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "4px solid green",
+       
             }}
           >
             <ConfigProvider
@@ -751,15 +748,12 @@ const PlayerProfile = () => {
           </Col>
 
           <Col
-           xs={8}
-           sm={6}
-           md={4}
-           lg={2}
+          span={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "4px solid green",
+       
             }}
           >
             <ConfigProvider
@@ -776,15 +770,12 @@ const PlayerProfile = () => {
             </ConfigProvider>
           </Col>
           <Col
-            xs={8}
-            sm={6}
-            md={4}
-            lg={2}
+            span={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "4px solid green",
+           
             }}
           >
             <ConfigProvider
@@ -827,12 +818,11 @@ const PlayerProfile = () => {
             justifyContent: "center",
             alignItems: "center",
             marginBottom: "1%",
-            border: "4px solid #0E4",
+     
           }}
         >
-            <Col span={6}></Col>
-          <Col
-            span={4}
+           <Col
+            span={2}
             style={{
               display: "flex",
               alignItems: "center",
@@ -855,7 +845,7 @@ const PlayerProfile = () => {
             </Typography>
           </Col>
           <Col
-            span={4}
+            span={2}
             style={{
               display: "flex",
               alignItems: "center",
@@ -877,9 +867,8 @@ const PlayerProfile = () => {
               Completed
             </Typography>
           </Col>
-
           <Col
-            span={4}
+            span={2}
             style={{
               display: "flex",
               alignItems: "center",
@@ -901,8 +890,7 @@ const PlayerProfile = () => {
               Canceled
             </Typography>
           </Col>
-          <Col span={6}></Col>
-
+          <Col span={8}></Col>
 
 
           <Col span={8}>
@@ -1137,7 +1125,7 @@ const PlayerProfile = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          border: "4px solid yellow",
+      
          
         }}
       >
@@ -1526,7 +1514,7 @@ const PlayerProfile = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          border: "4px solid red",
+        
         }}
       >
         <p
@@ -1718,8 +1706,7 @@ const PlayerProfile = () => {
         backgroundSize: "cover",
         width:200,
         marginRight: "10%",
-        border: "4px solid #0E45",	
-       
+     
         }}>
       <AppFooter />
       </Col>

@@ -18,12 +18,14 @@ const PrintableContent = React.forwardRef<
   PrintableContentProps
 >(({ zoneData, coachData, packageData, COLORS, tableColumns }, ref) => (
   <div ref={ref} style={{ padding: "2%", backgroundColor: "#EFF4FA" }}>
+    
     {/* Zone Bookings Section */}
     <div style={{ marginBottom: "2rem" }}>
       <hr />
       <h3 style={{ color: "#0E458E", textAlign: "center" }}>Arena Bookings</h3>
       <hr />
       <Row>
+        
         <Col span={12}>
           <PieChart width={500} height={300}>
             <Pie
@@ -49,6 +51,7 @@ const PrintableContent = React.forwardRef<
             <Legend layout="vertical" verticalAlign="top" align="right" />
           </PieChart>
         </Col>
+
         <Col span={12}>
           <Table
             columns={tableColumns}
@@ -61,8 +64,10 @@ const PrintableContent = React.forwardRef<
       </Row>
     </div>
     <hr />
+
+
     {/* Coach Bookings Section */}
-    <div style={{ marginBottom: "2rem" }}>
+    <div style={{ marginBottom: "2rem"}}>
       <h3 style={{ color: "#0E458E", textAlign: "center" }}>Coach Bookings</h3>
       <Row>
         <Col span={12}>
@@ -101,7 +106,10 @@ const PrintableContent = React.forwardRef<
         </Col>
       </Row>
     </div>
+
+
     <hr />
+
     {/* Package Enrollments Section */}
     <div style={{ marginBottom: "2rem" }}>
       <h3 style={{ color: "#0E458E", textAlign: "center" }}>
