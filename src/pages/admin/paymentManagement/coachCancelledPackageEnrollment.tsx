@@ -1,4 +1,4 @@
-import { Col, Row, Modal, Button, Empty } from "antd";
+import { Col, Row, Modal, Button, Empty, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ZoneBookingDetails } from "../../../types";
@@ -44,45 +44,52 @@ const CoachCancelledPackageEnrollment = () => {
     }
   }, []);
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Coach - Package Enrollment</h2>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Cancelled By Coach - Package Enrollment</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+            />
+          </Col>
+        </Row>
+        <Col
+          style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
+        >
+          {arcadeCanceled.length === 0 ? <Empty /> : null}
+          {arcadeCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
+            <DataRow
+              booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+              booked_Arena={ZoneBookingDetails.zone.zone_name}
+              booked_by={ZoneBookingDetails.user.firstname}
+              rate={
+                Number(ZoneBookingDetails.zone.rate) *
+                Number(ZoneBookingDetails.participant_count)
+              }
+              user_id={ZoneBookingDetails.user.user_id}
+              zone_id={ZoneBookingDetails.zone.zone_id}
+              zone={ZoneBookingDetails.zone.zone_name}
+              booking_date={ZoneBookingDetails.date}
+              booking_time={ZoneBookingDetails.time}
+              participant_count={ZoneBookingDetails.participant_count}
+              created_at={ZoneBookingDetails.created_at}
+              canceled_at={ZoneBookingDetails.canceled_at}
+              image={ZoneBookingDetails.user.user_image}
+            />
+          ))}
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
-        {arcadeCanceled.length === 0 ? <Empty /> : null}
-        {arcadeCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
-          <DataRow
-            booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-            booked_Arena={ZoneBookingDetails.zone.zone_name}
-            booked_by={ZoneBookingDetails.user.firstname}
-            rate={
-              Number(ZoneBookingDetails.zone.rate) *
-              Number(ZoneBookingDetails.participant_count)
-            }
-            user_id={ZoneBookingDetails.user.user_id}
-            zone_id={ZoneBookingDetails.zone.zone_id}
-            zone={ZoneBookingDetails.zone.zone_name}
-            booking_date={ZoneBookingDetails.date}
-            booking_time={ZoneBookingDetails.time}
-            participant_count={ZoneBookingDetails.participant_count}
-            created_at={ZoneBookingDetails.created_at}
-            canceled_at={ZoneBookingDetails.canceled_at}
-            image={ZoneBookingDetails.user.user_image}
-          />
-        ))}
-      </Col>
+      </Spin>
     </Col>
   );
 };

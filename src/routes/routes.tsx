@@ -59,7 +59,7 @@ const AppRoutes = () => {
         <Route path="signupCoach" element={<SignupCoach />} />
         <Route path="coachProfile" element={<CoachProfile />} />
         <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
-        <Route path="PlayerUser" element={<PlayerProfileUser />} />
+        <Route path="PlayerUser/:playerId" element={<PlayerProfileUser />} />
         <Route
           path="forms/coachassigndetailsform"
           element={
@@ -98,10 +98,10 @@ const AppRoutes = () => {
         />
         <Route path="profile" element={<PlayerProfile />} />
         <Route path="ChooseArchade" element={<ChooseArcade />} />
-
         <Route path="resetPassword/:token" element={<ResetPassword/>} />
         <Route path="verify-email?" element={<VerifyEmail/>} />
         <Route path="sendVerificationEmail" element={<SendVerification/>} />
+
 
       </Routes>
     </>
@@ -109,3 +109,9 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+
+
+// REACT_APP_GOOGLE_MAP_API_KEY=AIzaSyBeROe-ao-HyAMy-Nx292M9Nx0Ke67Xmuc
+// # REACT_APP_API_URL=https://sportzilive-hzb3h7ddaqefdvac.eastus-01.azurewebsites.net/
+// REACT_APP_API_URL=http://localhost:8000/
+

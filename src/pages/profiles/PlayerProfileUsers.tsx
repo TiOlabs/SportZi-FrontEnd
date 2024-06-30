@@ -25,8 +25,8 @@ interface PlayerData {
   // add other properties as needed
 }
 const PlayerProfileUser = (props: any) => {
-  const { playerID } = useParams();
-  console.log(playerID);
+  const { playerId } = useParams(); // Use playerId, not playerID
+  console.log(playerId);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
   const { userDetails } = useContext(PlayerContext);
   const { managerDetails } = useArcade();
@@ -43,10 +43,10 @@ const PlayerProfileUser = (props: any) => {
     return [];
   };
   useEffect(() => {
-    axios
-      .get("/api/auth/getplayerdetails/", {})
+    axiosInstance
+      .get(`/api/auth/getplayerdetailsUser/${playerId}`, {})
       .then((res) => {
-        console.log("dataaaaaaaaaa222222", res.data);
+        console.log(res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
         setDiscription(res.data.Discription);
@@ -57,12 +57,11 @@ const PlayerProfileUser = (props: any) => {
           achiveArr.push(item.achivement_details as string);
         });
         setAchivements(achiveArr.join(","));
-        // console.log("userDetails", userDetails);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [userDetails]);
 
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();

@@ -1,7 +1,12 @@
 import "../../styles/signup.css";
 
+
 import { Col, Row ,Button, Checkbox, Form, Input, DatePicker, Select, Flex, message,Image  } from "antd";
-import { Link } from "react-router-dom";
+
+
+
+import { Link, useNavigate } from "react-router-dom";
+
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axiosInstance from "../../axiosInstance";
@@ -46,6 +51,9 @@ const { Option } = Select;
 const SignupPlayer = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -79,6 +87,7 @@ const SignupPlayer = () => {
           console.log(res);
           message.success(res.data.message);
           form.resetFields();
+          navigate("/login");
         })
         .catch((err) => {
           console.log(err);

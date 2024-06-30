@@ -1,4 +1,14 @@
-import { Col, Row, Button, Modal, Form, message, Input, Radio } from "antd";
+import {
+  Col,
+  Row,
+  Button,
+  Modal,
+  Form,
+  message,
+  Input,
+  Radio,
+  Spin,
+} from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Admin, User } from "../../../types";
@@ -15,6 +25,7 @@ const agreebtnLayout = {
 };
 
 const SignUpAdmin = () => {
+  const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [firstname, setFirstname] = useState("");
@@ -75,6 +86,8 @@ const SignUpAdmin = () => {
       form.resetFields();
     } catch (e) {
       console.log(e);
+    } finally {
+      setLoading(false);
     }
     setIsModalOpen(false);
   };
@@ -115,6 +128,8 @@ const SignUpAdmin = () => {
         setAdminData(filteredData);
       } catch (e) {
         console.log(e);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -154,6 +169,8 @@ const SignUpAdmin = () => {
     } catch (e) {
       message.error("Failed to update admin details!");
       console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,6 +208,8 @@ const SignUpAdmin = () => {
     } catch (e) {
       message.error("Invalid username or password!");
       console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -228,142 +247,127 @@ const SignUpAdmin = () => {
   };
 
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Admin - DashBoard</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <Input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </Col>
-      </Row>
-      <Row
-        style={{
-          marginTop: "30px",
-        }}
-      >
-        <Col span={21}></Col>
-        <Col span={3}>
-          {data.role === "SUPERADMIN" && (
-            <Button
-              onClick={showModal}
-              style={{
-                backgroundColor: "#EFF4FA",
-                color: "#0E458E",
-                borderRadius: "3px",
-                fontFamily: "kanit",
-                borderColor: "#0E458E",
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Admin - DashBoard</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Col>
+        </Row>
+        <Row
+          style={{
+            marginTop: "30px",
+          }}
+        >
+          <Col span={21}></Col>
+          <Col span={3}>
+            {data.role === "SUPERADMIN" && (
+              <Button
+                onClick={showModal}
+                style={{
+                  backgroundColor: "#EFF4FA",
+                  color: "#0E458E",
+                  borderRadius: "3px",
+                  fontFamily: "kanit",
+                  borderColor: "#0E458E",
 
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "row",
-              }}
-            >
-              add +
-            </Button>
-          )}
-        </Col>
-      </Row>
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+              >
+                add +
+              </Button>
+            )}
+          </Col>
+        </Row>
 
-      {filteredAdmins.map(
-        (admin) => (
-          console.log(admin),
-          (
-            <Row
-              key={admin.user_id as string}
-              style={{
-                backgroundColor: "white",
-                padding: "1%",
-                marginTop: "50px",
-              }}
-            >
-              <Col></Col>
-              <Col span={6} style={{}}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    textAlign: "center",
-                    height: "80px",
-                    fontSize: "16px",
-                  }}
-                >
-                  {admin.firstname} {admin.lastname}
-                </div>
-              </Col>
-
-              <Col span={6} style={{}}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    textAlign: "center",
-                    height: "80px",
-                    fontSize: "16px",
-                  }}
-                >
-                  {admin.email}
-                </div>
-              </Col>
-              <Col span={6} style={{}}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    textAlign: "center",
-                    height: "80px",
-                    fontSize: "16px",
-                  }}
-                >
-                  {admin.phone[0].phone_number}
-                </div>
-              </Col>
-              <Col span={6} style={{}}>
-                <div
-                  style={{
-                    height: "80px",
-                    fontSize: "16px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    disabled={admin.user_id !== data.userId}
-                    type="primary"
-                    style={{ width: "100px", backgroundColor: "#0E458E" }}
-                    onClick={() => showDetailsModal(admin)}
+        {filteredAdmins.map(
+          (admin) => (
+            console.log(admin),
+            (
+              <Row
+                key={admin.user_id as string}
+                style={{
+                  backgroundColor: "white",
+                  padding: "1%",
+                  marginTop: "50px",
+                }}
+              >
+                <Col></Col>
+                <Col span={6} style={{}}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      alignItems: "center",
+                      textAlign: "center",
+                      height: "80px",
+                      fontSize: "16px",
+                    }}
                   >
-                    <div
-                      style={{
-                        fontSize: "16px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        textAlign: "center",
-                      }}
-                    >
-                      Details
-                    </div>
-                  </Button>
-                  {data.role === "SUPERADMIN" && (
+                    {admin.firstname} {admin.lastname}
+                  </div>
+                </Col>
+
+                <Col span={6} style={{}}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      alignItems: "center",
+                      textAlign: "center",
+                      height: "80px",
+                      fontSize: "16px",
+                    }}
+                  >
+                    {admin.email}
+                  </div>
+                </Col>
+                <Col span={6} style={{}}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      alignItems: "center",
+                      textAlign: "center",
+                      height: "80px",
+                      fontSize: "16px",
+                    }}
+                  >
+                    {admin.phone[0].phone_number}
+                  </div>
+                </Col>
+                <Col span={6} style={{}}>
+                  <div
+                    style={{
+                      height: "80px",
+                      fontSize: "16px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
                     <Button
+                      disabled={admin.user_id !== data.userId}
                       type="primary"
-                      onClick={() => isremoveAdminModel(admin.user_id as string)}
-                      ghost
-                      style={{ width: "100px", marginLeft: "20px" }}
+                      style={{ width: "100px", backgroundColor: "#0E458E" }}
+                      onClick={() => showDetailsModal(admin)}
                     >
                       <div
                         style={{
@@ -374,139 +378,44 @@ const SignUpAdmin = () => {
                           textAlign: "center",
                         }}
                       >
-                        Remove
+                        Details
                       </div>
                     </Button>
-                  )}
-                </div>
-              </Col>
-            </Row>
+                    {data.role === "SUPERADMIN" && (
+                      <Button
+                        type="primary"
+                        onClick={() =>
+                          isremoveAdminModel(admin.user_id as string)
+                        }
+                        ghost
+                        style={{ width: "100px", marginLeft: "20px" }}
+                      >
+                        <div
+                          style={{
+                            fontSize: "16px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            textAlign: "center",
+                          }}
+                        >
+                          Remove
+                        </div>
+                      </Button>
+                    )}
+                  </div>
+                </Col>
+              </Row>
+            )
           )
-        )
-      )}
+        )}
 
-      <Modal visible={isModalOpen} onCancel={handleCancel} footer={null}>
-        <Form
-          layout="vertical"
-          style={{ marginTop: "10%" }}
-          onFinish={handleFinish}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              fontSize: "20px",
-              marginBottom: "5%",
-            }}
+        <Modal visible={isModalOpen} onCancel={handleCancel} footer={null}>
+          <Form
+            layout="vertical"
+            style={{ marginTop: "10%" }}
+            onFinish={handleFinish}
           >
-            Admin SignUp Form
-          </div>
-          <Form.Item name="role" label="Role">
-            <Radio.Group onChange={(e) => setRole(e.target.value)} value={role}>
-              <Radio value="ADMIN">Admin</Radio>
-              <Radio value="SUPERADMIN">Super Admin</Radio>
-            </Radio.Group>
-          </Form.Item>
-
-          <Form.Item
-            name="firstname"
-            label="First Name"
-            rules={[
-              {
-                required: true,
-                message: "Please input firstname",
-                whitespace: true,
-              },
-              {
-                validator: validateName,
-              },
-            ]}
-          >
-            <Input
-              placeholder="Enter first name"
-              onChange={(e) => setFirstname(e.target.value)}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="lastname"
-            label="Last Name"
-            rules={[
-              {
-                required: true,
-                message: "Please input lastname",
-                whitespace: true,
-              },
-              {
-                validator: validateName,
-              },
-            ]}
-          >
-            <Input
-              placeholder="Enter last name"
-              onChange={(e) => setLastname(e.target.value)}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label="E-mail"
-            rules={[
-              {
-                type: "email",
-                message: "The input is not valid E-mail!",
-              },
-              {
-                required: true,
-                message: "Please input E-mail!",
-              },
-            ]}
-          >
-            <Input
-              placeholder="Enter email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item
-            name="phone_number"
-            label="Phone Number"
-            rules={[
-              {
-                required: true,
-                validator: validatePhoneNumber,
-              },
-            ]}
-          >
-            <Input
-              placeholder="Enter contact number"
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              htmlType="submit"
-              className="animated-button kanit-regular"
-              style={{
-                height: "40px",
-                fontSize: "16px",
-                width: "100%",
-                backgroundColor: "#2E5488",
-                color: "#fff",
-              }}
-            >
-              Add
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <Modal
-        visible={isShowDetailsModal}
-        onCancel={() => setIsShowDetailsModal(false)}
-        footer={null}
-      >
-        {selectedAdmin && (
-          <Form layout="vertical">
             <div
               style={{
                 display: "flex",
@@ -515,63 +424,189 @@ const SignUpAdmin = () => {
                 marginBottom: "5%",
               }}
             >
-              Admin Details
+              Admin SignUp Form
             </div>
+            <Form.Item name="role" label="Role">
+              <Radio.Group
+                onChange={(e) => setRole(e.target.value)}
+                value={role}
+              >
+                <Radio value="ADMIN">Admin</Radio>
+                <Radio value="SUPERADMIN">Super Admin</Radio>
+              </Radio.Group>
+            </Form.Item>
 
-            <Form.Item label="First Name">
+            <Form.Item
+              name="firstname"
+              label="First Name"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input firstname",
+                  whitespace: true,
+                },
+                {
+                  validator: validateName,
+                },
+              ]}
+            >
               <Input
-                value={firstname}
+                placeholder="Enter first name"
                 onChange={(e) => setFirstname(e.target.value)}
               />
             </Form.Item>
-            <Form.Item label="Last Name">
+
+            <Form.Item
+              name="lastname"
+              label="Last Name"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input lastname",
+                  whitespace: true,
+                },
+                {
+                  validator: validateName,
+                },
+              ]}
+            >
               <Input
-                value={lastname}
+                placeholder="Enter last name"
                 onChange={(e) => setLastname(e.target.value)}
               />
             </Form.Item>
-            <Form.Item label="Email">
-              <Input value={email} onChange={(e) => setEmail(e.target.value)} />
-            </Form.Item>
-            <Form.Item label="Phone Number">
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </Form.Item>
 
-            {isChangingPassword ? (
-              <>
-                <Form.Item label="Current Password">
-                  <Input.Password
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item label="New Password">
-                  <Input.Password
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item label="Confirm New Password">
-                  <Input.Password
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </Form.Item>
-                <Button type="primary" onClick={handleUpdate}>
-                  Update
-                </Button>
-                <Button onClick={() => setIsChangingPassword(false)}>
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button onClick={handleUpdateWithoutPassword}>Update</Button>
-                <Button onClick={() => setIsChangingPassword(true)}>
-                  Change Password
-                </Button>
-              </>
-            )}
+            <Form.Item
+              name="email"
+              label="E-mail"
+              rules={[
+                {
+                  type: "email",
+                  message: "The input is not valid E-mail!",
+                },
+                {
+                  required: true,
+                  message: "Please input E-mail!",
+                },
+              ]}
+            >
+              <Input
+                placeholder="Enter email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="phone_number"
+              label="Phone Number"
+              rules={[
+                {
+                  required: true,
+                  validator: validatePhoneNumber,
+                },
+              ]}
+            >
+              <Input
+                placeholder="Enter contact number"
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                htmlType="submit"
+                className="animated-button kanit-regular"
+                style={{
+                  height: "40px",
+                  fontSize: "16px",
+                  width: "100%",
+                  backgroundColor: "#2E5488",
+                  color: "#fff",
+                }}
+              >
+                Add
+              </Button>
+            </Form.Item>
           </Form>
-        )}
-      </Modal>
+        </Modal>
+
+        <Modal
+          visible={isShowDetailsModal}
+          onCancel={() => setIsShowDetailsModal(false)}
+          footer={null}
+        >
+          {selectedAdmin && (
+            <Form layout="vertical">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  fontSize: "20px",
+                  marginBottom: "5%",
+                }}
+              >
+                Admin Details
+              </div>
+
+              <Form.Item label="First Name">
+                <Input
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item label="Last Name">
+                <Input
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item label="Email">
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item label="Phone Number">
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </Form.Item>
+
+              {isChangingPassword ? (
+                <>
+                  <Form.Item label="Current Password">
+                    <Input.Password
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Form.Item label="New Password">
+                    <Input.Password
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Confirm New Password">
+                    <Input.Password
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Button type="primary" onClick={handleUpdate}>
+                    Update
+                  </Button>
+                  <Button onClick={() => setIsChangingPassword(false)}>
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button onClick={handleUpdateWithoutPassword}>Update</Button>
+                  <Button onClick={() => setIsChangingPassword(true)}>
+                    Change Password
+                  </Button>
+                </>
+              )}
+            </Form>
+          )}
+        </Modal>
+      </Spin>
     </Col>
   );
 };

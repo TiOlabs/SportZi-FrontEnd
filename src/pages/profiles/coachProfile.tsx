@@ -44,6 +44,8 @@ import CoachEdit from "../../components/coachEdit";
 import Notification from "../../components/notification";
 import { CoachFeedback } from "../../types";
 import PackageEnrollListForCoach from "../../components/packageEnrolllistInCoachProfile";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 interface AvailableTime {
   day: string;
@@ -262,17 +264,22 @@ const CoachProfile = () => {
   const [AvailableTimes, setAvailableTimes] = useState<any>();
   const [qulifications, setQulifications] = useState<any>();
   const [expertice, setExpertice] = useState<any>();
+  const [AccNumber, setAccNumber] = useState<any>();
+  const [user_image, setUser_image] = useState<any>();
   const [packageEnrollmentCoach, setPackageEnrollmentCoach] = useState<
     CoachEnrollDetailsForPackages[]
   >([]);
+  const [rate, setRate] = useState<any>();
   useEffect(() => {
     if (Details) {
       setFirstName(Details?.firstname);
       setLastName(Details?.lastname);
       setDiscription(Details?.Discription);
       setAvailableTimes(Details?.Coach?.availability);
-      setExpertice(Details?.Coach?.sport?.sport_name);
-      console.log(Details);
+      setExpertice(Details?.Coach?.sport?.sport_id);
+      setAccNumber(Details?.accountNumber);
+      setUser_image(Details?.user_image);
+      setRate(Details?.Coach?.rate);
       const achiv = Details?.achivement;
       if (achiv) {
         let achiveArr: string[] = [];
@@ -295,6 +302,7 @@ const CoachProfile = () => {
     }
     return [];
   };
+  console.log("AvailableTimes:", AvailableTimes);
   let groupedByDay: { [key: string]: string[] } = {};
   if (AvailableTimes) {
     groupedByDay = AvailableTimes.reduce(
@@ -392,7 +400,12 @@ const CoachProfile = () => {
       }
     }
   );
-
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <NavbarProfile />
@@ -442,10 +455,13 @@ const CoachProfile = () => {
               xl={24}
             >
               {" "}
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(user_image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
@@ -542,9 +558,12 @@ const CoachProfile = () => {
                 expertice={expertice}
                 setExpertice={setExpertice}
                 coachId={coachDetails?.id}
-                startTime={coachDetails?.start_time}
-                closeTime={coachDetails?.close_time}
-                day={coachDetails?.day}
+                availability={AvailableTimes}
+                AccNumber={AccNumber}
+                setAccNumber={setAccNumber}
+                user_image={user_image}
+                rate={rate}
+                setRate={setRate}
               />
             </div>
             <div>
@@ -561,7 +580,7 @@ const CoachProfile = () => {
                       marginBottom: "0px",
                     }}
                   >
-                    {Details?.firstname} {Details?.lastname}
+                    {firstname} {lastname}
                   </h1>
                 </Col>
                 <Col span={1}></Col>
@@ -585,6 +604,19 @@ const CoachProfile = () => {
                 }}
               >
                 First class {Details?.Coach?.sport?.sport_name} coach
+              </p>
+              <p
+                style={{
+                  marginTop: "4px",
+                  color: "#0E458E",
+                  fontFamily: "kanit",
+                  fontSize: "22px",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                }}
+              >
+                Rate (per hour):Rs.{rate}
               </p>
             </div>
             <div
@@ -642,12 +674,6 @@ const CoachProfile = () => {
                         width: "100%",
                       }}
                     >
-                      {/* <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
-
                       <Rate
                         allowHalf
                         disabled
@@ -692,7 +718,7 @@ const CoachProfile = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Qlifications
+              Qulifications
             </Typography>
             <List
               style={{
@@ -932,12 +958,21 @@ const CoachProfile = () => {
                 </div>
               ))}
             </div>
-
-           </div>
+            <Typography
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontStyle: "normal",
+                fontWeight: "200",
+                lineHeight: "normal",
+                marginTop: "5px",
+                fontSize: lg ? "24px" : "18px",
+              }}
+            >
+              Acc Number :{AccNumber}
+            </Typography>
+          </div>
         </Col>
-
-                      
-
       </Row>
 
       <Row
@@ -1213,7 +1248,7 @@ const CoachProfile = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{
@@ -1270,32 +1305,49 @@ const CoachProfile = () => {
             Venue
           </Col>
         </Row>
-        {filteredBookings.length > 0 ? (
-          filteredBookings.map((booking: CoachBookingDetails) => (
-            <CoachAccepteLst
-              key={booking.booking_id} // Make sure to provide a unique key
-              booking_id={booking.booking_id}
-              booked_by={booking.player.user.firstname}
-              image={booking.player.user.user_image}
-              date={booking.date}
-              time={booking.time}
-              venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
-              coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-              role="COACH"
-              email={booking.player.user.email}
-              arcade_email={booking.arcade.arcade_email}
-              arcade_name={booking.arcade.arcade_name}
-              status={booking.status}
-              full_amount={booking.full_amount}
-              player_id={booking.player_id}
-              arcade_id={booking.arcade_id}
-              coach_id={booking.coach_id}
-            />
-          ))
-        ) : (
-          <Empty description="No Bookings Available" />
-        )}
-
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking: CoachBookingDetails) => (
+                <CoachAccepteLst
+                  key={booking.booking_id} // Make sure to provide a unique key
+                  booking_id={booking.booking_id}
+                  booked_by={booking.player.user.firstname}
+                  image={booking.player.user.user_image}
+                  date={booking.date}
+                  time={booking.time}
+                  venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
+                  coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                  role="COACH"
+                  email={booking.player.user.email}
+                  arcade_email={booking.arcade.arcade_email}
+                  arcade_name={booking.arcade.arcade_name}
+                  status={booking.status}
+                  full_amount={booking.full_amount}
+                  player_id={booking.player_id}
+                  arcade_id={booking.arcade_id}
+                  coach_id={booking.coach_id}
+                />
+              ))
+            ) : (
+              <Empty description="No Bookings Available" />
+            )}
+          </div>
+        </div>
         {/* {showMore ? (
         <Button
           style={{
@@ -1515,6 +1567,24 @@ const CoachProfile = () => {
           >
             Date
           </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Duration
+          </Col>
           {lg && (
             <Col
               style={{
@@ -1561,6 +1631,7 @@ const CoachProfile = () => {
               image={booking.arcade.arcade_image}
               date={booking.assigned_date}
               time={booking.created_at}
+              duration={booking.duration}
               coach_name={coachDetails.firstName + " " + coachDetails.lastName}
               role="COACH"
               arcade_email={booking.arcade.arcade_email}
@@ -2128,8 +2199,6 @@ const CoachProfile = () => {
       </Row>
       <AppFooter />
     </>
-
-
   );
 };
 

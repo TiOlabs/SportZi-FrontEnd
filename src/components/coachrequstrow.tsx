@@ -1,4 +1,4 @@
-import { Col, Form, Row, Typography } from "antd";
+import { Col, Form, Row, Typography, message } from "antd";
 import { Button, Flex } from "antd";
 import { ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { Modal, Upload } from "antd";
@@ -135,6 +135,9 @@ const CoachRequstRow = (props: any) => {
                 coachBookingDetails.booking_id !== props.booking_id
             );
           });
+          message.success(
+            "Booking cancelation successfull!"
+          );
           setIsModalOpen(false);
         } catch (error) {
           console.log("error");

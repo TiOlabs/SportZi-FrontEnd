@@ -80,6 +80,7 @@ const CoachBookingForm: React.FC = () => {
   const currentCoachId = useRef(coachId);
 
   const handleDateChange = (datee: any) => {
+    console.log(datee);
     // Extract the date part from the Day.js object
     const formattedDate = datee.format("YYYY-MM-DD");
     console.log(formattedDate);
@@ -374,11 +375,6 @@ const CoachBookingForm: React.FC = () => {
     }
   };
 
-
-
-  
-
-
   // eslint-disable-next-line no-octal
   const openTimeStr = zoneDetails?.open_time ?? "";
   const closeTimeStr = zoneDetails?.close_time ?? "";
@@ -439,7 +435,8 @@ const CoachBookingForm: React.FC = () => {
 
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
-  let coachAmount = Number(coachData?.rate) * Number(pcount);
+  let coachAmount = Number(coachData?.rate) 
+  // * Number(pcount); --------------------------------------------------------
   let coachRate = Number(coachData?.rate);
   let zonerate = Number(zoneDetails?.rate);
   let fullAmount;
@@ -472,7 +469,7 @@ const CoachBookingForm: React.FC = () => {
     zoneDetails?.full_zone_rate !== 0 &&
     reservationType === "person_by_person"
   ) {
-    if (zoneDetails?.discount.discount_percentage === null) {
+    if (zoneDetails?.discount === null) {
       fullAmount = Number(zonerate) * Number(pcount);
     } else {
       fullAmount =
@@ -493,7 +490,10 @@ const CoachBookingForm: React.FC = () => {
           100;
     }
   }
-  let finalAmaount = Number(fullAmount) + coachAmount * timeStep;
+  console.log(fullAmount);
+  console.log(coachAmount);
+  
+  let finalAmaount = Number(fullAmount) + (coachAmount * timeStep);
 
   // let finalAmount;
   // if (zoneDetails?.discount === null) {
@@ -682,7 +682,6 @@ const CoachBookingForm: React.FC = () => {
                 justifyContent: "center",
                 textAlign: "center",
                 lineHeight: "2.5",
-           
               }}
             >
               Join Us and Unleash Your Potential with Our Expert Coaches
@@ -901,21 +900,147 @@ const CoachBookingForm: React.FC = () => {
                             );
                           }
                         )
-                        .map((slot: any, index: number) => (
-                          <ConfigProvider
-                            theme={{
-                              components: {
-                                Button: {
-                                  colorPrimaryHover: "white",
+                        .map((slot: any, index: number) => {
+                          const participantCount =
+                            timeParticipantCounts1.find(
+                              (item) =>
+                                item.time ===
+                                `${slot.startTime}-${slot.endTime}`
+                            )?.totalParticipantCount || 0;
+                          const percentageOccupied = Math.round(
+                            (participantCount / Number(capacity)) * 100
+                          );
+                          const isGradientApplied = bookingDate.find((item) => {
+                            return (
+                              item.date === datee &&
+                              item.zone.zone_id === zone &&
+                              item.time ===
+                                `${slot.startTime}-${slot.endTime}` &&
+                              item.way_of_booking === "person_by_person" &&
+                              item.booking_type === "zone" &&
+                              item.status === "success"
+                            );
+                          });
+                          return (
+                            <ConfigProvider
+                              theme={{
+                                components: {
+                                  Button: {
+                                    colorPrimaryHover: "white",
+                                  },
                                 },
-                              },
-                            }}
-                            key={index} // Use a unique key for each time slot
-                          >
-                            <Button
-                              id={`${slot.startTime}-${slot.endTime}`}
-                              disabled={
-                                coachBookings.find(
+                              }}
+                              key={index} // Use a unique key for each time slot
+                            >
+                              <Button
+                                id={`${slot.startTime}-${slot.endTime}`}
+                                disabled={
+                                  coachBookings.find(
+                                    (item) =>
+                                      item.date === datee &&
+                                      // item.zone_id === zone &&
+                                      item.coach_id === coachId &&
+                                      item.time ===
+                                        `${slot.startTime}-${slot.endTime}` &&
+                                      item.status === "success"
+                                  ) !== undefined ||
+                                  bookingDate.find((item) => {
+                                    return (
+                                      item.date === datee &&
+                                      item.zone.zone_id === zone &&
+                                      item.time ===
+                                        `${slot.startTime}-${slot.endTime}` &&
+                                      item.way_of_booking === "full" &&
+                                      item.status === "success"
+                                    );
+                                  }) !== undefined ||
+                                  !zone ||
+                                  !arcade ||
+                                  isPackageDayAndTime(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  ) ||
+                                  isZoneRejectDay(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  ) ||
+                                  isZoneRejectDate(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  ) ||
+                                  isCoachInthePackage(
+                                    `${slot.startTime}-${slot.endTime}`
+                                  )
+                                }
+                                style={{
+                                  width: "100%",
+                                  height: "60px",
+                                  backgroundImage: bookingDate.find(
+                                    (booking) =>
+                                      booking.time ===
+                                        `${slot.startTime}-${slot.endTime}` &&
+                                      booking.date === datee &&
+                                      booking.zone.zone_id === zone &&
+                                      booking.way_of_booking === "full" &&
+                                      booking.status === "success"
+                                  )
+                                    ? "none" // If fully booked, no gradient needed
+                                    : bookingDate.find((item) => {
+                                        return (
+                                          item.date === datee &&
+                                          item.zone.zone_id === zone &&
+                                          item.time ===
+                                            `${slot.startTime}-${slot.endTime}` &&
+                                          item.way_of_booking ===
+                                            "person_by_person" &&
+                                          item.booking_type === "zone" &&
+                                          item.status === "success"
+                                        );
+                                      })
+                                    ? `linear-gradient(to right, #0F70AE ${percentageOccupied}%, ${
+                                        `${slot.startTime}-${slot.endTime}` ===
+                                        time
+                                          ? "#1677FF"
+                                          : "#2EA8BF"
+                                      } 0%)`
+                                    : "none",
+                                  backgroundColor:
+                                    `${slot.startTime}-${slot.endTime}` === time
+                                      ? "#1677FF"
+                                      : coachBookings.some(
+                                          (item) =>
+                                            item.date === datee &&
+                                            item.coach_id === coachId &&
+                                            item.time ===
+                                              `${slot.startTime}-${slot.endTime}` &&
+                                            item.status === "success"
+                                        ) ||
+                                        bookingDate.find((item) => {
+                                          return (
+                                            item.date === datee &&
+                                            item.way_of_booking === "full" &&
+                                            item.time ===
+                                              `${slot.startTime}-${slot.endTime}` &&
+                                            item.status === "success"
+                                          );
+                                        }) ||
+                                        isPackageDayAndTime(
+                                          `${slot.startTime}-${slot.endTime}`
+                                        ) ||
+                                        isCoachInthePackage(
+                                          `${slot.startTime}-${slot.endTime}`
+                                        ) ||
+                                        isZoneRejectDay(
+                                          `${slot.startTime}-${slot.endTime}`
+                                        ) ||
+                                        isZoneRejectDate(
+                                          `${slot.startTime}-${slot.endTime}`
+                                        )
+                                      ? "#0d96ff " // Red color when disabled due to package time
+                                      : "#2EA8BF",
+                                }}
+                                onClick={() => {
+                                  setTime(`${slot.startTime}-${slot.endTime}`);
+                                }}
+                              >
+                                {coachBookings.some(
                                   (item) =>
                                     item.date === datee &&
                                     // item.zone_id === zone &&
@@ -923,7 +1048,7 @@ const CoachBookingForm: React.FC = () => {
                                     item.time ===
                                       `${slot.startTime}-${slot.endTime}` &&
                                     item.status === "success"
-                                ) !== undefined ||
+                                ) ||
                                 bookingDate.find((item) => {
                                   return (
                                     item.date === datee &&
@@ -933,141 +1058,36 @@ const CoachBookingForm: React.FC = () => {
                                     item.way_of_booking === "full" &&
                                     item.status === "success"
                                   );
-                                }) !== undefined ||
-                                !zone ||
-                                !arcade ||
-                                isPackageDayAndTime(
-                                  `${slot.startTime}-${slot.endTime}`
-                                ) ||
-                                isZoneRejectDay(
-                                  `${slot.startTime}-${slot.endTime}`
-                                ) ||
-                                isZoneRejectDate(
-                                  `${slot.startTime}-${slot.endTime}`
-                                ) ||
-                                isCoachInthePackage(
-                                  `${slot.startTime}-${slot.endTime}`
-                                )
-                              }
-                              style={{
-                                width: "100%",
-                                height: "60px",
-                                backgroundImage: bookingDate.find(
-                                  (booking) =>
-                                    booking.time ===
-                                      `${slot.startTime}-${slot.endTime}` &&
-                                    booking.date === datee &&
-                                    booking.zone.zone_id === zone &&
-                                    booking.way_of_booking === "full" &&
-                                    booking.status === "success"
-                                )
-                                  ? "none" // If fully booked, no gradient needed
-                                  : bookingDate.find((item) => {
-                                      return (
-                                        item.date === datee &&
-                                        item.zone.zone_id === zone &&
-                                        item.time ===
-                                          `${slot.startTime}-${slot.endTime}` &&
-                                        item.way_of_booking ===
-                                          "person_by_person" &&
-                                        item.booking_type === "zone" &&
-                                        item.status === "success"
-                                      );
-                                    })
-                                  ? `linear-gradient(to right, #0F70AE ${
-                                      ((timeParticipantCounts1.find(
-                                        (item) =>
-                                          item.time ===
-                                          `${slot.startTime}-${slot.endTime}`
-                                      )?.totalParticipantCount || 0) /
-                                        Number(capacity)) *
-                                      100
-                                    }%, ${
-                                      `${slot.startTime}-${slot.endTime}` ===
-                                      time
-                                        ? "#1677FF"
-                                        : "#2EA8BF"
-                                    } 0%)`
-                                  : "none",
-                                backgroundColor:
-                                  `${slot.startTime}-${slot.endTime}` === time
-                                    ? "#1677FF"
-                                    : coachBookings.some(
-                                        (item) =>
-                                          item.date === datee &&
-                                          item.coach_id === coachId &&
-                                          item.time ===
-                                            `${slot.startTime}-${slot.endTime}` &&
-                                          item.status === "success"
-                                      ) ||
-                                      bookingDate.find((item) => {
-                                        return (
-                                          item.date === datee &&
-                                          item.way_of_booking === "full" &&
-                                          item.time ===
-                                            `${slot.startTime}-${slot.endTime}` &&
-                                          item.status === "success"
-                                        );
-                                      }) ||
-                                      isPackageDayAndTime(
-                                        `${slot.startTime}-${slot.endTime}`
-                                      ) ||
-                                      isCoachInthePackage(
-                                        `${slot.startTime}-${slot.endTime}`
-                                      ) ||
-                                      isZoneRejectDay(
-                                        `${slot.startTime}-${slot.endTime}`
-                                      ) ||
-                                      isZoneRejectDate(
-                                        `${slot.startTime}-${slot.endTime}`
-                                      )
-                                    ? "#FF0000" // Red color when disabled due to package time
-                                    : "#2EA8BF",
-                              }}
-                              onClick={() => {
-                                setTime(`${slot.startTime}-${slot.endTime}`);
-                              }}
-                            >
-                              {coachBookings.some(
-                                (item) =>
-                                  item.date === datee &&
-                                  // item.zone_id === zone &&
-                                  item.coach_id === coachId &&
-                                  item.time ===
-                                    `${slot.startTime}-${slot.endTime}` &&
-                                  item.status === "success"
-                              ) ||
-                              bookingDate.find((item) => {
-                                return (
-                                  item.date === datee &&
-                                  item.zone.zone_id === zone &&
-                                  item.time ===
-                                    `${slot.startTime}-${slot.endTime}` &&
-                                  item.way_of_booking === "full" &&
-                                  item.status === "success"
-                                );
-                              })
-                                ? "Booked"
-                                : isPackageDayAndTime(
-                                    `${slot.startTime}-${slot.endTime}`
-                                  )
-                                ? `${slot.startTime}-${slot.endTime} : Has a Package `
-                                : isCoachInthePackage(
-                                    `${slot.startTime}-${slot.endTime}`
-                                  )
-                                ? `${slot.startTime}-${slot.endTime} : Coach has a Package`
-                                : isZoneRejectDay(
-                                    `${slot.startTime}-${slot.endTime}`
-                                  )
-                                ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
-                                : isZoneRejectDate(
-                                    `${slot.startTime}-${slot.endTime}`
-                                  )
-                                ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
-                                : `${slot.startTime}-${slot.endTime}`}
-                            </Button>
-                          </ConfigProvider>
-                        ))}
+                                })
+                                  ? `${slot.startTime}-${slot.endTime} -  Booked`
+                                  : isPackageDayAndTime(
+                                      `${slot.startTime}-${slot.endTime}`
+                                    )
+                                  ? `${slot.startTime}-${slot.endTime} : Has a Package `
+                                  : isCoachInthePackage(
+                                      `${slot.startTime}-${slot.endTime}`
+                                    )
+                                  ? `${slot.startTime}-${slot.endTime} : Coach has a Package`
+                                  : isZoneRejectDay(
+                                      `${slot.startTime}-${slot.endTime}`
+                                    )
+                                  ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
+                                  : isZoneRejectDate(
+                                      `${slot.startTime}-${slot.endTime}`
+                                    )
+                                  ? `${slot.startTime}-${slot.endTime} : Zone is Closed`
+                                  : `${slot.startTime}-${slot.endTime}`}
+                                {isGradientApplied && (
+                                  <div
+                                    style={{ fontSize: "12px", color: "#000" }}
+                                  >
+                                    ( {percentageOccupied}% Occupied )
+                                  </div>
+                                )}
+                              </Button>
+                            </ConfigProvider>
+                          );
+                        })}
                     </>
                   ) : (
                     <Empty
@@ -1075,6 +1095,7 @@ const CoachBookingForm: React.FC = () => {
                     />
                   )}
                 </Form.Item>
+
                 <Form.Item
                   name="Participant Count"
                   label={
@@ -1166,8 +1187,6 @@ const CoachBookingForm: React.FC = () => {
             </Col>
           </Row>
 
-            
-
           <Row>
             <Col xs={24} lg={10}></Col>
             <Col xs={24} lg={14}>
@@ -1177,13 +1196,12 @@ const CoachBookingForm: React.FC = () => {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  
                 }}
               ></div>
             </Col>
           </Row>
           <Row>
-          <Col xs={1} md={3} lg={0}></Col>
+            <Col xs={1} md={3} lg={0}></Col>
             <Col xs={8} sm={8} md={7} lg={6}>
               <Button
                 htmlType="submit"
@@ -1195,14 +1213,12 @@ const CoachBookingForm: React.FC = () => {
                   alignItems: "center",
                   backgroundColor: "#BAE5EE",
                   marginBottom: "0.8%",
-                 
                 }}
               >
                 <LeftOutlined />
                 Back
               </Button>
             </Col>
-           
 
             <Col xs={0} md={0} lg={4}></Col>
             <Col xs={14} sm={12} md={12} lg={14}>
@@ -1262,7 +1278,6 @@ const CoachBookingForm: React.FC = () => {
                 />
               </div>
             </Col>
-          
           </Row>
         </Form>
         <div style={{ marginTop: "40px" }}></div>

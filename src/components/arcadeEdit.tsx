@@ -1,5 +1,6 @@
 import { EditFilled, PlusOutlined } from "@ant-design/icons";
 import {
+  Alert,
   Button,
   Drawer,
   Form,
@@ -12,6 +13,7 @@ import {
   TimePicker,
   Typography,
   Upload,
+  message,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useCallback, useContext, useState } from "react";
@@ -25,6 +27,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { ArcadeEditContext } from "../context/ArcadeEdit.context";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { useLocation } from "../context/location.context";
+import dayjs from "dayjs";
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -46,6 +49,9 @@ interface PlayerEditProps {
   closeTime: string;
   setCloseTime: (value: string) => void;
   id: any;
+  accNumber: any;
+  setAccNumber: (value: string) => void;
+  user_image: String;
 }
 
 const ArcadeEdit = ({
@@ -60,10 +66,24 @@ const ArcadeEdit = ({
   closeTime,
   setCloseTime,
   id,
+  accNumber,
+  setAccNumber,
+  user_image,
 }: PlayerEditProps) => {
+  console.log(
+    firstname,
+    discription,
+    address,
+    openTime,
+    closeTime,
+    id,
+    accNumber,
+    user_image
+  );
+
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
-  const [publicId, setPublicId] = useState("");
+  const [publicId, setPublicId] = useState(user_image);
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
   const [uwConfig] = useState({
@@ -103,7 +123,7 @@ const ArcadeEdit = ({
     },
   });
 
-  const imgObject = cld.image(publicId);
+  const imgObject = cld.image(publicId as string);
   console.log(imgObject);
 
   const showDrawer = () => {
@@ -114,32 +134,59 @@ const ArcadeEdit = ({
   };
 
   const onFinish = () => {
+    console.log(
+      firstname,
+      discription,
+      address,
+      openTime,
+      closeTime,
+      accNumber,
+      publicId,
+      selectedLocation
+    );
     // {"lat":6.795160823938917,"lng":79.89616736106872}
-    console.log("selectedLocation", selectedLocation);
-    const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
-    try {
-      axiosInstance
-        .put(`/api/auth/updatearchadedetails/${id}`, {
-          arcade_name: firstname,
-          discription: discription,
-          open_time: openTime,
-          close_time: closeTime,
-          location: location,
-          arcade_image: publicId,
-          //user_image:
-        })
-        .then((res) => {
+    form
+      .validateFields()
+      .then((values) => {
+        console.log("selectedLocation", selectedLocation);
+        const location = selectedLocation
+          ? JSON.stringify(selectedLocation)
+          : "";
+        try {
+          axiosInstance
+            .put(`/api/auth/updatearchadedetails/${id}`, {
+              arcade_name: firstname,
+              discription: discription,
+              address: address,
+              open_time: openTime,
+              close_time: closeTime,
+              location: location,
+              arcade_image: publicId,
+              accNumber: accNumber,
+              //user_image:
+            })
+            .then((res) => {
+              setOpen(false);
+              console.log("inside then", res.data);
+              message.success("Profile Updated Successfully");
+              window.location.reload();
+            })
+            .catch(() => {
+              setOpen(false);
+            });
+        } catch (error) {
           setOpen(false);
-          console.log("inside then", res.data);
-        })
-        .catch(() => {
+          onClose();
+          console.error("Error:", error);
+        } finally {
+          message.success("Profile Updated Successfully");
+          window.location.reload();
           setOpen(false);
-        });
-    } catch (error) {
-      setOpen(false);
-      onClose();
-      console.error("Error:", error);
-    }
+        }
+      })
+      .catch((info) => {
+        <Alert message="Fill All the Fields" />;
+      });
   };
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -292,32 +339,43 @@ const ArcadeEdit = ({
           >
             {/* first name */}
             <Form.Item
-              name="firstname"
-              label="First Name"
+              name="ArcadeName"
+              label="Arcade Name"
+              initialValue={firstname}
               rules={[
                 {
                   required: true,
-                  message: "Please input your firstname",
+                  message: "Please input Arcade name",
                   whitespace: true,
+                },
+                {
+                  
+                  message: "First name letters and only contain A-Z and a-z",
                 },
               ]}
               style={{}}
             >
               <Input
-                placeholder="Enter your first name"
+                placeholder="Enter your Arcade name"
                 value={userDetails?.firstName}
                 onChange={(e) => setFirstname(e.target.value)}
+                defaultValue={firstname}
               />
             </Form.Item>
-            {/* last name */}
+
             <Form.Item
               name="Discription"
-              label="Discription"
+              label="Description"
+              initialValue={discription}
               rules={[
                 {
                   required: true,
-                  message: "Please input your Discription",
+                  message: "Please input your description",
                   whitespace: true,
+                },
+                {
+                  max: 100,
+                  message: "Description must be at least 100 characters",
                 },
               ]}
               style={{}}
@@ -327,16 +385,22 @@ const ArcadeEdit = ({
                 onChange={(e) => setDiscription(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 4 }}
+                defaultValue={discription}
               />
             </Form.Item>
             <Form.Item
               name="Address"
               label="Address"
+              initialValue={address}
               rules={[
                 {
                   required: true,
                   message: "Please input your Address",
                   whitespace: true,
+                },
+                {
+                  pattern: /^[A-Za-z, ]+$/,
+                  message: "Enter address using comma to separate the address",
                 },
               ]}
               style={{}}
@@ -351,6 +415,7 @@ const ArcadeEdit = ({
             <Form.Item
               name="TimeStart"
               label="Add Arcade Open Time"
+              initialValue={openTime ? dayjs(openTime, "HH:mm") : null}
               rules={[
                 {
                   required: true,
@@ -361,12 +426,13 @@ const ArcadeEdit = ({
               <TimePicker
                 format="HH:mm"
                 onChange={(e) => setopenTime(e.format("HH:mm"))}
+                defaultValue={openTime ? dayjs(openTime, "HH:mm") : null}
               />
             </Form.Item>
-            <p>{openTime}</p>
             <Form.Item
               name="TimeClose"
               label="Add Arcade Close Time"
+              initialValue={closeTime ? dayjs(closeTime, "HH:mm") : null}
               rules={[
                 {
                   required: true,
@@ -377,32 +443,34 @@ const ArcadeEdit = ({
               <TimePicker
                 format="HH:mm"
                 onChange={(e) => setCloseTime(e.format("HH:mm"))}
+                defaultValue={closeTime ? dayjs(closeTime, "HH:mm") : null}
               />
             </Form.Item>
-            {/* Achivements */}
-            {/* <Form.Item
-              name="Achivements"
-              label="Achivements"
+            <Form.Item
+              name="AccNumber"
+              label="Account Number"
+              initialValue={accNumber}
               rules={[
                 {
                   required: true,
-                  message: "Input your Achivements Using Comma Seprated",
+                  message: "Please input your Account Number",
                   whitespace: true,
+                },
+                {
+                  pattern: /^\d+$/,
+                  message:
+                    "Account Number Should be a number and only contain 0-9",
                 },
               ]}
               style={{}}
             >
               <Input
-                // value={}
-                placeholder="Input your Achivements Using Comma Seprated"
-                onChange={(e) => setAchivements(e.target.value)}
+                placeholder="Enter your Account number"
+                value={accNumber}
+                onChange={(e) => setAccNumber(e.target.value)}
+                defaultValue={accNumber}
               />
             </Form.Item>
-
-            {achivements &&
-              achivements.split(",").map((achivements: string) => {
-                return <Tag>{achivements}</Tag>;
-              })} */}
             <Form.Item name="Update Your Location" label="Update Your Location">
               <GoogleMap
                 center={center}
@@ -428,7 +496,7 @@ const ArcadeEdit = ({
               label="Upload profile picture"
               rules={[
                 {
-                  required: true,
+                  //   required: true,
                   message: "upload profile picture",
                   whitespace: true,
                 },
@@ -444,6 +512,7 @@ const ArcadeEdit = ({
                 style={{ maxWidth: "100px" }}
                 cldImg={imgObject}
                 plugins={[responsive(), placeholder()]}
+                defaultValue={publicId}
               />
             </Form.Item>
           </Form>

@@ -6,6 +6,7 @@ export interface Discount {
   zone: Zone;
 }
 export interface Zone {
+  status: string;
   zone_name: String;
   zone_id: String;
   rate: Number;
@@ -185,6 +186,7 @@ export interface ArcadeBookings {
 }
 
 export interface Arcade {
+  find(arg0: (item: any) => boolean): unknown;
   packageDayAndTime: any;
   lng: number | (() => number);
   lat: number | (() => number);

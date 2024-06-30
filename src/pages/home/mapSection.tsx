@@ -4,6 +4,7 @@ import {
   GoogleMap,
   Marker,
   MarkerClusterer,
+  DirectionsRenderer,
 } from "@react-google-maps/api";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState, useRef } from "react";
@@ -21,6 +22,16 @@ const MapSection: React.FC = () => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [directions, setDirections] =
+    useState<google.maps.DirectionsResult | null>(null);
+  const [startLocation, setStartLocation] = useState<{
+    lat: number;
+    lng: number;
+  }>({ lat: 0, lng: 0 });
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
 
   useEffect(() => {
@@ -82,7 +93,47 @@ const MapSection: React.FC = () => {
       const firstArcade = filtered[0];
       mapRef.current.panTo({ lat: firstArcade.lat, lng: firstArcade.lng });
       mapRef.current.setZoom(18);
+
+      // Get the current location (you might want to implement a more robust solution for getting the user's location)
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const startLoc = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setStartLocation(startLoc);
+          setUserLocation(startLoc);
+          setDirections(null); // Clear existing directions before fetching new ones
+          fetchDirections(startLoc, {
+            lat: firstArcade.lat,
+            lng: firstArcade.lng,
+          });
+        });
+      }
     }
+  };
+
+  const fetchDirections = (
+    start: { lat: number; lng: number },
+    end: { lat: number; lng: number }
+  ) => {
+    if (!isLoaded || !google.maps) return;
+
+    const directionsService = new google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin: start,
+        destination: end,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      }
+    );
   };
 
   if (loadError) {
@@ -169,11 +220,30 @@ const MapSection: React.FC = () => {
                     key={index}
                     position={{ lat: location.lat, lng: location.lng }}
                     clusterer={clusterer}
+                    label={{
+                      text: "ccc",
+                      color: "black",
+                      fontWeight: "bold",
+                    }}
                   />
                 ))}
               </React.Fragment>
             )}
           </MarkerClusterer>
+          {userLocation && (
+            <Marker
+              position={userLocation}
+              label={{
+                text: "My Location",
+                color: "black",
+                fontWeight: "bold",
+              }}
+              icon={{
+                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+              }}
+            />
+          )}
+          {directions && <DirectionsRenderer directions={directions} />}
         </GoogleMap>
       </Col>
     </Row>

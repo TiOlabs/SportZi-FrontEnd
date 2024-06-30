@@ -240,7 +240,7 @@ const BookingForm = () => {
     fullAmount = Number(zoneDetails?.full_zone_rate);
   }
   let finalAmount;
-  if (zoneDetails?.discount.discount_percentage === null) {
+  if (zoneDetails?.discount === null) {
     finalAmount = fullAmount ?? 0;
   } else {
     finalAmount =

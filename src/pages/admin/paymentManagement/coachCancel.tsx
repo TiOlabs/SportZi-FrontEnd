@@ -1,4 +1,13 @@
-import { Col, Row, Modal, Button, Empty, Radio, RadioChangeEvent } from "antd";
+import {
+  Col,
+  Row,
+  Modal,
+  Button,
+  Empty,
+  Radio,
+  RadioChangeEvent,
+  Spin,
+} from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CoachBookingDetails } from "../../../types";
@@ -97,60 +106,67 @@ const CoachCancelCoachBookings = () => {
   };
 
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Coach - Coach Bookings</h2>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Cancelled By Coach - Coach Bookings</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+              onChange={(e) => onSearch(e.target.value)}
+            />
+          </Col>
+        </Row>
+        <Row style={{ marginTop: "20px" }}>
+          <Col>
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={1}>Before 24 hours</Radio>
+              <Radio value={2}>After 24 hours</Radio>
+            </Radio.Group>
+          </Col>
+        </Row>
+        <Col
+          style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
+        >
+          {arcadeCanceled.length === 0 ? <Empty /> : null}
+          {arcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
+            <DataRow
+              key={CoachBookingDetails.booking_id}
+              booking_id={CoachBookingDetails.booking_id}
+              booked_Arena={CoachBookingDetails.zone.zone_name}
+              booked_by={CoachBookingDetails.player.user.firstname}
+              rate={
+                Number(CoachBookingDetails.zone.rate) *
+                  Number(CoachBookingDetails.participant_count) +
+                Number(CoachBookingDetails.zone.rate) *
+                  Number(CoachBookingDetails.participant_count)
+              }
+              user_id={CoachBookingDetails.player.player_id}
+              zone_id={CoachBookingDetails.zone.zone_id}
+              zone={CoachBookingDetails.zone.zone_name}
+              booking_date={CoachBookingDetails.date}
+              booking_time={CoachBookingDetails.time}
+              participant_count={CoachBookingDetails.participant_count}
+              created_at={CoachBookingDetails.created_at}
+              canceled_at={CoachBookingDetails.canceled_at}
+              image={CoachBookingDetails.player.user.user_image}
+              coach_Image={CoachBookingDetails.coach.user.user_image}
+              coach_id={CoachBookingDetails.coach.coach_id}
+              coach_name={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
+            />
+          ))}
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-            onChange={(e) => onSearch(e.target.value)}
-          />
-        </Col>
-      </Row>
-      <Row style={{ marginTop: "20px" }}>
-        <Col>
-          <Radio.Group onChange={onChange} value={value}>
-            <Radio value={1}>Before 24 hours</Radio>
-            <Radio value={2}>After 24 hours</Radio>
-          </Radio.Group>
-        </Col>
-      </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
-        {arcadeCanceled.length === 0 ? <Empty /> : null}
-        {arcadeCanceled.map((CoachBookingDetails: CoachBookingDetails) => (
-          <DataRow
-            key={CoachBookingDetails.booking_id}
-            booking_id={CoachBookingDetails.booking_id}
-            booked_Arena={CoachBookingDetails.zone.zone_name}
-            booked_by={CoachBookingDetails.player.user.firstname}
-            rate={
-              Number(CoachBookingDetails.zone.rate) *
-                Number(CoachBookingDetails.participant_count) +
-              Number(CoachBookingDetails.zone.rate) *
-                Number(CoachBookingDetails.participant_count)
-            }
-            user_id={CoachBookingDetails.player.player_id}
-            zone_id={CoachBookingDetails.zone.zone_id}
-            zone={CoachBookingDetails.zone.zone_name}
-            booking_date={CoachBookingDetails.date}
-            booking_time={CoachBookingDetails.time}
-            participant_count={CoachBookingDetails.participant_count}
-            created_at={CoachBookingDetails.created_at}
-            canceled_at={CoachBookingDetails.canceled_at}
-            image={CoachBookingDetails.player.user.user_image}
-            coach_Image={CoachBookingDetails.coach.user.user_image}
-            coach_id={CoachBookingDetails.coach.coach_id}
-            coach_name={`${CoachBookingDetails.coach.user.firstname} ${CoachBookingDetails.coach.user.lastname}`}
-          />
-        ))}
-      </Col>
+      </Spin>
     </Col>
   );
 };

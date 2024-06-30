@@ -4,7 +4,7 @@ import { Flex, message } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, TimePicker, Select } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState, useEffect } from "react";
 import { Dayjs } from "dayjs";
@@ -52,6 +52,7 @@ const { Option } = Select;
 const SignupArcadeManager: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -124,6 +125,7 @@ const SignupArcadeManager: React.FC = () => {
           console.log(res);
           message.success(res.data.message);
           form.resetFields();
+          navigate("/login");
         })
         .catch((err) => {
           console.log(err);

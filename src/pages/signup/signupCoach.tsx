@@ -4,7 +4,7 @@ import { Flex, InputNumber, Space, TimePicker, message } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -53,7 +53,11 @@ const { Option } = Select;
 // function starting
 const SignupCoach = () => {
   const [form] = Form.useForm();
+
   const [loading, setLoading] = useState(false);
+
+
+  const navigate = useNavigate();
 
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -151,6 +155,7 @@ const SignupCoach = () => {
           console.log(res);
           message.success(res.data.message);
           form.resetFields();
+          navigate("/login");
         })
         .catch((err) => {
           console.log(err);
