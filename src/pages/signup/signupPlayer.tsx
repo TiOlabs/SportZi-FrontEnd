@@ -1,15 +1,16 @@
 import "../../styles/signup.css";
 
-import { Flex } from "antd";
-import { Image } from "antd";
-import { Col, Row } from "antd";
-import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
-import { Link } from "react-router-dom";
+
+import { Col, Row ,Button, Checkbox, Form, Input, DatePicker, Select, Flex, message,Image  } from "antd";
+
+
+
+import { Link, useNavigate } from "react-router-dom";
+
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axiosInstance from "../../axiosInstance";
 import { Moment } from "moment";
-
 
 //responsiveness
 const formItemLayout = {
@@ -46,12 +47,12 @@ const commonInputStyle = {
 };
 const { Option } = Select;
 
-
-
-
 // function starting
 const SignupPlayer = () => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -61,39 +62,57 @@ const SignupPlayer = () => {
   const [selectedDateString, setSelectedDateString] = useState<string>("");
   const [gender, setGender] = useState("");
 
-  
-
   const onFinish = async () => {
+    setLoading(true);
     try {
-      const response = await axiosInstance.post("api/addplayer", {
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        DOB: selectedDateString,
-        gender: gender,
-        role: "PLAYER",
-        password: password,
-        phone_number: phone_number,
-        accountNumber:"123456789789"
-      })
-      .then(res =>{
-        console.log(res);
-        alert("Form submitted successfully!");
-        form.resetFields();
-      }).catch(err =>{
-        console.log(err);
-        alert(err.response.data.message);
-      });
-    
+      const res = await axiosInstance
+        .post(
+          "api/addplayer",
+          {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            // DOB: selectedDateString,
+            // gender: gender,
+            role: "PLAYER",
+            password: password,
+            phone_number: phone_number,
+            // accountNumber: "123456789789",
+          },
+          {
+            timeout: 10000, // Increase timeout to 10 seconds
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          message.success(res.data.message);
+          form.resetFields();
+          navigate("/login");
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.code === "ECONNABORTED") {
+            alert("The request took too long - please try again later.");
+          } else if (
+            err.response &&
+            err.response.data &&
+            err.response.data.message
+          ) {
+            message.error(err.response.data.message);
+          } else {
+            message.error("An unexpected error occurred.");
+          }
+        });
     } catch (err) {
       console.log(err);
-      alert(err);
+      message.error("An unexpected error occurred.");
+    }
+    finally{
+      setLoading(false);
     }
   };
 
-
-
-  const validateName =  (_: any, value: string) => {
+  const validateName = (_: any, value: string) => {
     const phoneRegex = /^[a-zA-Z]+$/;
     if (!value || phoneRegex.test(value)) {
       return Promise.resolve();
@@ -108,7 +127,7 @@ const SignupPlayer = () => {
     }
     return Promise.reject("Invalid phone number");
   };
-  
+
   const validatePassword = async (_: any, value: string) => {
     if (value && value.length < 8) {
       return Promise.reject("Password must be at least 8 characters");
@@ -118,7 +137,7 @@ const SignupPlayer = () => {
 
   return (
     <>
-      <Row className="signupContainer" >
+      <Row className="signupContainer">
         {/* left column */}
         <Col
           sm={24}
@@ -195,7 +214,7 @@ const SignupPlayer = () => {
         </Col>
 
         {/* right column */}
-        <Col sm={24} md={24} lg={12} xl={12} style={{ padding: 50}}>
+        <Col sm={24} md={24} lg={12} xl={12} style={{ padding: 50 }}>
           {/* form */}
           <div
             style={{
@@ -243,8 +262,8 @@ const SignupPlayer = () => {
                     whitespace: true,
                   },
                   {
-                    validator:validateName,
-                  }
+                    validator: validateName,
+                  },
                 ]}
                 // style={{ ...commonLabelStyle }}
               >
@@ -266,8 +285,8 @@ const SignupPlayer = () => {
                     whitespace: true,
                   },
                   {
-                    validator:validateName,
-                  }
+                    validator: validateName,
+                  },
                 ]}
               >
                 <Input
@@ -334,7 +353,9 @@ const SignupPlayer = () => {
                       if (!value || getFieldValue("password") === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject("The new password that you entered do not match!");
+                      return Promise.reject(
+                        "The new password that you entered do not match!"
+                      );
                     },
                   }),
                 ]}
@@ -364,7 +385,7 @@ const SignupPlayer = () => {
               </Form.Item>
 
               {/* birthday field */}
-              <Form.Item
+              {/* <Form.Item
                 name="dob"
                 label="DOB"
                 rules={[
@@ -384,14 +405,14 @@ const SignupPlayer = () => {
                       const formattedDate = date.format("YYYY-MM-DD");
                       setSelectedDateString(formattedDate);
                     } else {
-                      setSelectedDateString(""); 
+                      setSelectedDateString("");
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               {/* gender field */}
-              <Form.Item
+              {/* <Form.Item
                 name="gender"
                 label="Gender"
                 rules={[{ required: true, message: "Please select gender!" }]}
@@ -418,7 +439,7 @@ const SignupPlayer = () => {
                     Female
                   </Option>
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item
                 name="agreement"
@@ -443,6 +464,7 @@ const SignupPlayer = () => {
                 <Button
                   htmlType="submit"
                   className="animated-button kanit-regular"
+                  loading={loading}
                   style={{
                     height: "40px",
                     fontSize: "16px",
@@ -457,7 +479,10 @@ const SignupPlayer = () => {
 
               <Form.Item {...buttonFormItemLayout}>
                 <div className="kanit-regular">
-                  Already have an account <Link to={"/login"}><a href="">Sign in here</a> </Link> 
+                  Already have an account{" "}
+                  <Link to={"/login"}>
+                    <a href="">Sign in here</a>{" "}
+                  </Link>
                 </div>
               </Form.Item>
             </Form>

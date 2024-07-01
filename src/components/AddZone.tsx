@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -16,6 +16,7 @@ import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
 import TextArea from "antd/es/input/TextArea";
 import CloudinaryUploadWidget from "./cloudinaryUploadWidget";
 import { useParams } from "react-router-dom";
+import { Sport } from "../types";
 
 const AddZone = () => {
   const { ArcadeId } = useParams();
@@ -40,8 +41,9 @@ const AddZone = () => {
   };
 
   const [rate, setRate] = useState("");
+  const [fullRate, setFullRate] = useState("");
   const [discount, setdiscount] = useState("");
-  const[discountDiscription, setdiscountDiscription] = useState("");
+  const [discountDiscription, setdiscountDiscription] = useState("");
   const [capacity, setCapacity] = useState("");
   const [way, setWay] = useState("");
   const [arcadeName, setArcadeName] = useState("");
@@ -52,6 +54,8 @@ const AddZone = () => {
   const [closedTime, setClosedTime] = useState<string | null>(null);
   const [discription, setDiscription] = useState("");
   const [sport, setSport] = useState("");
+  const [SportDetails, setSportDetails] = useState<Sport[]>([]);
+  const [timeStep, setTimeStep] = useState("");
   const handleTimeChangeStart = (time: any, timeString: string) => {
     setStartedTime(timeString);
     console.log("Selected time:", timeString);
@@ -98,13 +102,19 @@ const AddZone = () => {
   const handleFinish = async () => {
     const capacityint = parseInt(capacity);
     const rateint = parseInt(rate);
+    const fullRateint = parseInt(fullRate);
+    const timeStepInt = parseFloat(timeStep);
+    console.log(timeStepInt);
+
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}api/addZoneDetails`,
         {
           zone_name: arcadeName,
           capacity: capacityint,
+          time_Step: timeStepInt,
           rate: rateint,
+          full_zone_rate: fullRateint,
           description: discription,
           way_of_booking: way,
           zone_image: publicId,
@@ -118,8 +128,10 @@ const AddZone = () => {
       );
       console.log();
       UpdateData();
+      message.success("Zone added successfully");
     } catch (error) {
       console.log(error);
+      message.error("Failed to add zone");
     }
     handleOk();
   };
@@ -141,6 +153,25 @@ const AddZone = () => {
     }
   };
   console.log(arcadeName);
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getSportDetails`
+        );
+        const data = await res.data;
+        console.log(data);
+        setSportDetails(data);
+      };
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  const sortedSports = [...SportDetails].sort((a, b) =>
+    a.sport_name.toString().localeCompare(b.sport_name.toString())
+  );
   return (
     <>
       <Button
@@ -156,7 +187,12 @@ const AddZone = () => {
         Add Zone
       </Button>
 
-      <Modal visible={isModalOpen} onOk={handleFinish} onCancel={handleCancel}>
+      <Modal
+        visible={isModalOpen}
+        onOk={handleFinish}
+        onCancel={handleCancel}
+        okText="Add"
+      >
         <Form
           layout="vertical"
           style={{ marginTop: "10%", margin: "2%" }}
@@ -218,10 +254,31 @@ const AddZone = () => {
               onChange={(value) => setCapacity(value?.toString() || "")}
             />
           </Form.Item>
+          <Form.Item
+            name="timeStep"
+            label="Add zone time step for one time slot"
+            rules={[
+              {
+                type: "number",
+                message: "Please enter time step!",
+              },
+              {
+                required: true,
+                message: "Please input time step!",
+              },
+            ]}
+          >
+            <Select onChange={(value) => setTimeStep(value?.toString() || "")}>
+              <Select.Option value={0.5}>Half hour</Select.Option>
+              <Select.Option value={1}>Hour</Select.Option>
+              <Select.Option value={1.5}>One and half hour</Select.Option>
+              <Select.Option value={2}>Two hour</Select.Option>
+            </Select>
+          </Form.Item>
 
           <Form.Item
             name="rate"
-            label="Add your rate (per hour)"
+            label="Add your rate (per time slot )"
             rules={[
               {
                 type: "number",
@@ -245,6 +302,36 @@ const AddZone = () => {
               placeholder="rate"
               style={{ width: "100%" }}
               onChange={(value) => setRate(value?.toString() || "")}
+            />
+          </Form.Item>
+          <Form.Item
+            name="ful_rate"
+            label="Add your full Zone rate for a time slot (if you don't have full zone rate please enter 0, after we will calculate the rate for full zone as rate for one time slot * capacity)"
+            rules={[
+              {
+                type: "number",
+                message: "Please enter a valid number!",
+              },
+              {
+                required: true,
+                message: "Please input your number!",
+              },
+              {
+                validator: (_, value) => {
+                  if (value < 0) {
+                    return Promise.reject(
+                      "Rate should be greater than or equal to 0"
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <InputNumber
+              placeholder="full zone rate"
+              style={{ width: "100%" }}
+              onChange={(value) => setFullRate(value?.toString() || "")}
             />
           </Form.Item>
           <Checkbox
@@ -328,7 +415,7 @@ const AddZone = () => {
 
           <Form.Item
             name="way_of_booking"
-            label="Way of Booking"
+            label="Reservation Type"
             rules={[
               {
                 required: true,
@@ -360,13 +447,17 @@ const AddZone = () => {
             <Select
               placeholder="Select a sport"
               onChange={(value) => setSport(value)}
+              dropdownRender={(menu) => (
+                <div style={{ maxHeight: "150px", overflowY: "auto" }}>
+                  {menu}
+                </div>
+              )}
             >
-              <Select.Option value="S00001">Cricket</Select.Option>
-              <Select.Option value="S00003">Swimming</Select.Option>
-              <Select.Option value="S00002">FootBall</Select.Option>
-              <Select.Option value="S00004">Gym</Select.Option>
-              <Select.Option value="S00005">NetBall</Select.Option>
-              <Select.Option value="S00006">Batmintain</Select.Option>
+              {sortedSports.map((sport) => (
+                <Select.Option value={sport.sport_id}>
+                  {sport.sport_name}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item

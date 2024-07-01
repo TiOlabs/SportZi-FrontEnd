@@ -19,8 +19,11 @@ import ArcadeProfileArcade from "../pages/profiles/arcadeProfile";
 import ArcadeProfileUser from "../pages/profiles/arcadeProfileUsers";
 import CoachBookingForm from "../pages/bookingForm/coachBookingForm";
 import PlayerProfile from "../pages/profiles/playerProfile";
-import { Auth, ProtectedRoute } from "../middlewares/auth";
+import { AdminRoute, Auth, ProtectedRoute } from "../middlewares/auth";
 import ChooseArcade from "../pages/login/chooseArcade";
+import ResetPassword from "../pages/login/resetPassword";
+import VerifyEmail from "../components/VerifyEmail";
+import SendVerification from "../components/SendVerificationEmail";
 
 const AppRoutes = () => {
   return (
@@ -56,7 +59,7 @@ const AppRoutes = () => {
         <Route path="signupCoach" element={<SignupCoach />} />
         <Route path="coachProfile" element={<CoachProfile />} />
         <Route path="signupArcadeManager" element={<SignupArcadeManager />} />
-        <Route path="PlayerUser" element={<PlayerProfileUser />} />
+        <Route path="PlayerUser/:playerId" element={<PlayerProfileUser />} />
         <Route
           path="forms/coachassigndetailsform"
           element={
@@ -67,13 +70,22 @@ const AppRoutes = () => {
             </Auth>
           }
         />
-        <Route path="CoachUser" element={<CoachProfileUser />} />
+        <Route path="CoachUser/:coachId" element={<CoachProfileUser />} />
         <Route
           path="ArcadeforArcade/:ArcadeId"
           element={<ArcadeProfileArcade />}
         />
         <Route path="arcadeProfile/:ArcadeId" element={<ArcadeProfileUser />} />
-        <Route path="admin" element={<Admin />} />
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="coachBookingForm"
           element={
@@ -86,9 +98,16 @@ const AppRoutes = () => {
         />
         <Route path="profile" element={<PlayerProfile />} />
         <Route path="ChooseArchade" element={<ChooseArcade />} />
+        <Route path="resetPassword/:token" element={<ResetPassword />} />
+        <Route path="verify-email?" element={<VerifyEmail />} />
+        <Route path="sendVerificationEmail" element={<SendVerification />} />
       </Routes>
     </>
   );
 };
 
 export default AppRoutes;
+
+// REACT_APP_GOOGLE_MAP_API_KEY=AIzaSyBeROe-ao-HyAMy-Nx292M9Nx0Ke67Xmuc
+// # REACT_APP_API_URL=https://sportzilive-hzb3h7ddaqefdvac.eastus-01.azurewebsites.net/
+// REACT_APP_API_URL=http://localhost:8000/

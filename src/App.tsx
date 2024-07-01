@@ -8,16 +8,23 @@ import AppRoutes from "./routes/routes";
 import { PlayerProvider } from "./context/player.context";
 import { ArcadeProvider } from "./context/Arcade.context";
 import { CoachProvider } from "./context/coach.context";
+import { UserIdProvider } from "./context/userId.context";
+import { UserProvider } from "./context/userContext";
+import { LocationProvider } from "./context/location.context";
 
 function App() {
   return (
-    <ArcadeProvider>
-      <CoachProvider>
-        <PlayerProvider>
-          <AppRoutes />
-        </PlayerProvider>
-      </CoachProvider>
-    </ArcadeProvider>
+    <UserProvider>
+      <ArcadeProvider>
+        <CoachProvider>
+          <PlayerProvider>
+            <LocationProvider>
+              <AppRoutes />
+            </LocationProvider>
+          </PlayerProvider>
+        </CoachProvider>
+      </ArcadeProvider>
+    </UserProvider>
   );
 }
 

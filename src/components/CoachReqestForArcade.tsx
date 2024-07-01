@@ -1,10 +1,12 @@
-import { Col, Row } from "antd";
+import { Col, Row, message } from "antd";
 import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const CoachReqestForArcade = (props: any) => {
   console.log("props", props);
@@ -13,6 +15,7 @@ const CoachReqestForArcade = (props: any) => {
   const { lg, md, sm, xs } = useBreakpoint();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -20,11 +23,18 @@ const CoachReqestForArcade = (props: any) => {
 
   const handleOk = () => {
     setIsModalOpen(false);
+    handleAccept();
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setIsRejectModalOpen(false);
   };
+  const handlReject = () => {
+    setIsModalOpen(false);
+    setIsRejectModalOpen(true);
+    
+  }
   const handleAccept = () => {
     try {
       const fetchData = async () => {
@@ -32,19 +42,64 @@ const CoachReqestForArcade = (props: any) => {
           `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
           {
             coach_id: props.coach_id,
+            coachId: props.coach_id,
             arcade_id: ArcadeId,
             status: "success",
+            coach_name: props.coach_name,
+            email: props.coach_Email,
+            arcade_name: props.arcade_name,
+            role:"ARCADE"
           }
         );
         console.log(res.data);
       };
       fetchData();
-      alert("Accepted");
+      message.success("Coach Assigned Successfully");
     } catch (e) {
       console.log(e);
     }
   };
 
+  const handleOkRehect = () => {
+    setIsRejectModalOpen(false);
+    try {
+      const fetchData = async () => {
+        const res = await axios.put(
+          `${process.env.REACT_APP_API_URL}api/updatecoachAssignDetailsForArcade`,
+          {
+            coach_id: props.coach_id,
+            coachId: props.coach_id,
+            arcade_id: ArcadeId,
+            status: "canceled_By_Arcade",
+            coach_name: props.coach_name,
+            email: props.coach_Email,
+            arcade_name: props.arcade_name,
+          }
+        );
+        console.log(res.data);
+      };
+      fetchData();
+      message.success("Coach Rejected Successfully");
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
+  const dateTimeString = props.date;
+  const dateObject = new Date(dateTimeString);
+
+  // Extracting the date and time parts
+  const date = dateObject.toLocaleDateString();
+  const time = dateObject.toLocaleTimeString();
   return (
     <>
       <Row
@@ -63,17 +118,18 @@ const CoachReqestForArcade = (props: any) => {
         <Col xs={8} sm={8} md={8} lg={6} xl={6}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <div
-                style={{
-                  backgroundColor: "#000",
-                  width: "90px",
-                  height: "81px",
-                  borderRadius: "50%",
-                  marginRight: "10px",
-                  backgroundImage: `url(${profilePic})`,
-                  backgroundSize: "cover",
-                }}
-              ></div>
+              <AdvancedImage
+                onClick={handleClick}
+                style={{ width: "80px", height: "80px", borderRadius: "50%" }}
+                cldImg={
+                  cld.image(props.coach_image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
+                // border-radius: 50%;
+                // width: 80px;
+                // height: 80px;
+              />
             </Col>
             <Col
               style={{
@@ -91,7 +147,7 @@ const CoachReqestForArcade = (props: any) => {
               lg={12}
               xl={12}
             >
-              {props.coachName}
+              {props.coach_name}
             </Col>
           </Row>
         </Col>
@@ -105,13 +161,16 @@ const CoachReqestForArcade = (props: any) => {
             justifyContent: "center",
             alignItems: "center",
           }}
-          xs={8}
-          sm={8}
-          md={8}
-          lg={6}
-          xl={6}
+          xs={4}
+          sm={4}
+          md={4}
+          lg={4}
+          xl={4}
         >
-          {props.date}
+          <div>
+            <div>{date}</div>
+            <div>{time}</div>
+          </div>
         </Col>
         <Col
           style={{
@@ -129,6 +188,24 @@ const CoachReqestForArcade = (props: any) => {
           lg={6}
           xl={6}
         >
+          {props.sport}
+        </Col>
+        <Col
+          style={{
+            color: "#000",
+            fontFamily: "kanit",
+            fontWeight: "300",
+            fontSize: "18px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          xs={4}
+          sm={4}
+          md={4}
+          lg={4}
+          xl={4}
+        >
           <Button
             style={{
               backgroundColor: "#5587CC",
@@ -138,7 +215,7 @@ const CoachReqestForArcade = (props: any) => {
             }}
             key="submit"
             type="primary"
-            onClick={handleAccept}
+            onClick={showModal}
           >
             Accept
           </Button>
@@ -154,11 +231,11 @@ const CoachReqestForArcade = (props: any) => {
               justifyContent: "center",
               alignItems: "center",
             }}
-            xs={8}
-            sm={8}
-            md={8}
-            lg={6}
-            xl={6}
+            xs={4}
+            sm={4}
+            md={4}
+            lg={4}
+            xl={4}
           >
             <Button
               style={{
@@ -169,7 +246,7 @@ const CoachReqestForArcade = (props: any) => {
               }}
               key="submit"
               type="primary"
-              onClick={handleOk}
+              onClick={showModal}
             >
               Reject
             </Button>
@@ -193,6 +270,7 @@ const CoachReqestForArcade = (props: any) => {
             }}
             key="submit"
             type="primary"
+            // onClick={handleOk}
             onClick={handleOk}
           >
             Accept
@@ -205,7 +283,7 @@ const CoachReqestForArcade = (props: any) => {
               fontFamily: "kanit",
             }}
             key="back"
-            onClick={handleCancel}
+            onClick={handlReject}
           >
             Reject
           </Button>,
@@ -227,17 +305,18 @@ const CoachReqestForArcade = (props: any) => {
           <Col xs={24} sm={12} md={12} lg={8} xl={8}>
             <Row style={{ width: "100%" }}>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                <div
-                  style={{
-                    backgroundColor: "#000",
-                    width: "90px",
-                    height: "81px",
-                    borderRadius: "50%",
-                    marginRight: "10px",
-                    backgroundImage: `url(${profilePic})`,
-                    backgroundSize: "cover",
-                  }}
-                ></div>
+                <AdvancedImage
+                  onClick={handleClick}
+                  style={{ width: "80px", height: "80px", borderRadius: "50%" }}
+                  cldImg={
+                    cld.image(props.coach_image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                  // border-radius: 50%;
+                  // width: 80px;
+                  // height: 80px;
+                />
               </Col>
               <Col
                 style={{
@@ -255,7 +334,7 @@ const CoachReqestForArcade = (props: any) => {
                 lg={12}
                 xl={12}
               >
-                kanishka
+                {props.coach_name}
               </Col>
             </Row>
           </Col>
@@ -275,7 +354,7 @@ const CoachReqestForArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            Date
+            {props.date}
           </Col>
           <Col
             style={{
@@ -293,7 +372,25 @@ const CoachReqestForArcade = (props: any) => {
             lg={8}
             xl={8}
           >
-            ,
+            {props.sport}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            xl={8}
+          >
+            for {props.duration} years
           </Col>
 
           <Col
@@ -311,8 +408,21 @@ const CoachReqestForArcade = (props: any) => {
             md={12}
             lg={8}
             xl={8}
-          ></Col>
+          >
+            {props.description}
+          </Col>
         </Row>
+      </Modal>
+      <Modal
+        title="Reject Coach"
+        visible={isRejectModalOpen}
+        onOk={handleOkRehect}
+        onCancel={handleCancel}
+      >
+        <p>Are you sure you want to reject this coach?</p>
+
+
+
       </Modal>
     </>
   );

@@ -1,4 +1,4 @@
-import { Button, Col, Row, Skeleton, Typography } from "antd";
+import { Button, Col, Empty, Row, Skeleton, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { useEffect, useState } from "react";
@@ -6,11 +6,13 @@ import { Coach } from "../../types";
 import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
 import axios from "axios";
+import { useUser } from "../../context/userContext";
 
 const CoachCardSection = () => {
   const [coachAssignDetails, setCoachAssignDetails] = useState<Coach[]>([]);
   const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
+  const { userDetails } = useUser();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -27,10 +29,12 @@ const CoachCardSection = () => {
           `${process.env.REACT_APP_API_URL}api/getcoach`
         );
         const data = await res.data;
+        console.log(data);
 
         // Filter the data to include only items with status "active"
         const successCoaches = data.filter(
-          (coach: { status: string }) => coach.status === "active"
+          (coach: { user: any; status: string }) =>
+            coach.status === "active" && coach.user.is_active === "active"
         );
         setCoachAssignDetails(successCoaches);
       } catch (error) {
@@ -116,23 +120,33 @@ const CoachCardSection = () => {
                   flexWrap: "nowrap",
                 }}
               >
-                {coachAssignDetails?.map((coach: Coach) => (
-                  <Col
-                    lg={{ span: 5 }}
-                    md={{ span: 8 }}
-                    sm={{ span: 12 }}
-                    xs={{ span: 24 }}
-                  >
-                    <CoachCard
-                      coachName={`${coach.user.firstname} ${coach.user.lastname}`}
-                      coach_last_name={coach.user.lastname}
-                      short_description={coach.short_desctiption}
-                      rate={coach.rate}
-                      // duration={coachAssignDetail.duration}
-                      coach_image={coach.user.user_image}
-                    />
-                  </Col>
-                ))}
+                {" "}
+                {coachAssignDetails.length === 0 ? (
+                  <Empty description={"No Coaches Availiable"} />
+                ) : (
+                  coachAssignDetails.map((coach: Coach) => (
+                    <Col
+                      lg={{ span: 5 }}
+                      md={{ span: 8 }}
+                      sm={{ span: 12 }}
+                      xs={{ span: 24 }}
+                      // Adding a unique key for each element
+                    >
+                      <CoachCard
+                        coachName={`${coach.user.firstname} ${coach.user.lastname}`}
+                        coach_last_name={coach.user.lastname}
+                        short_description={coach.short_desctiption} // Corrected the typo
+                        rate={coach.rate}
+                        averageRate={coach.averageRate}
+                        // duration={coachAssignDetail.duration}
+                        coach_image={coach.user.user_image}
+                        coach_id={coach.coach_id}
+                        sport={coach.sport.sport_name}
+                        role={userDetails.role}
+                      />
+                    </Col>
+                  ))
+                )}
               </Row>
               <Pagination
                 style={{ marginTop: "-30px" }}

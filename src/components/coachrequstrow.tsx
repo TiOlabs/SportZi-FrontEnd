@@ -1,4 +1,4 @@
-import { Col, Row, Typography } from "antd";
+import { Col, Form, Row, Typography, message } from "antd";
 import { Button, Flex } from "antd";
 import { ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { Modal, Upload } from "antd";
@@ -11,11 +11,13 @@ import axios from "axios";
 import { CoachBookingDetails, ZoneBookingDetails } from "../types";
 import { AdvancedImage } from "@cloudinary/react";
 import confirm from "antd/es/modal/confirm";
+import TextArea from "antd/es/input/TextArea";
 
 const CoachRequstRow = (props: any) => {
   console.log(props);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const [isResonModalOpen, setIsResonModalOpen] = useState(false);
+  const [reason, setReason] = useState("");
   const [zoneBookingDetalsByCreateTime, setZoneBookingDetailsByCreateTime] =
     useState<ZoneBookingDetails[]>([]);
   console.log(props.created_at);
@@ -25,7 +27,7 @@ const CoachRequstRow = (props: any) => {
     try {
       const fetchData = async () => {
         const res = await fetch(
-          `http://localhost:8000/api/getarcadebookingbyCreatedTime/${props.created_at}/${props.user_id}`
+          `${process.env.REACT_APP_API_URL}api/getarcadebookingbyCreatedTime/${props.created_at}/${props.user_id}`
         );
 
         const data = await res.json();
@@ -53,8 +55,18 @@ const CoachRequstRow = (props: any) => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setIsResonModalOpen(false);
   };
-  const showDeleteConfirm = () => {
+  const shoeResonModal = () => {
+    setIsResonModalOpen(true);
+  };
+  const handleOkForResonModal = () => {
+    setIsResonModalOpen(false);
+  };
+  const handleCancelForResonModal = () => {
+    setIsResonModalOpen(false);
+  };
+  const showDeleteConfirm = async () => {
     confirm({
       title: "Are you sure cancel this task?",
       icon: <ExclamationCircleFilled />,
@@ -62,6 +74,7 @@ const CoachRequstRow = (props: any) => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      okCancel: true,
 
       async onOk() {
         let created_at, player_id;
@@ -78,10 +91,21 @@ const CoachRequstRow = (props: any) => {
         }
         try {
           const response = await axios.put(
-            `http://localhost:8000/api/updatecoachBooking/${props.booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatecoachBooking/${props.booking_id}`,
             {
               booking_id: props.booking_id,
               status: "canceled_By_Player",
+              email: props.email,
+              role: props.role,
+              coach_name: props.coach_name,
+              player_name: props.player_name,
+              booking_date: props.booking_date,
+              booking_time: props.booking_time,
+              arcade_email: props.arcade_email,
+              reason: reason,
+              coach_id: props.coach_id,
+              arcade_id: props.arcade_id,
+              player_id: props.player_id,
             }
           );
           try {
@@ -97,7 +121,7 @@ const CoachRequstRow = (props: any) => {
             console.log(error);
           }
           const res = await axios.put(
-            `http://localhost:8000/api/updatearcadebooking/${zoneBookingDetalsByCreateTime[0]?.zone_booking_id}`,
+            `${process.env.REACT_APP_API_URL}api/updatearcadebooking/${zoneBookingDetalsByCreateTime[0]?.zone_booking_id}`,
             {
               zone_booking_id:
                 zoneBookingDetalsByCreateTime[0]?.zone_booking_id,
@@ -111,7 +135,26 @@ const CoachRequstRow = (props: any) => {
                 coachBookingDetails.booking_id !== props.booking_id
             );
           });
+          message.success(
+            "Booking cancelation successfull!"
+          );
           setIsModalOpen(false);
+        } catch (error) {
+          console.log("error");
+          console.log(error);
+        }
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}api/addbookingcancelcoach`,
+            {
+              booking_id: props.booking_id,
+              reason: reason,
+            }
+          );
+          // Close modal
+          setIsResonModalOpen(false);
+
+          // Update zone booking details
         } catch (error) {
           console.log("error");
           console.log(error);
@@ -266,7 +309,7 @@ const CoachRequstRow = (props: any) => {
               fontWeight: "400",
               fontSize: "18px",
             }}
-            onClick={showDeleteConfirm}
+            onClick={shoeResonModal}
             key="submit"
             type="primary"
           >
@@ -290,17 +333,20 @@ const CoachRequstRow = (props: any) => {
           <Col xs={24} sm={12} md={12} lg={8} xl={8}>
             <Row style={{ width: "100%" }}>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                <div
+                <AdvancedImage
                   style={{
-                    backgroundColor: "#000",
                     width: "90px",
-                    height: "81px",
+                    height: "90px",
                     borderRadius: "50%",
                     marginRight: "10px",
-                    backgroundImage: `url(${profilePic})`,
                     backgroundSize: "cover",
                   }}
-                ></div>
+                  cldImg={
+                    cld.image(props?.coach_image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
               </Col>
               <Col
                 style={{
@@ -375,11 +421,115 @@ const CoachRequstRow = (props: any) => {
             lg={6}
             xl={6}
           >
-            {props.venue}
+            Zone: {props.venue}
+          </Col>
+
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={6}
+          >
+            Status: {props.status}
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "300",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={24}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={6}
+          >
+            Rate: LKR {props.full_amount}
           </Col>
         </Row>
       </Modal>
-      <Modal></Modal>
+      <Modal
+        width={1000}
+        title="Basic Modal"
+        // open={isModalOpen}
+        open={isResonModalOpen}
+        onOk={handleOkForResonModal}
+        okText="Cancel Meeting"
+        onCancel={handleCancelForResonModal}
+        footer={[
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#0E458E",
+              border: "1px solid #0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            key="back"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>,
+          <Button
+            style={{
+              backgroundColor: "#fff",
+              color: "#FF0000",
+              border: "1px solid #FF0000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "18px",
+            }}
+            // onClick={showDeleteConfirm}
+            onClick={showDeleteConfirm}
+            key="submit"
+            type="primary"
+          >
+            Cancel Meeting
+          </Button>,
+        ]}
+      >
+        <Form layout="vertical" onFinish={showDeleteConfirm}>
+          <Form.Item>
+            <h3>Are you sure you want to cancel this meeting?</h3>
+          </Form.Item>
+
+          <Form.Item
+            name="reason"
+            label="Please enter the reason for cancellation"
+            rules={[
+              {
+                type: "string",
+                message: "Please enter a valid Description!",
+              },
+              {
+                required: true,
+                message: "Please input your Descrition!",
+              },
+            ]}
+          >
+            <TextArea
+              rows={5}
+              placeholder="Add a Short Description about Applying for Coaching"
+              onChange={(e) => setReason(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };

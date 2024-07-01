@@ -2,7 +2,12 @@ import Navbar2 from "../../components/navbar";
 import { Col, Flex, Row } from "antd";
 import Navbar from "../../components/navbar";
 import AppFooter from "../../components/footer";
-import AboutImage from "../../assents/AboutImage.png";
+import AboutImage from "../../assents/AboutImage1.jpg";
+import AboutImage2 from "../../assents/AboutImage2.jpeg";
+import AboutImage3 from "../../assents/AboutImage3.jpeg";
+import AboutImage4 from "../../assents/AboutImage4_1.jpeg";
+import AboutImage5 from "../../assents/AboutImage5.jpeg";
+import AboutImage6 from "../../assents/AboutImage6.jpeg";
 import { Image } from "antd";
 import { Grid } from "antd";
 import { useEffect, useState } from "react";
@@ -10,6 +15,7 @@ import Cookies from "js-cookie";
 import NavbarLogin from "../../components/NavBarLogin";
 import { usePlayer } from "../../context/player.context";
 import { useLocation } from "react-router-dom";
+import { useUser } from "../../context/userContext";
 
 const About = () => {
   const about = useLocation();
@@ -22,7 +28,7 @@ const About = () => {
   useEffect(() => {
     setToken(Cookies.get("token"));
   }, []);
-  const { userDetails } = usePlayer();
+  const { userDetails } = useUser();
   return (
     <div style={{}}>
       {userDetails.id !== "" ? <Navbar /> : <NavbarLogin />}
@@ -71,10 +77,11 @@ const About = () => {
           <div
             style={{
               fontSize: 45,
-              fontWeight: 300,
+              fontWeight: 400,
               marginTop: lg ? "12%" : "10%",
               marginBottom: lg ? "0%" : "3%",
               fontStyle: "kanit",
+              color:"#0E458E",
             }}
           >
             About Us
@@ -102,8 +109,10 @@ const About = () => {
               width: lg ? "460px" : "400px",
               marginLeft: lg ? "-5%" : "2%",
               marginRight: lg ? "0%" : "2%",
+              borderRadius: "10px",
             }}
             width={460}
+            height={440}
             src={AboutImage}
             preview={{ src: AboutImage }}
           />
@@ -119,6 +128,7 @@ const About = () => {
             textAlign: "center",
           }}
         >
+          
           <div
             style={{
               fontSize: lg ? "18px" : "16px",
@@ -130,6 +140,7 @@ const About = () => {
               fontWeight: 300,
             }}
           >
+        <p> Welcome to Spotzi! </p>  
             <div
               style={{
                 display: "Flex",
@@ -139,14 +150,20 @@ const About = () => {
                 marginBottom: "5%",
               }}
             >
-              I am a former elite rugby league player who would love to
-              encourage and mentor younger athletes to work towards their goals
-              and aspirations as well as to share my knowledge and give back to
-              the game that’s given me so much. My main position in rugby league
-              was halfback and I had the honour of representing QLD in the State
-              Of Origin
+           
+             
+              At SpotZi, we are dedicated to transforming the way 
+              sports facilities are managed. Our mission is to empower 
+              sports venues of all sizes with state-of-the-art, user-friendly 
+              technology, making complex operational challenges a thing of the past. 
+              From local community gyms to prestigious world-class stadiums, SpotZi provides
+              innovative solutions that streamline every aspect of facility management.
             </div>
+<div>
+<p> Our Vision</p>  
+<p style={{fontSize:"20px"}}>Efficient Operations, Exceptional Experiences</p>
 
+</div>
             <div
               style={{
                 display: "Flex",
@@ -155,12 +172,14 @@ const About = () => {
                 textAlign: "center",
               }}
             >
-              I am a former elite rugby league player who would love to
-              encourage and mentor younger athletes to work towards their goals
-              and aspirations as well as to share my knowledge and give back to
-              the game that’s given me so much. My main position in rugby league
-              was halfback and I had the honour of representing QLD in the State
-              Of Origin
+        
+
+
+We believe in the power of efficiency to enhance experiences. 
+By integrating our advanced management system into your operations, 
+we simplify tasks such as booking, maintenance, and resource management. 
+This allows you to focus on what truly matters—creating outstanding experiences 
+for athletes, coaches, and sports enthusiasts alike.
             </div>
           </div>
         </Col>
@@ -181,7 +200,7 @@ const About = () => {
             color: "#0E458E",
           }}
         >
-          The Journey of coaching
+         Join Us on the Journey
         </div>
       </Row>
 
@@ -204,19 +223,110 @@ const About = () => {
             }}
           >
             {" "}
-            I am a former elite rugby league player who would love to encourage
-            and mentor younger athletes to work towards their goals and
-            aspirations as well as to share my knowledge and give back to the
-            game that’s given me so much. My I am a former elite rugby league
-            player who would love to encourage and mentor younger athletes to
-            work towards their goals and aspirations as well as to share my
-            knowledge and give back to the game that’s given me so much. My main
-            position in rugby league was halfback and I had the honour of
-            representing QLD in the State Of Origin{" "}
+            At SpotZi, we're not just about managing facilities; 
+            we're about pioneering a new era of sports venue management. 
+            Our commitment to innovation and excellence drives us to constantly 
+            evolve and improve, providing our clients with the tools they need to succeed. 
+            Discover how SpotZi can redefine your facility’s operations and elevate your venue to new heights.
+{" "}
           </div>
         </Col>
         <Col lg={4} xs={0} md={3}></Col>
       </Row>
+
+<Row style={{display :"flex",
+             marginBottom:"5%",
+             justifyContent:"center",
+             justifyItems:"center",
+             }}>
+<p style={{color:"#0E458E",
+          fontFamily:"kanit",
+}}>Meet Our Team</p>
+</Row>
+<Row style={{marginBottom:"5%",
+             display :"flex",
+             justifyContent:"center",
+             justifyItems:"center",
+             textAlign: "center",
+             flexWrap: "wrap"
+}}>
+ 
+<Image.PreviewGroup 
+    preview={{
+      onChange: (current, prev) => console.log(`current index: ${current}, prev index: ${prev}`),
+    }}
+  >
+  
+    <Col lg={3} md={8} xs={12}> <Image 
+    style={{borderRadius:"100%",
+      width : lg ? "140px" :"130px",
+      border: "6px solid #0E458E",
+   
+      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+      transition: "transform 0.2s, box-shadow 0.2s",
+      cursor: "pointer"}} 
+            src={AboutImage5} />
+          <div style={{marginTop: "10px", display :"flex",
+             justifyContent:"center", justifyItems:"center"}}>Thisara</div>
+    </Col>
+
+    <Col lg={3} md={8} xs={12}><Image  
+    style={{ borderRadius:"100%",
+      width : lg ? "140px" :"140px",
+      border: "6px solid #0E458E",
+     
+      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+      transition: "transform 0.2s, box-shadow 0.2s",
+      cursor: "pointer"}}src={AboutImage4}/>
+    <div style={{marginTop: "10px"}}>Bathiya</div>
+    </Col>
+
+    <Col lg={3} md={8} xs={12}> <Image  
+    style={{ borderRadius:"100%",
+      width : lg ? "140px" :"140px",
+      border: "6px solid #0E458E",
+     
+      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+      transition: "transform 0.2s, box-shadow 0.2s",
+      cursor: "pointer"}}src={AboutImage2}/>
+    <div style={{marginTop: "10px"}}>Navindu</div>
+    </Col>  
+
+    <Col lg={3} md={8} xs={12}><Image 
+    style={{borderRadius:"100%",
+            width : lg ? "140px" :"140px",
+            border: "6px solid #0E458E",
+           
+            boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+            transition: "transform 0.2s, box-shadow 0.2s",
+            cursor: "pointer"}} 
+            src={AboutImage3}/>
+
+         <div style={{marginTop: "10px"}}>Niweesha</div>
+    </Col>
+
+
+
+    <Col lg={3} md={8} xs={12}> <Image 
+    style={{ borderRadius:"100%",
+      width : lg ? "140px" :"140px",
+      border: "6px solid #0E458E",
+   
+      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+      transition: "transform 0.2s, box-shadow 0.2s",
+      cursor: "pointer"}} 
+      src={AboutImage6}/>
+   
+    <div style={{marginTop: "10px"}}>Kanishka</div>
+
+    </Col>
+   
+    
+   
+    
+   
+  </Image.PreviewGroup>
+</Row>
 
       {<AppFooter />}
     </div>

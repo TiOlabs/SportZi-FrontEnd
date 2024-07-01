@@ -1,7 +1,11 @@
 import {
   AuditOutlined,
+  DashboardOutlined,
   DollarOutlined,
+  EyeOutlined,
   MenuOutlined,
+  ShoppingOutlined,
+  SolutionOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Col, Row, Menu } from "antd";
@@ -31,6 +35,12 @@ import AdminCanceledPackageEnrollment from "./paymentManagement/adminCancelledPa
 import { Link } from "react-router-dom";
 import AdminDashboard from "./dashboard";
 import AdminPannel from "./adminDashBoard";
+import AllPackagers from "./packageManagement/allPackages";
+import CancelPackagers from "./packageManagement/cancelPackagers";
+import SportManagement from "./sportManagement/sportManagement";
+import ReportManagement from "./reportManagement/reportManagement";
+import ReportUserManagement from "./reportManagement/reportUserManagement";
+import SignUpAdmin from "./addAdmin/signUpAdmin";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -50,7 +60,7 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuProps["items"] = [
-  getItem("Dashboard", "2"),
+  getItem("Dashboard", "2", <DashboardOutlined />),
   getItem("User manegment", "sub4", <UserOutlined />, [
     getItem("Coaches Management", "9"),
     getItem("Player Management", "10"),
@@ -84,7 +94,19 @@ const items: MenuProps["items"] = [
     getItem("Booked Coaches ", "18"),
     getItem("Package Enrolled", "19"),
   ]),
+  getItem("Package Management", "sub7", <ShoppingOutlined />, [
+    getItem("AllPackagers", "32"),
+    getItem("Cancel Packagers", "33"),
+  ]),
+  getItem("Sports Management", "sub8", <EyeOutlined />, [
+    getItem("Sport Management", "34"),
+  ]),
+  getItem("Report Management", "sub9", <SolutionOutlined />, [
+    getItem("Reported Arcades", "35"),
+    getItem("Reported Users", "36"),
+  ]),
 ];
+
 const SideBarAdminPage = () => {
   const [stts, setstts] = useState("");
   const [arcadeBookings, setArcadeBookings] = useState<ArcadeBookings[]>([]);
@@ -94,7 +116,7 @@ const SideBarAdminPage = () => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getarcadebookings`
         );
         const data = await res.data;
 
@@ -163,7 +185,17 @@ const SideBarAdminPage = () => {
     } else if (e.key === "31") {
       setstts("AdminCanceledPackage");
     } else if (e.key === "2") {
-      setstts("dashBoard");
+      setstts("signUpAdmin");
+    } else if (e.key === "32") {
+      setstts("AllPackagers");
+    } else if (e.key === "33") {
+      setstts("CancelPackagers");
+    } else if (e.key === "34") {
+      setstts("SportManagement");
+    } else if (e.key === "35") {
+      setstts("ArcadeReports");
+    } else if (e.key === "36") {
+      setstts("UserReports");
     }
   };
   return (
@@ -174,8 +206,9 @@ const SideBarAdminPage = () => {
           backgroundColor: "#051F43",
           color: "white",
           padding: "2%",
-          height: "120vh",
+          height: "220vh",
           overflowY: "hidden",
+          position: "fixed",
         }}
       >
         <Row>
@@ -183,9 +216,7 @@ const SideBarAdminPage = () => {
           <MenuOutlined />
         </Row>
         <Row style={{ marginTop: "5%" }}>
-         
-            <h3>Admin Pannel</h3>
-          
+          <h3>Admin Pannel</h3>
         </Row>
         <Row>
           {" "}
@@ -227,7 +258,7 @@ const SideBarAdminPage = () => {
             /> */}
       </>
       {/* ))} */}
-      {stts === "dashBoard" && <AdminPannel />}
+      {stts === "signUpAdmin" && <SignUpAdmin />}
       {stts === "bookedcoach" && <BookedCoaches />}
       {stts === "packageEnrolled" && <PackageEnrolled />}
       {stts === "PlayerManagement" && <PlayerManagement />}
@@ -246,6 +277,13 @@ const SideBarAdminPage = () => {
       {stts === "AdminCanceledCoach" && <AdminCanceledCoachBookings />}
       {stts === "AdminCanceledPackage" && <AdminCanceledPackageEnrollment />}
       {stts === "completedBooking" && <ComplitedBookings />}
+      {stts === "AllPackagers" && <AllPackagers />}
+      {stts === "CancelPackagers" && <CancelPackagers />}
+      {stts === "SportManagement" && <SportManagement />}
+      {stts === "ArcadeReports" && <ReportManagement />}
+      {stts === "UserReports" && <ReportUserManagement />}
+      {stts === "" && <AdminPannel />}
+      {/* <AdminPannel /> */}
     </Row>
   );
 };

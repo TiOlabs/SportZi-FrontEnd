@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Modal, Upload, Button, Row, Col } from "antd";
+import { Modal, Upload, Button, Row, Col, message } from "antd";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
 import React, { useContext, useEffect, useState } from "react";
@@ -10,6 +10,8 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import axios from "axios";
 import { PlayerContext } from "../context/player.context";
 import { useArcade } from "../context/Arcade.context";
+import { UserContext } from "../context/userContext";
+import { useParams } from "react-router-dom";
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -20,8 +22,10 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 
 const AddPhotoButton = () => {
-  const { managerDetails } = useArcade();
-  const { userDetails } = useContext(PlayerContext);
+  const { ArcadeId } = useParams();
+  console.log(ArcadeId);
+  const { userDetails } = useContext(UserContext);
+  console.log(userDetails);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -92,29 +96,47 @@ const AddPhotoButton = () => {
     },
   });
   const imgObject = cld.image(publicId);
-  let userId = "";
+
   useEffect(() => {
-    let userId = "";
-    if (userDetails?.id === "") {
-      userId = managerDetails?.id;
-    } else {
-      userId = userDetails?.id;
+    console.log(publicId);
+    console.log(userDetails.id);
+    async function fetchData() {
+      if (ArcadeId === undefined || ArcadeId === null) {
+        try {
+          const res = await axios.post(
+            `${process.env.REACT_APP_API_URL}api/addUserPhoto`,
+            {
+              image: publicId,
+              user_id: userDetails.id,
+            }
+          );
+          message.success("Photo uploaded successfully");
+          window.location.reload();
+        } catch (e) {
+          console.log(e);
+        }
+      }
     }
+    fetchData();
+  }, [publicId, userDetails.id]);
+  useEffect(() => {
     async function fetchData() {
       try {
         const res = await axios.post(
-          `${process.env.REACT_APP_API_URL}api/addUserPhoto`,
+          `${process.env.REACT_APP_API_URL}api/addArcadePhoto`,
           {
             image: publicId,
-            user_id: userId,
+            arcade_id: ArcadeId,
           }
         );
+        message.success("Photo uploaded successfully");
+        window.location.reload();
       } catch (e) {
         console.log(e);
       }
     }
     fetchData();
-  }, [publicId, userDetails, managerDetails.id]);
+  }, [publicId]);
   return (
     <>
       {/* <Button

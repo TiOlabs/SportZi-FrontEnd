@@ -5,11 +5,14 @@ import {
   ConfigProvider,
   Empty,
   Grid,
+  Input,
   List,
   Radio,
   RadioChangeEvent,
   Row,
+  Select,
   Typography,
+  Rate,
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -18,7 +21,7 @@ import { Image } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import AddPhotoButton from "../../components/addPhotoButton";
 import CoachAccepteLst from "../../components/CoachAcceptedList";
-import { useContext, useEffect, useState } from "react";
+import { SetStateAction, useContext, useEffect, useState } from "react";
 import CoachReqestList from "../../components/CoachRequestList";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import ReviewCard from "../../components/ReviewCard";
@@ -30,10 +33,24 @@ import {
   Arcade,
   CoachAssignDetails,
   CoachBookingDetails,
+  CoachEnrollDetailsForPackages,
   Zone,
 } from "../../types";
 import axios from "axios";
+import { Option } from "antd/es/mentions";
+import ReportGenarationForCoach from "../../components/reportGenarationForCoach";
+import CoachEdit from "../../components/coachEdit";
 
+import Notification from "../../components/notification";
+import { CoachFeedback } from "../../types";
+import PackageEnrollListForCoach from "../../components/packageEnrolllistInCoachProfile";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+
+interface AvailableTime {
+  day: string;
+  time: string;
+}
 const RequestedMeetings = [<CoachReqestList />];
 
 const CoachProfile = () => {
@@ -45,14 +62,19 @@ const CoachProfile = () => {
     console.log("radio checked", e.target.value);
     setValue2(e.target.value);
   };
+  const onChangePackageEnroll = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValuepackageEnroll(e.target.value);
+  };
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [valuepackageEnroll, setValuepackageEnroll] = useState(13);
   const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
   const [coachAssignDetails, setCoachAssignDetails] = useState<
     CoachAssignDetails[]
   >([]);
   const { coachDetails } = useContext(CoachContext);
-  console.log("coachDetails", coachDetails);
+  const coach_id = coachDetails?.id;
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
 
@@ -60,7 +82,9 @@ const CoachProfile = () => {
   const [showMore, setShowMore] = useState(true);
 
   const [Details, setDetails] = useState<any>(null);
-  console.log("coach detailsssss", coachDetails.id);
+
+  const coachId = coachDetails?.id;
+  console.log("Coach ID:", coachId);
   useEffect(() => {
     axiosInstance
       .get(
@@ -68,15 +92,11 @@ const CoachProfile = () => {
       )
       .then((res) => {
         setDetails(res.data);
-        console.log("responsedataaaa", res.data);
       })
       .catch((err) => {
         console.log("errorrrrrrrrrrrrrrrr", err);
       });
   }, [coachDetails?.id]);
-  useEffect(() => {
-    console.log("coach detailsssss", Details);
-  }, [Details]);
 
   // useEffect(() => {
   //   axios
@@ -151,7 +171,9 @@ const CoachProfile = () => {
             (booking: { status: string; date: string }) => {
               const bookingDate = new Date(booking.date);
               return (
-                booking.status === "canceled_By_Coach" &&
+                (booking.status === "canceled_By_Coach" ||
+                  booking.status === "canceled_By_Player" ||
+                  booking.status === "canceled_By_Arcade") &&
                 bookingDate > currentDate
               );
             }
@@ -175,11 +197,11 @@ const CoachProfile = () => {
   const acceptedMeetings = [<CoachAccepteLst />];
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachDetails?.id}`
-        );
+    axios
+      .get(
+        `${process.env.REACT_APP_API_URL}api/getcoachassignvaluesById/${coachDetails?.id}`
+      )
+      .then((res) => {
         const data = res.data;
 
         if (value2 === 4) {
@@ -197,14 +219,193 @@ const CoachProfile = () => {
         }
 
         console.log(data);
-      };
+      })
 
-      fetchData();
-    } catch (e) {
-      console.log(e);
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [coachAssignDetails, value2]);
+
+  const [filterBy, setFilterBy] = useState("date");
+  const [filterValue, setFilterValue] = useState(""); // Assuming value is for Radio.Group
+
+  const handleFilterChange = (e: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setFilterValue(e.target.value);
+  };
+
+  const filteredBookings = coachBookings.filter((booking) => {
+    if (filterBy === "player_name") {
+      return booking.player.user.firstname
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    } else if (filterBy === "arcade_name") {
+      return booking.arcade.arcade_name
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    } else if (filterBy === "date") {
+      return booking.date.includes(filterValue);
+    } else if (filterBy === "time") {
+      return booking.time.includes(filterValue);
+    } else if (filterBy === "rate") {
+      return booking.rate && booking.rate.toString().includes(filterValue);
+    } else if (filterBy === "booking_id") {
+      return booking.booking_id.toString().includes(filterValue);
+    } else if (filterBy === "status") {
+      return booking.status.includes(filterValue);
     }
-  }, [coachDetails, value2]);
+    return true;
+  });
+  const [firstname, setFirstName] = useState<any>();
+  const [lastname, setLastName] = useState<any>();
+  const [discription, setDiscription] = useState<any>();
+  const [profileImage, setProfileImage] = useState<any[]>([]);
+  const [AvailableTimes, setAvailableTimes] = useState<any>();
+  const [qulifications, setQulifications] = useState<any>();
+  const [expertice, setExpertice] = useState<any>();
+  const [AccNumber, setAccNumber] = useState<any>();
+  const [user_image, setUser_image] = useState<any>();
+  const [packageEnrollmentCoach, setPackageEnrollmentCoach] = useState<
+    CoachEnrollDetailsForPackages[]
+  >([]);
+  const [rate, setRate] = useState<any>();
+  useEffect(() => {
+    if (Details) {
+      setFirstName(Details?.firstname);
+      setLastName(Details?.lastname);
+      setDiscription(Details?.Discription);
+      setAvailableTimes(Details?.Coach?.availability);
+      setExpertice(Details?.Coach?.sport?.sport_id);
+      setAccNumber(Details?.accountNumber);
+      setUser_image(Details?.user_image);
+      setRate(Details?.Coach?.rate);
+      const achiv = Details?.achivement;
+      if (achiv) {
+        let achiveArr: string[] = [];
+        achiv.map((item: any) => {
+          achiveArr.push(item.achivement_details as string);
+        });
+        console.log(achiveArr);
+        let achivArrString = achiveArr.join(",");
+        setQulifications(achivArrString);
+      }
+    }
+  }, [Details]);
+  useEffect(() => {
+    setLastName(coachDetails?.lastname);
+  }, []);
 
+  const QulificationsGetToArry = (qulifications: string) => {
+    if (qulifications) {
+      return qulifications.split(",");
+    }
+    return [];
+  };
+  console.log("AvailableTimes:", AvailableTimes);
+  let groupedByDay: { [key: string]: string[] } = {};
+  if (AvailableTimes) {
+    groupedByDay = AvailableTimes.reduce(
+      (acc: { [key: string]: string[] }, { day, time }: AvailableTime) => {
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+        acc[day].push(time);
+        return acc;
+      },
+      {} as { [key: string]: string[] }
+    );
+  }
+
+  //for display reviews
+  const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getcoachfeedbacks/${coachId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, [coachId]);
+
+  useEffect(() => {
+    const fetchPackageEnrollmentCoach = async () => {
+      console.log("coachId:", coachId);
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentCoachDetailsById/${coachId}`
+        );
+        console.log("response:", response.data);
+        setPackageEnrollmentCoach(response.data);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchPackageEnrollmentCoach();
+  }, [coachId]);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbycoachId/${coachId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [coachId]);
+
+  const filteredEnrollmentCoach = packageEnrollmentCoach.filter(
+    (enrollment) => {
+      if (valuepackageEnroll === 13) {
+        return enrollment.status === "pending";
+      } else if (valuepackageEnroll === 14) {
+        return enrollment.status === "success";
+      } else if (valuepackageEnroll === 15) {
+        return (
+          enrollment.status === "canceled_By_Coach" ||
+          enrollment.status === "canceled_By_Arcade"
+        );
+      } else {
+        return true;
+      }
+    }
+  );
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <NavbarProfile />
@@ -212,6 +413,7 @@ const CoachProfile = () => {
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
+
       <Row>
         <Col
           xs={24}
@@ -253,10 +455,13 @@ const CoachProfile = () => {
               xl={24}
             >
               {" "}
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(user_image)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>
@@ -300,7 +505,7 @@ const CoachProfile = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                {Details?.Discription}
+                {discription}
               </Typography>
             </Col>
           </Row>
@@ -325,26 +530,67 @@ const CoachProfile = () => {
             style={{
               width: "80%",
               height: "800px",
-
               display: "flex",
               justifyContent: "flex-start",
               flexDirection: "column",
             }}
           >
+            <div
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                width: "80%",
+                display: "flex",
+                justifyContent: "flex-end",
+                flexDirection: "row",
+              }}
+            >
+              {" "}
+              <CoachEdit
+                firstname={firstname}
+                setFirstname={setFirstName}
+                lastName={lastname}
+                setLastName={setLastName}
+                discription={discription}
+                setDiscription={setDiscription}
+                setQulifications={setQulifications}
+                qulifications={qulifications}
+                expertice={expertice}
+                setExpertice={setExpertice}
+                coachId={coachDetails?.id}
+                availability={AvailableTimes}
+                AccNumber={AccNumber}
+                setAccNumber={setAccNumber}
+                user_image={user_image}
+                rate={rate}
+                setRate={setRate}
+              />
+            </div>
             <div>
-              <h1
-                style={{
-                  color: "#000",
-                  fontSize: "32px",
-                  fontStyle: "capitalize",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {Details?.firstname} {Details?.lastname}
-              </h1>
+              <Row>
+                <Col>
+                  <h1
+                    style={{
+                      color: "#000",
+                      fontSize: "32px",
+                      fontStyle: "capitalize",
+                      fontWeight: "500",
+                      fontFamily: "kanit",
+                      lineHeight: "normal",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    {firstname} {lastname}
+                  </h1>
+                </Col>
+                <Col span={1}></Col>
+                <Col>
+                  <h1>
+                    <Notification userType="coach" id={coachDetails?.id} />
+                  </h1>
+                </Col>
+              </Row>
+
               <p
                 style={{
                   margin: "0px",
@@ -357,7 +603,20 @@ const CoachProfile = () => {
                   lineHeight: "normal",
                 }}
               >
-                First class rugby coach
+                First class {Details?.Coach?.sport?.sport_name} coach
+              </p>
+              <p
+                style={{
+                  marginTop: "4px",
+                  color: "#0E458E",
+                  fontFamily: "kanit",
+                  fontSize: "22px",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                }}
+              >
+                Rate (per hour):Rs.{rate}
               </p>
             </div>
             <div
@@ -380,7 +639,7 @@ const CoachProfile = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -415,11 +674,19 @@ const CoachProfile = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <Rate
+                        allowHalf
+                        disabled
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
                     </div>
                     <p
                       style={{
@@ -433,13 +700,12 @@ const CoachProfile = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      ({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
               </Row>
             </div>
-
             <Typography
               style={{
                 color: "#000",
@@ -452,19 +718,18 @@ const CoachProfile = () => {
                 fontSize: lg ? "24px" : "18px",
               }}
             >
-              Qlifications
+              Qulifications
             </Typography>
-
             <List
               style={{
                 padding: "0px",
                 fontWeight: "200",
                 color: "#000",
                 fontFamily: "kanit",
-                lineHeight: "1",
+                lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
+              dataSource={QulificationsGetToArry(qulifications)}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -501,7 +766,6 @@ const CoachProfile = () => {
                 </List.Item>
               )}
             />
-
             <Typography
               style={{
                 color: "#000",
@@ -516,7 +780,6 @@ const CoachProfile = () => {
             >
               Expertise
             </Typography>
-
             <List
               style={{
                 padding: "0px",
@@ -526,43 +789,39 @@ const CoachProfile = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "none",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  {Details?.Coach?.sport?.sport_name}
+                </div>
+              </List.Item>
+            </List>
             <Typography
               style={{
                 color: "#000",
@@ -586,7 +845,7 @@ const CoachProfile = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={["physical"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -637,52 +896,81 @@ const CoachProfile = () => {
             >
               Available Times
             </Typography>
-            <List
+            <div
               style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
               }}
-              itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              {Object.keys(groupedByDay).map((day) => (
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
+                    flexDirection: "row",
+                    width: "100%",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
+                  key={day}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: lg ? "24px" : "18px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                      width: "1%",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
+                    &#8226;
+                  </span>
+                  <Typography
+                    style={{
+                      color: "#000",
+                      fontFamily: "kanit",
+                      width: "30%",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "normal",
+                      marginTop: "5px",
+                      fontSize: lg ? "24px" : "18px",
+                    }}
+                  >
+                    {day}
+                  </Typography>
+                  <div
+                    style={{
+                      marginTop: "5px",
+                      fontSize: lg ? "18px" : "14px",
+                      fontFamily: "kanit",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "40%",
+                      fontWeight: "300",
+                      justifyContent: "flex-start",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    {groupedByDay[day].map((time, index) => (
+                      <div key={index}>{time}</div>
+                    ))}
                   </div>
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </div>
+            <Typography
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontStyle: "normal",
+                fontWeight: "200",
+                lineHeight: "normal",
+                marginTop: "5px",
+                fontSize: lg ? "24px" : "18px",
+              }}
+            >
+              Acc Number :{AccNumber}
+            </Typography>
           </div>
         </Col>
       </Row>
@@ -720,123 +1008,25 @@ const CoachProfile = () => {
         }}
       >
         {" "}
-        <AddPhotoButton />{" "}
+        <AddPhotoButton />
       </div>
       <PhotoCollage />
-
-      <Row
+      <div
         style={{
           width: "100%",
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "60px",
-        }}
-      >
-        <Typography
-          style={{
-            alignItems: "center",
-            color: "#0E458E",
-            fontFamily: "kanit",
-            fontWeight: "500",
-            fontSize: lg ? "32px" : "24px",
-            paddingBottom: "10px",
-            marginBottom: "0px",
-          }}
-        >
-          {" "}
-          Available Meetings For You
-        </Typography>
-      </Row>
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <Col
-          span={2}
+        <Row
           style={{
+            width: "100%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBorder: "#0E458E",
-                colorPrimary: "#0E458E",
-              },
-            }}
-          >
-            <Radio.Group onChange={onChange} value={value}>
-              <Radio value={1}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        <Col
-          span={2}
-          style={{
-            display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBorder: "#05a30a",
-                colorPrimary: "#05a30a",
-              },
-            }}
-          >
-            <Radio.Group onChange={onChange} value={value}>
-              <Radio value={2}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBorder: "#ad0508",
-                colorPrimary: "#ad0508",
-              },
-            }}
-          >
-            <Radio.Group onChange={onChange} value={value}>
-              <Radio value={3}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        <Col span={16}></Col>
-      </Row>
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            marginTop: "60px",
           }}
         >
           <Typography
@@ -844,73 +1034,193 @@ const CoachProfile = () => {
               alignItems: "center",
               color: "#0E458E",
               fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
+              fontWeight: "500",
+              fontSize: "32px",
               paddingBottom: "10px",
               marginBottom: "0px",
-              display: "flex",
             }}
           >
-            Availiable
+            Available Meetings For You
           </Typography>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#05a30a",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Completed
-          </Typography>
-        </Col>
+        </Row>
 
-        <Col
-          span={2}
+        <Row
           style={{
+            width: "100%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <Typography
+          <Col
+            span={2}
             style={{
-              alignItems: "center",
-              color: "#ad0508",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            Canceled
-          </Typography>
-        </Col>
-        <Col span={16}></Col>
-      </Row>
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+              }}
+            >
+              <Radio.Group onChange={onChange} value={value}>
+                <Radio value={1}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#05a30a", colorPrimary: "#05a30a" },
+              }}
+            >
+              <Radio.Group onChange={onChange} value={value}>
+                <Radio value={2}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+              }}
+            >
+              <Radio.Group onChange={onChange} value={value}>
+                <Radio value={3}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+          <Col span={8}></Col>
+          <Col span={8}>
+            <Select
+              defaultValue="date"
+              style={{ width: 120, height: "40px" }}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="date">Date</Option>
+              <Option value="time">Time</Option>
+              <Option value="rate">Rate</Option>
+              <Option value="player_name">Player Name</Option>
+              <Option value="arcade_name">Arcade Name</Option>
+              <Option value="booking_id">Booking ID</Option>
+              <Option value="status">Status</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{ width: 200, marginLeft: 10, height: "40px" }}
+              onChange={handleFilterChange}
+            />
+            <Button
+              style={{ marginLeft: 10, height: "40px" }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
+        </Row>
+
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Available
+            </Typography>
+          </Col>
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#05a30a",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Completed
+            </Typography>
+          </Col>
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#ad0508",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Canceled
+            </Typography>
+          </Col>
+          <Col span={16}></Col>
+        </Row>
+
         <Row
           style={{
             borderRadius: "3px 3px 0px 0px",
@@ -938,7 +1248,7 @@ const CoachProfile = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{
@@ -976,72 +1286,98 @@ const CoachProfile = () => {
           >
             Time
           </Col>
-          {lg && (
-            <Col
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontWeight: "400",
-                fontSize: "28px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              xs={8}
-              sm={8}
-              md={8}
-              lg={6}
-              xl={6}
-            >
-              Venue
-            </Col>
-          )}
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Venue
+          </Col>
         </Row>
-        {coachBookings.length > 0 ? (
-          coachBookings.map((booking: CoachBookingDetails) => (
-            <CoachAccepteLst
-              booking_id={booking.booking_id}
-              booked_by={booking.player.user.firstname}
-              image={booking.player.user.user_image}
-              date={booking.date}
-              time={booking.time}
-              venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
-            />
-          ))
-        ) : (
-          <Empty />
-        )}
-
+        <div
+          style={{
+            width: "100%",
+            maxHeight: "500px",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking: CoachBookingDetails) => (
+                <CoachAccepteLst
+                  key={booking.booking_id} // Make sure to provide a unique key
+                  booking_id={booking.booking_id}
+                  booked_by={booking.player.user.firstname}
+                  image={booking.player.user.user_image}
+                  date={booking.date}
+                  time={booking.time}
+                  venue={` ${booking.zone.zone_name} / ${booking.arcade.arcade_name} `}
+                  coach_name={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                  role="COACH"
+                  email={booking.player.user.email}
+                  arcade_email={booking.arcade.arcade_email}
+                  arcade_name={booking.arcade.arcade_name}
+                  status={booking.status}
+                  full_amount={booking.full_amount}
+                  player_id={booking.player_id}
+                  arcade_id={booking.arcade_id}
+                  coach_id={booking.coach_id}
+                />
+              ))
+            ) : (
+              <Empty description="No Bookings Available" />
+            )}
+          </div>
+        </div>
         {/* {showMore ? (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See More
-          </Button>
-        ) : (
-          <Button
-            style={{
-              alignItems: "center",
-              color: "#062C60",
-              fontFamily: "kanit",
-              fontWeight: "500",
-              fontSize: "18px",
-            }}
-            type="link"
-            onClick={toggleItems}
-          >
-            See Less
-          </Button>
-        )} */}
-      </Row>
+        <Button
+          style={{
+            alignItems: "center",
+            color: "#062C60",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "18px",
+          }}
+          type="link"
+          onClick={toggleItems}
+        >
+          See More
+        </Button>
+      ) : (
+        <Button
+          style={{
+            alignItems: "center",
+            color: "#062C60",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: "18px",
+          }}
+          type="link"
+          onClick={toggleItems}
+        >
+          See Less
+        </Button>
+      )} */}
+      </div>
 
       <Row
         style={{
@@ -1231,6 +1567,24 @@ const CoachProfile = () => {
           >
             Date
           </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Duration
+          </Col>
           {lg && (
             <Col
               style={{
@@ -1277,6 +1631,335 @@ const CoachProfile = () => {
               image={booking.arcade.arcade_image}
               date={booking.assigned_date}
               time={booking.created_at}
+              duration={booking.duration}
+              coach_name={coachDetails.firstName + " " + coachDetails.lastName}
+              role="COACH"
+              arcade_email={booking.arcade.arcade_email}
+              arcade_name={booking.arcade.arcade_name}
+            />
+          ))
+        ) : (
+          <Empty />
+        )}
+      </Row>
+      {/* package Enrollments */}
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Typography
+          style={{
+            alignItems: "center",
+            color: "#0E458E",
+            fontFamily: "kanit",
+            fontWeight: "500",
+            fontSize: lg ? "32px" : "24px",
+            paddingBottom: "10px",
+            marginBottom: "0px",
+          }}
+        >
+          Package Enrollment
+        </Typography>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangePackageEnroll}
+              value={valuepackageEnroll}
+            >
+              <Radio value={13}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#05a30a", colorPrimary: "#05a30a" },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangePackageEnroll}
+              value={valuepackageEnroll}
+            >
+              <Radio value={14}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+            }}
+          >
+            <Radio.Group
+              onChange={onChangePackageEnroll}
+              value={valuepackageEnroll}
+            >
+              <Radio value={15}></Radio>
+            </Radio.Group>
+          </ConfigProvider>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Available
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Assigned
+          </Typography>
+        </Col>
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+        <Col span={16}></Col>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Row
+          style={{
+            borderRadius: "3px 3px 0px 0px",
+            width: "90%",
+            height: "97px",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "#EFF4FA",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Package Name
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Date
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Percentage
+          </Col>
+          <Col
+            style={{
+              color: "#000",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: md ? "28px" : "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            xs={8}
+            sm={8}
+            md={8}
+            lg={6}
+            xl={6}
+          >
+            Arcade
+          </Col>
+          {lg && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            ></Col>
+          )}
+          {sm && (
+            <Col
+              style={{
+                color: "#000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "28px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              xs={8}
+              sm={8}
+              md={8}
+              lg={6}
+              xl={6}
+            ></Col>
+          )}
+        </Row>
+        {filteredEnrollmentCoach.length > 0 ? (
+          filteredEnrollmentCoach.map((enrollment) => (
+            <PackageEnrollListForCoach
+              key={enrollment.package_id}
+              package_id={enrollment.package_id}
+              package_name={enrollment.package.package_name}
+              date={enrollment.applied_date}
+              percentage={enrollment.package.percentageForCoach}
+              arcade={enrollment.package.arcade.arcade_name}
+              image={enrollment.package.package_image}
+              role="COACH"
+              arcade_email={enrollment.package.arcade.arcade_email}
+              coach_id={enrollment.coach_id}
             />
           ))
         ) : (
@@ -1284,6 +1967,7 @@ const CoachProfile = () => {
         )}
       </Row>
 
+      {/* Reviews */}
       <Row
         style={{
           minWidth: "100%",
@@ -1318,7 +2002,8 @@ const CoachProfile = () => {
           >
             Reviews
           </Typography>
-          <Row
+
+          {/* <Row
             style={{
               display: "flex",
               justifyContent: "center",
@@ -1423,10 +2108,96 @@ const CoachProfile = () => {
               {" "}
               <ReviewCard />
             </Col>
+          </Row> */}
+
+          <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
         </Col>
-        <AppFooter />
       </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "60px",
+        }}
+      >
+        <Col>
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "500",
+              fontSize: lg ? "32px" : "24px",
+              paddingBottom: "10px",
+              marginBottom: "0px",
+            }}
+          >
+            Report Genaration
+          </Typography>
+        </Col>
+      </Row>
+      <Row>
+        <Col
+          span={24}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+            marginBottom: "100px",
+          }}
+        >
+          <ReportGenarationForCoach coach_id={coachId} />
+        </Col>
+      </Row>
+      <AppFooter />
     </>
   );
 };

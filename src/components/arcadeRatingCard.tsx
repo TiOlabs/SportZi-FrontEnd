@@ -3,17 +3,31 @@ import { Row } from "antd";
 import { Rate } from "antd";
 import { Button } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { AdvancedImage } from "@cloudinary/react";
 
 const ArcadeRatingCard = (props: any) => {
+  console.log("props", props);
   const [cloudName] = useState("dle0txcgt");
   // const cld = new Cloudinary({
   //   cloud: {
   //     cloudName,
   //   },
   // });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/arcadeProfile/${props.arcade_id}`);
+  };
   const { md } = useBreakpoint();
+
+  const roundedAvgRate = Math.round(props.arcadeAverageRate * 2) / 2;
+
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <Row>
       <div
@@ -26,7 +40,22 @@ const ArcadeRatingCard = (props: any) => {
           marginLeft: "25px",
         }}
       >
-        <img
+        <AdvancedImage
+             style={{
+              width: md ? "242px" : "164px",
+              height: "191px",
+              WebkitClipPath: md
+                ? "polygon(0 0, 70% 0%, 100% 100%, 0% 100%)"
+                : "polygon(0 0, 50% 0%, 100% 100%, 0% 100%)",
+              clipPath: "polygon(0 0, 100% 0%, 100% 100%, 0% 98%)",
+            }}
+          cldImg={
+            cld.image(props.arcade_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+        />
+        {/* <img
           src="https://sportsplanningguide.com/wp-content/uploads/2016/05/Woodside_WisconsinDellsCenter-1.jpg"
           style={{
             width: md ? "242px" : "164px",
@@ -36,7 +65,7 @@ const ArcadeRatingCard = (props: any) => {
               : "polygon(0 0, 50% 0%, 100% 100%, 0% 100%)",
             clipPath: "polygon(0 0, 100% 0%, 100% 100%, 0% 98%)",
           }}
-        ></img>
+        ></img> */}
         {/* <AdvancedImage
             cldImg={cld.image(props.arcadeRating_image)}
           style={{
@@ -78,7 +107,6 @@ const ArcadeRatingCard = (props: any) => {
                   alignItems: "center",
                   lineHeight: "1",
                   textAlign: "center",
-                  
                 }}
               >
                 {props.arcadeName}
@@ -110,8 +138,10 @@ const ArcadeRatingCard = (props: any) => {
               }}
             >
               <Rate
+                allowHalf
                 disabled
-                defaultValue={props.arcadeRating}
+                defaultValue={0}
+                value={roundedAvgRate}
                 style={{ color: "#5587CC", fontSize: "12px" }}
               />
             </div>
@@ -128,11 +158,13 @@ const ArcadeRatingCard = (props: any) => {
             </div>
           </div>
           <div className="BookArcadeButton">
-            <Link to="/bookings">
-              <Button type="primary" style={{ backgroundColor: "#5587CC" }}>
-                Book Arcade
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "#5587CC" }}
+              onClick={handleClick}
+            >
+              View Arcade
+            </Button>
           </div>
         </div>
       </div>

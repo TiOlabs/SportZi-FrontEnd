@@ -1,50 +1,122 @@
 import "../../styles/login.css";
 import AppFooter from "../../components/footer";
-import { Form, Input, Row, Col, Button } from "antd";
+import {
+  Form,
+  Input,
+  Row,
+  Col,
+  Button,
+  message,
+  Modal,
+  message as antMessage,
+} from "antd";
 // import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import img1 from "./images/img1.png";
 import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const commonInputStyle = {
   height: "40px",
 };
 
 const Login = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const login = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [login]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const onFinish = async () => {
     try {
-      const res = await axios
-        .post("http://localhost:8000/api/login", {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/login`,
+        {
           email: email,
           password: password,
-        })
-        .then((res) => {
-          navigate("/");
-          // console.log(res.data.token);
-          Cookies.set("token", res.data.token, {
-            expires: 1,
-            httpOnly: false,
-            secure: true,
-          });
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
-          console.log("response error:", err);
+        }
+      );
+      
+      //chech whether email is not verified
+      if(res.data.token == false){  
+        console.log("Email is not verified");
+        message.warning({
+          type: 'warning',
+          content: 'Your email is not verified! Please verify it before login to the system',
+          duration: 5,
         });
+        navigate("/sendVerificationEmail");
+        return;
+      }
+
+      Cookies.set("token", res.data.token, {
+        expires: 1,
+        httpOnly: false,
+        secure: true,
+      });
+      message.success({
+        type: "success",
+        content: "Successfully Login!",
+      });
+
+      const user: any = jwtDecode(res.data.token);
+      console.log(user.role);
+
+      if (user.role === "ADMIN" || user.role === "SUPERADMIN") {
+        navigate("/admin", {
+          replace: true,
+          state: { loggedIn: true },
+        });
+        window.location.href = "/admin";
+      } else {
+        navigate("/", { replace: true, state: { loggedIn: true } });
+        window.location.href = "/";
+      }
     } catch (err) {
       console.log(err);
-      alert("Login failed...2");
+      message.error(
+        (err as any).response
+          ? (err as any).response.data.message
+          : "Login failed"
+      );
     }
+  };
+
+  //for forget password button
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [loading,setloading] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    setloading(true);
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/forgot-password`,
+        { email: resetEmail }
+      );
+      antMessage.success("Password reset email sent successfully");
+      setIsModalVisible(false);
+    } catch (error: any) {
+      console.log("Error sending password reset email::", error);
+      antMessage.error("Something Error!");
+      setIsModalVisible(false);
+    }finally{
+      setloading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
   return (
@@ -62,38 +134,25 @@ const Login = () => {
             alignItems: "center",
           }}
         >
-          {/* image */}
-
           <div style={{ textAlign: "center", paddingBottom: "50px" }}>
             <img
               src={img1}
               alt=""
               width={385}
               height={514}
-              style={{ marginBottom: "20px" }} // Add some spacing between image and text
+              style={{ marginBottom: "20px" }}
             />
-            <div
-              style={{
-                fontSize: "18px",
-                padding: "0px 80px 20px 80px ",
-              }}
-            >
+            <div style={{ fontSize: "18px", padding: "0px 80px 20px 80px " }}>
               From cricket to volleyball and beyond, our skilled coaches pave
               your path to greatness. Embrace the opportunity to excel and
               evolve with our dedicated team guiding your journey.
             </div>
-
-            <div
-              style={{
-                fontSize: "18px",
-              }}
-            >
+            <div style={{ fontSize: "18px" }}>
               <a href=""> Privacy And Policy </a>
             </div>
           </div>
         </Col>
 
-        {/* form */}
         <Col
           xl={{ span: 12, offset: 0 }}
           lg={{ span: 12, offset: 0 }}
@@ -113,7 +172,6 @@ const Login = () => {
                 fontSize: "28px",
                 textAlign: "center",
                 paddingBottom: "20px",
-
                 color: "#0E458E",
               }}
             >
@@ -124,7 +182,14 @@ const Login = () => {
               name="username"
               label="User Name"
               rules={[
-                { required: true, message: "Please input your Username!" },
+                {
+                  type: "email",
+                  message: "The input is not valid E-mail!",
+                },
+                {
+                  required: true,
+                  message: "Please input your E-mail!",
+                },
               ]}
             >
               <Input
@@ -149,11 +214,16 @@ const Login = () => {
               />
             </Form.Item>
             <Form.Item style={{ textAlign: "right" }}>
-              <a className="login-form-forgot" href="">
+              <Button
+                onClick={showModal}
+                style={{
+                  border: "none",
+                  fontSize: "14px",
+                }}
+              >
                 Forgot password
-              </a>
+              </Button>
             </Form.Item>
-
             <Form.Item>
               <Button
                 htmlType="submit"
@@ -174,15 +244,43 @@ const Login = () => {
               <hr />
               <Form.Item style={{ display: "flex", justifyContent: "center" }}>
                 Don't have an account{" "}
-                <Link to={"/signupPlayer"}>
-                  <a href="">sign up here!</a>
-                </Link>
+                <Link to={"/signupPlayer"}>sign up here!</Link>
               </Form.Item>
             </Form.Item>
           </Form>
         </Col>
       </Row>
 
+      <Modal
+        title="Reset Password"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Reset Password"
+        cancelText="Cancel"
+        confirmLoading={loading}
+      >
+        <Form layout="vertical">
+          <Form.Item
+            label="Email"
+            rules={[
+              {
+                type: "email",
+                message: "The input is not valid E-mail!",
+              },
+              {
+                required: true,
+                message: "Please input your E-mail!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Enter the email"
+              onChange={(e) => setResetEmail(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
       <AppFooter />
     </>
   );

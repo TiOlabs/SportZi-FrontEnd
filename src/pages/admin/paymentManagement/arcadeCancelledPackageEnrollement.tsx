@@ -1,26 +1,29 @@
-import { Col, Row, Modal, Button, Empty } from "antd";
+import { Col, Row, Modal, Button, Empty, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ZoneBookingDetails } from "../../../types";
+import {
+  PackageEnroolDetailsForPlayer,
+  ZoneBookingDetails,
+} from "../../../types";
 import { Link } from "react-router-dom";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 const ArcadeCancelledPackageEnrollement = () => {
   const [ArcadeBookingDetails, setArcadeBookingDetails] = useState<
-    ZoneBookingDetails[]
+    PackageEnroolDetailsForPlayer[]
   >([]);
   const [loading, setLoading] = useState(true);
   const [canceledByArcade, setCanceledByArcade] = useState<
-    ZoneBookingDetails[]
+    PackageEnroolDetailsForPlayer[]
   >([]);
-  const [arcadeCanceled, setArcadeCanceled] = useState<ZoneBookingDetails[]>(
-    []
-  );
+  const [arcadeCanceled, setArcadeCanceled] = useState<
+    PackageEnroolDetailsForPlayer[]
+  >([]);
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          "http://localhost:8000/api/getarcadebookings"
+          `${process.env.REACT_APP_API_URL}api/getPackageEnrollmentPlayerDetails`
         );
         const data = await res.data;
         setArcadeBookingDetails(data);
@@ -29,7 +32,7 @@ const ArcadeCancelledPackageEnrollement = () => {
         // console.log(arcadeBookings.filter((arcadeBooking) => arcadeBooking.);
 
         const playerCanceledBookings = data.filter(
-          (arcadeBooking: ZoneBookingDetails) =>
+          (arcadeBooking: PackageEnroolDetailsForPlayer) =>
             arcadeBooking.status === "canceled_By_Arcade"
         );
         console.log(playerCanceledBookings);
@@ -44,45 +47,59 @@ const ArcadeCancelledPackageEnrollement = () => {
     }
   }, []);
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Cancelled By Arcade - Package Enrollment</h2>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Cancelled By Arcade - Package Enrollment</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+            />
+          </Col>
+        </Row>
+        <Col
+          style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}
+        >
+          {arcadeCanceled.length === 0 ? <Empty /> : null}
+          {arcadeCanceled.map(
+            (packageEnrollmentForPlayer: PackageEnroolDetailsForPlayer) => (
+              <DataRow
+                package_id={packageEnrollmentForPlayer.package_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
+                booked_Arena={
+                  packageEnrollmentForPlayer.package.arcade.arcade_name
+                }
+                booked_by={
+                  packageEnrollmentForPlayer.player.user.firstname +
+                  " " +
+                  packageEnrollmentForPlayer.player.user.lastname
+                }
+                rate={Number(packageEnrollmentForPlayer.rate)}
+                user_id={packageEnrollmentForPlayer.player_id}
+                zone_id={packageEnrollmentForPlayer.package.zone_id}
+                arcade_id={packageEnrollmentForPlayer.package.arcade_id}
+                zone={packageEnrollmentForPlayer.package.zone.zone_name}
+                package_image={packageEnrollmentForPlayer.package.package_image}
+                // booking_date={packageEnrollmentForPlayer.date}
+                // booking_time={packageEnrollmentForPlayer.time}
+                // participant_count={packageEnrollmentForPlayer.participant_count}
+                created_at={packageEnrollmentForPlayer.enrolled_date}
+                canceled_at={packageEnrollmentForPlayer.canceled_at}
+                image={packageEnrollmentForPlayer.player.user.user_image}
+              />
+            )
+          )}
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
-      <Col style={{ marginTop: "20px", maxHeight: "75vh", overflowY: "auto" }}>
-        {arcadeCanceled.length === 0 ? <Empty /> : null}
-        {arcadeCanceled.map((ZoneBookingDetails: ZoneBookingDetails) => (
-          <DataRow
-            booking_id={ZoneBookingDetails.zone_booking_id} // Fix: Access the zone_booking_id property from ZoneBookingDetails
-            booked_Arena={ZoneBookingDetails.zone.zone_name}
-            booked_by={ZoneBookingDetails.user.firstname}
-            rate={
-              Number(ZoneBookingDetails.zone.rate) *
-              Number(ZoneBookingDetails.participant_count)
-            }
-            user_id={ZoneBookingDetails.user.user_id}
-            zone_id={ZoneBookingDetails.zone.zone_id}
-            zone={ZoneBookingDetails.zone.zone_name}
-            booking_date={ZoneBookingDetails.date}
-            booking_time={ZoneBookingDetails.time}
-            participant_count={ZoneBookingDetails.participant_count}
-            created_at={ZoneBookingDetails.created_at}
-            canceled_at={ZoneBookingDetails.canceled_at}
-            image={ZoneBookingDetails.user.user_image}
-          />
-        ))}
-      </Col>
+      </Spin>
     </Col>
   );
 };
@@ -124,7 +141,7 @@ function DataRow(props: any) {
             height: "80px",
           }}
           cldImg={
-            cld.image(props?.zone_image)
+            cld.image(props?.package_image)
             // .resize(Resize.crop().width(200).height(200).gravity('auto'))
             // .resize(Resize.scale().width(200).height(200))
           }
@@ -154,7 +171,7 @@ function DataRow(props: any) {
           }}
         >
           {" "}
-          Rs.{props.rate}
+          LKR {props.rate}
         </div>
       </Col>
       <Col span={8}>
@@ -235,10 +252,10 @@ function DataRow(props: any) {
                 <Col span={24}>
                   <Row>
                     <Col span={16}>
-                      <b>Arcade :</b> Super Box Complex
+                      <b>Arcade :</b> {props.booked_Arena}
                     </Col>
                     <Col span={8}>
-                      <b>User_ID</b> : C000189
+                      <b>User_ID</b> : {props.arcade_id}
                     </Col>
                   </Row>
                 </Col>

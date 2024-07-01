@@ -52,7 +52,7 @@ const AdminDashboard = () => {
     <Row>
       <Col
         span={5}
-        style={{ backgroundColor: "#051F43", color: "white", padding: "2%" }}
+        style={{ backgroundColor: "#051F43", color: "white", padding: "2%", marginLeft: "21%" }}
       >
         <Row>
           {" "}

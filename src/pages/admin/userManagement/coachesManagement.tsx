@@ -1,6 +1,9 @@
-import { Col, Row, Button, Modal } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { useNavigate } from "react-router-dom";
 
 interface Coach {
   coach_id: string;
@@ -32,41 +35,64 @@ interface Coach {
 
 const CoachesManagement = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
-
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/getcoach");
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}api/getcoach`
+        );
         setCoaches(response.data);
       } catch (error) {
         console.error("Error fetching coaches:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCoaches();
   }, []);
-
+  const filteredCoaches = coaches.filter(
+    (coaches) =>
+      coaches.coach_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      coaches.user.firstname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      coaches.user.lastname.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Coaches details</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Coaches details</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Col>
+        </Row>
 
-      {coaches.map((coachdetails: Coach) => (
-        <DataRow coachdetails={coachdetails} />
-      ))}
+        {filteredCoaches.length === 0 ? (
+          <div>
+            <Empty description={"No Coache Found"} />
+          </div>
+        ) : (
+          filteredCoaches.map((coach) => <DataRow coachdetails={coach} />)
+        )}
+      </Spin>
     </Col>
   );
 };
@@ -90,7 +116,17 @@ function DataRow(props: any) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const navigate = useNavigate();
 
+  const handleClick = () => {
+    navigate(`/CoachUser/:${props.coach_id}`);
+  };
   return (
     <Row
       key={coachdetails.coach_id}
@@ -101,24 +137,28 @@ function DataRow(props: any) {
       }}
     >
       <Col></Col>
-      <Col span={8} style={{}}>
-        <div
+      <Col span={10} style={{}}>
+        <AdvancedImage
+          onClick={handleClick}
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(coachdetails.user.user_image)
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+          // border-radius: 50%;
+          // width: 80px;
+          // height: 80px;
+        />
         <div
           style={{
             display: "flex",
-            justifyContent: "left",
-            marginLeft: "100px",
+            justifyContent: "center",
             alignItems: "center",
             textAlign: "center",
             height: "80px",
@@ -130,7 +170,7 @@ function DataRow(props: any) {
         </div>
       </Col>
 
-      <Col span={8}>
+      <Col span={6}>
         <div
           style={{
             display: "flex",

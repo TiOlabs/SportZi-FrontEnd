@@ -2,15 +2,25 @@ import {
   Button,
   Col,
   Flex,
+  Form,
   Grid,
   Input,
   List,
   Modal,
   Row,
+  Select,
   Typography,
+  Rate,
+  ConfigProvider,
+  message as antMessage,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
-import { StarFilled, StarTwoTone } from "@ant-design/icons";
+import {
+  ExclamationCircleTwoTone,
+  StarFilled,
+  StarTwoTone,
+  StarOutlined,
+} from "@ant-design/icons";
 import profilePic from "../../assents/pro.png";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -19,11 +29,33 @@ import { Image } from "antd";
 import ReviewCard from "../../components/ReviewCard";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import AppFooter from "../../components/footer";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import NavbarProfile from "../../components/NavBarProfile";
+import axiosInstance from "../../axiosInstance";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { Coach, User, achivement } from "../../types";
+import { UserContext } from "../../context/userContext";
+import PhotoCollageForUsers from "../../components/photoCollageForUsers";
+import { CoachFeedback } from "../../types";
+
+import { any } from "prop-types";
+import NavbarLogin from "../../components/NavBarLogin";
+
+interface FeedbackData {
+  feedback: string;
+  rating: number;
+}
 
 const CoachProfileUser = () => {
   const { useBreakpoint } = Grid;
+  const { coachId } = useParams();
+  console.log("Coach ID +++++++++++++++++++++++++++++++++++++++:", coachId);
+  const formattedCoachId = coachId?.replace(":", "") ?? "";
+  console.log("CoachId:", coachId);
+  console.log(formattedCoachId);
+  console.log(coachId);
+  console.log(formattedCoachId);
   const { lg, md, sm, xs } = useBreakpoint();
   const { TextArea } = Input;
   const onChange = (
@@ -31,8 +63,67 @@ const CoachProfileUser = () => {
   ) => {
     console.log("Change:", e.target.value);
   };
-
+  const { userDetails } = useContext(UserContext);
   const [ismodelopen, setismodelopen] = useState(false);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0.0);
+
+  const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
+
+  const [averageRating, setAverageRating] = useState(0.0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
+  // Replace with actual coach ID
+  console.log(userDetails);
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbycoachId/${coachId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:", averageRating);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setAverageRating(roundedRating);
+        setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [coachId]);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getcoachfeedbacks/${coachId}`
+        );
+        // const fName = response.data[0].feedback.user.firstname;
+        // console.log("Fname ----------------:",fName);
+        const allFeedbackDetails = response.data;
+        console.log("Feedback Data---------------:", allFeedbackDetails);
+        setAllFeedbacks(allFeedbackDetails);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, [coachId]);
+
+  // console.log("All feedbacks:::::::::::", allFeedbacks);
+
+  const [isModalOpenForReport, setismodelopenForReport] = useState(false);
+  const [description, setDescription] = useState("");
+  const [reason, setReason] = useState("");
 
   const showModal = () => {
     setismodelopen(true);
@@ -43,14 +134,140 @@ const CoachProfileUser = () => {
   const handleCancel = () => {
     setismodelopen(false);
   };
+  const [coachDetails, setCoachDetails] = useState<Coach>();
+  useEffect(() => {
+    axiosInstance
+      .get(`/api/auth/getcoachDetailsForUsers`, {
+        params: {
+          coachId: coachId,
+        },
+      })
 
+      .then((res) => {
+        setCoachDetails(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [coachId]);
+
+  const showModalForReport = () => {
+    setismodelopenForReport(true);
+  };
+  const handleOkForReport = () => {
+    setismodelopenForReport(false);
+  };
+  const handleCancelForReport = () => {
+    setismodelopenForReport(false);
+  };
+  console.log("coachDetails", coachDetails);
+  console.log("userDetails", userDetails);
+
+  const handleFinishForReport = async () => {
+    try {
+      console.log("userDetails", userDetails);
+      console.log(description, reason);
+      let id;
+      id = userDetails?.id;
+
+      console.log(id);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/addreport`,
+        {
+          reporter_user_id: id,
+          victim_user_id: coachDetails?.coach_id,
+          report_reason: reason,
+          description: description,
+        }
+      );
+      console.log(res.data);
+      antMessage.info("Reported Successfully");
+    } catch (e) {
+      console.log(e);
+    }
+    setismodelopenForReport(false);
+  };
+
+  const submitFeedback = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `api/addcoachfeedbacks/${coachId}`,
+        {
+          comment,
+          rating,
+        }
+      );
+      console.log("Feedback data:", response.data);
+
+      setComment("");
+      setRating(0);
+      // alert("feedback was submitted successfully");
+      antMessage.success("feedback submitted successfully");
+      setismodelopen(false);
+      // setAverageRating(response.data.averageRating); // Update average rating
+    } catch (error) {
+      console.error("Error submitting feedback=====================", error);
+      alert("Error submitting feedback:");
+    }
+  };
+  const navigate = useNavigate();
+  const QulificationsGetToArry = (qulifications: string) => {
+    if (qulifications) {
+      return qulifications.split(",");
+    }
+    return [];
+  };
+
+  const [qulifications, setQulifications] = useState<any>();
+  //const [achiv, setachiv] = useState<any>();
+  const [AvailableTimes, setAvailableTimes] = useState<any>();
+  const [expertice, setExpertice] = useState<any>();
+
+  interface AvailableTime {
+    day: string;
+    time: string;
+  }
+  useEffect(() => {
+    setAvailableTimes(coachDetails?.availability);
+    // setachiv(coachDetails?.user?.achivement);
+    setExpertice(coachDetails?.sport?.sport_name);
+  }, [coachDetails]);
+  console.log("AvailableTimes", AvailableTimes);
+  useEffect(() => {
+    //
+
+    const achiv = coachDetails?.user?.achivement;
+    if (achiv) {
+      let achiveArr: string[] = [];
+      achiv.map((item: any) => {
+        achiveArr.push(item.achivement_details as string);
+      });
+      console.log(achiveArr);
+      let achivArrString = achiveArr.join(",");
+      setQulifications(achivArrString);
+    }
+  }, [coachDetails]);
+  console.log(qulifications);
+  let groupedByDay: { [key: string]: string[] } = {};
+  if (AvailableTimes) {
+    groupedByDay = AvailableTimes.reduce(
+      (acc: { [key: string]: string[] }, { day, time }: AvailableTime) => {
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+        acc[day].push(time);
+        return acc;
+      },
+      {} as { [key: string]: string[] }
+    );
+  }
   return (
     <>
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
       </style>
-      <NavbarProfile />
+      {userDetails.id === "" ? <NavbarLogin /> : <NavbarProfile />}
       <Row>
         <Col
           xs={24}
@@ -140,12 +357,7 @@ const CoachProfileUser = () => {
                   fontSize: lg ? "18px" : "14px",
                 }}
               >
-                I am a former elite rugby league player who would love to
-                encourage and mentor younger athletes to work towards their
-                goals and aspirations as well as to share my knowledge and give
-                back to the game that’s given me so much. My main position in
-                rugby league was halfback and I had the honour of representing
-                QLD in the State Of Origin
+                {coachDetails?.short_desctiption}
               </Typography>
               <Button
                 style={{
@@ -154,10 +366,103 @@ const CoachProfileUser = () => {
                   color: "#fff",
                   borderRadius: "3px",
                 }}
+                onClick={() => {
+                  if (userDetails.role === "PLAYER") {
+                    localStorage.setItem("coachId", formattedCoachId as string);
+                    navigate("/CoachBookingForm");
+                  } else {
+                    antMessage.error("You are not a player");
+                  }
+                }}
               >
                 {" "}
                 Request for Booking
               </Button>
+              <div>
+                <Button
+                  style={{
+                    backgroundColor: "#EFF4FA",
+                    color: "#0E458E",
+                    borderRadius: "3px",
+                    fontFamily: "kanit",
+                    borderColor: "#0E458E",
+                    marginTop: "20px",
+                    marginBottom: "55%",
+                  }}
+                  onClick={() => {
+                    if (userDetails.id === "") {
+                      antMessage.error("Please Login First");
+                    } else {
+                      showModalForReport();
+                    }
+                  }}
+                >
+                  Report User
+                </Button>
+                <Modal
+                  visible={isModalOpenForReport}
+                  onCancel={handleCancelForReport}
+                  okText="Report"
+                  onOk={handleFinishForReport}
+                >
+                  <Form
+                    layout="vertical"
+                    style={{ marginTop: "10%", margin: "2%" }}
+                    onFinish={handleFinishForReport}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        color: "#5587CC",
+                        height: "100px",
+                      }}
+                    >
+                      <ExclamationCircleTwoTone width={1000} /> Repot User
+                    </div>
+                    <Form.Item
+                      name="Chooose_Why"
+                      label="Choose Reason"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select a Reason!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Select a Reson"
+                        onChange={(value) => setReason(value)}
+                      >
+                        <Select.Option value="Fake Profile">
+                          Fake Profile
+                        </Select.Option>
+                        <Select.Option value="Cheating">Cheating</Select.Option>
+                        <Select.Option value="Misbehavior">
+                          Misbehavior
+                        </Select.Option>
+                        <Select.Option value="Other">Other</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      name="Report_reason"
+                      label="Tell Us More About Why"
+                      rules={[
+                        {
+                          type: "string",
+                          message: "Please enter a valid Reason!",
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={5}
+                        placeholder="Add a little more about why you are reporting this user"
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Modal>
+              </div>
             </Col>
           </Row>
         </Col>
@@ -200,7 +505,7 @@ const CoachProfileUser = () => {
                   marginBottom: "0px",
                 }}
               >
-                Sandun Malage
+                {coachDetails?.user.firstname} {coachDetails?.user.lastname}
               </h1>
               <p
                 style={{
@@ -215,6 +520,19 @@ const CoachProfileUser = () => {
                 }}
               >
                 First class rugby coach
+              </p>
+              <p
+                style={{
+                  marginTop: "4px",
+                  color: "#0E458E",
+                  fontFamily: "kanit",
+                  fontSize: "22px",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                }}
+              >
+                Rate (per Hour):{coachDetails?.rate?.toString()}
               </p>
             </div>
             <div
@@ -237,7 +555,7 @@ const CoachProfileUser = () => {
                       margin: "0px",
                     }}
                   >
-                    5.0
+                    {averageRating.toFixed(1)}
                   </p>
                 </Col>
 
@@ -272,11 +590,25 @@ const CoachProfileUser = () => {
                         width: "100%",
                       }}
                     >
-                      <StarFilled style={{ color: "#0E458E" }} />
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                      <Rate
+                        allowHalf
+                        disabled
+                        value={averageRating}
+                        style={{
+                          scale: "0.7",
+                          display: "flex",
+                          flexDirection: "row",
+                          color: "#0E458E",
+                          fillOpacity: "0.8",
+                          borderBlockEnd: "dashed",
+                        }}
+                      />
                     </div>
                     <p
                       style={{
@@ -290,7 +622,7 @@ const CoachProfileUser = () => {
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      ({totalFeedbacks} Feedbacks)
                     </p>
                   </div>{" "}
                 </Col>
@@ -321,7 +653,7 @@ const CoachProfileUser = () => {
                 lineHeight: "1",
               }}
               itemLayout="horizontal"
-              dataSource={["school rugby captan 2001- 2008", "T20", "T20"]}
+              dataSource={QulificationsGetToArry(qulifications)}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -383,43 +715,39 @@ const CoachProfileUser = () => {
                 lineHeight: "0.5",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "T20", "T20"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              <List.Item
+                style={{
+                  position: "relative",
+                  listStyle: "none",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
+                      fontSize: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                    &#8226;
+                  </span>
+                  {expertice}
+                </div>
+              </List.Item>
+            </List>
             <Typography
               style={{
                 color: "#000",
@@ -443,12 +771,11 @@ const CoachProfileUser = () => {
                 lineHeight: "0.4",
               }}
               itemLayout="horizontal"
-              dataSource={["T20", "Cricket", "T20"]}
+              dataSource={["Physical"]}
               renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -494,52 +821,68 @@ const CoachProfileUser = () => {
             >
               Available Times
             </Typography>
-            <List
+            <div
               style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
               }}
-              itemLayout="horizontal"
-              dataSource={["Full day in sunday", "saturday 8-16 pm"]}
-              renderItem={(item) => (
-                <List.Item
+            >
+              {Object.keys(groupedByDay).map((day) => (
+                <div
                   style={{
-                    position: "relative",
-
-                    listStyle: "none",
                     display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
+                    flexDirection: "row",
+                    width: "100%",
+                    fontSize: "20px",
+                    fontFamily: "kanit",
                   }}
+                  key={day}
                 >
-                  <div
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
+                      fontSize: lg ? "24px" : "18px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                      width: "1%",
                     }}
                   >
-                    {" "}
-                    <span
-                      style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                      }}
-                    >
-                      &#8226;
-                    </span>
-                    {item}
+                    &#8226;
+                  </span>
+                  <Typography
+                    style={{
+                      color: "#000",
+                      fontFamily: "kanit",
+                      width: "30%",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "normal",
+                      marginTop: "5px",
+                      fontSize: lg ? "24px" : "18px",
+                    }}
+                  >
+                    {day}
+                  </Typography>
+                  <div
+                    style={{
+                      marginTop: "5px",
+                      fontSize: lg ? "18px" : "14px",
+                      fontFamily: "kanit",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "40%",
+                      fontWeight: "300",
+                      justifyContent: "flex-start",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    {groupedByDay[day].map((time, index) => (
+                      <div key={index}>{time}</div>
+                    ))}
                   </div>
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </div>
           </div>
         </Col>
       </Row>
@@ -578,18 +921,19 @@ const CoachProfileUser = () => {
       >
         {" "}
       </div>
-      <PhotoCollage />
+      <PhotoCollageForUsers id={coachId} role={"COACH"} />
 
+      {/* Reviews */}
       <Row
         style={{
           width: "100%",
           minHeight: "650px",
           marginTop: "100px",
+          backgroundImage: `url(${reviewBacground})`,
         }}
       >
         <Col
           style={{
-            backgroundImage: `url(${reviewBacground})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             minHeight: "650px",
@@ -616,7 +960,7 @@ const CoachProfileUser = () => {
             Reviews
           </Typography>
 
-          <Row
+          {/* <Row
             style={{
               width: "100%",
               minHeight: "300px",
@@ -669,62 +1013,91 @@ const CoachProfileUser = () => {
               {" "}
               <ReviewCard />
             </Col>
-          </Row>
+          </Row> */}
+
+          {/* <Row
+            style={{
+              width: "100%",
+              minHeight: "300px",
+              paddingBottom: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <Col
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignContent: "center",
+              }}
+              xs={24}
+              sm={12}
+              md={24}
+              lg={24}
+              xl={24}
+            >
+              {allFeedbacks.map((feedback: any) =>
+                feedback.feedback.feedbackComments.map((comment: any) => (
+                  <ReviewCard
+                    key={comment.feedback_id}
+                    rate={feedback.rate}
+                    userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                    comment={comment.comment}
+                  />
+                ))
+              )}
+            </Col>
+          </Row> */}
+
           <Row
             style={{
               width: "100%",
               minHeight: "300px",
               paddingBottom: "20px",
               display: "flex",
+              flexDirection: "row",
               justifyContent: "center",
               alignContent: "center",
             }}
           >
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
-            <Col
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              xs={24}
-              sm={12}
-              md={12}
-              lg={8}
-              xl={8}
-            >
-              {" "}
-              <ReviewCard />
-            </Col>
+            {allFeedbacks.map((feedback: any) =>
+              feedback.feedback.feedbackComments.map((comment: any) => (
+                <Col
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "3%",
+                  }}
+                  xl={6}
+                  lg={8}
+                  xs={24}
+                  md={12}
+                  key={feedback.feedback.feedbacks_id}
+                >
+                  <div
+                    style={{
+                      marginTop: "0vh",
+                      marginRight: "10vh",
+                      marginBottom: "10vh",
+                    }}
+                  >
+                    <ReviewCard
+                      key={comment.feedback_id}
+                      image={feedback.feedback.user.user_image}
+                      rate={feedback.rate}
+                      userName={`${feedback.feedback.user.firstname} ${feedback.feedback.user.lastname}`}
+                      comment={comment.comment}
+                    />
+                  </div>
+                </Col>
+              ))
+            )}
           </Row>
+
           <Row>
             {" "}
             <div
@@ -742,10 +1115,16 @@ const CoachProfileUser = () => {
                   color: "#fff",
                   borderRadius: "3px",
                 }}
-                onClick={showModal}
+                onClick={() => {
+                  if (userDetails.id === "") {
+                    antMessage.error("Please Login First");
+                  } else {
+                    showModal();
+                  }
+                }}
               >
                 {" "}
-                Request for Booking
+                Give an Feedback
               </Button>
             </div>
           </Row>
@@ -781,17 +1160,29 @@ const CoachProfileUser = () => {
             }}
             key="submit"
             type="primary"
-            onClick={handleOk}
+            onClick={submitFeedback}
           >
             Give Reveiw
           </Button>,
         ]}
       >
         <Flex vertical gap={32}>
+          <Rate
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              // color:"#0E458E",
+              // borderBlock: "dashed #0E458E",
+              opacity: "1",
+            }}
+            value={rating}
+            onChange={(value) => setRating(value)}
+          />
           <TextArea
             showCount
             maxLength={60}
-            onChange={onChange}
+            value={comment}
+            onChange={(e: any) => setComment(e.target.value)}
             placeholder="Write your feedback"
             style={{ height: 120, resize: "none", marginBottom: "20px" }}
           />
@@ -800,4 +1191,5 @@ const CoachProfileUser = () => {
     </>
   );
 };
+
 export default CoachProfileUser;

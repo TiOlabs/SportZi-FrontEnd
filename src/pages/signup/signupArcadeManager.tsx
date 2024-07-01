@@ -1,15 +1,16 @@
 import "../../styles/signup.css";
 
-import { Flex } from "antd";
+import { Flex, message } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, TimePicker, Select } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "./images/img1.png";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dayjs } from "dayjs";
 import axiosInstance from "../../axiosInstance";
 import MapForSignUpForm from "../../components/mapForSignUpForm";
+import { useLocation } from "../../context/location.context";
 
 //responsiveness
 const formItemLayout = {
@@ -48,25 +49,38 @@ const commonInputStyle = {
 const { Option } = Select;
 
 // function starting
-const SignupArcadeManager = () => {
+const SignupArcadeManager: React.FC = () => {
+
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
-  const [location, setLocation] = useState("");
   const [arcadename, setArcadeName] = useState("");
   const [arcadeemail, setArcadeEmail] = useState("");
   const [opentime, setOpentime] = useState<string>("");
   const [closetime, setClosetime] = useState<string>("");
-  const [selectedLocation, setSelectedLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(() => {
+  // const [selectedLocation, setSelectedLocation] = useState<{
+  //   lat: number;
+  //   lng: number;
+  // } | null>(() => {
+  //   const storedLocation = localStorage.getItem("selectedLocation");
+  //   return storedLocation ? JSON.parse(storedLocation) : null;
+  // });
+  const { selectedLocation } = useLocation();
+  useEffect(() => {
+    // Log the initial stored location when the component mounts
     const storedLocation = localStorage.getItem("selectedLocation");
-    return storedLocation ? JSON.parse(storedLocation) : null;
-  });
+    console.log("Initial storedLocation", storedLocation);
+  }, []);
+
+  useEffect(() => {
+    // Log the selected location whenever it changes
+    console.log("Updated selectedLocation", selectedLocation);
+  }, [selectedLocation]);
 
   const handleOpenTime = (
     time: Dayjs | null,
@@ -89,8 +103,9 @@ const SignupArcadeManager = () => {
   const [form] = Form.useForm();
 
   const onFinish = async () => {
-    console.log("selectedLocation", selectedLocation);
-    const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
+    setLoading(true);
+    // console.log("selectedLocation", selectedLocation);
+    // const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
     try {
       const res = await axiosInstance
         .post("api/addarcadeManager", {
@@ -99,25 +114,29 @@ const SignupArcadeManager = () => {
           email: email,
           password: password,
           phone: phone,
-          gender: gender,
+          // gender: gender,
           arcade_name: arcadename,
           arcade_email: arcadeemail,
-          location: location,
-          open_time: opentime,
-          close_time: closetime,
+          // location: location,
+          // open_time: opentime,
+          // close_time: closetime,
         })
         .then((res) => {
           console.log(res);
-          alert("Form submitted successfully!");
+          message.success(res.data.message);
           form.resetFields();
+          navigate("/login");
         })
         .catch((err) => {
           console.log(err);
-          alert(err.response.data.message);
+          message.error("An unexpected error occurred.");
         });
     } catch (err) {
       console.log(err);
-      alert(err);
+      message.error("An unexpected error occurred.");
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -143,7 +162,6 @@ const SignupArcadeManager = () => {
     }
     return Promise.reject("Invalid phone number");
   };
-  console.log(selectedLocation);
 
   return (
     <>
@@ -402,7 +420,7 @@ const SignupArcadeManager = () => {
               </Form.Item>
 
               {/* gender field */}
-              <Form.Item
+              {/* <Form.Item
                 name="gender"
                 label="Gender"
                 rules={[{ required: true, message: "Please select gender!" }]}
@@ -429,7 +447,7 @@ const SignupArcadeManager = () => {
                     Female
                   </Option>
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
               {/* arcade name */}
               <Form.Item
@@ -452,7 +470,7 @@ const SignupArcadeManager = () => {
 
               {/* arcade email */}
               <Form.Item
-                name="arcade email"
+                name="arcadeemail"
                 label="Arcade E-mail"
                 rules={[
                   {
@@ -473,7 +491,7 @@ const SignupArcadeManager = () => {
               </Form.Item>
 
               {/* location */}
-              <Form.Item
+              {/* <Form.Item
                 name="location"
                 label="Location"
                 rules={[
@@ -483,9 +501,9 @@ const SignupArcadeManager = () => {
                 ]}
               >
                 <MapForSignUpForm />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* <Form.Item
                 name="opentime"
                 label="Open Time"
                 rules={[
@@ -506,15 +524,15 @@ const SignupArcadeManager = () => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* <Form.Item
                 name="closetime"
                 label="Closed Time"
                 rules={[
                   {
                     required: true,
-                    message: "Please select Open Time!",
+                    message: "Please select Close Time!",
                   },
                 ]}
               >
@@ -529,7 +547,7 @@ const SignupArcadeManager = () => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item
                 name="agreement"
@@ -554,6 +572,7 @@ const SignupArcadeManager = () => {
                 <Button
                   htmlType="submit"
                   className="animated-button kanit-regular"
+                  loading={loading}
                   style={{
                     height: "40px",
                     fontSize: "16px",

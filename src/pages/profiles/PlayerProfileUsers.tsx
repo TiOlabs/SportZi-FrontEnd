@@ -12,6 +12,9 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlayerContext } from "../../context/player.context";
 import axiosInstance from "../../axiosInstance";
+import { useArcade } from "../../context/Arcade.context";
+import { useCoach } from "../../context/coach.context";
+import NavbarLogin from "../../components/NavBarLogin";
 
 interface PlayerData {
   role?: string;
@@ -22,10 +25,12 @@ interface PlayerData {
   // add other properties as needed
 }
 const PlayerProfileUser = (props: any) => {
-  const { playerID } = useParams();
-  console.log(playerID);
+  const { playerId } = useParams(); // Use playerId, not playerID
+  console.log(playerId);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
   const { userDetails } = useContext(PlayerContext);
+  const { managerDetails } = useArcade();
+  const { coachDetails } = useCoach();
   const [firstname, setFirstname] = useState(userDetails?.firstName);
   const [lastname, setLastname] = useState(userDetails?.lastName);
   const [discription, setDiscription] = useState(userDetails?.discription);
@@ -38,10 +43,10 @@ const PlayerProfileUser = (props: any) => {
     return [];
   };
   useEffect(() => {
-    axios
-      .get("/api/auth/getplayerdetails/", {})
+    axiosInstance
+      .get(`/api/auth/getplayerdetailsUser/${playerId}`, {})
       .then((res) => {
-        console.log("dataaaaaaaaaa222222", res.data);
+        console.log(res.data);
         setFirstname(res.data.firstname);
         setLastname(res.data.lastname);
         setDiscription(res.data.Discription);
@@ -52,18 +57,24 @@ const PlayerProfileUser = (props: any) => {
           achiveArr.push(item.achivement_details as string);
         });
         setAchivements(achiveArr.join(","));
-        // console.log("userDetails", userDetails);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [userDetails]);
 
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   return (
     <>
-      <NavbarProfile />
+      {userDetails.id !== "" ||
+      managerDetails.id !== "" ||
+      coachDetails.id !== "" ? (
+        <NavbarProfile />
+      ) : (
+        <NavbarLogin />
+      )}
+
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')

@@ -1,5 +1,6 @@
 import { EditFilled, PlusOutlined } from "@ant-design/icons";
 import {
+  Alert,
   Button,
   Drawer,
   Form,
@@ -55,7 +56,7 @@ const PlayerEdit = ({
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
-  const [publicId, setPublicId] = useState("");
+  const [publicId, setPublicId] = useState(user_image);
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
   const [uwConfig] = useState({
@@ -104,33 +105,39 @@ const PlayerEdit = ({
   const onClose = () => {
     setOpen(false);
   };
-  console.log("inside try");
-  console.log("inside try", userDetails?.id);
+
   const onFinish = () => {
-    try {
-      console.log("inside tryyyyy");
-      console.log("inside tryyyyyy", userDetails?.id);
-      console.log("inside tryyyyyy", firstname);
-      axiosInstance
-        .put(`http://localhost:8000/api/auth/updatePlayerdetails/${userDetails?.id}`, {
-          firstname: firstname,
-          lastname: lastname,
-          discription: discription,
-          achivements: achivements.split(","),
-          user_image: publicId,
-        })
-        .then((res) => {
+    form
+      .validateFields()
+      .then((values) => {
+        try {
+          axiosInstance
+            .put(
+              `${process.env.REACT_APP_API_URL}api/auth/updatePlayerdetails/${userDetails?.id}`,
+              {
+                firstname: firstname,
+                lastname: lastname,
+                discription: discription,
+                achivements: achivements.split(","),
+                user_image: publicId,
+              }
+            )
+            .then((res) => {
+              setOpen(false);
+              console.log("inside then", res.data);
+            })
+            .catch(() => {
+              setOpen(false);
+            });
+        } catch (error) {
           setOpen(false);
-          console.log("inside then", res.data);
-        })
-        .catch(() => {
-          setOpen(false);
-        });
-    } catch (error) {
-      setOpen(false);
-      onClose();
-      console.error("Error:", error);
-    }
+          onClose();
+          console.error("Error:", error);
+        }
+      })
+      .catch((error) => {
+        <Alert message="fill All the feilds"></Alert>;
+      });
   };
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
@@ -258,11 +265,17 @@ const PlayerEdit = ({
             <Form.Item
               name="firstname"
               label="First Name"
+              initialValue={firstname}
               rules={[
                 {
                   required: true,
                   message: "Please input your firstname",
                   whitespace: true,
+                },
+                {
+                  pattern: /^[A-Za-z]{3,}$/,
+                  message:
+                    "First name must be at least 3 letters and only contain A-Z and a-z",
                 },
               ]}
               style={{}}
@@ -277,11 +290,17 @@ const PlayerEdit = ({
             <Form.Item
               name="lastname"
               label="Last Name"
+              initialValue={lastname}
               rules={[
                 {
                   required: true,
                   message: "Please input your lastname",
                   whitespace: true,
+                },
+                {
+                  pattern: /^[A-Za-z]{3,}$/,
+                  message:
+                    "Last name must be at least 3 letters and only contain A-Z and a-z",
                 },
               ]}
             >
@@ -294,11 +313,16 @@ const PlayerEdit = ({
             <Form.Item
               name="Discription"
               label="Discription"
+              initialValue={discription}
               rules={[
                 {
                   required: true,
                   message: "Please input your Discription",
                   whitespace: true,
+                },
+                {
+                  max: 100,
+                  message: "Description must be at least 100 characters",
                 },
               ]}
               style={{}}
@@ -314,11 +338,16 @@ const PlayerEdit = ({
             <Form.Item
               name="Achivements"
               label="Achivements"
+              initialValue={achivements}
               rules={[
                 {
                   required: true,
                   message: "Input your Achivements Using Comma Seprated",
                   whitespace: true,
+                },
+                {
+                  pattern: /^[A-Za-z ,0-9]{3,}$/,
+                  message: "enter your Achivements using comma seprated,",
                 },
               ]}
               style={{}}
@@ -340,21 +369,23 @@ const PlayerEdit = ({
               label="Upload profile picture"
               rules={[
                 {
-                  required: true,
+                  //  required: true,
                   message: "upload profile picture",
                   whitespace: true,
                 },
               ]}
               style={{}}
-            ><CloudinaryUploadWidget uwConfig={uwConfig} setPublicId={setPublicId} />
+            >
+              <CloudinaryUploadWidget
+                uwConfig={uwConfig}
+                setPublicId={setPublicId}
+              />
 
-            <AdvancedImage
-              style={{ maxWidth: "100px" }}
-              cldImg={imgObject}
-              plugins={[responsive(), placeholder()]}
-            />
-    
-          
+              <AdvancedImage
+                style={{ maxWidth: "100px" }}
+                cldImg={imgObject}
+                plugins={[responsive(), placeholder()]}
+              />
             </Form.Item>
           </Form>
         </Drawer>

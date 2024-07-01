@@ -13,6 +13,9 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from "@cloudinary/react";
 import { useArcade } from "../context/Arcade.context";
 import { useCoach } from "../context/coach.context";
+import { useUser } from "../context/userContext";
+import Notification from "./notification";
+import NotificationDot from "./notificationDot";
 
 const Navbar: React.FC = () => {
   const [cloudName] = useState("dle0txcgt");
@@ -24,6 +27,8 @@ const Navbar: React.FC = () => {
   const { userDetails } = usePlayer();
   const { managerDetails } = useArcade();
   const { coachDetails } = useCoach();
+  const { users } = useUser();
+  console.log(users);
   console.log(managerDetails);
   console.log(userDetails);
   console.log(coachDetails);
@@ -193,25 +198,38 @@ const Navbar: React.FC = () => {
           className="NavBarUserProfileImgLaptop"
           style={{ justifyContent: "center", display: "flex" }}
         >
-          {userDetails.role === "PLAYER" && (
-            <Link to={`/profile/`}>
-              <AdvancedImage
+          {userDetails.role === "PLAYER" ? (
+            userDetails?.is_active === "inactive" ? (
+              <div
                 style={{
-                  width: "50px",
-                  height: "50px",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                  borderRadius: "50%",
-                  border: "1px solid black",
+                  borderStyle: "solid",
+                  color: "black",
+                  border: "3px dashed red",
                 }}
-                cldImg={
-                  cld.image(userDetails?.image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
-            </Link>
-          )}
+              >
+                Your account is suspended <br></br> please contact an admin to
+                reactivate your account
+              </div>
+            ) : (
+              <Link to={`/profile/`}>
+                <AdvancedImage
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                  cldImg={
+                    cld.image(userDetails?.image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
+              </Link>
+            )
+          ) : null}
           {managerDetails.role === "MANAGER" && (
             <Link to={`/ChooseArchade/`}>
               <AdvancedImage
@@ -232,25 +250,37 @@ const Navbar: React.FC = () => {
             </Link>
           )}
 
-          {coachDetails.role === "COACH" && (
-            <Link to={`/coachProfile/`}>
-              <AdvancedImage
+          {coachDetails.role === "COACH" &&
+            (coachDetails?.is_active === "inactive" ? (
+              <div
                 style={{
-                  width: "50px",
-                  height: "50px",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                  borderRadius: "50%",
-                  border: "1px solid black",
+                  borderStyle: "solid",
+                  color: "black",
+                  border: "3px dashed red",
                 }}
-                cldImg={
-                  cld.image(coachDetails?.image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
-            </Link>
-          )}
+              >
+                Your account is suspended <br></br> please contact an admin to
+                reactivate your account
+              </div>
+            ) : (
+              <Link to={`/coachProfile/`}>
+                <AdvancedImage
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    borderRadius: "50%",
+                    border: "1px solid black",
+                  }}
+                  cldImg={
+                    cld.image(coachDetails?.image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
+              </Link>
+            ))}
         </div>
         <div
           className="NavBarUserProfileNameLaptop"
@@ -265,7 +295,11 @@ const Navbar: React.FC = () => {
         >
           {userDetails.firstName && userDetails.lastName
             ? `${userDetails.firstName} ${userDetails.lastName}`
-            : `${coachDetails.firstName} ${coachDetails.lastName}`}
+            : coachDetails.firstName && coachDetails.lastName
+            ? `${coachDetails.firstName} ${coachDetails.lastName}`
+            : managerDetails.firstName && managerDetails.lastName
+            ? `${managerDetails.firstName} ${managerDetails.lastName}`
+            : "User Name"}
         </div>
 
         <div
@@ -277,7 +311,13 @@ const Navbar: React.FC = () => {
             fontSize: "15px",
           }}
         >
-          {userDetails?.role ? userDetails?.role : coachDetails?.role}
+          {userDetails?.role
+            ? userDetails?.role
+            : coachDetails?.role
+            ? coachDetails?.role
+            : managerDetails?.role
+            ? managerDetails?.role
+            : "Role"}
         </div>
         <Divider style={{}} />
       </div>
@@ -423,20 +463,76 @@ const Navbar: React.FC = () => {
                     className="NavBarUserProfileImg"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
-                    <Link to="/profile/">
-                      <img
-                        src={userDetails?.image}
-                        alt=""
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          marginLeft: "10px",
-                          marginTop: "32px",
-                          borderRadius: "50%",
-                          border: "1px solid black",
-                        }}
-                      />
-                    </Link>
+                    {userDetails.role === "PLAYER" && (
+                      <Link to={`/profile/`}>
+                        <AdvancedImage
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginLeft: "10px",
+                            marginTop: "10px",
+                            borderRadius: "50%",
+                            border: "1px solid black",
+                          }}
+                          cldImg={
+                            cld.image(userDetails?.image)
+                            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                            // .resize(Resize.scale().width(200).height(200))
+                          }
+                        />{" "}
+                        <NotificationDot
+                          userType={userDetails.role.toLowerCase()}
+                          id={userDetails?.id}
+                        />
+                      </Link>
+                    )}
+                    {managerDetails.role === "MANAGER" && (
+                      <Link to={`/ChooseArchade/`}>
+                        <AdvancedImage
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginLeft: "10px",
+                            marginTop: "10px",
+                            borderRadius: "50%",
+                            border: "1px solid black",
+                          }}
+                          cldImg={
+                            cld.image(managerDetails?.image)
+                            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                            // .resize(Resize.scale().width(200).height(200))
+                          }
+                        />{" "}
+                        <NotificationDot
+                          userType={managerDetails.role.toLowerCase()}
+                          id={managerDetails?.id}
+                        />
+                      </Link>
+                    )}
+
+                    {coachDetails.role === "COACH" && (
+                      <Link to={`/coachProfile/`}>
+                        <AdvancedImage
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginLeft: "10px",
+                            marginTop: "10px",
+                            borderRadius: "50%",
+                            border: "1px solid black",
+                          }}
+                          cldImg={
+                            cld.image(coachDetails?.image)
+                            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                            // .resize(Resize.scale().width(200).height(200))
+                          }
+                        />{" "}
+                        <NotificationDot
+                          userType={coachDetails.role.toLowerCase()}
+                          id={coachDetails?.id}
+                        />
+                      </Link>
+                    )}
                   </div>
                   <div
                     className="NavBarUserProfileName"
@@ -448,7 +544,13 @@ const Navbar: React.FC = () => {
                       fontFamily: "kanit",
                     }}
                   >
-                    Sasindu Dhanushka
+                    {userDetails.firstName && userDetails.lastName
+                      ? `${userDetails.firstName} ${userDetails.lastName}`
+                      : coachDetails.firstName && coachDetails.lastName
+                      ? `${coachDetails.firstName} ${coachDetails.lastName}`
+                      : managerDetails.firstName && managerDetails.lastName
+                      ? `${managerDetails.firstName} ${managerDetails.lastName}`
+                      : "User Name"}
                   </div>
                   <div
                     className="NavBarUserProfileStatus"
@@ -459,7 +561,13 @@ const Navbar: React.FC = () => {
                       fontSize: "15px",
                     }}
                   >
-                    student
+                    {userDetails?.role
+                      ? userDetails?.role
+                      : coachDetails?.role
+                      ? coachDetails?.role
+                      : managerDetails?.role
+                      ? managerDetails?.role
+                      : "Role"}
                   </div>
                   <Divider style={{ color: "black" }} />
                 </div>
@@ -619,7 +727,7 @@ const Navbar: React.FC = () => {
               >
                 <Link to="/contact">Contact Us</Link>
               </Menu.Item>
-              <Menu.Item
+              {/* <Menu.Item
                 key="PrfileButton"
                 style={{
                   fontFamily: "kanit",
@@ -639,7 +747,7 @@ const Navbar: React.FC = () => {
                   style={{ fontSize: "20px", marginRight: "10px" }}
                 />
                 Edit Profile
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item
                 key="contactUs"
                 style={{
@@ -655,6 +763,11 @@ const Navbar: React.FC = () => {
                 }}
                 onMouseEnter={() => setLogOutButtonHovered(true)}
                 onMouseLeave={() => setLogOutButtonHovered(false)}
+                onClick={() => {
+                  logOut();
+                  window.location.href = "/";
+                  // window.location.reload(); // This forces a reload from the server
+                }}
               >
                 <LogoutOutlined
                   style={{ fontSize: "20px", marginRight: "10px" }}
@@ -779,7 +892,9 @@ const Navbar: React.FC = () => {
                       pathname === "/about" ? "#01abf8" : fontColor(),
                     transition: aboutUnderlineStyle.transition,
                   }}
-                ></span>
+                >
+                  {" "}
+                </span>
               </Link>
             </div>
             <div className="navBarUserProfile" style={{ marginTop: "5px" }}>
@@ -802,12 +917,33 @@ const Navbar: React.FC = () => {
                     cldImg={
                       userDetails && userDetails.image
                         ? cld.image(userDetails.image)
-                        : // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                          // .resize(Resize.scale().width(200).height(200))
-                          cld.image(coachDetails.image)
-                          // render coach's image if userDetails is empty
+                        : coachDetails && coachDetails.image
+                        ? cld.image(coachDetails.image)
+                        : managerDetails && managerDetails.image
+                        ? cld.image(managerDetails.image)
+                        : cld.image("") // Provide a fallback or default image if necessary
                     }
                   />
+                  {userDetails.role === "PLAYER" && (
+                    <NotificationDot
+                      userType={userDetails.role.toLowerCase()}
+                      id={userDetails?.id}
+                    />
+                  )}
+                  {managerDetails.role === "MANAGER" &&
+                    (console.log(managerDetails),
+                    (
+                      <NotificationDot
+                        userType={managerDetails.role.toLowerCase()}
+                        id={managerDetails?.id}
+                      />
+                    ))}
+                  {coachDetails.role === "COACH" && (
+                    <NotificationDot
+                      userType={coachDetails.role.toLowerCase()}
+                      id={coachDetails?.id}
+                    />
+                  )}
                 </a>
               </Popover>
             </div>

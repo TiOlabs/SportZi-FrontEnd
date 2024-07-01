@@ -12,32 +12,32 @@ import { usePlayer } from "../../context/player.context";
 import { useLocation } from "react-router-dom";
 import { useArcade } from "../../context/Arcade.context";
 import { useCoach } from "../../context/coach.context";
-// Redirect or perform other logout operations if necessary
+import CoachApplyForm from "../../components/coachApplyForArcade";
+import ArcadeZoneCardUserView from "../../components/arcadeZoneCard(UserView)";
 
 const Home = () => {
-  const index = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [index]);
+  const location = useLocation();
   const [token, setToken] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    setToken(Cookies.get("token"));
-  }, []);
   const { userDetails } = usePlayer();
   const { managerDetails } = useArcade();
-  const{coachDetails}=useCoach();
-  console.log("userDetails", userDetails);
-  console.log("managerDetails", managerDetails);
-  console.log("coachDetails", coachDetails);
+  const { coachDetails } = useCoach();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   return (
     <>
-      {userDetails.id !== "" || managerDetails.id !== "" || coachDetails.id!=="" ? (
+      {userDetails.id !== "" ||
+      managerDetails.id !== "" ||
+      coachDetails.id !== "" ? (
         <Navbar />
       ) : (
         <NavbarLogin />
       )}
       <HeroSection />
+      {/* <ArcadeZoneCardUserView /> */}
+      {/* <CoachApplyForm /> */}
       <CoachCardSection />
       <DiscoutCardsSection />
       <MapSction />
