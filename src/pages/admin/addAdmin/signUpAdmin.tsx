@@ -51,6 +51,10 @@ const SignUpAdmin = () => {
   const data: any = jwtDecode(token as string);
   console.log(data.userId);
 
+  // const data = {
+  //   userId: "1",
+  //   role: "SUPERADMIN",
+  // };
   const handleCancel = () => {
     setIsModalOpen(false);
   };

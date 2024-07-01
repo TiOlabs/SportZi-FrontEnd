@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal, Form, Input, TimePicker } from "antd";
+import { Col, Row, Button, Modal, Form, Input, TimePicker, message } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import ArcadeCardForMannager from "../../components/ArcadeCardForMannager";
 import axiosInstance from "../../axiosInstance";
@@ -95,8 +95,8 @@ const ChooseArcade = () => {
   };
   const handleFinish = async () => {
     console.log("finish");
-    console.log("selectedLocation", selectedLocation);
-    const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
+    // console.log("selectedLocation", selectedLocation);
+    // const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}api/addarcadeDetails`,
@@ -107,9 +107,9 @@ const ChooseArcade = () => {
           manager_id: managersArcades?.user_id,
           open_time: opentime,
           close_time: closetime,
-          distription: discription,
-          arcade_image: publicId,
-          location: location,
+          // distription: discription,
+          // arcade_image: publicId,
+          // location: location,
         }
       );
       window.location.reload();
@@ -117,6 +117,9 @@ const ChooseArcade = () => {
       setIsModalVisible(false);
     } catch (err) {
       console.log(err);
+    }
+    finally{
+      message.success("Arcade Added Successfully");
     }
   };
 
@@ -193,12 +196,7 @@ const ChooseArcade = () => {
               type="primary"
               icon="+"
               onClick={showModal}
-              style={{ marginTop: "20px",
-                borderRadius:"3px",
-                width:"100%",
-                
-
-               }}
+              style={{ marginTop: "20px", borderRadius: "3px", width: "100%" }}
             />
 
             <Modal
@@ -322,7 +320,7 @@ const ChooseArcade = () => {
                     }}
                   />
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                   name="Discription"
                   label="Add a description"
                   rules={[
@@ -341,8 +339,8 @@ const ChooseArcade = () => {
                     placeholder="descrition"
                     onChange={(e) => setDiscription(e.target.value)}
                   />
-                </Form.Item>
-                <Form.Item
+                </Form.Item> */}
+                {/* <Form.Item
                   name="Update Your Location"
                   label="Update Your Location"
                 >
@@ -364,10 +362,10 @@ const ChooseArcade = () => {
                       />
                     )}
                   </GoogleMap>
-                </Form.Item>
+                </Form.Item> */}
                 {/* .................. picture upload........................  */}
 
-                <Form.Item label="Upload Zone Image">
+                {/* <Form.Item label="Upload Zone Image">
                   <CloudinaryUploadWidget
                     uwConfig={uwConfig}
                     setPublicId={setPublicId}
@@ -378,7 +376,7 @@ const ChooseArcade = () => {
                     cldImg={imgObject}
                     plugins={[responsive(), placeholder()]}
                   />
-                </Form.Item>
+                </Form.Item> */}
               </Form>
             </Modal>
           </div>
