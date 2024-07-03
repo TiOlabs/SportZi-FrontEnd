@@ -55,10 +55,9 @@ const requestList = [
 const PlayerProfile = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [enrollValue, setEnrollValue] = useState(11);
   const [playerBookingsData, setPlayerBookingsData] = useState([]);
-  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
-    PackageEnroolDetailsForPlayer[]
-  >([]);
+  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState([]);
   const [coachBookingData, setCoachBookingData] = useState<
     CoachBookingDetails[]
   >([]);
@@ -96,6 +95,10 @@ const PlayerProfile = () => {
     console.log("radio checked", e.target.value);
     setValue2(e.target.value);
   };
+  const onChangePackagePlayerEnrollment = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setEnrollValue(e.target.value);
+  }
   const currentDate = new Date();
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
   console.log(userDetails.id);
@@ -149,6 +152,22 @@ const PlayerProfile = () => {
       .then((res) => {
         console.log(res.data);
         setPackageEnrollmentForPlayer(res.data);
+
+        const filteredDataForPlayerEnroll = res.data.filter(
+          (item: {status: string}) =>{
+            if(enrollValue === 11) {
+              return item.status === "success";
+            }
+            else if(enrollValue === 13) {
+              return (item.status === "canceled_By_Player" || item.status === "canceled_By_Arcade");
+            }
+            return false;
+          }
+
+        );
+        setPackageEnrollmentForPlayer(filteredDataForPlayerEnroll);
+
+
         setPackageEnrollmentForPlayer((prev: any) => {
           return prev.filter(
             (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
@@ -157,11 +176,14 @@ const PlayerProfile = () => {
           );
         });
         setLoading(false);
+
       })
+
+
       .catch((error) => {
         console.log(error);
       });
-  }, [userDetails]);
+  }, [userDetails, enrollValue]);
   console.log("userDetails", userDetails);
 
   useEffect(() => {
@@ -255,6 +277,7 @@ const PlayerProfile = () => {
   const handleFilterChange1 = (value: React.SetStateAction<string>) => {
     setFilterValue(value);
   };
+  
 
   const filteredBookings = coachBookingData.filter((booking) => {
     if (filterBy === "coach_name") {
@@ -297,6 +320,20 @@ const PlayerProfile = () => {
       return true;
     }
   );
+  const filteredPackageEnrollmentForPlayer = packageEnrollmentForPlayer.filter(
+    (item: PackageEnroolDetailsForPlayer) => {
+      if(filterBy === "package_name") {
+        return item.package.package_name.toLowerCase().includes(filterValue.toLowerCase());
+      }
+      else if (filterBy === "date") {
+        return item.enrolled_date.includes(filterValue);
+      } else if (filterBy === "rate") {
+        return item.rate.toString().includes(filterValue);
+      }
+      return true;
+    }
+  );
+  
   return (
     <>
       {userDetails.id !== "" ? <NavbarProfile /> : <NavbarLogin />}
@@ -2050,6 +2087,138 @@ const PlayerProfile = () => {
         >
           Package Enrollments
         </p>
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {/* Radio button section */}
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+              }}
+            >
+              <Radio.Group onChange={onChangePackagePlayerEnrollment} value={enrollValue}>
+                <Radio value={11}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+              }}
+            >
+              <Radio.Group onChange={onChangePackagePlayerEnrollment} value={enrollValue}>
+                <Radio value={13}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+          <Col span={8}></Col>
+          <Col span={8}>
+            <Select
+              defaultValue="date"
+              style={{ width: 120, height: "40px" }}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="package_name">Package Name</Option>
+              <Option value="date">Date</Option>
+              <Option value="rate">Rate</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{ width: 200, marginLeft: 10, height: "40px" }}
+              onChange={(e) => handleFilterChange1(e.target.value)}
+            />
+            <Button
+              style={{ marginLeft: 10, height: "40px" }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
+        </Row>
+
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Available
+            </Typography>
+          </Col>
+          <Col
+            span={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#ad0508",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Canceled
+            </Typography>
+          </Col>
+          <Col span={16}></Col>
+        </Row>
 
         <Row
           style={{
@@ -2161,9 +2330,9 @@ const PlayerProfile = () => {
             alignItems: "center",
           }}
         >
-          {packageEnrollmentForPlayer &&
-          packageEnrollmentForPlayer.length > 0 ? (
-            packageEnrollmentForPlayer.map(
+          {filteredPackageEnrollmentForPlayer &&
+          filteredPackageEnrollmentForPlayer.length > 0 ? (
+            filteredPackageEnrollmentForPlayer.map(
               (enroll: PackageEnroolDetailsForPlayer) => (
                 // Check if booking type is "zone"
 

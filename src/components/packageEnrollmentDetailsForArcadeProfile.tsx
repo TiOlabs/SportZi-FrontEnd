@@ -1,10 +1,8 @@
 import { Col, Row } from "antd";
-import profilePic from "../assents/pro.png";
 import { Grid } from "antd";
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import axios from "axios";
-import { ZoneBookingDetails } from "../types";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
@@ -173,7 +171,6 @@ const PackageEnrollmentDetailsInArcadeProfile = (props: any) => {
 
       <Modal
         width={1000}
-        title="Basic Modal"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -192,21 +189,23 @@ const PackageEnrollmentDetailsInArcadeProfile = (props: any) => {
           >
             Cancel
           </Button>,
-          <Button
-            style={{
-              backgroundColor: "#fff",
-              color: "#FF0000",
-              border: "1px solid #FF0000",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "18px",
-            }}
-            onClick={showDeleteConfirm}
-            key="submit"
-            type="primary"
-          >
-            Cancel Meeting
-          </Button>,
+          props.status === "success" && [
+            <Button
+              style={{
+                backgroundColor: "#fff",
+                color: "#FF0000",
+                border: "1px solid #FF0000",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "18px",
+              }}
+              onClick={showDeleteConfirm}
+              key="submit"
+              type="primary"
+            >
+              Cancel Meeting
+            </Button>,
+          ],
         ]}
       >
         <Row
@@ -313,7 +312,7 @@ const PackageEnrollmentDetailsInArcadeProfile = (props: any) => {
             lg={6}
             xl={6}
           >
-            {props.zone_name}
+            Status: {props.status}
           </Col>
         </Row>
       </Modal>
