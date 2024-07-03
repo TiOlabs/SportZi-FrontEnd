@@ -112,7 +112,7 @@ const BookedCoaches = (props: any) => {
         <Row>NAV</Row>
         <Row>
           <Col style={{ color: "#0E458E" }}>
-            <h2>Booked Arena</h2>
+            <h2>Booked Coaches</h2>
           </Col>
         </Row>
         <Row>

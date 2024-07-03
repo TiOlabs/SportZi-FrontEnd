@@ -33,8 +33,7 @@ const CoachReqestForArcade = (props: any) => {
   const handlReject = () => {
     setIsModalOpen(false);
     setIsRejectModalOpen(true);
-    
-  }
+  };
   const handleAccept = () => {
     try {
       const fetchData = async () => {
@@ -48,7 +47,7 @@ const CoachReqestForArcade = (props: any) => {
             coach_name: props.coach_name,
             email: props.coach_Email,
             arcade_name: props.arcade_name,
-            role:"ARCADE"
+            role: "ARCADE",
           }
         );
         console.log(res.data);
@@ -57,6 +56,8 @@ const CoachReqestForArcade = (props: any) => {
       message.success("Coach Assigned Successfully");
     } catch (e) {
       console.log(e);
+    } finally {
+      window.location.reload();
     }
   };
 
@@ -420,9 +421,6 @@ const CoachReqestForArcade = (props: any) => {
         onCancel={handleCancel}
       >
         <p>Are you sure you want to reject this coach?</p>
-
-
-
       </Modal>
     </>
   );

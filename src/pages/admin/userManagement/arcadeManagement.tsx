@@ -249,10 +249,12 @@ function DataRow(props: any) {
                     <b>Manager ID : </b> {arcadedetails.manager_id}
                   </Col>
                   <Col>
-                    <b>First Name : </b> {arcadedetails.manager.user.firstname}
+                    <b> Manager's First Name : </b>{" "}
+                    {arcadedetails.manager.user.firstname}
                   </Col>
                   <Col>
-                    <b>Last Name : </b> {arcadedetails.manager.user.lastname}
+                    <b>Manager's Last Name : </b>{" "}
+                    {arcadedetails.manager.user.lastname}
                   </Col>
                   <Col>
                     <b>Email :</b> {arcadedetails.manager.user.email}
@@ -261,9 +263,7 @@ function DataRow(props: any) {
                     <b>Account Number :</b>{" "}
                     {arcadedetails.manager.user.accountNumber || "N/A"}
                   </Col>
-                  <Col>
-                    <b>Gender :</b> {arcadedetails.manager.user.gender}
-                  </Col>
+
                   <Col>
                     <b>City :</b> {arcadedetails.manager.user.city || "N/A"}
                   </Col>

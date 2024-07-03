@@ -198,12 +198,7 @@ function DataRow(props: any) {
                   {playerdetails.user.accountNumber || "N/A"}
                 </Col>
 
-                <Col span={24}>
-                  <b>DOB :</b> {playerdetails.user.DOB}
-                </Col>
-                <Col span={24}>
-                  <b>Gender :</b> {playerdetails.user.gender}
-                </Col>
+               
                 <Col span={24}>
                   <b>City :</b> {playerdetails.user.city || "N/A"}
                 </Col>

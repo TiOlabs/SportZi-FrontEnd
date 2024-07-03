@@ -11,6 +11,8 @@ import {
   Input,
   Select,
   Rate,
+  Skeleton,
+  Spin,
 } from "antd";
 import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
@@ -58,6 +60,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
 const ArcadeProfileArcade = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
   const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
@@ -97,7 +100,11 @@ const ArcadeProfileArcade = () => {
         );
         const data = await res.data;
         console.log(data);
-        setPackageEnrollmentForCoach(data);
+        const filtereddata = data.filter(
+          (item: CoachEnrollDetailsForPackages) =>
+            item.package.arcade_id === ArcadeId
+        );
+        setPackageEnrollmentForCoach(filtereddata);
       };
       fetchData();
     } catch (e) {
@@ -143,6 +150,7 @@ const ArcadeProfileArcade = () => {
   }, [ArcadeId]);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get<Arcade>(
         process.env.REACT_APP_API_URL +
@@ -193,6 +201,7 @@ const ArcadeProfileArcade = () => {
 
         setArcadeBookings(filteredBookings);
         console.log("Filtered bookings:", filteredBookings);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -200,6 +209,7 @@ const ArcadeProfileArcade = () => {
   }, [ArcadeId, value]);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get(
         `${process.env.REACT_APP_API_URL}api/getCoachBookingByArcadeId/${ArcadeId}`
@@ -238,6 +248,7 @@ const ArcadeProfileArcade = () => {
 
         setCoachBookings(filteredBookings);
         console.log("Filtered bookings:", filteredBookings);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -254,6 +265,7 @@ const ArcadeProfileArcade = () => {
   // };
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get(
         `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${ArcadeId}`,
@@ -291,10 +303,14 @@ const ArcadeProfileArcade = () => {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [ArcadeId, valueForCoachRequest]);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get(
         process.env.REACT_APP_API_URL + `api/getPackageEnrollmentPlayerDetails`
@@ -309,6 +325,7 @@ const ArcadeProfileArcade = () => {
               playerEnrollDetails.package.arcade_id === ArcadeId
           );
         });
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -597,7 +614,7 @@ const ArcadeProfileArcade = () => {
     console.log("radio checked", e.target.value);
     setValueForCoachRequest(e.target.value);
   };
-
+  console.log(isLoading);
   return (
     <>
       <NavbarProfile />
@@ -1524,12 +1541,15 @@ const ArcadeProfileArcade = () => {
         }}
       >
         <Col
-         xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1547,12 +1567,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-         xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1569,12 +1592,15 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-    xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1591,8 +1617,8 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
 
-       {/* Spacer for larger screens */}
-       <Col xs={0} sm={0} md={0} lg={16}></Col>
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
       <Row
         style={{
@@ -1600,17 +1626,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexWrap: "wrap",  // For wrapping in small viewports
-          marginTop: "2px", 
+          flexWrap: "wrap", // For wrapping in small viewports
+          marginTop: "2px",
         }}
       >
         <Col
-          xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -1629,12 +1658,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -1654,12 +1686,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-         xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -1680,19 +1715,31 @@ const ArcadeProfileArcade = () => {
         {/* Spacer for larger screens */}
         <Col xs={0} sm={0} md={8} lg={8}></Col>
 
-
-         {/* Filter Section */}
-         <Col xs={24} sm={24} md={24} lg={8} 
-        style={{ marginBottom: "2%", 
-                 display: "flex", 
-                 justifyContent: "center", 
-                 alignItems: "center", 
-                 flexDirection: "row", 
-                 flexWrap: "wrap",
-                 marginTop:"3%"}}>
+        {/* Filter Section */}
+        <Col
+          xs={24}
+          sm={24}
+          md={24}
+          lg={8}
+          style={{
+            marginBottom: "2%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: "3%",
+          }}
+        >
           <Select
             defaultValue="date"
-            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px"  }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             onChange={(value) => setFilterBy(value)}
           >
             <Option value="date">Date</Option>
@@ -1705,11 +1752,23 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+              height: "40px",
+            }}
             onChange={(e) => handleFilterChange2(e.target.value)}
           />
           <Button
-            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             ghost
             type="primary"
             onClick={() => {
@@ -1721,8 +1780,6 @@ const ArcadeProfileArcade = () => {
           </Button>
         </Col>
       </Row>
-
-
 
       <Row
         style={{
@@ -1825,52 +1882,53 @@ const ArcadeProfileArcade = () => {
             overflowY: "scroll",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {filteredArcadeBookings.length > 0 ? (
-              (console.log(filteredArcadeBookings),
-              (
-                <>
-                  {filteredArcadeBookings.map((zone) =>
-                    (zone.zoneBookingDetails || [])
-                      .filter((booking) => booking.booking_type === "zone")
-                      .map((booking) => (
-                        <AvailableBookingsArcade
-                          key={booking.zone_booking_id}
-                          user_image={booking.user.user_image}
-                          booking_id={booking.zone_booking_id}
-                          booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                          booked_id={booking.user.user_id}
-                          zoneName={zone.zone_name}
-                          time={booking.time}
-                          date={booking.date}
-                          rate={zone.rate}
-                          zoneImage={zone.zone_image}
-                          arcade_name={arcadeName}
-                          email={booking.user.email}
-                          status={booking.status}
-                          full_amount={booking.full_amount}
-                          user_id={booking.user.user_id}
-                          arcade_id={ArcadeId}
-                        />
-                      ))
-                  )}
-                </>
-              ))
-            ) : (
-              <Empty />
-            )}
-          </div>
+          <Spin spinning={isLoading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {filteredArcadeBookings.length > 0 ? (
+                (console.log(filteredArcadeBookings),
+                (
+                  <>
+                    {filteredArcadeBookings.map((zone) =>
+                      (zone.zoneBookingDetails || [])
+                        .filter((booking) => booking.booking_type === "zone")
+                        .map((booking) => (
+                          <AvailableBookingsArcade
+                            key={booking.zone_booking_id}
+                            user_image={booking.user.user_image}
+                            booking_id={booking.zone_booking_id}
+                            booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                            booked_id={booking.user.user_id}
+                            zoneName={zone.zone_name}
+                            time={booking.time}
+                            date={booking.date}
+                            rate={zone.rate}
+                            zoneImage={zone.zone_image}
+                            arcade_name={arcadeName}
+                            email={booking.user.email}
+                            status={booking.status}
+                            full_amount={booking.full_amount}
+                            user_id={booking.user.user_id}
+                            arcade_id={ArcadeId}
+                          />
+                        ))
+                    )}
+                  </>
+                ))
+              ) : (
+                <Empty />
+              )}
+            </div>
+          </Spin>
         </div>
       </Row>
-
 
       <Row
         style={{
@@ -1904,17 +1962,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexWrap: "wrap", 
+          flexWrap: "wrap",
         }}
       >
         {/* Radio button section */}
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1929,12 +1990,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1949,18 +2013,20 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
             theme={{
-              token: { colorBorder: "#ad0508", 
-                       colorPrimary: "#ad0508" },
+              token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
             }}
           >
             <Radio.Group onChange={onChangeCoachBookings} value={value2}>
@@ -1969,9 +2035,8 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
 
- {/* Spacer for larger screens */}
- <Col xs={0} sm={0} md={0} lg={16}></Col>
-
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
 
       <Row
@@ -1980,17 +2045,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexWrap: "wrap",  // For wrapping in small viewports
+          flexWrap: "wrap", // For wrapping in small viewports
           marginTop: "2px",
         }}
       >
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2009,12 +2077,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",  
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2033,12 +2104,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2060,19 +2134,31 @@ const ArcadeProfileArcade = () => {
         {/* Spacer for larger screens */}
         <Col xs={0} sm={0} md={8} lg={8}></Col>
 
-
         {/* Filter Section */}
-        <Col xs={24} sm={24} md={24} lg={8} 
-        style={{ marginBottom: "2%", 
-                 display: "flex", 
-                 justifyContent: "center", 
-                 alignItems: "center", 
-                 flexDirection: "row", 
-                 flexWrap: "wrap",
-                 marginTop:"3%"}}>
+        <Col
+          xs={24}
+          sm={24}
+          md={24}
+          lg={8}
+          style={{
+            marginBottom: "2%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: "3%",
+          }}
+        >
           <Select
             defaultValue="date"
-            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             onChange={(value) => setFilterBy(value)}
           >
             <Option value="date">Date</Option>
@@ -2085,11 +2171,23 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px"  }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+              height: "40px",
+            }}
             onChange={(e) => handleFilterChange(e.target.value)}
           />
           <Button
-            style={{width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             ghost
             type="primary"
             onClick={() => {
@@ -2201,63 +2299,66 @@ const ArcadeProfileArcade = () => {
             overflowY: "scroll",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {coachBookings.length > 0 ? (
-              coachBookings
-                .filter((booking) => {
-                  if (filterBy === "date") {
-                    return booking.date.includes(filterValue);
-                  } else if (filterBy === "time") {
-                    return booking.time.includes(filterValue);
-                  } else if (filterBy === "rate") {
-                    return booking.zone.rate.toString().includes(filterValue);
-                  } else if (filterBy === "zoneName") {
-                    return booking.zone.zone_name.includes(filterValue);
-                  } else if (filterBy === "booked_by") {
-                    return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
-                      filterValue
-                    );
-                  } else if (filterBy === "booking_id") {
-                    return booking.booking_id.includes(filterValue);
-                  } else if (filterBy === "status") {
-                    return booking.status.includes(filterValue);
-                  }
-                  return true;
-                })
-                .map((booking) => (
-                  <AvailableCoachBookingsArcade
-                    key={booking.booking_id}
-                    user_image={booking.player.user.user_image}
-                    booking_id={booking.booking_id}
-                    booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
-                    zoneName={booking.zone.zone_name}
-                    time={booking.time}
-                    date={booking.date}
-                    rate={booking.zone.rate}
-                    zoneImage={booking.zone.zone_image}
-                    booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-                    player_email={booking.player.user.email}
-                    coach_email={booking.coach.user.email}
-                    coach_image={booking.coach.user.user_image}
-                    coach_id={booking.coach_id}
-                    status={booking.status}
-                    full_amount={booking.full_amount}
-                    player_id={booking.player_id}
-                    arcade_id={ArcadeId}
-                  />
-                ))
-            ) : (
-              <Empty />
-            )}
-          </div>
+          {" "}
+          <Spin spinning={isLoading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {coachBookings.length > 0 ? (
+                coachBookings
+                  .filter((booking) => {
+                    if (filterBy === "date") {
+                      return booking.date.includes(filterValue);
+                    } else if (filterBy === "time") {
+                      return booking.time.includes(filterValue);
+                    } else if (filterBy === "rate") {
+                      return booking.zone.rate.toString().includes(filterValue);
+                    } else if (filterBy === "zoneName") {
+                      return booking.zone.zone_name.includes(filterValue);
+                    } else if (filterBy === "booked_by") {
+                      return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
+                        filterValue
+                      );
+                    } else if (filterBy === "booking_id") {
+                      return booking.booking_id.includes(filterValue);
+                    } else if (filterBy === "status") {
+                      return booking.status.includes(filterValue);
+                    }
+                    return true;
+                  })
+                  .map((booking) => (
+                    <AvailableCoachBookingsArcade
+                      key={booking.booking_id}
+                      user_image={booking.player.user.user_image}
+                      booking_id={booking.booking_id}
+                      booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
+                      zoneName={booking.zone.zone_name}
+                      time={booking.time}
+                      date={booking.date}
+                      rate={booking.zone.rate}
+                      zoneImage={booking.zone.zone_image}
+                      booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                      player_email={booking.player.user.email}
+                      coach_email={booking.coach.user.email}
+                      coach_image={booking.coach.user.user_image}
+                      coach_id={booking.coach_id}
+                      status={booking.status}
+                      full_amount={booking.full_amount}
+                      player_id={booking.player_id}
+                      arcade_id={ArcadeId}
+                    />
+                  ))
+              ) : (
+                <Empty />
+              )}
+            </div>
+          </Spin>
         </div>
       </Row>
       {/* Package Enrollments Section */}
@@ -2268,7 +2369,6 @@ const ArcadeProfileArcade = () => {
           justifyContent: "center",
           alignItems: "center",
           marginTop: "60px",
-         
         }}
       >
         <Col>
@@ -2297,12 +2397,15 @@ const ArcadeProfileArcade = () => {
         }}
       >
         <Col
-            xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2320,12 +2423,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2342,12 +2448,15 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2364,8 +2473,8 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
 
-         {/* Spacer for larger screens */}
-         <Col xs={0} sm={0} md={0} lg={16}></Col>
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
 
       <Row
@@ -2374,17 +2483,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexWrap: "wrap",  // For wrapping in small viewports
+          flexWrap: "wrap", // For wrapping in small viewports
           marginTop: "2px",
         }}
       >
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2403,12 +2515,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2428,12 +2543,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-            xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2455,18 +2573,31 @@ const ArcadeProfileArcade = () => {
         {/* Spacer for larger screens */}
         <Col xs={0} sm={0} md={8} lg={8}></Col>
 
-       {/* Filter Section */}
-       <Col xs={24} sm={24} md={24} lg={8} 
-        style={{ marginBottom: "2%", 
-                 display: "flex", 
-                 justifyContent: "center", 
-                 alignItems: "center", 
-                 flexDirection: "row", 
-                 flexWrap: "wrap",
-                 marginTop:"3%"}}>
+        {/* Filter Section */}
+        <Col
+          xs={24}
+          sm={24}
+          md={24}
+          lg={8}
+          style={{
+            marginBottom: "2%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: "3%",
+          }}
+        >
           <Select
             defaultValue="enroll_date"
-            style={{width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             onChange={(value) => setFilterByPackage(value)}
           >
             <Option value="package_name">Package Name</Option>
@@ -2478,11 +2609,23 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px"}}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+              height: "40px",
+            }}
             onChange={(e) => handleFilterChangePackage(e.target.value)}
           />
           <Button
-            style={{  width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px"  }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             ghost
             type="primary"
             onClick={() => {
@@ -2596,40 +2739,43 @@ const ArcadeProfileArcade = () => {
             overflowY: "scroll",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {filteredPackageEnrollments.length > 0 ? (
-              <>
-                {filteredPackageEnrollments.map(
-                  (enroll: PackageEnroolDetailsForPlayer) => (
-                    <PackageEnrollmentDetailsInArcadeProfile
-                      key={enroll.enrolled_date} // Make sure to provide a unique key
-                      package_id={enroll.package_id}
-                      package_image={enroll.package.package_image}
-                      package_name={enroll.package.package_name}
-                      enroll_date={enroll.enrolled_date}
-                      venue={enroll.package.arcade.arcade_name}
-                      rate={enroll.rate}
-                      duration={enroll.duration}
-                      zone_name={enroll.package.zone.zone_name}
-                      player_id={enroll.player_id}
-                      email={enroll.player.user.email}
-                      role={"ARCADE"}
-                    />
-                  )
-                )}
-              </>
-            ) : (
-              <Empty description="No Package Enrollments Yet" />
-            )}
-          </div>
+          {" "}
+          <Spin spinning={isLoading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {filteredPackageEnrollments.length > 0 ? (
+                <>
+                  {filteredPackageEnrollments.map(
+                    (enroll: PackageEnroolDetailsForPlayer) => (
+                      <PackageEnrollmentDetailsInArcadeProfile
+                        key={enroll.enrolled_date} // Make sure to provide a unique key
+                        package_id={enroll.package_id}
+                        package_image={enroll.package.package_image}
+                        package_name={enroll.package.package_name}
+                        enroll_date={enroll.enrolled_date}
+                        venue={enroll.package.arcade.arcade_name}
+                        rate={enroll.rate}
+                        duration={enroll.duration}
+                        zone_name={enroll.package.zone.zone_name}
+                        player_id={enroll.player_id}
+                        email={enroll.player.user.email}
+                        role={"ARCADE"}
+                      />
+                    )
+                  )}
+                </>
+              ) : (
+                <Empty description="No Package Enrollments Yet" />
+              )}
+            </div>
+          </Spin>
         </div>
       </Row>
 
@@ -2663,16 +2809,19 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexWrap: "wrap", 
+          flexWrap: "wrap",
         }}
       >
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2693,12 +2842,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2718,12 +2870,15 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-          xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", 
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2745,7 +2900,6 @@ const ArcadeProfileArcade = () => {
 
         {/* Spacer for larger screens */}
         <Col xs={0} sm={0} md={0} lg={16}></Col>
-
       </Row>
       <Row
         style={{
@@ -2753,18 +2907,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexWrap: "wrap",  // For wrapping in small viewports
+          flexWrap: "wrap", // For wrapping in small viewports
           marginTop: "2px",
-
         }}
       >
         <Col
-          xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2773,7 +2929,7 @@ const ArcadeProfileArcade = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
+              fontSize: "16px",
               paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
@@ -2783,12 +2939,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-           xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2807,12 +2966,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          xs={6} sm={6} md={6} lg={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", 
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2830,13 +2992,10 @@ const ArcadeProfileArcade = () => {
             Canceled
           </Typography>
         </Col>
-       
+
         {/* Spacer for larger screens */}
         <Col xs={0} sm={0} md={8} lg={8}></Col>
-
-
-
-
+        <Col xs={24} sm={24} md={24} lg={8}></Col>
       </Row>
       <Row
         style={{
@@ -2853,35 +3012,38 @@ const ArcadeProfileArcade = () => {
             width: "100%",
             maxHeight: "500px",
             overflowY: "scroll",
+            marginTop: "80px",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {Array.isArray(CoachReqestToArchade) &&
-              CoachReqestToArchade.slice(0, numberOfItemsShown).map(
-                (request, index) => (
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    key={index}
-                  >
-                    {request}
-                  </div>
-                )
-              )}
-          </div>
+          <Spin spinning={isLoading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {Array.isArray(CoachReqestToArchade) &&
+                CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+                  (request, index) => (
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      key={index}
+                    >
+                      {request}
+                    </div>
+                  )
+                )}
+            </div>
+          </Spin>
         </div>
         {showMore ? (
           <Button
@@ -2944,6 +3106,7 @@ const ArcadeProfileArcade = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          marginTop: "60px",
         }}
       >
         <div

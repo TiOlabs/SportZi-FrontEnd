@@ -1,4 +1,4 @@
-import { Col, Row, Modal, Button, Empty, Spin } from "antd";
+import { Col, Row, Modal, Button, Empty, Spin, Checkbox } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
@@ -132,6 +132,10 @@ function DataRow(props: any) {
         marginTop: "63px",
       }}
     >
+      {" "}
+      <Col span={1} style={{ display: "flex", justifyContent: "center" }}>
+        <Checkbox></Checkbox>
+      </Col>
       <Col span={8} style={{}}>
         <AdvancedImage
           style={{
@@ -174,7 +178,7 @@ function DataRow(props: any) {
           LKR {props.rate}
         </div>
       </Col>
-      <Col span={8}>
+      <Col span={7}>
         <Link to={`/profile/`}>
           <AdvancedImage
             style={{
