@@ -155,6 +155,8 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
           >
             {props.venue}
           </Col>
+          
+          
         )}
       </Row>
 
@@ -261,7 +263,7 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
             sm={12}
             md={12}
             lg={6}
-            xl={6}
+            xl={4}
           >
             {props.enroll_date}
           </Col>
@@ -283,7 +285,6 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
           >
             {props.duration} months
           </Col>
-
           <Col
             style={{
               color: "#000",
@@ -298,9 +299,9 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
             sm={12}
             md={12}
             lg={6}
-            xl={6}
+            xl={4}
           >
-            {props.zone_name}
+            LKR {props.rate}
           </Col>
           <Col
             style={{
@@ -316,9 +317,11 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
             sm={12}
             md={12}
             lg={6}
-            xl={6}
+            xl={4}
           >
-            LKR {props.rate}
+            Status: {props.status === 
+            "canceled_By_Player" ? "Canceled By Player" : "Success"}
+            
           </Col>
         </Row>
       </Modal>

@@ -61,11 +61,17 @@ const ArcadeProfileArcade = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
   const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
+  const [ValueForPackage, setValueForPackaget] = useState(7);
+
   const [packageDetail, setPackageDetail] = useState<Package[]>([]);
   console.log("packageDetail", packageDetail);
   const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
     PackageEnroolDetailsForPlayer[]
   >([]);
+  const [
+    packageEnrollmentForPlayerConfirm,
+    setPackageEnrollmentForPlayerConfirm,
+  ] = useState<PackageEnroolDetailsForPlayer[]>([]);
   const [packageEnrollmentForCoach, setPackageEnrollmentForCoach] = useState<
     CoachEnrollDetailsForPackages[]
   >([]);
@@ -77,6 +83,11 @@ const ArcadeProfileArcade = () => {
     console.log("radio checked", e.target.value);
     setValue2(e.target.value);
   };
+  const onChangePackageEnrollments = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setValueForPackaget(e.target.value);
+  };
+
   console.log("value", value);
   const { ArcadeId } = useParams();
   console.log("ArcadeId", ArcadeId);
@@ -248,11 +259,6 @@ const ArcadeProfileArcade = () => {
     setFilterValue(value);
   };
 
-  // const onChangeCoachBookings = (e) => {
-  //   setCoachBookings([]);
-  //   // Logic to change value2
-  // };
-
   useEffect(() => {
     axios
       .get(
@@ -302,18 +308,26 @@ const ArcadeProfileArcade = () => {
       .then((res) => {
         console.log(res.data);
         setPackageEnrollmentForPlayer(res.data);
-        setPackageEnrollmentForPlayer((prev: any) => {
-          return prev.filter(
-            (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
-              playerEnrollDetails.status === "success" &&
-              playerEnrollDetails.package.arcade_id === ArcadeId
-          );
-        });
+        const filteredDataForPlayerEnroll = res.data.filter(
+          (item: { status: string }) => {
+            if (ValueForPackage === 7) {
+              return item.status === "success";
+            } else if (ValueForPackage === 8) {
+              return (
+                item.status === "canceled_By_Arcade" ||
+                item.status === "canceled_By_Player"
+              );
+            }
+            return false;
+          }
+        );
+        console.log("filteredDataForPlayerEnroll", filteredDataForPlayerEnroll);
+        setPackageEnrollmentForPlayerConfirm(filteredDataForPlayerEnroll);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [ArcadeId]);
+  }, [ArcadeId, ValueForPackage]);
 
   const { useBreakpoint } = Grid;
   const { lg, md } = useBreakpoint();
@@ -486,7 +500,7 @@ const ArcadeProfileArcade = () => {
   //   })
   // );
 
-  const filteredPackageEnrollments = packageEnrollmentForPlayer.filter(
+  const filteredPackageEnrollments = packageEnrollmentForPlayerConfirm.filter(
     (enroll) => {
       const { package: pkg, rate, duration, enrolled_date } = enroll;
       const { package_name, zone } = pkg;
@@ -1357,8 +1371,16 @@ const ArcadeProfileArcade = () => {
                   rate={zone.rate}
                   zoneImage={zone.zone_image}
                   description={zone.description}
-                  discount_percentage={zone.discount.discount_percentage}
-                  discount_description={zone.discount.description}
+                  discount_percentage={
+                    zone.discount && zone.discount.discount_percentage
+                      ? zone.discount.discount_percentage
+                      : 0
+                  }
+                  discount_description={
+                    zone.discount && zone.discount.description
+                      ? zone.discount.description
+                      : ""
+                  }
                   id={zone.zone_id}
                   capacity={zone.capacity}
                   open_time={zone.open_time}
@@ -2253,7 +2275,10 @@ const ArcadeProfileArcade = () => {
               },
             }}
           >
-            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+            <Radio.Group
+              onChange={onChangePackageEnrollments}
+              value={ValueForPackage}
+            >
               <Radio value={7}></Radio>
             </Radio.Group>
           </ConfigProvider>
@@ -2270,12 +2295,15 @@ const ArcadeProfileArcade = () => {
           <ConfigProvider
             theme={{
               token: {
-                colorBorder: "#05a30a",
-                colorPrimary: "#05a30a",
+                colorBorder: "#ad0508",
+                colorPrimary: "#ad0508",
               },
             }}
           >
-            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
+            <Radio.Group
+              onChange={onChangePackageEnrollments}
+              value={ValueForPackage}
+            >
               <Radio value={8}></Radio>
             </Radio.Group>
           </ConfigProvider>
@@ -2287,20 +2315,7 @@ const ArcadeProfileArcade = () => {
             alignItems: "center",
             justifyContent: "center",
           }}
-        >
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBorder: "#ad0508",
-                colorPrimary: "#ad0508",
-              },
-            }}
-          >
-            <Radio.Group onChange={onChangeCoachBookings} value={value2}>
-              <Radio value={9}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
+        ></Col>
 
         <Col span={16}></Col>
       </Row>
@@ -2346,30 +2361,6 @@ const ArcadeProfileArcade = () => {
           <Typography
             style={{
               alignItems: "center",
-              color: "#05a30a",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Completed
-          </Typography>
-        </Col>
-
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
               color: "#ad0508",
               fontFamily: "kanit",
               fontWeight: "400",
@@ -2382,6 +2373,15 @@ const ArcadeProfileArcade = () => {
             Canceled
           </Typography>
         </Col>
+
+        <Col
+          span={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        ></Col>
         <Col span={8}></Col>
         <Col span={8}>
           <Select
@@ -2541,6 +2541,7 @@ const ArcadeProfileArcade = () => {
                       player_id={enroll.player_id}
                       email={enroll.player.user.email}
                       role={"ARCADE"}
+                      status={enroll.status}
                     />
                   )
                 )}
