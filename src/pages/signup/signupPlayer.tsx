@@ -1,10 +1,12 @@
 import "../../styles/signup.css";
 
-import { Flex, message } from "antd";
-import { Image } from "antd";
-import { Col, Row } from "antd";
-import { Button, Checkbox, Form, Input, DatePicker, Select } from "antd";
-import { Link } from "react-router-dom";
+
+import { Col, Row ,Button, Checkbox, Form, Input, DatePicker, Select, Flex, message,Image  } from "antd";
+
+
+
+import { Link, useNavigate } from "react-router-dom";
+
 import img1 from "./images/img1.png";
 import React, { useState } from "react";
 import axiosInstance from "../../axiosInstance";
@@ -48,6 +50,9 @@ const { Option } = Select;
 // function starting
 const SignupPlayer = () => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -58,6 +63,7 @@ const SignupPlayer = () => {
   const [gender, setGender] = useState("");
 
   const onFinish = async () => {
+    setLoading(true);
     try {
       const res = await axiosInstance
         .post(
@@ -79,8 +85,9 @@ const SignupPlayer = () => {
         )
         .then((res) => {
           console.log(res);
-          message.success("Form submitted successfully!");
+          message.success(res.data.message);
           form.resetFields();
+          navigate("/login");
         })
         .catch((err) => {
           console.log(err);
@@ -91,14 +98,17 @@ const SignupPlayer = () => {
             err.response.data &&
             err.response.data.message
           ) {
-            alert(err.response.data.message);
+            message.error(err.response.data.message);
           } else {
-            alert("An unexpected error occurred.");
+            message.error("An unexpected error occurred.");
           }
         });
     } catch (err) {
       console.log(err);
-      alert("An unexpected error occurred.");
+      message.error("An unexpected error occurred.");
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -454,6 +464,7 @@ const SignupPlayer = () => {
                 <Button
                   htmlType="submit"
                   className="animated-button kanit-regular"
+                  loading={loading}
                   style={{
                     height: "40px",
                     fontSize: "16px",

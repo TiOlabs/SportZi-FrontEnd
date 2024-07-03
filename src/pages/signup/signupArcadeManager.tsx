@@ -4,7 +4,7 @@ import { Flex, message } from "antd";
 import { Image } from "antd";
 import { Col, Row } from "antd";
 import { Button, Checkbox, Form, Input, TimePicker, Select } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "./images/img1.png";
 import React, { useState, useEffect } from "react";
 import { Dayjs } from "dayjs";
@@ -50,6 +50,9 @@ const { Option } = Select;
 
 // function starting
 const SignupArcadeManager: React.FC = () => {
+
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -100,6 +103,7 @@ const SignupArcadeManager: React.FC = () => {
   const [form] = Form.useForm();
 
   const onFinish = async () => {
+    setLoading(true);
     // console.log("selectedLocation", selectedLocation);
     // const location = selectedLocation ? JSON.stringify(selectedLocation) : "";
     try {
@@ -119,16 +123,20 @@ const SignupArcadeManager: React.FC = () => {
         })
         .then((res) => {
           console.log(res);
-          message.success("Form submitted successfully!");
+          message.success(res.data.message);
           form.resetFields();
+          navigate("/login");
         })
         .catch((err) => {
           console.log(err);
-          alert(err.response.data.message);
+          message.error("An unexpected error occurred.");
         });
     } catch (err) {
       console.log(err);
-      alert(err);
+      message.error("An unexpected error occurred.");
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -564,6 +572,7 @@ const SignupArcadeManager: React.FC = () => {
                 <Button
                   htmlType="submit"
                   className="animated-button kanit-regular"
+                  loading={loading}
                   style={{
                     height: "40px",
                     fontSize: "16px",

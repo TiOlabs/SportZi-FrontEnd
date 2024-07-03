@@ -42,6 +42,18 @@ const Login = () => {
           password: password,
         }
       );
+      
+      //chech whether email is not verified
+      if(res.data.token == false){  
+        console.log("Email is not verified");
+        message.warning({
+          type: 'warning',
+          content: 'Your email is not verified! Please verify it before login to the system',
+          duration: 5,
+        });
+        navigate("/sendVerificationEmail");
+        return;
+      }
 
       Cookies.set("token", res.data.token, {
         expires: 1,
@@ -79,12 +91,14 @@ const Login = () => {
   //for forget password button
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [loading,setloading] = useState(false);
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = async () => {
+    setloading(true);
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}api/forgot-password`,
@@ -96,6 +110,8 @@ const Login = () => {
       console.log("Error sending password reset email::", error);
       antMessage.error("Something Error!");
       setIsModalVisible(false);
+    }finally{
+      setloading(false);
     }
   };
 
@@ -242,6 +258,7 @@ const Login = () => {
         onCancel={handleCancel}
         okText="Reset Password"
         cancelText="Cancel"
+        confirmLoading={loading}
       >
         <Form layout="vertical">
           <Form.Item

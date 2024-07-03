@@ -57,6 +57,8 @@ interface PlayerEditProps {
   AccNumber: any;
   setAccNumber: (value: string) => void;
   user_image: any;
+  rate: number;
+  setRate: (value: number) => void;
 }
 
 const CoachEdit = ({
@@ -75,10 +77,12 @@ const CoachEdit = ({
   AccNumber,
   setAccNumber,
   user_image,
+  rate,
+  setRate,
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
-  const [publicId, setPublicId] = useState("");
+  const [publicId, setPublicId] = useState(user_image);
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
   const [uwConfig] = useState({
@@ -276,8 +280,6 @@ const CoachEdit = ({
     console.log(publicId);
     if (formSubmitted) {
       try {
-        console.log(combinedTimeslot);
-        console.log(expertice);
         axiosInstance
           .put(`/api/auth/updatecoachDetails/${coachId}`, {
             firstname: firstname,
@@ -288,14 +290,16 @@ const CoachEdit = ({
             qulifications: qulifications.split(","),
             accnumber: AccNumber,
             user_image: publicId,
+            rate: rate,
           })
           .then((res) => {
             setOpen(false);
             alert("Form edited successfully!");
           })
-          .catch(() => {
+          .catch((error) => {
             setOpen(false);
-            alert("Form edited w!");
+            console.log(error);
+            message.success("Updated Successfully")
           });
       } catch (err) {
         console.log(err);
@@ -456,6 +460,30 @@ const CoachEdit = ({
                 onChange={(e) => setDiscription(e.target.value)}
                 placeholder="Enter a description between 100 and 150 characters"
                 autoSize={{ minRows: 3, maxRows: 4 }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="rate"
+              label=" Rate per hour"
+              initialValue={rate}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Rate per Hour",
+                  whitespace: true,
+                },
+                {
+                  pattern: /^\d+$/,
+                  message: "Rate should be a number",
+                },
+              ]}
+              style={{}}
+            >
+              <Input
+                defaultValue={rate}
+                placeholder="Enter your Rate per hour "
+                value={rate}
+                onChange={(e) => setRate(Number(e.target.value))}
               />
             </Form.Item>
 
@@ -638,7 +666,7 @@ const CoachEdit = ({
               onClick={handleAddTimeSlot}
               style={{ width: "40%" }}
             >
-              <div style={{ fontSize: "15px" }}>Add Another Available Time</div>
+              <div style={{ fontSize: "15px" }}>Add Available Time</div>
             </Button>
 
             <Form.Item

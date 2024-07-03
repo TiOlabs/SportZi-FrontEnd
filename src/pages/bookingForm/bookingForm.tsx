@@ -104,6 +104,8 @@ const BookingForm = () => {
   }, [userId]);
   console.log(date);
   useEffect(() => {
+    console.log(selectedDate);
+    console.log(zoneId);
     const fetchData = async () => {
       try {
         const res = await fetch(
@@ -240,7 +242,7 @@ const BookingForm = () => {
     fullAmount = Number(zoneDetails?.full_zone_rate);
   }
   let finalAmount;
-  if (zoneDetails?.discount.discount_percentage === null) {
+  if (zoneDetails?.discount === null) {
     finalAmount = fullAmount ?? 0;
   } else {
     finalAmount =
@@ -828,7 +830,7 @@ const BookingForm = () => {
                         : button.id === time
                         ? "#1677FF"
                         : isPackageTime
-                        ? "red"
+                        ? "#0d96ff"
                         : isZoneRejectDayTime
                         ? "#0F70AE"
                         : isZoneRejectDateTime

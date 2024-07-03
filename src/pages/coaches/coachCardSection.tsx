@@ -43,7 +43,10 @@ const CoachCardSection = () => {
         sortedArcades = sortedArcades.filter(
           (coach: Coach) =>
             coach.user.firstname.toLowerCase().includes(search.toLowerCase()) ||
-            coach.user.lastname.toLowerCase().includes(search.toLowerCase())
+            coach.user.lastname.toLowerCase().includes(search.toLowerCase()) ||
+            coach.sport.sport_name
+              .toLowerCase()
+              .includes(search.toLowerCase()) 
         );
       }
 
@@ -158,7 +161,7 @@ const CoachCardSection = () => {
             }}
           >
             <Search
-              placeholder="Search Coaches"
+              placeholder="Search Coaches by name or sport"
               allowClear
               onSearch={onSearch}
               size="large"
@@ -203,11 +206,10 @@ const CoachCardSection = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: "4%",
-                marginLeft: "10%",
+               
               }}
               lg={8}
               xs={24}
-              sm={24}
               md={12}
             >
               <div

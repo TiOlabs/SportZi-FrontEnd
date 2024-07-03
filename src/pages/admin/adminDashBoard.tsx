@@ -14,7 +14,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useReactToPrint } from "react-to-print";
-import { CoachBookingDetails, ZoneBookingDetails } from "../../types";
+import {
+  CoachBookingDetails,
+  PackageEnroolDetailsForPlayer,
+  ZoneBookingDetails,
+} from "../../types";
 import { ColumnType } from "antd/es/table";
 
 interface PrintableContentProps {
@@ -148,7 +152,7 @@ const PrintableContent = React.forwardRef<
             <PieChart width={500} height={300}>
               <Pie
                 data={packageData}
-                cx={100}
+                cx={200}
                 cy={150}
                 labelLine={false}
                 label={({ name, percent }) =>
@@ -221,7 +225,9 @@ const PrintableContent = React.forwardRef<
 const AdminPannel = () => {
   const [zoneBookings, setZoneBookings] = useState<ZoneBookingDetails[]>([]);
   const [coachBookings, setCoachBookings] = useState<CoachBookingDetails[]>([]);
-  const [packageEnrollments, setPackageEnrollments] = useState<any[]>([]);
+  const [packageEnrollments, setPackageEnrollments] = useState<
+    PackageEnroolDetailsForPlayer[]
+  >([]);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
   const [canceledByArcadeRevenue, setCanceledByArcadeRevenue] =
     useState<number>(0);
@@ -290,9 +296,17 @@ const AdminPannel = () => {
 
     const totalPackageRevenue = packageEnrollments
       .filter((enrollment) => enrollment.status === "success")
-      .reduce((acc, enrollment) => acc + Number(enrollment.total_amount), 0);
+      .reduce(
+        (acc, enrollment) =>
+          acc + Number(enrollment.rate) * packageEnrollments.length,
+        0
+      );
 
     setTotalRevenue(totalZoneRevenue + totalCoachRevenue + totalPackageRevenue);
+    console.log(totalRevenue);
+    console.log(totalZoneRevenue);
+    console.log(totalCoachRevenue);
+    console.log(totalPackageRevenue);
 
     // Calculate revenue lost due to cancellations
     const canceledByArcadeZoneRevenue = zoneBookings
@@ -305,7 +319,11 @@ const AdminPannel = () => {
 
     const canceledByArcadePackageRevenue = packageEnrollments
       .filter((enrollment) => enrollment.status === "canceled_By_Arcade")
-      .reduce((acc, enrollment) => acc + Number(enrollment.total_amount), 0);
+      .reduce(
+        (acc, enrollment) =>
+          acc + Number(enrollment.rate) * packageEnrollments.length,
+        0
+      );
 
     setCanceledByArcadeRevenue(
       canceledByArcadeZoneRevenue +
@@ -319,7 +337,11 @@ const AdminPannel = () => {
 
     const canceledByCoachPackageRevenue = packageEnrollments
       .filter((enrollment) => enrollment.status === "canceled_By_Coach")
-      .reduce((acc, enrollment) => acc + Number(enrollment.total_amount), 0);
+      .reduce(
+        (acc, enrollment) =>
+          acc + Number(enrollment.rate) * packageEnrollments.length,
+        0
+      );
 
     setCanceledByCoachRevenue(
       canceledByCoachCoachRevenue + canceledByCoachPackageRevenue
@@ -335,7 +357,11 @@ const AdminPannel = () => {
 
     const canceledByPlayerPackageRevenue = packageEnrollments
       .filter((enrollment) => enrollment.status === "canceled_By_Player")
-      .reduce((acc, enrollment) => acc + Number(enrollment.total_amount), 0);
+      .reduce(
+        (acc, enrollment) =>
+          acc + Number(enrollment.rate) * packageEnrollments.length,
+        0
+      );
 
     setCanceledByPlayerRevenue(
       canceledByPlayerZoneRevenue +

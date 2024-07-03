@@ -158,6 +158,7 @@ const AvailableCoachBookingsArcade = (props: any) => {
   const handleClick = () => {
     navigate(`/CoachUser/:${props.coach_id}`);
   };
+  console.log(props.user_image);
   return (
     <>
       <Row

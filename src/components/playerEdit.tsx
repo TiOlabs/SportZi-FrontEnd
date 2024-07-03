@@ -56,7 +56,7 @@ const PlayerEdit = ({
 }: PlayerEditProps) => {
   const [open, setOpen] = useState(false);
   const { userDetails } = useContext(PlayerContext);
-  const [publicId, setPublicId] = useState("");
+  const [publicId, setPublicId] = useState(user_image);
   const [cloudName] = useState("dle0txcgt");
   const [uploadPreset] = useState("n6ykxpof");
   const [uwConfig] = useState({
@@ -321,7 +321,7 @@ const PlayerEdit = ({
                   whitespace: true,
                 },
                 {
-                  min: 100,
+                  max: 100,
                   message: "Description must be at least 100 characters",
                 },
               ]}
@@ -346,7 +346,7 @@ const PlayerEdit = ({
                   whitespace: true,
                 },
                 {
-                  pattern: /^[A-Za-z,0-9]{3,}$/,
+                  pattern: /^[A-Za-z ,0-9]{3,}$/,
                   message: "enter your Achivements using comma seprated,",
                 },
               ]}

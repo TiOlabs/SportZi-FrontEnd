@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AdvancedImage } from "@cloudinary/react";
@@ -35,7 +35,8 @@ interface Coach {
 
 const CoachesManagement = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
-
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
@@ -45,33 +46,53 @@ const CoachesManagement = () => {
         setCoaches(response.data);
       } catch (error) {
         console.error("Error fetching coaches:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCoaches();
   }, []);
-
+  const filteredCoaches = coaches.filter(
+    (coaches) =>
+      coaches.coach_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      coaches.user.firstname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      coaches.user.lastname.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" ,marginLeft:"21%" }}>
-      <Row>NAV</Row>
-      <Row>
-        <Col style={{ color: "#0E458E" }}>
-          <h2>Coaches details</h2>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <input
-            style={{ width: "100%", height: "40px" }}
-            type="search"
-            placeholder="Search here"
-          />
-        </Col>
-      </Row>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
+      <Spin spinning={loading}>
+        <Row>NAV</Row>
+        <Row>
+          <Col style={{ color: "#0E458E" }}>
+            <h2>Coaches details</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <input
+              style={{ width: "100%", height: "40px" }}
+              type="search"
+              placeholder="Search here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Col>
+        </Row>
 
-      {coaches.map((coachdetails: Coach) => (
-        <DataRow coachdetails={coachdetails} />
-      ))}
+        {filteredCoaches.length === 0 ? (
+          <div>
+            <Empty description={"No Coache Found"} />
+          </div>
+        ) : (
+          filteredCoaches.map((coach) => <DataRow coachdetails={coach} />)
+        )}
+      </Spin>
     </Col>
   );
 };
@@ -112,8 +133,7 @@ function DataRow(props: any) {
       style={{
         backgroundColor: "white",
         padding: "1%",
-        marginTop: "20px"
-       
+        marginTop: "20px",
       }}
     >
       <Col></Col>
@@ -234,12 +254,7 @@ function DataRow(props: any) {
                   {coachdetails.user.accountNumber || "N/A"}
                 </Col>
 
-                <Col span={24}>
-                  <b>DOB :</b> {coachdetails.user.DOB}
-                </Col>
-                <Col span={24}>
-                  <b>Gender :</b> {coachdetails.user.gender}
-                </Col>
+               
                 <Col span={24}>
                   <b>City :</b> {coachdetails.user.city || "N/A"}
                 </Col>

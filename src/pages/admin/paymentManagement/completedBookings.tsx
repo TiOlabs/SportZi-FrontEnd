@@ -1,4 +1,14 @@
-import { Col, Row, Button, Empty, Modal, Dropdown, Space, message } from "antd";
+import {
+  Col,
+  Row,
+  Button,
+  Empty,
+  Modal,
+  Dropdown,
+  Space,
+  message,
+  Checkbox,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import type { MenuProps, RadioChangeEvent } from "antd";
 import { Radio } from "antd";
@@ -21,7 +31,18 @@ const CompletedBookings = () => {
     ZoneBookingDetails[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [checkedStates, setCheckedStates] = useState(
+    Array(completedBookings.length).fill(false)
+  );
 
+  // Handler to update the checked state of a specific checkbox
+  const handleCheckboxChange = (index: number) => (e: any) => {
+    const newCheckedStates = [...checkedStates];
+    newCheckedStates[index] = e.target.checked;
+    setCheckedStates(newCheckedStates);
+  };
+
+  console.log(checkedStates);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -178,8 +199,12 @@ const CompletedBookings = () => {
     items,
     onClick: handleMenuClick,
   };
+
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%" ,marginLeft:"21%"}}>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
       <Row>NAV</Row>
       <Row>
         <Col style={{ color: "#0E458E" }}>
@@ -212,7 +237,7 @@ const CompletedBookings = () => {
           <Radio.Group onChange={onChange} value={value}>
             <Radio value={1}>Coach Bookings</Radio>
             <Radio value={2}>Arcade Bookings</Radio>
-            <Radio value={3}>Enrolled Package</Radio>
+            {/* <Radio value={3}>Enrolled Package</Radio> */}
             <Radio value={4}>All</Radio>
           </Radio.Group>
         </Col>
@@ -240,6 +265,15 @@ const CompletedBookings = () => {
           completedBookings.map((booking, index) => (
             <>
               <Col></Col>
+              <Col
+                span={1}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <Checkbox
+                  checked={checkedStates[index]}
+                  onChange={handleCheckboxChange(index)}
+                ></Checkbox>
+              </Col>
               <Col span={8} style={{}}>
                 <AdvancedImage
                   style={{
@@ -279,7 +313,7 @@ const CompletedBookings = () => {
                   }}
                 >
                   {" "}
-                  LKR {" "}
+                  LKR{" "}
                   {String(
                     Number(booking.participant_count) *
                       Number(booking.zone.rate)
@@ -315,7 +349,7 @@ const CompletedBookings = () => {
                   {booking.user.firstname} {booking.user.lastname}
                 </div>
               </Col>
-              <Col span={6} style={{}}>
+              <Col span={5} style={{}}>
                 <div
                   style={{
                     height: "80px",
@@ -402,7 +436,7 @@ const CompletedBookings = () => {
                       </Row>
                     </div>
                   </Modal>
-                  <Button
+                  {/* <Button
                     type="primary"
                     ghost
                     onClick={() =>
@@ -421,7 +455,7 @@ const CompletedBookings = () => {
                     >
                       Delete
                     </div>
-                  </Button>
+                  </Button> */}
                 </div>
               </Col>
               <Col style={{ marginTop: "2%" }} span={24}></Col>

@@ -187,7 +187,12 @@ const AddZone = () => {
         Add Zone
       </Button>
 
-      <Modal visible={isModalOpen} onOk={handleFinish} onCancel={handleCancel}>
+      <Modal
+        visible={isModalOpen}
+        onOk={handleFinish}
+        onCancel={handleCancel}
+        okText="Add"
+      >
         <Form
           layout="vertical"
           style={{ marginTop: "10%", margin: "2%" }}

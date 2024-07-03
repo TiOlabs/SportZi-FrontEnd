@@ -10,10 +10,13 @@ import axios from "axios";
 import { SearchProps } from "antd/es/input";
 
 const BookedCoaches = (props: any) => {
-  const [coachBookingDetails, setCoachBookingDetails] = useState([]);
+  const [coachBookingDetails, setCoachBookingDetails] = useState<
+    CoachBookingDetails[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [filteredDataa, setFilteredData] = useState<CoachBookingDetails[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
   // useEffect(() => {
   //   try {
   //     const fetchData = async () => {
@@ -82,16 +85,34 @@ const BookedCoaches = (props: any) => {
     fetchData();
   }, [search]);
 
-  const onSearch: SearchProps["onSearch"] = (value: string) => {
-    setSearch(value.trim());
-  };
+  const filteredBookings = coachBookingDetails.filter(
+    (coachBookingDetails) =>
+      coachBookingDetails.booking_id
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      coachBookingDetails.player.user.firstname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      coachBookingDetails.player.user.lastname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      coachBookingDetails.coach.user.firstname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      coachBookingDetails.coach.user.lastname
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+  );
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%",marginLeft:"21%" }}>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
       <Spin spinning={loading}>
         <Row>NAV</Row>
         <Row>
           <Col style={{ color: "#0E458E" }}>
-            <h2>Booked Arena</h2>
+            <h2>Booked Coaches</h2>
           </Col>
         </Row>
         <Row>
@@ -100,15 +121,16 @@ const BookedCoaches = (props: any) => {
               style={{ width: "100%", height: "40px" }}
               type="search"
               placeholder="Search here"
-              onChange={(e) => onSearch(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Col>
         </Row>
         <Col
           style={{ marginTop: "20px", maxHeight: "80vh", overflowY: "auto" }}
         >
-          {coachBookingDetails.length === 0 ? <Empty /> : null}
-          {coachBookingDetails.map(
+          {filteredBookings.length === 0 ? <Empty /> : null}
+          {filteredBookings.map(
             (CoachBookingDetails: CoachBookingDetails) => {
               console.log(CoachBookingDetails); // Logging CoachBookingDetails
               return (

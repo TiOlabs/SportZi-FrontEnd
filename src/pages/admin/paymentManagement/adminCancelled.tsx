@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal, Empty } from "antd";
+import { Col, Row, Button, Modal, Empty, Checkbox } from "antd";
 import { useEffect, useState } from "react";
 import { ZoneBookingDetails } from "../../../types";
 import axios from "axios";
@@ -127,7 +127,10 @@ const AdminCanceled = (props: any) => {
   };
 
   return (
-    <Col span={19} style={{ backgroundColor: "#EFF4FA", padding: "2%",marginLeft:"21%" }}>
+    <Col
+      span={19}
+      style={{ backgroundColor: "#EFF4FA", padding: "2%", marginLeft: "21%" }}
+    >
       <Spin spinning={loading}>
         <Row>NAV</Row>
         <Row>
@@ -220,6 +223,10 @@ function DataRow(props: any) {
         marginTop: "63px",
       }}
     >
+      {" "}
+      <Col span={1} style={{ display: "flex", justifyContent: "center" }}>
+        <Checkbox></Checkbox>
+      </Col>
       <Col span={8} style={{}}>
         <AdvancedImage
           style={{
@@ -262,7 +269,7 @@ function DataRow(props: any) {
           Rs.{props.rate}
         </div>
       </Col>
-      <Col span={8}>
+      <Col span={7}>
         <AdvancedImage
           style={{
             borderRadius: "50%",

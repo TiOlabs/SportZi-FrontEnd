@@ -11,6 +11,8 @@ import {
   Input,
   Select,
   Rate,
+  Skeleton,
+  Spin,
 } from "antd";
 import { Grid, Radio } from "antd";
 import backgroundImg from "../../assents/background2.png";
@@ -28,7 +30,7 @@ import ReviewCard from "../../components/ReviewCard";
 import AppFooter from "../../components/footer";
 import reviewBacground from "../../assents/ReviewBackground.png";
 import axiosInstance from "../../axiosInstance";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import {
   Arcade,
@@ -58,6 +60,7 @@ import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 
 const ArcadeProfileArcade = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
   const [valueForCoachRequest, setValueForCoachRequest] = useState(10);
@@ -108,7 +111,11 @@ const ArcadeProfileArcade = () => {
         );
         const data = await res.data;
         console.log(data);
-        setPackageEnrollmentForCoach(data);
+        const filtereddata = data.filter(
+          (item: CoachEnrollDetailsForPackages) =>
+            item.package.arcade_id === ArcadeId
+        );
+        setPackageEnrollmentForCoach(filtereddata);
       };
       fetchData();
     } catch (e) {
@@ -119,6 +126,7 @@ const ArcadeProfileArcade = () => {
   console.log("arcade", ArcadeId);
 
   useEffect(() => {
+    setIsLoading(true);
     try {
       //some kinda error in here
       const fetchData = async () => {
@@ -130,6 +138,7 @@ const ArcadeProfileArcade = () => {
         setArcade(data);
       };
       fetchData();
+      setIsLoading(false);
     } catch (e) {
       console.log(e);
     }
@@ -154,6 +163,7 @@ const ArcadeProfileArcade = () => {
   }, [ArcadeId]);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get<Arcade>(
         process.env.REACT_APP_API_URL +
@@ -204,6 +214,7 @@ const ArcadeProfileArcade = () => {
 
         setArcadeBookings(filteredBookings);
         console.log("Filtered bookings:", filteredBookings);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -211,6 +222,7 @@ const ArcadeProfileArcade = () => {
   }, [ArcadeId, value]);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get(
         `${process.env.REACT_APP_API_URL}api/getCoachBookingByArcadeId/${ArcadeId}`
@@ -249,6 +261,7 @@ const ArcadeProfileArcade = () => {
 
         setCoachBookings(filteredBookings);
         console.log("Filtered bookings:", filteredBookings);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -260,6 +273,7 @@ const ArcadeProfileArcade = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get(
         `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${ArcadeId}`,
@@ -297,10 +311,14 @@ const ArcadeProfileArcade = () => {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [ArcadeId, valueForCoachRequest]);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get(
         process.env.REACT_APP_API_URL + `api/getPackageEnrollmentPlayerDetails`
@@ -323,6 +341,16 @@ const ArcadeProfileArcade = () => {
         );
         console.log("filteredDataForPlayerEnroll", filteredDataForPlayerEnroll);
         setPackageEnrollmentForPlayerConfirm(filteredDataForPlayerEnroll);
+
+        setPackageEnrollmentForPlayer((prev: any) => {
+          return prev.filter(
+            (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
+              playerEnrollDetails.status === "success" &&
+              playerEnrollDetails.package.arcade_id === ArcadeId
+          );
+        });
+        setIsLoading(false);
+
       })
       .catch((error) => {
         console.log(error);
@@ -611,7 +639,11 @@ const ArcadeProfileArcade = () => {
     console.log("radio checked", e.target.value);
     setValueForCoachRequest(e.target.value);
   };
-
+  console.log(isLoading);
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/CoachUser/${""}`);
+  };
   return (
     <>
       <NavbarProfile />
@@ -738,240 +770,359 @@ const ArcadeProfileArcade = () => {
               flexDirection: "column",
             }}
           >
-            <div
-              style={{
-                width: "80%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                position: "absolute",
-                height: "0px",
-              }}
-            >
-              <ArcadeEdit
-                firstname={arcadeName}
-                setFirstname={setArcadeName}
-                discription={discription}
-                setDiscription={setDiscription}
-                address={address}
-                setAddress={setAddress}
-                openTime={openTime}
-                setopenTime={setOpenTime}
-                closeTime={closeTime}
-                setCloseTime={setCloseTime}
-                id={ArcadeId}
-                accNumber={accNumber}
-                setAccNumber={setAccNumber}
-                user_image={arcade?.arcade_image as string}
-              />
-            </div>
-            <div>
-              <Row>
-                <Col>
-                  <h1
-                    style={{
-                      color: "#000",
-
-                      fontSize: "32px",
-                      fontStyle: "normal",
-                      fontWeight: "500",
-                      fontFamily: "kanit",
-                      lineHeight: "normal",
-                      marginBottom: "0px",
-                    }}
-                  >
-                    {arcade && arcade?.arcade_name}
-                  </h1>
-                </Col>
-                <Col span={2}></Col>
-                <Col>
-                  <h1>
-                    <Notification userType="arcade" id={ArcadeId as string} />
-                  </h1>
-                </Col>
-              </Row>
-
-              <p
+            <Spin spinning={isLoading}>
+              <div
                 style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "300",
-                  lineHeight: "normal",
-                  width: "150px",
+                  width: "80%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  position: "absolute",
+                  height: "0px",
                 }}
               >
-                {address &&
-                  address
-
-                    .split(",")
-                    .map(
-                      (
-                        line:
-                          | string
-                          | number
-                          | boolean
-                          | React.ReactElement<
-                              any,
-                              string | React.JSXElementConstructor<any>
-                            >
-                          | Iterable<React.ReactNode>
-                          | React.ReactPortal
-                          | null
-                          | undefined,
-                        index: React.Key | null | undefined
-                      ) => (
-                        <React.Fragment key={index}>
-                          {line}
-                          <br />
-                        </React.Fragment>
-                      )
-                    )}
-              </p>
-              <p
-                style={{
-                  color: "#000",
-                  fontFamily: "kanit",
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "350",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                  marginTop: "5px",
-                }}
-              >
-                Manager : {arcadeDetails?.manager.user.firstname}{" "}
-                {arcadeDetails?.manager.user.lastname}
-              </p>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-              }}
-            >
-              <Row>
-                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                  <p
-                    style={{
-                      color: "#0E458E",
-                      fontFamily: "kanit",
-                      fontSize: "39px",
-                      fontStyle: "normal",
-                      fontWeight: "500",
-                      lineHeight: "normal",
-                      margin: "0px",
-                    }}
-                  >
-                    {/* 5.0 */}
-                    {averageRating.toFixed(1)}
-                  </p>
-                </Col>
-
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={12}
-                  lg={12}
-                  xl={12}
-                  style={{
-                    display: "flex",
-
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "auto",
-                      position: "relative",
-                      width: "max-content",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "100%",
-                      }}
-                    >
-                      {/* <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
-
-                      <Rate
-                        allowHalf
-                        disabled
-                        defaultValue={0}
-                        value={averageRating}
-                        style={{
-                          scale: "0.7",
-                          display: "flex",
-                          flexDirection: "row",
-                          color: "#0E458E",
-                          fillOpacity: "0.8",
-                          borderBlockEnd: "dashed",
-                        }}
-                      />
-                    </div>
-                    <p
+                <ArcadeEdit
+                  firstname={arcadeName}
+                  setFirstname={setArcadeName}
+                  discription={discription}
+                  setDiscription={setDiscription}
+                  address={address}
+                  setAddress={setAddress}
+                  openTime={openTime}
+                  setopenTime={setOpenTime}
+                  closeTime={closeTime}
+                  setCloseTime={setCloseTime}
+                  id={ArcadeId}
+                  accNumber={accNumber}
+                  setAccNumber={setAccNumber}
+                  user_image={arcade?.arcade_image as string}
+                />
+              </div>
+              <div>
+                <Row>
+                  <Col>
+                    <h1
                       style={{
                         color: "#000",
-                        opacity: "0.64",
+
+                        fontSize: "32px",
+                        fontStyle: "normal",
+                        fontWeight: "500",
                         fontFamily: "kanit",
-                        fontSize: "10px",
+                        lineHeight: "normal",
+                        marginBottom: "0px",
+                      }}
+                    >
+                      {arcade && arcade?.arcade_name}
+                    </h1>
+                  </Col>
+                  <Col span={2}></Col>
+                  <Col>
+                    <h1>
+                      <Notification userType="arcade" id={ArcadeId as string} />
+                    </h1>
+                  </Col>
+                </Row>
+
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "300",
+                    lineHeight: "normal",
+                    width: "150px",
+                  }}
+                >
+                  {address &&
+                    address
+
+                      .split(",")
+                      .map(
+                        (
+                          line:
+                            | string
+                            | number
+                            | boolean
+                            | React.ReactElement<
+                                any,
+                                string | React.JSXElementConstructor<any>
+                              >
+                            | Iterable<React.ReactNode>
+                            | React.ReactPortal
+                            | null
+                            | undefined,
+                          index: React.Key | null | undefined
+                        ) => (
+                          <React.Fragment key={index}>
+                            {line}
+                            <br />
+                          </React.Fragment>
+                        )
+                      )}
+                </p>
+                <p
+                  style={{
+                    color: "#000",
+                    fontFamily: "kanit",
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "350",
+                    lineHeight: "normal",
+                    marginBottom: "0px",
+                    marginTop: "5px",
+                  }}
+                >
+                  Manager : {arcadeDetails?.manager.user.firstname}{" "}
+                  {arcadeDetails?.manager.user.lastname}
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <p
+                      style={{
+                        color: "#0E458E",
+                        fontFamily: "kanit",
+                        fontSize: "39px",
                         fontStyle: "normal",
                         fontWeight: "500",
                         lineHeight: "normal",
                         margin: "0px",
                       }}
                     >
-                      {/* 120 Feedbacks */}
-                      {totalFeedbacks} Feedbacks)
+                      {/* 5.0 */}
+                      {averageRating.toFixed(1)}
                     </p>
-                  </div>{" "}
-                </Col>
-              </Row>
-            </div>
+                  </Col>
 
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Expertise
-            </Typography>
+                  <Col
+                    xs={24}
+                    sm={24}
+                    md={12}
+                    lg={12}
+                    xl={12}
+                    style={{
+                      display: "flex",
 
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.5",
-              }}
-              itemLayout="horizontal"
-              dataSource={sport}
-              renderItem={(item) => (
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: "auto",
+                        position: "relative",
+                        width: "max-content",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%",
+                        }}
+                      >
+                        {/* <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+                        <Rate
+                          allowHalf
+                          disabled
+                          defaultValue={0}
+                          value={averageRating}
+                          style={{
+                            scale: "0.7",
+                            display: "flex",
+                            flexDirection: "row",
+                            color: "#0E458E",
+                            fillOpacity: "0.8",
+                            borderBlockEnd: "dashed",
+                          }}
+                        />
+                      </div>
+                      <p
+                        style={{
+                          color: "#000",
+                          opacity: "0.64",
+                          fontFamily: "kanit",
+                          fontSize: "10px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                          lineHeight: "normal",
+                          margin: "0px",
+                        }}
+                      >
+                        {/* 120 Feedbacks */}
+                        {totalFeedbacks} Feedbacks)
+                      </p>
+                    </div>{" "}
+                  </Col>
+                </Row>
+              </div>
+
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Expertise
+              </Typography>
+
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.5",
+                }}
+                itemLayout="horizontal"
+                dataSource={sport}
+                renderItem={(item) => (
+                  <List.Item
+                    style={{
+                      position: "relative",
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
+                        fontFamily: "kanit",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Payment Types
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.4",
+                }}
+                itemLayout="horizontal"
+                dataSource={["Online Payment"]}
+                renderItem={(item) => (
+                  <List.Item
+                    style={{
+                      position: "relative",
+
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "kanit",
+                        fontSize: "20px",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Available Times
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.4",
+                }}
+                itemLayout="horizontal"
+              >
                 <List.Item
                   style={{
                     position: "relative",
-                    listStyle: "none",
+                    listStyle: "dotted",
                     display: "flex",
                     justifyContent: "flex-start",
                     alignItems: "center",
@@ -983,11 +1134,10 @@ const ArcadeProfileArcade = () => {
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "20px",
                       fontFamily: "kanit",
+                      fontSize: "20px",
                     }}
                   >
-                    {" "}
                     <span
                       style={{
                         fontSize: "30px",
@@ -997,41 +1147,13 @@ const ArcadeProfileArcade = () => {
                     >
                       &#8226;
                     </span>
-                    {item}
+                    Open Time : {openTime}
                   </div>
                 </List.Item>
-              )}
-            />
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Payment Types
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
-              }}
-              itemLayout="horizontal"
-              dataSource={["Online Payment"]}
-              renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
-                    listStyle: "none",
+                    listStyle: "dotted",
                     display: "flex",
                     justifyContent: "flex-start",
                     alignItems: "center",
@@ -1047,7 +1169,6 @@ const ArcadeProfileArcade = () => {
                       fontSize: "20px",
                     }}
                   >
-                    {" "}
                     <span
                       style={{
                         fontSize: "30px",
@@ -1057,111 +1178,24 @@ const ArcadeProfileArcade = () => {
                     >
                       &#8226;
                     </span>
-                    {item}
+                    Close Time : {closeTime}
                   </div>
                 </List.Item>
-              )}
-            />
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Available Times
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
-              }}
-              itemLayout="horizontal"
-            >
-              <List.Item
+              </List>
+              <Typography
                 style={{
-                  position: "relative",
-                  listStyle: "dotted",
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  fontStyle: "normal",
+                  fontWeight: "200",
+                  lineHeight: "normal",
+                  marginTop: "5px",
+                  fontSize: lg ? "24px" : "18px",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: "kanit",
-                    fontSize: "20px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "30px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                    }}
-                  >
-                    &#8226;
-                  </span>
-                  Open Time : {openTime}
-                </div>
-              </List.Item>
-              <List.Item
-                style={{
-                  position: "relative",
-                  listStyle: "dotted",
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: "kanit",
-                    fontSize: "20px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "30px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                    }}
-                  >
-                    &#8226;
-                  </span>
-                  Close Time : {closeTime}
-                </div>
-              </List.Item>
-            </List>
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontStyle: "normal",
-                fontWeight: "200",
-                lineHeight: "normal",
-                marginTop: "5px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Acc Number :{accNumber}
-            </Typography>
+                Acc Number :{accNumber}
+              </Typography>
+            </Spin>
           </div>
         </Col>
       </Row>
@@ -1240,6 +1274,8 @@ const ArcadeProfileArcade = () => {
                     rate={coach.coach.rate}
                     coach_id={coach.coach_id}
                     sport={coach.coach.sport.sport_name}
+                    coach_image={coach.coach.user.user_image}
+                    averageRate={coach.coach.averageRate}
                   />
                 </Col>
               ))}
@@ -1372,14 +1408,12 @@ const ArcadeProfileArcade = () => {
                   zoneImage={zone.zone_image}
                   description={zone.description}
                   discount_percentage={
-                    zone.discount && zone.discount.discount_percentage
-                      ? zone.discount.discount_percentage
-                      : 0
+
+                    zone.discount ? zone.discount.discount_percentage : 0
                   }
                   discount_description={
-                    zone.discount && zone.discount.description
-                      ? zone.discount.description
-                      : ""
+                    zone.discount ? zone.discount.description : ""
+
                   }
                   id={zone.zone_id}
                   capacity={zone.capacity}
@@ -1536,14 +1570,19 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1561,11 +1600,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1582,11 +1625,15 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1603,7 +1650,8 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
 
-        <Col span={16}></Col>
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
       <Row
         style={{
@@ -1611,14 +1659,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap", // For wrapping in small viewports
+          marginTop: "2px",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -1627,8 +1681,8 @@ const ArcadeProfileArcade = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1637,11 +1691,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -1650,8 +1708,8 @@ const ArcadeProfileArcade = () => {
               color: "#05a30a",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1661,11 +1719,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -1674,20 +1736,43 @@ const ArcadeProfileArcade = () => {
               color: "#ad0508",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               display: "flex",
             }}
           >
             Canceled
           </Typography>
         </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+        {/* Filter Section */}
+        <Col
+          xs={24}
+          sm={24}
+          md={24}
+          lg={8}
+          style={{
+            marginBottom: "2%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: "3%",
+          }}
+        >
           <Select
             defaultValue="date"
-            style={{ width: 120, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             onChange={(value) => setFilterBy(value)}
           >
             <Option value="date">Date</Option>
@@ -1700,11 +1785,23 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{ width: 200, marginLeft: 10, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+              height: "40px",
+            }}
             onChange={(e) => handleFilterChange2(e.target.value)}
           />
           <Button
-            style={{ marginLeft: 10, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             ghost
             type="primary"
             onClick={() => {
@@ -1716,6 +1813,7 @@ const ArcadeProfileArcade = () => {
           </Button>
         </Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
@@ -1751,7 +1849,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{
@@ -1817,51 +1915,54 @@ const ArcadeProfileArcade = () => {
             overflowY: "scroll",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {filteredArcadeBookings.length > 0 ? (
-              (console.log(filteredArcadeBookings),
-              (
-                <>
-                  {filteredArcadeBookings.map((zone) =>
-                    (zone.zoneBookingDetails || [])
-                      .filter((booking) => booking.booking_type === "zone")
-                      .map((booking) => (
-                        <AvailableBookingsArcade
-                          key={booking.zone_booking_id}
-                          user_image={booking.user.user_image}
-                          booking_id={booking.zone_booking_id}
-                          booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
-                          booked_id={booking.user.user_id}
-                          zoneName={zone.zone_name}
-                          time={booking.time}
-                          date={booking.date}
-                          rate={zone.rate}
-                          zoneImage={zone.zone_image}
-                          arcade_name={arcadeName}
-                          email={booking.user.email}
-                          status={booking.status}
-                          full_amount={booking.full_amount}
-                          user_id={booking.user.user_id}
-                          arcade_id={ArcadeId}
-                        />
-                      ))
-                  )}
-                </>
-              ))
-            ) : (
-              <Empty />
-            )}
-          </div>
+          <Spin spinning={isLoading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {filteredArcadeBookings.length > 0 ? (
+                (console.log(filteredArcadeBookings),
+                (
+                  <>
+                    {filteredArcadeBookings.map((zone) =>
+                      (zone.zoneBookingDetails || [])
+                        .filter((booking) => booking.booking_type === "zone")
+                        .map((booking) => (
+                          <AvailableBookingsArcade
+                            key={booking.zone_booking_id}
+                            user_image={booking.user.user_image}
+                            booking_id={booking.zone_booking_id}
+                            booked_by={`${booking.user.firstname} ${booking.user.lastname}`}
+                            booked_id={booking.user.user_id}
+                            zoneName={zone.zone_name}
+                            time={booking.time}
+                            date={booking.date}
+                            rate={zone.rate}
+                            zoneImage={zone.zone_image}
+                            arcade_name={arcadeName}
+                            email={booking.user.email}
+                            status={booking.status}
+                            full_amount={booking.full_amount}
+                            user_id={booking.user.user_id}
+                            arcade_id={ArcadeId}
+                          />
+                        ))
+                    )}
+                  </>
+                ))
+              ) : (
+                <Empty />
+              )}
+            </div>
+          </Spin>
         </div>
       </Row>
+
       <Row
         style={{
           width: "100%",
@@ -1894,15 +1995,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         {/* Radio button section */}
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1917,11 +2023,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1936,11 +2046,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1953,11 +2067,131 @@ const ArcadeProfileArcade = () => {
             </Radio.Group>
           </ConfigProvider>
         </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
+      </Row>
+
+      <Row
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap", // For wrapping in small viewports
+          marginTop: "2px",
+        }}
+      >
+        <Col
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#0E458E",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Available
+          </Typography>
+        </Col>
+        <Col
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#05a30a",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Completed
+          </Typography>
+        </Col>
+        <Col
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
+          }}
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: "16px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+        {/* Filter Section */}
+        <Col
+          xs={24}
+          sm={24}
+          md={24}
+          lg={8}
+          style={{
+            marginBottom: "2%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: "3%",
+          }}
+        >
           <Select
             defaultValue="date"
-            style={{ width: 120, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             onChange={(value) => setFilterBy(value)}
           >
             <Option value="date">Date</Option>
@@ -1970,11 +2204,23 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{ width: 200, marginLeft: 10, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+              height: "40px",
+            }}
             onChange={(e) => handleFilterChange(e.target.value)}
           />
           <Button
-            style={{ marginLeft: 10, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             ghost
             type="primary"
             onClick={() => {
@@ -1985,86 +2231,6 @@ const ArcadeProfileArcade = () => {
             Clear
           </Button>
         </Col>
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#0E458E",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Available
-          </Typography>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#05a30a",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Completed
-          </Typography>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            style={{
-              alignItems: "center",
-              color: "#ad0508",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "10px",
-              marginBottom: "0px",
-              display: "flex",
-            }}
-          >
-            Canceled
-          </Typography>
-        </Col>
-        <Col span={16}></Col>
       </Row>
 
       <Row
@@ -2102,7 +2268,7 @@ const ArcadeProfileArcade = () => {
             lg={6}
             xl={6}
           >
-            Athlete
+            Player
           </Col>
           <Col
             style={{
@@ -2166,63 +2332,66 @@ const ArcadeProfileArcade = () => {
             overflowY: "scroll",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {coachBookings.length > 0 ? (
-              coachBookings
-                .filter((booking) => {
-                  if (filterBy === "date") {
-                    return booking.date.includes(filterValue);
-                  } else if (filterBy === "time") {
-                    return booking.time.includes(filterValue);
-                  } else if (filterBy === "rate") {
-                    return booking.zone.rate.toString().includes(filterValue);
-                  } else if (filterBy === "zoneName") {
-                    return booking.zone.zone_name.includes(filterValue);
-                  } else if (filterBy === "booked_by") {
-                    return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
-                      filterValue
-                    );
-                  } else if (filterBy === "booking_id") {
-                    return booking.booking_id.includes(filterValue);
-                  } else if (filterBy === "status") {
-                    return booking.status.includes(filterValue);
-                  }
-                  return true;
-                })
-                .map((booking) => (
-                  <AvailableCoachBookingsArcade
-                    key={booking.booking_id}
-                    user_image={booking.player.user.user_image}
-                    booking_id={booking.booking_id}
-                    booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
-                    zoneName={booking.zone.zone_name}
-                    time={booking.time}
-                    date={booking.date}
-                    rate={booking.zone.rate}
-                    zoneImage={booking.zone.zone_image}
-                    booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
-                    player_email={booking.player.user.email}
-                    coach_email={booking.coach.user.email}
-                    coach_image={booking.coach.user.user_image}
-                    coach_id={booking.coach_id}
-                    status={booking.status}
-                    full_amount={booking.full_amount}
-                    player_id={booking.player_id}
-                    arcade_id={ArcadeId}
-                  />
-                ))
-            ) : (
-              <Empty />
-            )}
-          </div>
+          {" "}
+          <Spin spinning={isLoading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {coachBookings.length > 0 ? (
+                coachBookings
+                  .filter((booking) => {
+                    if (filterBy === "date") {
+                      return booking.date.includes(filterValue);
+                    } else if (filterBy === "time") {
+                      return booking.time.includes(filterValue);
+                    } else if (filterBy === "rate") {
+                      return booking.zone.rate.toString().includes(filterValue);
+                    } else if (filterBy === "zoneName") {
+                      return booking.zone.zone_name.includes(filterValue);
+                    } else if (filterBy === "booked_by") {
+                      return `${booking.player.user.firstname} ${booking.player.user.lastname}`.includes(
+                        filterValue
+                      );
+                    } else if (filterBy === "booking_id") {
+                      return booking.booking_id.includes(filterValue);
+                    } else if (filterBy === "status") {
+                      return booking.status.includes(filterValue);
+                    }
+                    return true;
+                  })
+                  .map((booking) => (
+                    <AvailableCoachBookingsArcade
+                      key={booking.booking_id}
+                      user_image={booking.player.user.user_image}
+                      booking_id={booking.booking_id}
+                      booked_by={`${booking.player.user.firstname} ${booking.player.user.lastname}`}
+                      zoneName={booking.zone.zone_name}
+                      time={booking.time}
+                      date={booking.date}
+                      rate={booking.zone.rate}
+                      zoneImage={booking.zone.zone_image}
+                      booked_coach={`${booking.coach.user.firstname} ${booking.coach.user.lastname}`}
+                      player_email={booking.player.user.email}
+                      coach_email={booking.coach.user.email}
+                      coach_image={booking.coach.user.user_image}
+                      coach_id={booking.coach_id}
+                      status={booking.status}
+                      full_amount={booking.full_amount}
+                      player_id={booking.player_id}
+                      arcade_id={ArcadeId}
+                    />
+                  ))
+              ) : (
+                <Empty />
+              )}
+            </div>
+          </Spin>
         </div>
       </Row>
       {/* Package Enrollments Section */}
@@ -2257,14 +2426,19 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2285,11 +2459,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2309,30 +2487,42 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         ></Col>
 
-        <Col span={16}></Col>
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap", // For wrapping in small viewports
+          marginTop: "2px",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2351,11 +2541,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2375,18 +2569,63 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
-        ></Col>
-        <Col span={8}></Col>
-        <Col span={8}>
+
+        >
+          <Typography
+            style={{
+              alignItems: "center",
+              color: "#ad0508",
+              fontFamily: "kanit",
+              fontWeight: "400",
+              fontSize: lg ? "16px" : "12px",
+              paddingBottom: "5px",
+              marginBottom: "0px",
+              display: "flex",
+            }}
+          >
+            Canceled
+          </Typography>
+        </Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+        {/* Filter Section */}
+        <Col
+          xs={24}
+          sm={24}
+          md={24}
+          lg={8}
+          style={{
+            marginBottom: "2%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: "3%",
+          }}
+        >
+
           <Select
             defaultValue="enroll_date"
-            style={{ width: 120, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             onChange={(value) => setFilterByPackage(value)}
           >
             <Option value="package_name">Package Name</Option>
@@ -2398,11 +2637,23 @@ const ArcadeProfileArcade = () => {
           </Select>
           <Input
             placeholder="Enter filter value"
-            style={{ width: 200, marginLeft: 10, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+              height: "40px",
+            }}
             onChange={(e) => handleFilterChangePackage(e.target.value)}
           />
           <Button
-            style={{ marginLeft: 10, height: "40px" }}
+            style={{
+              width: "100%",
+              maxWidth: "120px",
+              height: "40px",
+              marginLeft: "15px",
+              marginBottom: "10px",
+            }}
             ghost
             type="primary"
             onClick={() => {
@@ -2414,6 +2665,7 @@ const ArcadeProfileArcade = () => {
           </Button>
         </Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
@@ -2515,6 +2767,7 @@ const ArcadeProfileArcade = () => {
             overflowY: "scroll",
           }}
         >
+
           <div
             style={{
               width: "100%",
@@ -2550,6 +2803,7 @@ const ArcadeProfileArcade = () => {
               <Empty description="No Package Enrollments Yet" />
             )}
           </div>
+
         </div>
       </Row>
 
@@ -2583,14 +2837,19 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2611,11 +2870,15 @@ const ArcadeProfileArcade = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2635,11 +2898,15 @@ const ArcadeProfileArcade = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <ConfigProvider
@@ -2658,7 +2925,9 @@ const ArcadeProfileArcade = () => {
             </Radio.Group>
           </ConfigProvider>
         </Col>
-        <Col span={16}></Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
       <Row
         style={{
@@ -2666,14 +2935,20 @@ const ArcadeProfileArcade = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap", // For wrapping in small viewports
+          marginTop: "2px",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2682,8 +2957,8 @@ const ArcadeProfileArcade = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -2692,11 +2967,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2706,7 +2985,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "kanit",
               fontWeight: "400",
               fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -2715,11 +2994,15 @@ const ArcadeProfileArcade = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <Typography
@@ -2729,7 +3012,7 @@ const ArcadeProfileArcade = () => {
               fontFamily: "kanit",
               fontWeight: "400",
               fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -2737,7 +3020,10 @@ const ArcadeProfileArcade = () => {
             Canceled
           </Typography>
         </Col>
-        <Col span={16}></Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={8}></Col>
+        <Col xs={24} sm={24} md={24} lg={8}></Col>
       </Row>
       <Row
         style={{
@@ -2754,35 +3040,38 @@ const ArcadeProfileArcade = () => {
             width: "100%",
             maxHeight: "500px",
             overflowY: "scroll",
+            marginTop: "80px",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {Array.isArray(CoachReqestToArchade) &&
-              CoachReqestToArchade.slice(0, numberOfItemsShown).map(
-                (request, index) => (
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    key={index}
-                  >
-                    {request}
-                  </div>
-                )
-              )}
-          </div>
+          <Spin spinning={isLoading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {Array.isArray(CoachReqestToArchade) &&
+                CoachReqestToArchade.slice(0, numberOfItemsShown).map(
+                  (request, index) => (
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      key={index}
+                    >
+                      {request}
+                    </div>
+                  )
+                )}
+            </div>
+          </Spin>
         </div>
         {showMore ? (
           <Button
@@ -2845,6 +3134,7 @@ const ArcadeProfileArcade = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          marginTop: "60px",
         }}
       >
         <div
