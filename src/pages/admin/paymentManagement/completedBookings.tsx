@@ -31,7 +31,18 @@ const CompletedBookings = () => {
     ZoneBookingDetails[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [checkedStates, setCheckedStates] = useState(
+    Array(completedBookings.length).fill(false)
+  );
 
+  // Handler to update the checked state of a specific checkbox
+  const handleCheckboxChange = (index: number) => (e: any) => {
+    const newCheckedStates = [...checkedStates];
+    newCheckedStates[index] = e.target.checked;
+    setCheckedStates(newCheckedStates);
+  };
+
+  console.log(checkedStates);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -188,6 +199,7 @@ const CompletedBookings = () => {
     items,
     onClick: handleMenuClick,
   };
+
   return (
     <Col
       span={19}
@@ -257,7 +269,10 @@ const CompletedBookings = () => {
                 span={1}
                 style={{ display: "flex", justifyContent: "center" }}
               >
-                <Checkbox></Checkbox>
+                <Checkbox
+                  checked={checkedStates[index]}
+                  onChange={handleCheckboxChange(index)}
+                ></Checkbox>
               </Col>
               <Col span={8} style={{}}>
                 <AdvancedImage

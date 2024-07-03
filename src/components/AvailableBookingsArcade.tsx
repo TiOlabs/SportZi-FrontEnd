@@ -9,6 +9,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import TextArea from "antd/es/input/TextArea";
 import confirm from "antd/es/modal/confirm";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const AvailableBookingsArcade = (props: any) => {
   console.log(props);
@@ -133,6 +134,13 @@ const AvailableBookingsArcade = (props: any) => {
       cloudName,
     },
   });
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    console.log("props", props);
+    navigate(`/PlayerUser/${props.user_id}`);
+  };
+
   return (
     <>
       <Row
@@ -152,21 +160,23 @@ const AvailableBookingsArcade = (props: any) => {
         <Col xs={8} sm={8} md={8} lg={6} xl={6}>
           <Row style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <AdvancedImage
-                style={{
-                  width: "90px",
-                  height: "90px",
-                  borderRadius: "50%",
-                  marginRight: "10px",
-                  backgroundImage: `url(${profilePic})`,
-                  backgroundSize: "cover",
-                }}
-                cldImg={
-                  cld.image(props?.user_image)
-                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
-                  // .resize(Resize.scale().width(200).height(200))
-                }
-              />
+              <div onClick={handleClick}>
+                <AdvancedImage
+                  style={{
+                    width: "90px",
+                    height: "90px",
+                    borderRadius: "50%",
+                    marginRight: "10px",
+                    backgroundImage: `url(${profilePic})`,
+                    backgroundSize: "cover",
+                  }}
+                  cldImg={
+                    cld.image(props?.user_image)
+                    // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                    // .resize(Resize.scale().width(200).height(200))
+                  }
+                />
+              </div>
             </Col>
             <Col
               style={{
