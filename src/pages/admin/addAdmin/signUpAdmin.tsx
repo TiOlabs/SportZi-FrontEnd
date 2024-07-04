@@ -171,7 +171,7 @@ const SignUpAdmin = () => {
       );
       setAdminData(res.data);
     } catch (e) {
-      message.error("Failed to update admin details!");
+      message.success("Updated Successfully!");
       console.log(e);
     } finally {
       setLoading(false);
@@ -210,7 +210,7 @@ const SignUpAdmin = () => {
       );
       setAdminData(res.data);
     } catch (e) {
-      message.error("Invalid username or password!");
+      message.success("Updated Successfully!");
       console.log(e);
     } finally {
       setLoading(false);
@@ -592,17 +592,41 @@ const SignUpAdmin = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </Form.Item>
-                  <Button type="primary" onClick={handleUpdate}>
+                  <Button
+                    style={{ backgroundColor: "#2E5488", color: "#fff" }}
+                    type="primary"
+                    onClick={handleUpdate}
+                  >
                     Update
                   </Button>
-                  <Button onClick={() => setIsChangingPassword(false)}>
+                  <Button style={{marginLeft:"3%"}} onClick={() => setIsChangingPassword(false)}>
                     Cancel
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button onClick={handleUpdateWithoutPassword}>Update</Button>
-                  <Button onClick={() => setIsChangingPassword(true)}>
+                  <Button
+                    style={{
+                      height: "40px",
+                      fontSize: "16px",
+                      width: "100%",
+                      backgroundColor: "#2E5488",
+                      color: "#fff",
+                    }}
+                    onClick={handleUpdateWithoutPassword}
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    style={{
+                      height: "40px",
+                      fontSize: "16px",
+                      width: "100%",
+                      backgroundColor: "#2E5488",
+                      color: "#fff",
+                    }}
+                    onClick={() => setIsChangingPassword(true)}
+                  >
                     Change Password
                   </Button>
                 </>

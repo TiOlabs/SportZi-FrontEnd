@@ -562,6 +562,7 @@ const ArcadePackageUserView = (props: any) => {
                     okButtonProps={{ disabled: true }}
                     onCancel={handleCancel}
                     width={800}
+                    footer={null}
                   >
                     <Form
                       layout="vertical"
@@ -575,7 +576,7 @@ const ArcadePackageUserView = (props: any) => {
                           color: "#0E458E",
                         }}
                       >
-                        <h1>Application Form - For Enroll to the Package</h1>
+                        <h1>Application Form - Enroll to the Package</h1>
                       </div>
                       <Form.Item
                         name="duration"

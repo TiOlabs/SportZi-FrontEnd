@@ -1,5 +1,5 @@
 import { Col, Row, Select, Input } from "antd";
-import CoachHeropic01 from "../../assents/CoachHeropic01.png";
+import CoachHeropic01 from "../../assents/coach3hero (1).png";
 import Search from "antd/es/input/Search";
 import type { SearchProps } from "antd/es/input/Search";
 import { DownOutlined, UserOutlined } from "@ant-design/icons";
@@ -28,13 +28,12 @@ const HeroSection = () => {
               textAlign: "center",
               color: "#0E458E",
               fontFamily: "Kanit, sans-serif",
-              fontSize: md ? "36px" : "24px",
+              fontSize: 36,
               fontWeight: 200,
               lineHeight: 1.1,
-              marginTop: "15%",
             }}
           >
-            Discover Your Perfect Coach for Sporting Excellence
+            <b>Discover Your Perfect Coach for Sporting Excellence</b>
           </h1>
         </Col>
         <Col lg={11}></Col>
@@ -76,7 +75,12 @@ const HeroSection = () => {
             <img
               src={CoachHeropic01}
               alt="coachpic"
-              style={{ height: "auto", width: "100%", marginTop: "5%" }}
+              style={{
+                height: "auto",
+                width: "100%",
+                marginTop: "5%",
+                maxHeight: "500px",
+              }}
             />
           </div>
         </Col>

@@ -135,9 +135,7 @@ const CoachRequstRow = (props: any) => {
                 coachBookingDetails.booking_id !== props.booking_id
             );
           });
-          message.success(
-            "Booking cancelation successfull!"
-          );
+          message.success("Booking cancelation successfull!");
           setIsModalOpen(false);
         } catch (error) {
           console.log("error");
@@ -301,6 +299,7 @@ const CoachRequstRow = (props: any) => {
             Cancel
           </Button>,
           <Button
+            disabled={props.status !== "success"}
             style={{
               backgroundColor: "#fff",
               color: "#FF0000",

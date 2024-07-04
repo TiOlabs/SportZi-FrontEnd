@@ -1,6 +1,9 @@
 import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { AdvancedImage } from "@cloudinary/react";
+import { useNavigate } from "react-router-dom";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 interface Arcade {
   arcade_id: String;
@@ -114,7 +117,16 @@ function DataRow(props: any) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/arcadeProfile/:${arcadedetails.arcade_id}`);
+  };
   return (
     <Row
       key={arcadedetails.arcade_id}
@@ -126,18 +138,23 @@ function DataRow(props: any) {
     >
       <Col></Col>
       <Col span={8} style={{}}>
-        <div
+        <AdvancedImage
+          onClick={handleClick}
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(arcadedetails.arcade_image || "default.jpg")
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+          // border-radius: 50%;
+          // width: 80px;
+          // height: 80px;
+        />
         <div
           style={{
             display: "flex",

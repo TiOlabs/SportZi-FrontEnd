@@ -2,7 +2,7 @@ import Navbar2 from "../../components/navbar";
 import { Col, Flex, Row } from "antd";
 import Navbar from "../../components/navbar";
 import AppFooter from "../../components/footer";
-import AboutImage from "../../assents/AboutImage1.jpg";
+import AboutImage from "../../assents/sportEquepments.jpg";
 import AboutImage2 from "../../assents/AboutImage2.jpeg";
 import AboutImage3 from "../../assents/AboutImage3.jpeg";
 import AboutImage4 from "../../assents/AboutImage4_1.jpeg";
@@ -81,7 +81,7 @@ const About = () => {
               marginTop: lg ? "12%" : "10%",
               marginBottom: lg ? "0%" : "3%",
               fontStyle: "kanit",
-              color:"#0E458E",
+              color: "#0E458E",
             }}
           >
             About Us
@@ -128,7 +128,6 @@ const About = () => {
             textAlign: "center",
           }}
         >
-          
           <div
             style={{
               fontSize: lg ? "18px" : "16px",
@@ -140,7 +139,7 @@ const About = () => {
               fontWeight: 300,
             }}
           >
-        <p> Welcome to Spotzi! </p>  
+            <p> Welcome to Spotzi! </p>
             <div
               style={{
                 display: "Flex",
@@ -150,20 +149,20 @@ const About = () => {
                 marginBottom: "5%",
               }}
             >
-           
-             
-              At SpotZi, we are dedicated to transforming the way 
-              sports facilities are managed. Our mission is to empower 
-              sports venues of all sizes with state-of-the-art, user-friendly 
-              technology, making complex operational challenges a thing of the past. 
-              From local community gyms to prestigious world-class stadiums, SpotZi provides
-              innovative solutions that streamline every aspect of facility management.
+              At SpotZi, we are dedicated to transforming the way sports
+              facilities are managed. Our mission is to empower sports venues of
+              all sizes with state-of-the-art, user-friendly technology, making
+              complex operational challenges a thing of the past. From local
+              community gyms to prestigious world-class stadiums, SpotZi
+              provides innovative solutions that streamline every aspect of
+              facility management.
             </div>
-<div>
-<p> Our Vision</p>  
-<p style={{fontSize:"20px"}}>Efficient Operations, Exceptional Experiences</p>
-
-</div>
+            <div>
+              <p> Our Vision</p>
+              <p style={{ fontSize: "20px" }}>
+                Efficient Operations, Exceptional Experiences
+              </p>
+            </div>
             <div
               style={{
                 display: "Flex",
@@ -172,14 +171,12 @@ const About = () => {
                 textAlign: "center",
               }}
             >
-        
-
-
-We believe in the power of efficiency to enhance experiences. 
-By integrating our advanced management system into your operations, 
-we simplify tasks such as booking, maintenance, and resource management. 
-This allows you to focus on what truly matters—creating outstanding experiences 
-for athletes, coaches, and sports enthusiasts alike.
+              We believe in the power of efficiency to enhance experiences. By
+              integrating our advanced management system into your operations,
+              we simplify tasks such as booking, maintenance, and resource
+              management. This allows you to focus on what truly
+              matters—creating outstanding experiences for athletes, coaches,
+              and sports enthusiasts alike.
             </div>
           </div>
         </Col>
@@ -200,7 +197,7 @@ for athletes, coaches, and sports enthusiasts alike.
             color: "#0E458E",
           }}
         >
-         Join Us on the Journey
+          Join Us on the Journey
         </div>
       </Row>
 
@@ -223,110 +220,137 @@ for athletes, coaches, and sports enthusiasts alike.
             }}
           >
             {" "}
-            At SpotZi, we're not just about managing facilities; 
-            we're about pioneering a new era of sports venue management. 
-            Our commitment to innovation and excellence drives us to constantly 
-            evolve and improve, providing our clients with the tools they need to succeed. 
-            Discover how SpotZi can redefine your facility’s operations and elevate your venue to new heights.
-{" "}
+            At SpotZi, we're not just about managing facilities; we're about
+            pioneering a new era of sports venue management. Our commitment to
+            innovation and excellence drives us to constantly evolve and
+            improve, providing our clients with the tools they need to succeed.
+            Discover how SpotZi can redefine your facility’s operations and
+            elevate your venue to new heights.{" "}
           </div>
         </Col>
         <Col lg={4} xs={0} md={3}></Col>
       </Row>
 
-<Row style={{display :"flex",
-             marginBottom:"5%",
-             justifyContent:"center",
-             justifyItems:"center",
-             }}>
-<p style={{color:"#0E458E",
-          fontFamily:"kanit",
-}}>Meet Our Team</p>
-</Row>
-<Row style={{marginBottom:"5%",
-             display :"flex",
-             justifyContent:"center",
-             justifyItems:"center",
-             textAlign: "center",
-             flexWrap: "wrap"
-}}>
- 
-<Image.PreviewGroup 
-    preview={{
-      onChange: (current, prev) => console.log(`current index: ${current}, prev index: ${prev}`),
-    }}
-  >
-  
-    <Col lg={3} md={8} xs={12}> <Image 
-    style={{borderRadius:"100%",
-      width : lg ? "140px" :"130px",
-      border: "6px solid #0E458E",
-   
-      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
-      transition: "transform 0.2s, box-shadow 0.2s",
-      cursor: "pointer"}} 
-            src={AboutImage5} />
-          <div style={{marginTop: "10px", display :"flex",
-             justifyContent:"center", justifyItems:"center"}}>Thisara</div>
-    </Col>
+      <Row
+        style={{
+          display: "flex",
+          marginBottom: "5%",
+          justifyContent: "center",
+          justifyItems: "center",
+        }}
+      >
+        <p style={{ color: "#0E458E", fontFamily: "kanit" }}>Meet Our Team</p>
+      </Row>
+      <Row
+        style={{
+          marginBottom: "5%",
+          display: "flex",
+          justifyContent: "center",
+          justifyItems: "center",
+          textAlign: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <Image.PreviewGroup
+          preview={{
+            onChange: (current, prev) =>
+              console.log(`current index: ${current}, prev index: ${prev}`),
+          }}
+        >
+          <Col lg={3} md={8} xs={12}>
+            {" "}
+            <Image
+              style={{
+                borderRadius: "100%",
+                width: lg ? "140px" : "130px",
+                border: "6px solid #0E458E",
 
-    <Col lg={3} md={8} xs={12}><Image  
-    style={{ borderRadius:"100%",
-      width : lg ? "140px" :"140px",
-      border: "6px solid #0E458E",
-     
-      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
-      transition: "transform 0.2s, box-shadow 0.2s",
-      cursor: "pointer"}}src={AboutImage4}/>
-    <div style={{marginTop: "10px"}}>Bathiya</div>
-    </Col>
+                boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                cursor: "pointer",
+              }}
+              src={AboutImage5}
+            />
+            <div
+              style={{
+                marginTop: "10px",
+                display: "flex",
+                justifyContent: "center",
+                justifyItems: "center",
+              }}
+            >
+              Thisara
+            </div>
+          </Col>
 
-    <Col lg={3} md={8} xs={12}> <Image  
-    style={{ borderRadius:"100%",
-      width : lg ? "140px" :"140px",
-      border: "6px solid #0E458E",
-     
-      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
-      transition: "transform 0.2s, box-shadow 0.2s",
-      cursor: "pointer"}}src={AboutImage2}/>
-    <div style={{marginTop: "10px"}}>Navindu</div>
-    </Col>  
+          <Col lg={3} md={8} xs={12}>
+            <Image
+              style={{
+                borderRadius: "100%",
+                width: lg ? "140px" : "140px",
+                border: "6px solid #0E458E",
 
-    <Col lg={3} md={8} xs={12}><Image 
-    style={{borderRadius:"100%",
-            width : lg ? "140px" :"140px",
-            border: "6px solid #0E458E",
-           
-            boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
-            transition: "transform 0.2s, box-shadow 0.2s",
-            cursor: "pointer"}} 
-            src={AboutImage3}/>
+                boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                cursor: "pointer",
+              }}
+              src={AboutImage4}
+            />
+            <div style={{ marginTop: "10px" }}>Bathiya</div>
+          </Col>
 
-         <div style={{marginTop: "10px"}}>Niweesha</div>
-    </Col>
+          <Col lg={3} md={8} xs={12}>
+            {" "}
+            <Image
+              style={{
+                borderRadius: "100%",
+                width: lg ? "140px" : "140px",
+                border: "6px solid #0E458E",
 
+                boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                cursor: "pointer",
+              }}
+              src={AboutImage2}
+            />
+            <div style={{ marginTop: "10px" }}>Navindu</div>
+          </Col>
 
+          <Col lg={3} md={8} xs={12}>
+            <Image
+              style={{
+                borderRadius: "100%",
+                width: lg ? "140px" : "140px",
+                border: "6px solid #0E458E",
 
-    <Col lg={3} md={8} xs={12}> <Image 
-    style={{ borderRadius:"100%",
-      width : lg ? "140px" :"140px",
-      border: "6px solid #0E458E",
-   
-      boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
-      transition: "transform 0.2s, box-shadow 0.2s",
-      cursor: "pointer"}} 
-      src={AboutImage6}/>
-   
-    <div style={{marginTop: "10px"}}>Kanishka</div>
+                boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                cursor: "pointer",
+              }}
+              src={AboutImage3}
+            />
 
-    </Col>
-   
-    
-   
-    
-   
-  </Image.PreviewGroup>
-</Row>
+            <div style={{ marginTop: "10px" }}>Niweesha</div>
+          </Col>
+
+          <Col lg={3} md={8} xs={12}>
+            {" "}
+            <Image
+              style={{
+                borderRadius: "100%",
+                width: lg ? "140px" : "140px",
+                border: "6px solid #0E458E",
+
+                boxShadow: "0 4px 8px rgba(2, 2, 2, 2)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                cursor: "pointer",
+              }}
+              src={AboutImage6}
+            />
+            <div style={{ marginTop: "10px" }}>Kanishka</div>
+          </Col>
+        </Image.PreviewGroup>
+      </Row>
 
       {<AppFooter />}
     </div>

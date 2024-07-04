@@ -2,6 +2,9 @@ import { Col, Row, Button, Modal, Spin, Empty } from "antd";
 import React, { useState, useEffect } from "react";
 // import axios from "axios";
 import axiosInstance from "../../../axiosInstance";
+import { AdvancedImage } from "@cloudinary/react";
+import { useNavigate } from "react-router-dom";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 interface Player {
   player_id: string;
@@ -75,15 +78,15 @@ const PlayerManagement = () => {
           </Col>
         </Row>
 
-      {filteredPlayers.length === 0 ? (
-        <div>
-          <Empty description={"No Player Found"} />
-        </div>
-      ) : (
-        filteredPlayers.map((player: Player) => (
-          <DataRow playerdetails={player} />
-        ))
-      )}
+        {filteredPlayers.length === 0 ? (
+          <div>
+            <Empty description={"No Player Found"} />
+          </div>
+        ) : (
+          filteredPlayers.map((player: Player) => (
+            <DataRow playerdetails={player} />
+          ))
+        )}
       </Spin>
     </Col>
   );
@@ -106,7 +109,16 @@ function DataRow(props: any) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/PlayerUser/:${playerdetails.player_id}`);
+  };
   return (
     <Row
       key={playerdetails.player_id}
@@ -118,18 +130,23 @@ function DataRow(props: any) {
     >
       <Col></Col>
       <Col span={8} style={{}}>
-        <div
+        <AdvancedImage
+          onClick={handleClick}
           style={{
             borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             position: "absolute",
             width: "80px",
             height: "80px",
-            backgroundColor: "#000",
           }}
-        ></div>
+          cldImg={
+            cld.image(playerdetails.user.user_image || "default.jpg")
+            // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+            // .resize(Resize.scale().width(200).height(200))
+          }
+          // border-radius: 50%;
+          // width: 80px;
+          // height: 80px;
+        />
         <div
           style={{
             display: "flex",
@@ -198,7 +215,6 @@ function DataRow(props: any) {
                   {playerdetails.user.accountNumber || "N/A"}
                 </Col>
 
-               
                 <Col span={24}>
                   <b>City :</b> {playerdetails.user.city || "N/A"}
                 </Col>

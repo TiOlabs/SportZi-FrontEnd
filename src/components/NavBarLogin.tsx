@@ -645,7 +645,7 @@ const NavbarLogin: React.FC = () => {
                     border: "none",
                   }}
                 >
-                  Sign In
+                  Sign Up
                 </Button>
               </Link>
             </div>

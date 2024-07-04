@@ -155,8 +155,6 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
           >
             {props.venue}
           </Col>
-          
-          
         )}
       </Row>
 
@@ -182,6 +180,12 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
             Cancel
           </Button>,
           <Button
+            disabled={
+              props.status === "canceled_By_Coach" ||
+              props.status === "canceled_By_Arcade" ||
+              props.status === "canceled_By_Player" ||
+              props.status === "canceled_By_Admin"
+            }
             style={{
               backgroundColor: "#fff",
               color: "#FF0000",
@@ -319,9 +323,10 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
             lg={6}
             xl={4}
           >
-            Status: {props.status === 
-            "canceled_By_Player" ? "Canceled By Player" : "Success"}
-            
+            Status:{" "}
+            {props.status === "canceled_By_Player"
+              ? "Canceled By Player"
+              : "Success"}
           </Col>
         </Row>
       </Modal>

@@ -1,5 +1,5 @@
 import { StarFilled, StarTwoTone } from "@ant-design/icons";
-import { Col, Grid, List, Row } from "antd";
+import { Col, Grid, List, Row, Spin } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
 import profilePic from "../../assents/pro.png";
@@ -25,6 +25,7 @@ interface PlayerData {
   // add other properties as needed
 }
 const PlayerProfileUser = (props: any) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { playerId } = useParams(); // Use playerId, not playerID
   console.log(playerId);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
@@ -43,6 +44,7 @@ const PlayerProfileUser = (props: any) => {
     return [];
   };
   useEffect(() => {
+    // setIsLoading(true);
     axiosInstance
       .get(`/api/auth/getplayerdetailsUser/${playerId}`, {})
       .then((res) => {
@@ -57,6 +59,7 @@ const PlayerProfileUser = (props: any) => {
           achiveArr.push(item.achivement_details as string);
         });
         setAchivements(achiveArr.join(","));
+        // setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -126,188 +129,190 @@ const PlayerProfileUser = (props: any) => {
               flexDirection: "column",
             }}
           >
-            <div>
-              <h1
-                style={{
-                  color: "#000",
-
-                  fontSize: "32px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {firstname} {lastname}
-              </h1>
-              <p
-                style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
-
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
-                }}
-              >
-                First class rugby coach
-              </p>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-              }}
-            >
-              <Row>
-                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                  <p
-                    style={{
-                      color: "#0E458E",
-                      fontFamily: "kanit",
-                      fontSize: "39px",
-                      fontStyle: "normal",
-                      fontWeight: "500",
-                      lineHeight: "normal",
-                      margin: "0px",
-                    }}
-                  >
-                    5.0
-                  </p>
-                </Col>
-
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={12}
-                  lg={12}
-                  xl={12}
+            <Spin spinning={isLoading}>
+              <div>
+                <h1
                   style={{
-                    display: "flex",
+                    color: "#000",
 
-                    alignItems: "center",
-                    justifyContent: "center",
+                    fontSize: "32px",
+                    fontStyle: "normal",
+                    fontWeight: "500",
+                    fontFamily: "kanit",
+                    lineHeight: "normal",
+                    marginBottom: "0px",
                   }}
                 >
-                  <div
-                    style={{
-                      height: "auto",
-                      position: "relative",
-                      width: "max-content",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "100%",
-                      }}
-                    >
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                    </div>
+                  {firstname} {lastname}
+                </h1>
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
+
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  First class rugby coach
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <p
                       style={{
-                        color: "#000",
-                        opacity: "0.64",
+                        color: "#0E458E",
                         fontFamily: "kanit",
-                        fontSize: "10px",
+                        fontSize: "39px",
                         fontStyle: "normal",
                         fontWeight: "500",
                         lineHeight: "normal",
                         margin: "0px",
                       }}
                     >
-                      120 Feedbacks
+                      5.0
                     </p>
-                  </div>{" "}
-                </Col>
-              </Row>
-            </div>
-            <p
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                opacity: ".96",
-                fontSize: "18px",
-                fontStyle: "normal",
-                fontWeight: "300",
-                lineHeight: "normal",
-                marginTop: "0px",
-              }}
-            >
-              {discription}
-            </p>
-            <p
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontSize: "24px",
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-              }}
-            >
-              Achivements
-            </p>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
-              }}
-              itemLayout="horizontal"
-              dataSource={AchivementsGetToArry(achivements)}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
+                  </Col>
 
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
+                  <Col
+                    xs={24}
+                    sm={24}
+                    md={12}
+                    lg={12}
+                    xl={12}
                     style={{
                       display: "flex",
-                      flexDirection: "row",
+
                       alignItems: "center",
                       justifyContent: "center",
-                      fontFamily: "kanit",
-                      fontSize: "20px",
                     }}
                   >
-                    {" "}
-                    <span
+                    <div
                       style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
+                        height: "auto",
+                        position: "relative",
+                        width: "max-content",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%",
+                        }}
+                      >
+                        <StarFilled style={{ color: "#0E458E" }} />
+                        <StarFilled style={{ color: "#0E458E" }} />
+                        <StarFilled style={{ color: "#0E458E" }} />
+                        <StarTwoTone twoToneColor="#0E458E" />
+                        <StarTwoTone twoToneColor="#0E458E" />
+                      </div>
+                      <p
+                        style={{
+                          color: "#000",
+                          opacity: "0.64",
+                          fontFamily: "kanit",
+                          fontSize: "10px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                          lineHeight: "normal",
+                          margin: "0px",
+                        }}
+                      >
+                        120 Feedbacks
+                      </p>
+                    </div>{" "}
+                  </Col>
+                </Row>
+              </div>
+              <p
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+                  opacity: ".96",
+                  fontSize: "18px",
+                  fontStyle: "normal",
+                  fontWeight: "300",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                }}
+              >
+                {discription}
+              </p>
+              <p
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+                  fontSize: "24px",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                }}
+              >
+                Achivements
+              </p>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.4",
+                }}
+                itemLayout="horizontal"
+                dataSource={AchivementsGetToArry(achivements)}
+                renderItem={(item) => (
+                  <List.Item
+                    style={{
+                      position: "relative",
+
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "kanit",
+                        fontSize: "20px",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+            </Spin>
           </div>
         </Col>
       </Row>

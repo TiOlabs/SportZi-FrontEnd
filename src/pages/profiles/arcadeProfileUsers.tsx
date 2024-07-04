@@ -60,7 +60,8 @@ const ArcadeProfileUser = () => {
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const { ArcadeId } = useParams();
-  console.log("ArcadeId", ArcadeId);
+  const cleanedArcadeId = ArcadeId?.replace(":", "") ?? "";
+  console.log("ArcadeId", cleanedArcadeId);
   const [arcadeDetails1, setArcadeDetails] = useState<any>(null);
   const [arcade, setArcade] = useState<Arcade>();
 
@@ -90,7 +91,7 @@ const ArcadeProfileUser = () => {
     axiosInstance
       .get("/api/auth/getarchadedetails", {
         params: {
-          ArcadeId: ArcadeId,
+          ArcadeId: cleanedArcadeId,
         },
       })
       .then((res) => {
@@ -101,13 +102,13 @@ const ArcadeProfileUser = () => {
       .catch((err) => {
         console.log("daddds", err);
       });
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${cleanedArcadeId}`
         );
         const data = await res.data;
         console.log(data);
@@ -117,7 +118,7 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   console.log(arcade);
 
@@ -125,7 +126,7 @@ const ArcadeProfileUser = () => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${ArcadeId}`
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${cleanedArcadeId}`
         );
         const data = await res.data;
         console.log(data);
@@ -135,14 +136,14 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   console.log(arcadePackages);
 
   useEffect(() => {
     axios
       .get(
-        `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${ArcadeId}`,
+        `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${cleanedArcadeId}`,
         {}
       )
       .then((res) => {
@@ -155,13 +156,13 @@ const ArcadeProfileUser = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/getarcadefeedbacks/${ArcadeId}`
+          `/api/getarcadefeedbacks/${cleanedArcadeId}`
         );
         // const fName = response.data[0].feedback.user.firstname;
         // console.log("Fname ----------------:",fName);
@@ -180,7 +181,7 @@ const ArcadeProfileUser = () => {
     const fetchRatings = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/getaverageratingbyarcadeId/${ArcadeId}`
+          `/api/getaverageratingbyarcadeId/${cleanedArcadeId}`
         );
         console.log("response:", response.data);
 
@@ -200,7 +201,7 @@ const ArcadeProfileUser = () => {
     };
 
     fetchRatings();
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   console.log("arcade", arcade?.arcade_image);
   const [cloudName] = useState("dle0txcgt");
@@ -243,7 +244,7 @@ const ArcadeProfileUser = () => {
         `${process.env.REACT_APP_API_URL}api/addreportarcade`,
         {
           reporter_user_id: id,
-          victim_arcade_id: ArcadeId,
+          victim_arcade_id: cleanedArcadeId,
           report_reason: reason,
           description: description,
         }
@@ -261,7 +262,7 @@ const ArcadeProfileUser = () => {
   const submitFeedback = async () => {
     try {
       const response = await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}api/addarcadefeedbacks/${ArcadeId}`,
+        `${process.env.REACT_APP_API_URL}api/addarcadefeedbacks/${cleanedArcadeId}`,
         {
           comment,
           rating,
@@ -1198,7 +1199,7 @@ const ArcadeProfileUser = () => {
                 package_id={package1.package_id}
                 player_id={userDetails.id}
                 zone_id={package1.zone_id}
-                arcade_id={ArcadeId}
+                arcade_id={cleanedArcadeId}
                 coachPresentage={package1.percentageForCoach}
                 zone_name={package1.zone.zone_name}
                 day={package1.packageDayAndTime.map((item) => item.day)}
