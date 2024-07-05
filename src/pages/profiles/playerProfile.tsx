@@ -57,7 +57,9 @@ const PlayerProfile = () => {
   const [value2, setValue2] = useState(4);
   const [enrollValue, setEnrollValue] = useState(11);
   const [playerBookingsData, setPlayerBookingsData] = useState([]);
-  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState([]);
+  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState(
+    []
+  );
   const [coachBookingData, setCoachBookingData] = useState<
     CoachBookingDetails[]
   >([]);
@@ -98,7 +100,7 @@ const PlayerProfile = () => {
   const onChangePackagePlayerEnrollment = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setEnrollValue(e.target.value);
-  }
+  };
   const currentDate = new Date();
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
   console.log(userDetails.id);
@@ -154,19 +156,19 @@ const PlayerProfile = () => {
         setPackageEnrollmentForPlayer(res.data);
 
         const filteredDataForPlayerEnroll = res.data.filter(
-          (item: {status: string}) =>{
-            if(enrollValue === 11) {
+          (item: { status: string }) => {
+            if (enrollValue === 11) {
               return item.status === "success";
-            }
-            else if(enrollValue === 13) {
-              return (item.status === "canceled_By_Player" || item.status === "canceled_By_Arcade");
+            } else if (enrollValue === 13) {
+              return (
+                item.status === "canceled_By_Player" ||
+                item.status === "canceled_By_Arcade"
+              );
             }
             return false;
           }
-
         );
         setPackageEnrollmentForPlayer(filteredDataForPlayerEnroll);
-
 
         setPackageEnrollmentForPlayer((prev: any) => {
           return prev.filter(
@@ -176,9 +178,7 @@ const PlayerProfile = () => {
           );
         });
         setLoading(false);
-
       })
-
 
       .catch((error) => {
         console.log(error);
@@ -277,7 +277,6 @@ const PlayerProfile = () => {
   const handleFilterChange1 = (value: React.SetStateAction<string>) => {
     setFilterValue(value);
   };
-  
 
   const filteredBookings = coachBookingData.filter((booking) => {
     if (filterBy === "coach_name") {
@@ -322,10 +321,11 @@ const PlayerProfile = () => {
   );
   const filteredPackageEnrollmentForPlayer = packageEnrollmentForPlayer.filter(
     (item: PackageEnroolDetailsForPlayer) => {
-      if(filterBy === "package_name") {
-        return item.package.package_name.toLowerCase().includes(filterValue.toLowerCase());
-      }
-      else if (filterBy === "date") {
+      if (filterBy === "package_name") {
+        return item.package.package_name
+          .toLowerCase()
+          .includes(filterValue.toLowerCase());
+      } else if (filterBy === "date") {
         return item.enrolled_date.includes(filterValue);
       } else if (filterBy === "rate") {
         return item.rate.toString().includes(filterValue);
@@ -333,7 +333,7 @@ const PlayerProfile = () => {
       return true;
     }
   );
-  
+
   return (
     <>
       {userDetails.id !== "" ? <NavbarProfile /> : <NavbarLogin />}
@@ -1407,6 +1407,8 @@ const PlayerProfile = () => {
             fontSize: "32px",
             paddingBottom: "10px",
             marginBottom: "2%",
+            justifyContent: "center",
+            textAlign: "center",
           }}
         >
           Available Meetings For You
@@ -2093,15 +2095,20 @@ const PlayerProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexWrap: "wrap",
           }}
         >
           {/* Radio button section */}
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%",
             }}
           >
             <ConfigProvider
@@ -2109,18 +2116,25 @@ const PlayerProfile = () => {
                 token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
               }}
             >
-              <Radio.Group onChange={onChangePackagePlayerEnrollment} value={enrollValue}>
+              <Radio.Group
+                onChange={onChangePackagePlayerEnrollment}
+                value={enrollValue}
+              >
                 <Radio value={11}></Radio>
               </Radio.Group>
             </ConfigProvider>
           </Col>
 
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%",
             }}
           >
             <ConfigProvider
@@ -2128,13 +2142,99 @@ const PlayerProfile = () => {
                 token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
               }}
             >
-              <Radio.Group onChange={onChangePackagePlayerEnrollment} value={enrollValue}>
+              <Radio.Group
+                onChange={onChangePackagePlayerEnrollment}
+                value={enrollValue}
+              >
                 <Radio value={13}></Radio>
               </Radio.Group>
             </ConfigProvider>
           </Col>
-          <Col span={8}></Col>
-          <Col span={8}>
+          <Col xs={0} sm={0} md={0} lg={16}></Col>
+          {/* <Col span={8}></Col>
+          <Col span={8}> */}
+        </Row>
+
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap",
+            marginTop: "2px",
+          }}
+        >
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Available
+            </Typography>
+          </Col>
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#ad0508",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Canceled
+            </Typography>
+          </Col>
+          <Col xs={0} sm={0} md={8} lg={8}></Col>
+          <Col
+            xs={24}
+            sm={24}
+            md={24}
+            lg={8}
+            style={{
+              marginBottom: "2%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "3%", // Added top margin for separation from the radio buttons
+            }}
+          >
             <Select
               defaultValue="date"
               style={{ width: 120, height: "40px" }}
@@ -2161,63 +2261,6 @@ const PlayerProfile = () => {
               Clear
             </Button>
           </Col>
-        </Row>
-
-        <Row
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Col
-            span={2}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography
-              style={{
-                alignItems: "center",
-                color: "#0E458E",
-                fontFamily: "kanit",
-                fontWeight: "400",
-                fontSize: "16px",
-                paddingBottom: "10px",
-                marginBottom: "0px",
-                display: "flex",
-              }}
-            >
-              Available
-            </Typography>
-          </Col>
-          <Col
-            span={2}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography
-              style={{
-                alignItems: "center",
-                color: "#ad0508",
-                fontFamily: "kanit",
-                fontWeight: "400",
-                fontSize: "16px",
-                paddingBottom: "10px",
-                marginBottom: "0px",
-                display: "flex",
-              }}
-            >
-              Canceled
-            </Typography>
-          </Col>
-          <Col span={16}></Col>
         </Row>
 
         <Row

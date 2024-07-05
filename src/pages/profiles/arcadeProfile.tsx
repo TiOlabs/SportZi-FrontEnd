@@ -1558,6 +1558,7 @@ const ArcadeProfileArcade = () => {
               fontSize: lg ? "32px" : "24px",
               paddingBottom: "10px",
               marginBottom: "0px",
+               textAlign:"center"
             }}
           >
             Availale bookings for your complex
@@ -1982,6 +1983,7 @@ const ArcadeProfileArcade = () => {
               fontSize: "32px",
               paddingBottom: "10px",
               marginBottom: "0px",
+              textAlign:"center"
             }}
           >
             Available Coach bookings for your complex

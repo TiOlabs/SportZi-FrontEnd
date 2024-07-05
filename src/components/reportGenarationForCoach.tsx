@@ -29,7 +29,7 @@ const PrintableContent = React.forwardRef<
     <div style={{ marginBottom: "4rem" }}>
       <h2 style={{ color: "#0E458E", textAlign: "center" }}>Coach Bookings</h2>
       <Row>
-        <Col span={16}>
+        <Col md={16} xs={24}>
           <PieChart width={500} height={400}>
             <Pie
               data={coachData}
@@ -54,7 +54,7 @@ const PrintableContent = React.forwardRef<
             <Legend layout="vertical" verticalAlign="bottom" align="right" />
           </PieChart>
         </Col>
-        <Col span={8}>
+        <Col md={8} xs={24}>
           <Table
             columns={tableColumns}
             dataSource={coachData}
@@ -72,7 +72,7 @@ const PrintableContent = React.forwardRef<
         Package Enrollments
       </h2>
       <Row>
-        <Col span={16}>
+        <Col md={16} xs={24}>
           <PieChart width={500} height={400}>
             <Pie
               data={packageData}
@@ -97,7 +97,7 @@ const PrintableContent = React.forwardRef<
             <Legend layout="vertical" verticalAlign="bottom" align="right" />
           </PieChart>
         </Col>
-        <Col span={8}>
+        <Col md={8} xs={24}>
           <Table
             columns={tableColumns}
             dataSource={packageData}

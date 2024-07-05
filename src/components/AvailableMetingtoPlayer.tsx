@@ -50,6 +50,7 @@ const AvailableMetingstoPlayer = (props: any) => {
       okText: "Cancel Meeting",
       okType: "danger",
       cancelText: "No",
+      okCancel: true,
       async onOk() {
         try {
           const response = await axios.post(

@@ -296,7 +296,7 @@ const About = () => {
               }}
               src={AboutImage4}
             />
-            <div style={{ marginTop: "10px" }}>Bathiya</div>
+            <div style={{ marginTop: "10px" }}>Bhathiya</div>
           </Col>
 
           <Col lg={3} md={8} xs={12}>

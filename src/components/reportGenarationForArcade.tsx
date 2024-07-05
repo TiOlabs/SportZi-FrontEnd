@@ -56,7 +56,7 @@ const PrintableContent = React.forwardRef<
         </h2>
 
         <Row>
-          <Col span={16}>
+          <Col md={16} xs={24}>
             <PieChart width={500} height={400}>
               <Pie
                 data={zoneData}
@@ -82,7 +82,7 @@ const PrintableContent = React.forwardRef<
             </PieChart>
           </Col>
 
-          <Col span={8}>
+          <Col md={8} xs={24} >
             <Table
               columns={tableColumns}
               dataSource={zoneData}
@@ -100,7 +100,7 @@ const PrintableContent = React.forwardRef<
           Coach Bookings
         </h2>
         <Row>
-          <Col span={16}>
+          <Col md={16} xs={24}>
             <PieChart width={500} height={400}>
               <Pie
                 data={coachData}
@@ -125,7 +125,7 @@ const PrintableContent = React.forwardRef<
               <Legend layout="vertical" verticalAlign="bottom" align="right" />
             </PieChart>
           </Col>
-          <Col span={8}>
+          <Col md={8} xs={24}>
             <Table
               columns={tableColumns}
               dataSource={coachData}
@@ -144,7 +144,7 @@ const PrintableContent = React.forwardRef<
         </h2>
 
         <Row>
-          <Col span={16}>
+          <Col md={16} xs={24}>
             <PieChart width={500} height={400}>
               <Pie
                 data={packageData}
@@ -169,7 +169,7 @@ const PrintableContent = React.forwardRef<
               <Legend layout="vertical" verticalAlign="bottom" align="right" />
             </PieChart>
           </Col>
-          <Col span={8}>
+          <Col md={8} xs={24}>
             <Table
               columns={tableColumns}
               dataSource={packageData}
@@ -187,7 +187,7 @@ const PrintableContent = React.forwardRef<
           Booking Details
         </h2>
         <Row>
-          <Col span={16}>
+          <Col md={16} xs={24}>
             <BarChart
               width={500}
               height={400}
@@ -214,7 +214,7 @@ const PrintableContent = React.forwardRef<
               </Bar>
             </BarChart>
           </Col>
-          <Col span={8}>
+          <Col md={8} xs={24}>
             <Table
               columns={tableColumnsForZone}
               dataSource={bookingData}
