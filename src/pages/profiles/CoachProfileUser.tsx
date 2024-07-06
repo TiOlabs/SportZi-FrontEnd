@@ -73,6 +73,7 @@ const CoachProfileUser = () => {
   const [allFeedbacks, setAllFeedbacks] = useState<CoachFeedback[]>([]);
 
   const [averageRating, setAverageRating] = useState(0.0);
+  const [roundedAverageRating, setRoundedAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
   // Replace with actual coach ID
   console.log(userDetails);
@@ -82,14 +83,16 @@ const CoachProfileUser = () => {
         const response = await axiosInstance.get(
           `/api/getaverageratingbycoachId/${coachId}`
         );
-        console.log("response:", response.data);
+        // console.log("response:", response.data);
 
         const averageRate = response.data.averageRating.averageRate;
         const totalFeedbacks = response.data.totalFeedbacks;
         // console.log("averageRating:", averageRating);
         const roundedRating = Math.round(averageRate * 2) / 2;
 
-        setAverageRating(roundedRating);
+
+        setAverageRating(averageRate);
+        setRoundedAverageRating(roundedRating);
         setTotalFeedbacks(totalFeedbacks);
 
         // console.log("roundedRating", roundedRating);
@@ -210,8 +213,8 @@ const CoachProfileUser = () => {
       setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
-      console.error("Error submitting feedback=====================", error);
-      alert("Error submitting feedback:");
+      console.error("Error submitting feedback=====================",error);
+      antMessage.error("Error submitting feedback:");
     }
   };
   const navigate = useNavigate();
@@ -265,6 +268,7 @@ const CoachProfileUser = () => {
       {} as { [key: string]: string[] }
     );
   }
+
   return (
     <>
       <style>
@@ -680,8 +684,17 @@ const CoachProfileUser = () => {
                         fontFamily: "kanit",
                       }}
                     >
+
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+
                       {" "}
                       <span
+
                         style={{
                           fontSize: "30px",
                           marginLeft: "10px",

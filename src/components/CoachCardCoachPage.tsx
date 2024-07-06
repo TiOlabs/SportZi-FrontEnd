@@ -48,7 +48,7 @@ const CoachCardCoachPage = (props: any) => {
                 disabled
                 defaultValue={3}
                 value={roundedAvgRate}
-                style={{ color: "#FFD700", fontSize: "12px" }}
+                style={{ color: "#5587CC", fontSize: "12px" }}
               />
             </div>
 

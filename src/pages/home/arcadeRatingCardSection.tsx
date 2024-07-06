@@ -73,7 +73,7 @@ const ArcadeRatingCardsSection = () => {
             <Col key={arcade.arcade_id as string} lg={8} md={12} sm={24}>
               <ArcadeRatingCard
                 arcadeRating_id={arcade.arcade_id}
-                arcadeRating={arcade.averageRate}
+                // arcadeRating={arcade.averageRate}
                 arcadeName={arcade.arcade_name}
                 arcade_id={arcade.arcade_id}
                 arcadeAverageRate={arcade.averageRate}
