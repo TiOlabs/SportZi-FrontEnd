@@ -54,6 +54,7 @@ const UpdateZone = (props: any) => {
   };
 
   const handleOkForForseDelete = async () => {
+    console.log(reason);
     await updateZoneDetails();
     messageApi.success({
       content: "Submitted successfully!",

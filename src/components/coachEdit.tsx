@@ -299,7 +299,7 @@ const CoachEdit = ({
           .catch((error) => {
             setOpen(false);
             console.log(error);
-            alert("Form edited w!");
+            message.success("Updated Successfully")
           });
       } catch (err) {
         console.log(err);

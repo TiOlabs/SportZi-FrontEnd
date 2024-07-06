@@ -435,7 +435,7 @@ const CoachBookingForm: React.FC = () => {
 
   console.log(time);
   const [messageApi, contextHolder] = message.useMessage();
-  let coachAmount = Number(coachData?.rate) 
+  let coachAmount = Number(coachData?.rate);
   // * Number(pcount); --------------------------------------------------------
   let coachRate = Number(coachData?.rate);
   let zonerate = Number(zoneDetails?.rate);
@@ -492,8 +492,8 @@ const CoachBookingForm: React.FC = () => {
   }
   console.log(fullAmount);
   console.log(coachAmount);
-  
-  let finalAmaount = Number(fullAmount) + (coachAmount * timeStep);
+
+  let finalAmaount = Number(fullAmount) + coachAmount * timeStep;
 
   // let finalAmount;
   // if (zoneDetails?.discount === null) {
@@ -735,7 +735,10 @@ const CoachBookingForm: React.FC = () => {
                   >
                     <Select
                       placeholder="Select a Arcade"
-                      onChange={(value) => setArcade(value)}
+                      onChange={(value) => {
+                        setArcade(value);
+                        setTime("");
+                      }}
                       allowClear
                       style={{
                         height: "50px",
@@ -765,7 +768,10 @@ const CoachBookingForm: React.FC = () => {
                   >
                     <Select
                       placeholder="Select a Zone"
-                      onChange={(value) => setZone(value)}
+                      onChange={(value) => {
+                        setZone(value);
+                        setTime("");
+                      }}
                       allowClear
                       disabled={!arcade}
                       style={{

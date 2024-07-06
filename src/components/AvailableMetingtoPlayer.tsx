@@ -50,6 +50,7 @@ const AvailableMetingstoPlayer = (props: any) => {
       okText: "Cancel Meeting",
       okType: "danger",
       cancelText: "No",
+      okCancel: true,
       async onOk() {
         try {
           const response = await axios.post(
@@ -249,6 +250,12 @@ const AvailableMetingstoPlayer = (props: any) => {
             Cancel
           </Button>,
           <Button
+          disabled={
+            props.status === "canceled_By_Coach" ||
+            props.status === "canceled_By_Arcade" ||
+            props.status === "canceled_By_Player" ||
+            props.status === "canceled_By_Admin"
+          }
             style={{
               backgroundColor: "#fff",
               color: "#FF0000",
@@ -434,6 +441,12 @@ const AvailableMetingstoPlayer = (props: any) => {
             Cancel
           </Button>,
           <Button
+            disabled={
+              props.status === "canceled_By_Coach" ||
+              props.status === "canceled_By_Arcade" ||
+              props.status === "canceled_By_Player" ||
+              props.status === "canceled_By_Admin"
+            }
             style={{
               backgroundColor: "#fff",
               color: "#FF0000",

@@ -13,6 +13,7 @@ import {
   Select,
   Typography,
   Rate,
+  Spin,
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -54,6 +55,7 @@ interface AvailableTime {
 const RequestedMeetings = [<CoachReqestList />];
 
 const CoachProfile = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -86,12 +88,14 @@ const CoachProfile = () => {
   const coachId = coachDetails?.id;
   console.log("Coach ID:", coachId);
   useEffect(() => {
+    setIsLoading(true);
     axiosInstance
       .get(
         `${process.env.REACT_APP_API_URL}api/auth/getcoachDetailsForCoach/${coachDetails?.id}`
       )
       .then((res) => {
         setDetails(res.data);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log("errorrrrrrrrrrrrrrrr", err);
@@ -537,322 +541,267 @@ const CoachProfile = () => {
               flexDirection: "column",
             }}
           >
-            <div
-              style={{
-                zIndex: 1,
-                position: "absolute",
-                width: "80%",
-                display: "flex",
-                justifyContent: "flex-end",
-                flexDirection: "row",
-              }}
-            >
-              {" "}
-              <CoachEdit
-                firstname={firstname}
-                setFirstname={setFirstName}
-                lastName={lastname}
-                setLastName={setLastName}
-                discription={discription}
-                setDiscription={setDiscription}
-                setQulifications={setQulifications}
-                qulifications={qulifications}
-                expertice={expertice}
-                setExpertice={setExpertice}
-                coachId={coachDetails?.id}
-                availability={AvailableTimes}
-                AccNumber={AccNumber}
-                setAccNumber={setAccNumber}
-                user_image={user_image}
-                rate={rate}
-                setRate={setRate}
-              />
-            </div>
-            <div>
-              <Row>
-                <Col>
-                  <h1
-                    style={{
-                      color: "#000",
-                      fontSize: "32px",
-                      fontStyle: "capitalize",
-                      fontWeight: "500",
-                      fontFamily: "kanit",
-                      lineHeight: "normal",
-                      marginBottom: "0px",
-                    }}
-                  >
-                    {firstname} {lastname}
-                  </h1>
-                </Col>
-                <Col span={1}></Col>
-                <Col>
-                  <h1>
-                    <Notification userType="coach" id={coachDetails?.id} />
-                  </h1>
-                </Col>
-              </Row>
-
-              <p
+            <Spin spinning={isLoading}>
+              <div
                 style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
-
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
+                  zIndex: 1,
+                  position: "absolute",
+                  width: "80%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  flexDirection: "row",
                 }}
               >
-                First class {Details?.Coach?.sport?.sport_name} coach
-              </p>
-              <p
-                style={{
-                  marginTop: "4px",
-                  color: "#0E458E",
-                  fontFamily: "kanit",
-                  fontSize: "22px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
-                }}
-              >
-                Rate (per hour):Rs.{rate}
-              </p>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-              }}
-            >
-              <Row>
-                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                  <p
-                    style={{
-                      color: "#0E458E",
-                      fontFamily: "kanit",
-                      fontSize: "39px",
-                      fontStyle: "normal",
-                      fontWeight: "500",
-                      lineHeight: "normal",
-                      margin: "0px",
-                    }}
-                  >
-                    {averageRating.toFixed(1)}
-                  </p>
-                </Col>
-
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={12}
-                  lg={12}
-                  xl={12}
-                  style={{
-                    display: "flex",
-
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "auto",
-                      position: "relative",
-                      width: "max-content",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "100%",
-                      }}
-                    >
-                      <Rate
-                        allowHalf
-                        disabled
-                        value={roundedAverageRating}
-                        style={{
-                          scale: "0.7",
-                          display: "flex",
-                          flexDirection: "row",
-                          color: "#0E458E",
-                          fillOpacity: "0.8",
-                          borderBlockEnd: "dashed",
-                        }}
-                      />
-                    </div>
-                    <p
+                {" "}
+                <CoachEdit
+                  firstname={firstname}
+                  setFirstname={setFirstName}
+                  lastName={lastname}
+                  setLastName={setLastName}
+                  discription={discription}
+                  setDiscription={setDiscription}
+                  setQulifications={setQulifications}
+                  qulifications={qulifications}
+                  expertice={expertice}
+                  setExpertice={setExpertice}
+                  coachId={coachDetails?.id}
+                  availability={AvailableTimes}
+                  AccNumber={AccNumber}
+                  setAccNumber={setAccNumber}
+                  user_image={user_image}
+                  rate={rate}
+                  setRate={setRate}
+                />
+              </div>
+              <div>
+                <Row>
+                  <Col>
+                    <h1
                       style={{
                         color: "#000",
-                        opacity: "0.64",
+                        fontSize: "32px",
+                        fontStyle: "capitalize",
+                        fontWeight: "500",
                         fontFamily: "kanit",
-                        fontSize: "10px",
+                        lineHeight: "normal",
+                        marginBottom: "0px",
+                      }}
+                    >
+                      {firstname} {lastname}
+                    </h1>
+                  </Col>
+                  <Col span={1}></Col>
+                  <Col>
+                    <h1>
+                      <Notification userType="coach" id={coachDetails?.id} />
+                    </h1>
+                  </Col>
+                </Row>
+
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
+
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  First class {Details?.Coach?.sport?.sport_name} coach
+                </p>
+                <p
+                  style={{
+                    marginTop: "4px",
+                    color: "#0E458E",
+                    fontFamily: "kanit",
+                    fontSize: "22px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  Rate (per hour):Rs.{rate}
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <p
+                      style={{
+                        color: "#0E458E",
+                        fontFamily: "kanit",
+                        fontSize: "39px",
                         fontStyle: "normal",
                         fontWeight: "500",
                         lineHeight: "normal",
                         margin: "0px",
                       }}
                     >
-                      ({totalFeedbacks} Feedbacks)
+                      {averageRating.toFixed(1)}
                     </p>
-                  </div>{" "}
-                </Col>
-              </Row>
-            </div>
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
+                  </Col>
 
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Qulifications
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.5",
-              }}
-              itemLayout="horizontal"
-              dataSource={QulificationsGetToArry(qulifications)}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
+                  <Col
+                    xs={24}
+                    sm={24}
+                    md={12}
+                    lg={12}
+                    xl={12}
                     style={{
                       display: "flex",
-                      flexDirection: "row",
+
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
                     }}
                   >
-                    {" "}
-                    <span
+                    <div
                       style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
+                        height: "auto",
+                        position: "relative",
+                        width: "max-content",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Expertise
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.5",
-              }}
-              itemLayout="horizontal"
-            >
-              <List.Item
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%",
+                        }}
+                      >
+                        <Rate
+                          allowHalf
+                          disabled
+                          value={averageRating}
+                          style={{
+                            scale: "0.7",
+                            display: "flex",
+                            flexDirection: "row",
+                            color: "#0E458E",
+                            fillOpacity: "0.8",
+                            borderBlockEnd: "dashed",
+                          }}
+                        />
+                      </div>
+                      <p
+                        style={{
+                          color: "#000",
+                          opacity: "0.64",
+                          fontFamily: "kanit",
+                          fontSize: "10px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                          lineHeight: "normal",
+                          margin: "0px",
+                        }}
+                      >
+                        ({totalFeedbacks} Feedbacks)
+                      </p>
+                    </div>{" "}
+                  </Col>
+                </Row>
+              </div>
+              <Typography
                 style={{
-                  position: "relative",
-                  listStyle: "none",
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "20px",
-                    fontFamily: "kanit",
-                  }}
-                >
-                  <span
+                Qulifications
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.5",
+                }}
+                itemLayout="horizontal"
+                dataSource={QulificationsGetToArry(qulifications)}
+                renderItem={(item) => (
+                  <List.Item
                     style={{
-                      fontSize: "30px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
+                      position: "relative",
+
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
                     }}
                   >
-                    &#8226;
-                  </span>
-                  {Details?.Coach?.sport?.sport_name}
-                </div>
-              </List.Item>
-            </List>
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
+                        fontFamily: "kanit",
+                      }}
+                    >
 
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Session Types
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
-              }}
-              itemLayout="horizontal"
-              dataSource={["physical"]}
-              renderItem={(item) => (
+                      {" "}
+                      <span
+
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Expertise
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.5",
+                }}
+                itemLayout="horizontal"
+              >
                 <List.Item
                   style={{
                     position: "relative",
-
                     listStyle: "none",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -865,11 +814,10 @@ const CoachProfile = () => {
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontFamily: "kanit",
                       fontSize: "20px",
+                      fontFamily: "kanit",
                     }}
                   >
-                    {" "}
                     <span
                       style={{
                         fontSize: "30px",
@@ -879,100 +827,160 @@ const CoachProfile = () => {
                     >
                       &#8226;
                     </span>
-                    {item}
+                    {Details?.Coach?.sport?.sport_name}
                   </div>
                 </List.Item>
-              )}
-            />
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
+              </List>
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
 
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Available Times
-            </Typography>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-              }}
-            >
-              {Object.keys(groupedByDay).map((day) => (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    fontSize: "20px",
-                    fontFamily: "kanit",
-                  }}
-                  key={day}
-                >
-                  <span
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Session Types
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.4",
+                }}
+                itemLayout="horizontal"
+                dataSource={["physical"]}
+                renderItem={(item) => (
+                  <List.Item
                     style={{
-                      fontSize: lg ? "24px" : "18px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                      width: "1%",
+                      position: "relative",
+
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
                     }}
                   >
-                    &#8226;
-                  </span>
-                  <Typography
-                    style={{
-                      color: "#000",
-                      fontFamily: "kanit",
-                      width: "30%",
-                      fontStyle: "normal",
-                      fontWeight: "400",
-                      lineHeight: "normal",
-                      marginTop: "5px",
-                      fontSize: lg ? "24px" : "18px",
-                    }}
-                  >
-                    {day}
-                  </Typography>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "kanit",
+                        fontSize: "20px",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Available Times
+              </Typography>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                }}
+              >
+                {Object.keys(groupedByDay).map((day) => (
                   <div
                     style={{
-                      marginTop: "5px",
-                      fontSize: lg ? "18px" : "14px",
-                      fontFamily: "kanit",
                       display: "flex",
-                      flexDirection: "column",
-                      width: "40%",
-                      fontWeight: "300",
-                      justifyContent: "flex-start",
-                      marginLeft: "10px",
+                      flexDirection: "row",
+                      width: "100%",
+                      fontSize: "20px",
+                      fontFamily: "kanit",
                     }}
+                    key={day}
                   >
-                    {groupedByDay[day].map((time, index) => (
-                      <div key={index}>{time}</div>
-                    ))}
+                    <span
+                      style={{
+                        fontSize: lg ? "24px" : "18px",
+                        marginLeft: "10px",
+                        marginRight: "10px",
+                        width: "1%",
+                      }}
+                    >
+                      &#8226;
+                    </span>
+                    <Typography
+                      style={{
+                        color: "#000",
+                        fontFamily: "kanit",
+                        width: "30%",
+                        fontStyle: "normal",
+                        fontWeight: "400",
+                        lineHeight: "normal",
+                        marginTop: "5px",
+                        fontSize: lg ? "24px" : "18px",
+                      }}
+                    >
+                      {day}
+                    </Typography>
+                    <div
+                      style={{
+                        marginTop: "5px",
+                        fontSize: lg ? "18px" : "14px",
+                        fontFamily: "kanit",
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "40%",
+                        fontWeight: "300",
+                        justifyContent: "flex-start",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      {groupedByDay[day].map((time, index) => (
+                        <div key={index}>{time}</div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-                fontStyle: "normal",
-                fontWeight: "200",
-                lineHeight: "normal",
-                marginTop: "5px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Acc Number :{AccNumber}
-            </Typography>
+                ))}
+              </div>
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+                  fontStyle: "normal",
+                  fontWeight: "200",
+                  lineHeight: "normal",
+                  marginTop: "5px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Acc Number :{AccNumber}
+              </Typography>
+            </Spin>
           </div>
         </Col>
       </Row>
@@ -1037,9 +1045,9 @@ const CoachProfile = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "500",
-              fontSize: "32px",
+              fontSize: lg ? "32px" : "24px",
               paddingBottom: "10px",
-              marginBottom: "0px",
+              marginBottom: "2%",
             }}
           >
             Available Meetings For You
@@ -1052,14 +1060,19 @@ const CoachProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexWrap: "wrap",
           }}
         >
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%",
             }}
           >
             <ConfigProvider
@@ -1074,11 +1087,15 @@ const CoachProfile = () => {
           </Col>
 
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%",
             }}
           >
             <ConfigProvider
@@ -1092,11 +1109,15 @@ const CoachProfile = () => {
             </ConfigProvider>
           </Col>
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%",
             }}
           >
             <ConfigProvider
@@ -1109,38 +1130,9 @@ const CoachProfile = () => {
               </Radio.Group>
             </ConfigProvider>
           </Col>
-          <Col span={8}></Col>
-          <Col span={8}>
-            <Select
-              defaultValue="date"
-              style={{ width: 120, height: "40px" }}
-              onChange={(value) => setFilterBy(value)}
-            >
-              <Option value="date">Date</Option>
-              <Option value="time">Time</Option>
-              <Option value="rate">Rate</Option>
-              <Option value="player_name">Player Name</Option>
-              <Option value="arcade_name">Arcade Name</Option>
-              <Option value="booking_id">Booking ID</Option>
-              <Option value="status">Status</Option>
-            </Select>
-            <Input
-              placeholder="Enter filter value"
-              style={{ width: 200, marginLeft: 10, height: "40px" }}
-              onChange={handleFilterChange}
-            />
-            <Button
-              style={{ marginLeft: 10, height: "40px" }}
-              ghost
-              type="primary"
-              onClick={() => {
-                setFilterValue("");
-                setFilterBy("date");
-              }}
-            >
-              Clear
-            </Button>
-          </Col>
+
+          {/* Spacer for larger screens */}
+          <Col xs={0} sm={0} md={0} lg={16}></Col>
         </Row>
 
         <Row
@@ -1149,14 +1141,20 @@ const CoachProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexWrap: "wrap", // For wrapping in small viewports
+            marginTop: "2px",
           }}
         >
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%",
             }}
           >
             <Typography
@@ -1175,11 +1173,15 @@ const CoachProfile = () => {
             </Typography>
           </Col>
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%",
             }}
           >
             <Typography
@@ -1189,7 +1191,7 @@ const CoachProfile = () => {
                 fontFamily: "kanit",
                 fontWeight: "400",
                 fontSize: "16px",
-                paddingBottom: "10px",
+                paddingBottom: "5px",
                 marginBottom: "0px",
                 display: "flex",
               }}
@@ -1198,11 +1200,15 @@ const CoachProfile = () => {
             </Typography>
           </Col>
           <Col
-            span={2}
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%",
             }}
           >
             <Typography
@@ -1212,7 +1218,7 @@ const CoachProfile = () => {
                 fontFamily: "kanit",
                 fontWeight: "400",
                 fontSize: "16px",
-                paddingBottom: "10px",
+                paddingBottom: "5px",
                 marginBottom: "0px",
                 display: "flex",
               }}
@@ -1220,7 +1226,74 @@ const CoachProfile = () => {
               Canceled
             </Typography>
           </Col>
-          <Col span={16}></Col>
+
+          {/* Spacer for larger screens */}
+          <Col xs={0} sm={0} md={8} lg={8}></Col>
+
+          {/* Filter Section */}
+          <Col
+            xs={24}
+            sm={24}
+            md={24}
+            lg={8}
+            style={{
+              marginBottom: "2%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "3%",
+            }}
+          >
+            <Select
+              defaultValue="date"
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                height: "40px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+              }}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="date">Date</Option>
+              <Option value="time">Time</Option>
+              <Option value="rate">Rate</Option>
+              <Option value="player_name">Player Name</Option>
+              <Option value="arcade_name">Arcade Name</Option>
+              <Option value="booking_id">Booking ID</Option>
+              <Option value="status">Status</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+                height: "40px",
+              }}
+              onChange={handleFilterChange}
+            />
+            <Button
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                height: "40px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+              }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
         </Row>
 
         <Row
@@ -1239,7 +1312,7 @@ const CoachProfile = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: "28px",
+              fontSize: md ? "28px" : "20px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -1257,7 +1330,7 @@ const CoachProfile = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: "28px",
+              fontSize: md ? "28px" : "20px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -1275,7 +1348,7 @@ const CoachProfile = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: "28px",
+              fontSize: md ? "28px" : "20px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -1293,7 +1366,7 @@ const CoachProfile = () => {
               color: "#000",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: "28px",
+              fontSize: md ? "28px" : "20px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -1398,27 +1471,33 @@ const CoachProfile = () => {
             fontWeight: "500",
             fontSize: lg ? "32px" : "24px",
             paddingBottom: "10px",
-            marginBottom: "0px",
+            marginBottom: "2%",
           }}
         >
           {" "}
           Requests For Coaching
         </Typography>
       </Row>
+
       <Row
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={4}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1436,11 +1515,15 @@ const CoachProfile = () => {
         </Col>
 
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={4}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1456,22 +1539,32 @@ const CoachProfile = () => {
             </Radio.Group>
           </ConfigProvider>
         </Col>
-        <Col span={16}></Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap", // For wrapping in small viewports
+          marginTop: "0px",
         }}
       >
+        <Col xs={0} sm={0} md={6} lg={0}></Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={4}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <Typography
@@ -1480,7 +1573,7 @@ const CoachProfile = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
+              fontSize: "16px",
               paddingBottom: "10px",
               marginBottom: "0px",
               display: "flex",
@@ -1490,11 +1583,15 @@ const CoachProfile = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={4}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <Typography
@@ -1503,8 +1600,8 @@ const CoachProfile = () => {
               color: "#05a30a",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1512,14 +1609,17 @@ const CoachProfile = () => {
             Assigned
           </Typography>
         </Col>
-        <Col span={16}></Col>
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={6} lg={16}></Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginTop: "6%",
         }}
       >
         <Row
@@ -1663,7 +1763,7 @@ const CoachProfile = () => {
             fontWeight: "500",
             fontSize: lg ? "32px" : "24px",
             paddingBottom: "10px",
-            marginBottom: "0px",
+            marginBottom: "2%",
           }}
         >
           Package Enrollment
@@ -1675,14 +1775,19 @@ const CoachProfile = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1699,11 +1804,15 @@ const CoachProfile = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1720,11 +1829,15 @@ const CoachProfile = () => {
           </ConfigProvider>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-5%" : "5%",
           }}
         >
           <ConfigProvider
@@ -1740,22 +1853,31 @@ const CoachProfile = () => {
             </Radio.Group>
           </ConfigProvider>
         </Col>
-        <Col span={16}></Col>
+
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={0} lg={16}></Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap", // For wrapping in small viewports
+          marginTop: "2px",
         }}
       >
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <Typography
@@ -1764,8 +1886,8 @@ const CoachProfile = () => {
               color: "#0E458E",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1774,11 +1896,15 @@ const CoachProfile = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <Typography
@@ -1787,8 +1913,8 @@ const CoachProfile = () => {
               color: "#05a30a",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1797,11 +1923,15 @@ const CoachProfile = () => {
           </Typography>
         </Col>
         <Col
-          span={2}
+          xs={6}
+          sm={6}
+          md={6}
+          lg={2}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginBottom: lg ? "-10%" : "5%",
           }}
         >
           <Typography
@@ -1810,8 +1940,8 @@ const CoachProfile = () => {
               color: "#ad0508",
               fontFamily: "kanit",
               fontWeight: "400",
-              fontSize: lg ? "16px" : "12px",
-              paddingBottom: "10px",
+              fontSize: "16px",
+              paddingBottom: "5px",
               marginBottom: "0px",
               display: "flex",
             }}
@@ -1819,14 +1949,17 @@ const CoachProfile = () => {
             Canceled
           </Typography>
         </Col>
-        <Col span={16}></Col>
+        {/* Spacer for larger screens */}
+        <Col xs={0} sm={0} md={8} lg={16}></Col>
       </Row>
+
       <Row
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginTop: "6%",
         }}
       >
         <Row
@@ -1906,7 +2039,7 @@ const CoachProfile = () => {
             }}
             xs={8}
             sm={8}
-            md={8}
+            md={24}
             lg={6}
             xl={6}
           >

@@ -11,7 +11,8 @@ import {
   RadioChangeEvent,
   Select,
   Input,
-  Typography
+  Typography,
+  Spin,
 } from "antd";
 import backgroundImg from "../../assents/background2.png";
 import profileBackground from "../../assents/profileBackground.png";
@@ -38,9 +39,7 @@ import NavbarLogin from "../../components/NavBarLogin";
 import PackageEnrollmentDetailsInPlayerProfile from "../../components/packageEnrollDetailsInPlayerProfile";
 import { Option } from "antd/es/mentions";
 import Notification from "../../components/notification";
-import { Divider} from 'antd';
-
-
+import { Divider } from "antd";
 
 const requestList = [
   <CoachRequstRow />,
@@ -56,10 +55,11 @@ const requestList = [
 const PlayerProfile = () => {
   const [value, setValue] = useState(1);
   const [value2, setValue2] = useState(4);
+  const [enrollValue, setEnrollValue] = useState(11);
   const [playerBookingsData, setPlayerBookingsData] = useState([]);
-  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState<
-    PackageEnroolDetailsForPlayer[]
-  >([]);
+  const [packageEnrollmentForPlayer, setPackageEnrollmentForPlayer] = useState(
+    []
+  );
   const [coachBookingData, setCoachBookingData] = useState<
     CoachBookingDetails[]
   >([]);
@@ -96,6 +96,10 @@ const PlayerProfile = () => {
   const onChangeArcadeBookings = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setValue2(e.target.value);
+  };
+  const onChangePackagePlayerEnrollment = (e: RadioChangeEvent) => {
+    console.log("radio checked", e.target.value);
+    setEnrollValue(e.target.value);
   };
   const currentDate = new Date();
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
@@ -142,6 +146,7 @@ const PlayerProfile = () => {
       });
   }, [userDetails, value2]);
   useEffect(() => {
+    setLoading(true);
     axios
       .get(
         process.env.REACT_APP_API_URL + `api/getPackageEnrollmentPlayerDetails`
@@ -149,6 +154,22 @@ const PlayerProfile = () => {
       .then((res) => {
         console.log(res.data);
         setPackageEnrollmentForPlayer(res.data);
+
+        const filteredDataForPlayerEnroll = res.data.filter(
+          (item: { status: string }) => {
+            if (enrollValue === 11) {
+              return item.status === "success";
+            } else if (enrollValue === 13) {
+              return (
+                item.status === "canceled_By_Player" ||
+                item.status === "canceled_By_Arcade"
+              );
+            }
+            return false;
+          }
+        );
+        setPackageEnrollmentForPlayer(filteredDataForPlayerEnroll);
+
         setPackageEnrollmentForPlayer((prev: any) => {
           return prev.filter(
             (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
@@ -156,14 +177,17 @@ const PlayerProfile = () => {
               playerEnrollDetails.player_id === userDetails?.id
           );
         });
+        setLoading(false);
       })
+
       .catch((error) => {
         console.log(error);
       });
-  }, [userDetails]);
+  }, [userDetails, enrollValue]);
   console.log("userDetails", userDetails);
 
   useEffect(() => {
+    setLoading(true);
     axios
       .get(
         process.env.REACT_APP_API_URL + `api/getCoachBooking/${userDetails?.id}`
@@ -195,6 +219,7 @@ const PlayerProfile = () => {
             );
           }
         });
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -236,7 +261,6 @@ const PlayerProfile = () => {
         console.log(err);
       });
   }, [userDetails]);
-
 
   const setZoneBookingDetails1 = (
     updatedData: SetStateAction<ZoneBookingDetails[]>
@@ -295,6 +319,21 @@ const PlayerProfile = () => {
       return true;
     }
   );
+  const filteredPackageEnrollmentForPlayer = packageEnrollmentForPlayer.filter(
+    (item: PackageEnroolDetailsForPlayer) => {
+      if (filterBy === "package_name") {
+        return item.package.package_name
+          .toLowerCase()
+          .includes(filterValue.toLowerCase());
+      } else if (filterBy === "date") {
+        return item.enrolled_date.includes(filterValue);
+      } else if (filterBy === "rate") {
+        return item.rate.toString().includes(filterValue);
+      }
+      return true;
+    }
+  );
+
   return (
     <>
       {userDetails.id !== "" ? <NavbarProfile /> : <NavbarLogin />}
@@ -623,15 +662,6 @@ const PlayerProfile = () => {
         </Col>
       </Row>
 
-
-
-
-
-
-
-
-
-
       <div
         style={{
           width: "100%",
@@ -656,15 +686,6 @@ const PlayerProfile = () => {
         </p>
       </div>
 
-
-
-
-
-
-
-
-
-
       <div
         style={{
           width: "95%",
@@ -676,17 +697,15 @@ const PlayerProfile = () => {
         <AddPhotoButton />
       </div>
 
-
       <PhotoCollage />
 
       <div
         style={{
-          width:"100%",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-        
         }}
       >
         <p
@@ -700,229 +719,268 @@ const PlayerProfile = () => {
             paddingBottom: "10px",
 
             marginBottom: "2%",
-
           }}
         >
           Request for Coaching
         </p>
 
-{/* ////////////////////////////////////////////////// */}
+        {/* ////////////////////////////////////////////////// */}
         <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexWrap: "wrap",  // For wrapping in small viewports
-        }}
-      >
-        {/* Available Radio Button */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
           style={{
+            width: "100%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%",  // Margin to help with wrapping in smaller viewports
+            alignItems: "center",
+            flexWrap: "wrap", // For wrapping in small viewports
           }}
         >
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBorder: "#0E458E",
-                colorPrimary: "#0E458E",
-              },
-            }}
-          >
-            <Radio.Group onChange={onChange} value={value}>
-              <Radio value={1}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        {/* Completed Radio Button */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%"  // Margin to help with wrapping in smaller viewports
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBorder: "#05a30a",
-                colorPrimary: "#05a30a",
-              },
-            }}
-          >
-            <Radio.Group onChange={onChange} value={value}>
-              <Radio value={2}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        {/* Canceled Radio Button */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%"// Margin to help with wrapping in smaller viewports
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBorder: "#ad0508",
-                colorPrimary: "#ad0508",
-              },
-            }}
-          >
-            <Radio.Group onChange={onChange} value={value}>
-              <Radio value={3}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        {/* Spacer for larger screens */}
-        <Col xs={0} sm={0} md={0} lg={16}></Col>
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexWrap: "wrap",  // For wrapping in small viewports
-          marginTop: "2px", // Space between the two rows
-        }}
-      >
-        {/* Available Label */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", // Margin to help with wrapping in smaller viewports
-          }}
-        >
-          <Typography
+          {/* Available Radio Button */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
-              alignItems: "center",
-              color: "#0E458E",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "5px",
-              marginBottom: "0px",
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%", // Margin to help with wrapping in smaller viewports
             }}
           >
-            Available
-          </Typography>
-        </Col>
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorBorder: "#0E458E",
+                  colorPrimary: "#0E458E",
+                },
+              }}
+            >
+              <Radio.Group onChange={onChange} value={value}>
+                <Radio value={1}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
 
-        {/* Completed Label */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
+          {/* Completed Radio Button */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%", // Margin to help with wrapping in smaller viewports
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorBorder: "#05a30a",
+                  colorPrimary: "#05a30a",
+                },
+              }}
+            >
+              <Radio.Group onChange={onChange} value={value}>
+                <Radio value={2}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          {/* Canceled Radio Button */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%", // Margin to help with wrapping in smaller viewports
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorBorder: "#ad0508",
+                  colorPrimary: "#ad0508",
+                },
+              }}
+            >
+              <Radio.Group onChange={onChange} value={value}>
+                <Radio value={3}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col xs={0} sm={0} md={0} lg={16}></Col>
+        </Row>
+
+        <Row
           style={{
+            width: "100%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",   // Margin to help with wrapping in smaller viewports
+            alignItems: "center",
+            flexWrap: "wrap", // For wrapping in small viewports
+            marginTop: "2px", // Space between the two rows
           }}
         >
-          <Typography
+          {/* Available Label */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
-              alignItems: "center",
-              color: "#05a30a",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "5px",
-              marginBottom: "0px",
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%", // Margin to help with wrapping in smaller viewports
             }}
           >
-            Completed
-          </Typography>
-        </Col>
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "5px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Available
+            </Typography>
+          </Col>
 
-        {/* Canceled Label */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",  // Margin to help with wrapping in smaller viewports
-          }}
-        >
-          <Typography
+          {/* Completed Label */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
-              alignItems: "center",
-              color: "#ad0508",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "5px",
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%", // Margin to help with wrapping in smaller viewports
             }}
           >
-            Canceled
-          </Typography>
-        </Col>
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#05a30a",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "5px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Completed
+            </Typography>
+          </Col>
 
-        {/* Spacer for larger screens */}
-        <Col xs={0} sm={0} md={8} lg={8}></Col>
-
-        {/* Filter Section */}
-        <Col xs={24} sm={24} md={24} lg={8} 
-        style={{ marginBottom: "2%", 
-                 display: "flex", 
-                 justifyContent: "center", 
-                 alignItems: "center", 
-                 flexDirection: "row", 
-                 flexWrap: "wrap",
-                 marginTop:"3%"}}>
-          <Select
-            defaultValue="date"
-            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
-            onChange={(value) => setFilterBy(value)}
-          >
-            <Option value="date">Date</Option>
-            <Option value="time">Time</Option>
-            <Option value="coach_name">Coach Name</Option>
-            <Option value="venue">Venue</Option>
-            <Option value="booking_id">Booking ID</Option>
-            <Option value="status">Status</Option>
-          </Select>
-          <Input
-            placeholder="Enter filter value"
-            style={{ width: "100%", maxWidth: "120px", marginLeft: "15px", marginBottom: "10px", height: "40px" }}
-            onChange={(e) => handleFilterChange1(e.target.value)}
-          />
-          <Button
-            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
-            ghost
-            type="primary"
-            onClick={() => {
-              setFilterValue("");
-              setFilterBy("date");
+          {/* Canceled Label */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%", // Margin to help with wrapping in smaller viewports
             }}
           >
-            Clear
-          </Button>
-        </Col>
-      </Row>
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#ad0508",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "5px",
+                display: "flex",
+              }}
+            >
+              Canceled
+            </Typography>
+          </Col>
 
+          {/* Spacer for larger screens */}
+          <Col xs={0} sm={0} md={8} lg={8}></Col>
 
+          {/* Filter Section */}
+          <Col
+            xs={24}
+            sm={24}
+            md={24}
+            lg={8}
+            style={{
+              marginBottom: "2%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "3%",
+            }}
+          >
+            <Select
+              defaultValue="date"
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                height: "40px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+              }}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="date">Date</Option>
+              <Option value="time">Time</Option>
+              <Option value="coach_name">Coach Name</Option>
+              <Option value="venue">Venue</Option>
+              <Option value="booking_id">Booking ID</Option>
+              <Option value="status">Status</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+                height: "40px",
+              }}
+              onChange={(e) => handleFilterChange1(e.target.value)}
+            />
+            <Button
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                height: "40px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+              }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
+        </Row>
 
         {/* <Row
 
@@ -1157,7 +1215,6 @@ const PlayerProfile = () => {
 
         </Row> */}
 
-
         <Row
           style={{
             borderRadius: "3px 3px 0px 0px",
@@ -1243,8 +1300,6 @@ const PlayerProfile = () => {
           </Col>
         </Row>
 
-
-
         <div
           style={{
             width: "100%",
@@ -1252,56 +1307,56 @@ const PlayerProfile = () => {
             overflowY: "scroll",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {filteredBookings && filteredBookings.length > 0 ? (
-              filteredBookings.map((booking: CoachBookingDetails) => (
-                <CoachRequstRow
-                  key={booking.booking_id} // Make sure to provide a unique key
-                  booking_id={booking.booking_id}
-                  coach_image={booking.coach.user.user_image}
-                  coach_name={
-                    booking.coach.user.firstname +
-                    " " +
-                    booking.coach.user.lastname
-                  }
-                  booking_date={booking.date}
-                  booking_time={booking.time}
-                  venue={booking.arcade.arcade_name}
-                  user_id={booking.player.user.user_id}
-                  created_at={booking.created_at}
-                  setZoneBookingDetails={setZoneBookingDetails1}
-                  email={booking.coach.user.email}
-                  role={booking.player.user.role}
-                  player_name={
-                    booking.player.user.firstname +
-                    " " +
-                    booking.player.user.lastname
-                  }
-                  zone_name={booking.zone.zone_name}
-                  arcade_email={booking.arcade.arcade_email}
-                  status={booking.status}
-                  full_amount={booking.full_amount}
-                  player_id={booking.player_id}
-                  coach_id={booking.coach_id}
-                  arcade_id={booking.arcade_id}
-                />
-              ))
-            ) : (
-              <Empty description="No Bookings Available" />
-            )}
-          </div>
+          {" "}
+          <Spin spinning={loading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {filteredBookings && filteredBookings.length > 0 ? (
+                filteredBookings.map((booking: CoachBookingDetails) => (
+                  <CoachRequstRow
+                    key={booking.booking_id} // Make sure to provide a unique key
+                    booking_id={booking.booking_id}
+                    coach_image={booking.coach.user.user_image}
+                    coach_name={
+                      booking.coach.user.firstname +
+                      " " +
+                      booking.coach.user.lastname
+                    }
+                    booking_date={booking.date}
+                    booking_time={booking.time}
+                    venue={booking.arcade.arcade_name}
+                    user_id={booking.player.user.user_id}
+                    created_at={booking.created_at}
+                    setZoneBookingDetails={setZoneBookingDetails1}
+                    email={booking.coach.user.email}
+                    role={booking.player.user.role}
+                    player_name={
+                      booking.player.user.firstname +
+                      " " +
+                      booking.player.user.lastname
+                    }
+                    zone_name={booking.zone.zone_name}
+                    arcade_email={booking.arcade.arcade_email}
+                    status={booking.status}
+                    full_amount={booking.full_amount}
+                    player_id={booking.player_id}
+                    coach_id={booking.coach_id}
+                    arcade_id={booking.arcade_id}
+                  />
+                ))
+              ) : (
+                <Empty description="No Bookings Available" />
+              )}
+            </div>
+          </Spin>
         </div>
-
-
-
 
         {showMore ? (
           <Button
@@ -1334,19 +1389,6 @@ const PlayerProfile = () => {
         )}
       </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
       <div
         style={{
           width: "100%",
@@ -1354,8 +1396,6 @@ const PlayerProfile = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-      
-         
         }}
       >
         <p
@@ -1368,223 +1408,259 @@ const PlayerProfile = () => {
             fontSize: "32px",
             paddingBottom: "10px",
             marginBottom: "2%",
+            justifyContent: "center",
+            textAlign: "center",
           }}
         >
           Available Meetings For You
         </p>
 
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap", // Ensures wrapping on smaller screens
+          }}
+        >
+          {/* Radio button section */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%", // Added margin for better spacing on smaller screens
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+              }}
+            >
+              <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+                <Radio value={4}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%", // Added margin for better spacing on smaller screens
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#05a30a", colorPrimary: "#05a30a" },
+              }}
+            >
+              <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+                <Radio value={5}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%", // Added margin for better spacing on smaller screens
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+              }}
+            >
+              <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
+                <Radio value={6}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          {/* Spacer for larger screens */}
+          <Col xs={0} sm={0} md={0} lg={16}></Col>
+        </Row>
 
         <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexWrap: "wrap", // Ensures wrapping on smaller screens
-        }}
-      >
-        {/* Radio button section */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
           style={{
+            width: "100%",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%", // Added margin for better spacing on smaller screens
+            alignItems: "center",
+            flexWrap: "wrap", // Ensures wrapping on smaller screens
+            marginTop: "2px", // Added margin for separation from the previous row
           }}
         >
-          <ConfigProvider
-            theme={{
-              token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
-            }}
-          >
-            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-              <Radio value={4}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%" // Added margin for better spacing on smaller screens
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: { colorBorder: "#05a30a", 
-                       colorPrimary: "#05a30a" },
-            }}
-          >
-            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-              <Radio value={5}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-10%" : "5%" // Added margin for better spacing on smaller screens
-          }}
-        >
-          <ConfigProvider
-            theme={{
-              token: { colorBorder: "#ad0508", 
-                colorPrimary: "#ad0508" },
-            }}
-          >
-            <Radio.Group onChange={onChangeArcadeBookings} value={value2}>
-              <Radio value={6}></Radio>
-            </Radio.Group>
-          </ConfigProvider>
-        </Col>
-
-   {/* Spacer for larger screens */}
-   <Col xs={0} sm={0} md={0} lg={16}></Col>
-      </Row>
-
-      <Row
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexWrap: "wrap", // Ensures wrapping on smaller screens
-          marginTop: "2px",  // Added margin for separation from the previous row
-        }}
-      >
-        {/* Available Label */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",  // Added margin for better spacing on smaller screens
-          }}
-        >
-          <Typography
+          {/* Available Label */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
-              alignItems: "center",
-              color: "#0E458E",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "5px",
-              marginBottom: "0px",
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%", // Added margin for better spacing on smaller screens
             }}
           >
-            Available
-          </Typography>
-        </Col>
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "5px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Available
+            </Typography>
+          </Col>
 
-        {/* Completed Label */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%", // Added margin for better spacing on smaller screens
-          }}
-        >
-          <Typography
+          {/* Completed Label */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
-              alignItems: "center",
-              color: "#05a30a",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "5px",
-              marginBottom: "0px",
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%", // Added margin for better spacing on smaller screens
             }}
           >
-            Completed
-          </Typography>
-        </Col>
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#05a30a",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "5px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Completed
+            </Typography>
+          </Col>
 
-        {/* Canceled Label */}
-        <Col
-          xs={6} sm={6} md={6} lg={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: lg ?  "-5%" : "5%",// Added margin for better spacing on smaller screens
-          }}
-        >
-          <Typography
+          {/* Canceled Label */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
             style={{
-              alignItems: "center",
-              color: "#ad0508",
-              fontFamily: "kanit",
-              fontWeight: "400",
-              fontSize: "16px",
-              paddingBottom: "5px",
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%", // Added margin for better spacing on smaller screens
             }}
           >
-            Canceled
-          </Typography>
-        </Col>
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#ad0508",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "5px",
+                display: "flex",
+              }}
+            >
+              Canceled
+            </Typography>
+          </Col>
 
-        {/* Spacer for alignment */}
-        <Col xs={0} sm={0} md={8} lg={8}></Col>
+          {/* Spacer for alignment */}
+          <Col xs={0} sm={0} md={8} lg={8}></Col>
 
-
-{/* Filter section */}
-<Col
-          xs={24} sm={24} md={24} lg={8}
-          style={{
-            marginBottom: "2%", 
-            display: "flex", 
-            justifyContent: "center", 
-            alignItems: "center", 
-            flexDirection: "row", 
-            flexWrap: "wrap",
-            marginTop:"3%" // Added top margin for separation from the radio buttons
-          }}
-        >
-          <Select
-            defaultValue="date"
-            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px"}}
-            onChange={(value) => setFilterBy(value)}
-          >
-            <Option value="date">Date</Option>
-            <Option value="time">Time</Option>
-            <Option value="rate">Rate</Option>
-            <Option value="zone_name">Zone Name</Option>
-            <Option value="arcade_name">Arcade Name</Option>
-            <Option value="status">Status</Option>
-          </Select>
-          <Input
-            placeholder="Enter filter value"
-            style={{ width: "100%", maxWidth: "120px", height: "40px",marginLeft: "15px", marginBottom: "10px"}}
-            onChange={(e) => handleFilterChange1(e.target.value)}
-          />
-          <Button
-            style={{ width: "100%", maxWidth: "120px", height: "40px", marginLeft: "15px", marginBottom: "10px" }}
-            ghost
-            type="primary"
-            onClick={() => {
-              setFilterValue("");
-              setFilterBy("date");
+          {/* Filter section */}
+          <Col
+            xs={24}
+            sm={24}
+            md={24}
+            lg={8}
+            style={{
+              marginBottom: "2%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "3%", // Added top margin for separation from the radio buttons
             }}
           >
-            Clear
-          </Button>
-        </Col>
-        
-      </Row>
+            <Select
+              defaultValue="date"
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                height: "40px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+              }}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="date">Date</Option>
+              <Option value="time">Time</Option>
+              <Option value="rate">Rate</Option>
+              <Option value="zone_name">Zone Name</Option>
+              <Option value="arcade_name">Arcade Name</Option>
+              <Option value="status">Status</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                height: "40px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+              }}
+              onChange={(e) => handleFilterChange1(e.target.value)}
+            />
+            <Button
+              style={{
+                width: "100%",
+                maxWidth: "120px",
+                height: "40px",
+                marginLeft: "15px",
+                marginBottom: "10px",
+              }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
+        </Row>
 
         {/* <Row
           style={{
@@ -1819,8 +1895,6 @@ const PlayerProfile = () => {
         </Row> 
  */}
 
-
-
         <Row
           style={{
             borderRadius: "3px 3px 0px 0px",
@@ -1912,53 +1986,55 @@ const PlayerProfile = () => {
             overflowY: "scroll",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {filteredBookingsForArcade &&
-            filteredBookingsForArcade.length > 0 ? (
-              // Sort the bookings by date and time in descending order
-              filteredBookingsForArcade
-                .sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
-                  const dateTimeA: Date = new Date(`${a.date}T${a.time}`);
-                  const dateTimeB: Date = new Date(`${b.date}T${b.time}`);
-                  return dateTimeB.getTime() - dateTimeA.getTime(); // For descending order
-                })
-                .map(
-                  (booking: ZoneBookingDetails) =>
-                    // Check if booking type is "zone"
-                    booking.booking_type === "zone" ? (
-                      <AvailableMetingstoPlayer
-                        key={booking.zone_booking_id} // Make sure to provide a unique key
-                        booking_id={booking.zone_booking_id}
-                        zone_image={booking.zone.zone_image}
-                        zone_name={booking.zone.zone_name}
-                        booking_date={booking.date}
-                        booking_time={booking.time}
-                        venue={booking.zone.arcade.arcade_name}
-                        setZoneBookingDetails={setZoneBookingDetails1}
-                        email={booking.zone.arcade.arcade_email}
-                        role="PLAYER"
-                        player_name={
-                          userDetails.firstName + " " + userDetails.lastName
-                        }
-                        status={booking.status}
-                        full_amount={booking.full_amount}
-                        user_id={booking.user.user_id}
-                        arcade_id={booking.zone.arcade.arcade_id}
-                      />
-                    ) : null // Return null for bookings that are not of type "zone"
-                )
-            ) : (
-              <Empty description="No Bookings Available" />
-            )}
-          </div>
+          <Spin spinning={loading}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {filteredBookingsForArcade &&
+              filteredBookingsForArcade.length > 0 ? (
+                // Sort the bookings by date and time in descending order
+                filteredBookingsForArcade
+                  .sort((a: ZoneBookingDetails, b: ZoneBookingDetails) => {
+                    const dateTimeA: Date = new Date(`${a.date}T${a.time}`);
+                    const dateTimeB: Date = new Date(`${b.date}T${b.time}`);
+                    return dateTimeB.getTime() - dateTimeA.getTime(); // For descending order
+                  })
+                  .map(
+                    (booking: ZoneBookingDetails) =>
+                      // Check if booking type is "zone"
+                      booking.booking_type === "zone" ? (
+                        <AvailableMetingstoPlayer
+                          key={booking.zone_booking_id} // Make sure to provide a unique key
+                          booking_id={booking.zone_booking_id}
+                          zone_image={booking.zone.zone_image}
+                          zone_name={booking.zone.zone_name}
+                          booking_date={booking.date}
+                          booking_time={booking.time}
+                          venue={booking.zone.arcade.arcade_name}
+                          setZoneBookingDetails={setZoneBookingDetails1}
+                          email={booking.zone.arcade.arcade_email}
+                          role="PLAYER"
+                          player_name={
+                            userDetails.firstName + " " + userDetails.lastName
+                          }
+                          status={booking.status}
+                          full_amount={booking.full_amount}
+                          user_id={booking.user.user_id}
+                          arcade_id={booking.zone.arcade.arcade_id}
+                        />
+                      ) : null // Return null for bookings that are not of type "zone"
+                  )
+              ) : (
+                <Empty description="No Bookings Available" />
+              )}
+            </div>
+          </Spin>
         </div>
 
         {showMore ? (
@@ -1999,7 +2075,6 @@ const PlayerProfile = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-        
         }}
       >
         <p
@@ -2015,6 +2090,179 @@ const PlayerProfile = () => {
         >
           Package Enrollments
         </p>
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          {/* Radio button section */}
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#0E458E", colorPrimary: "#0E458E" },
+              }}
+            >
+              <Radio.Group
+                onChange={onChangePackagePlayerEnrollment}
+                value={enrollValue}
+              >
+                <Radio value={11}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-10%" : "5%",
+            }}
+          >
+            <ConfigProvider
+              theme={{
+                token: { colorBorder: "#ad0508", colorPrimary: "#ad0508" },
+              }}
+            >
+              <Radio.Group
+                onChange={onChangePackagePlayerEnrollment}
+                value={enrollValue}
+              >
+                <Radio value={13}></Radio>
+              </Radio.Group>
+            </ConfigProvider>
+          </Col>
+          <Col xs={0} sm={0} md={0} lg={16}></Col>
+          {/* <Col span={8}></Col>
+          <Col span={8}> */}
+        </Row>
+
+        <Row
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap",
+            marginTop: "2px",
+          }}
+        >
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#0E458E",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Available
+            </Typography>
+          </Col>
+          <Col
+            xs={6}
+            sm={6}
+            md={6}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: lg ? "-5%" : "5%",
+            }}
+          >
+            <Typography
+              style={{
+                alignItems: "center",
+                color: "#ad0508",
+                fontFamily: "kanit",
+                fontWeight: "400",
+                fontSize: "16px",
+                paddingBottom: "10px",
+                marginBottom: "0px",
+                display: "flex",
+              }}
+            >
+              Canceled
+            </Typography>
+          </Col>
+          <Col xs={0} sm={0} md={8} lg={8}></Col>
+          <Col
+            xs={24}
+            sm={24}
+            md={24}
+            lg={8}
+            style={{
+              marginBottom: "2%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "3%", // Added top margin for separation from the radio buttons
+            }}
+          >
+            <Select
+              defaultValue="date"
+              style={{ width: 120, height: "40px" }}
+              onChange={(value) => setFilterBy(value)}
+            >
+              <Option value="package_name">Package Name</Option>
+              <Option value="date">Date</Option>
+              <Option value="rate">Rate</Option>
+            </Select>
+            <Input
+              placeholder="Enter filter value"
+              style={{ width: 200, marginLeft: 10, height: "40px" }}
+              onChange={(e) => handleFilterChange1(e.target.value)}
+            />
+            <Button
+              style={{ marginLeft: 10, height: "40px" }}
+              ghost
+              type="primary"
+              onClick={() => {
+                setFilterValue("");
+                setFilterBy("date");
+              }}
+            >
+              Clear
+            </Button>
+          </Col>
+        </Row>
 
         <Row
           style={{
@@ -2126,9 +2374,9 @@ const PlayerProfile = () => {
             alignItems: "center",
           }}
         >
-          {packageEnrollmentForPlayer &&
-          packageEnrollmentForPlayer.length > 0 ? (
-            packageEnrollmentForPlayer.map(
+          {filteredPackageEnrollmentForPlayer &&
+          filteredPackageEnrollmentForPlayer.length > 0 ? (
+            filteredPackageEnrollmentForPlayer.map(
               (enroll: PackageEnroolDetailsForPlayer) => (
                 // Check if booking type is "zone"
 
@@ -2183,18 +2431,20 @@ const PlayerProfile = () => {
         )}
       </div>
       <Row>
-        <Col sm={24}xs={24} 
-        style={{
-        display:"flex",        
-        justifyContent:"center",
-        alignItems:"center",
-        backgroundSize: "cover",
-        width:200,
-        marginRight: "10%",
-     
-        }}>
-      <AppFooter />
-      </Col>
+        <Col
+          sm={24}
+          xs={24}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundSize: "cover",
+            width: 200,
+            marginRight: "10%",
+          }}
+        >
+          <AppFooter />
+        </Col>
       </Row>
     </>
   );

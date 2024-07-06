@@ -279,6 +279,12 @@ const AvailableCoachBookingsArcade = (props: any) => {
         onCancel={handleCancel}
         footer={[
           <Button
+            disabled={
+              props.status === "canceled_By_Coach" ||
+              props.status === "canceled_By_Arcade" ||
+              props.status === "canceled_By_Player" ||
+              props.status === "canceled_By_Admin"
+            }
             style={{
               backgroundColor: "#fff",
               color: "#0E458E",

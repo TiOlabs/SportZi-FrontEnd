@@ -104,6 +104,8 @@ const BookingForm = () => {
   }, [userId]);
   console.log(date);
   useEffect(() => {
+    console.log(selectedDate);
+    console.log(zoneId);
     const fetchData = async () => {
       try {
         const res = await fetch(
@@ -824,15 +826,15 @@ const BookingForm = () => {
                       );
 
                       const buttonBackgroundColor = isBookedSuccessfully
-                        ? "#0F70AE"
+                        ? "#0d96ff"
                         : button.id === time
                         ? "#1677FF"
                         : isPackageTime
-                        ? "red"
+                        ? "#0d96ff"
                         : isZoneRejectDayTime
-                        ? "#0F70AE"
+                        ? "#0d96ff"
                         : isZoneRejectDateTime
-                        ? "#0F70AE"
+                        ? "#0d96ff"
                         : "white";
 
                       const gradientBackground = isFullyBooked

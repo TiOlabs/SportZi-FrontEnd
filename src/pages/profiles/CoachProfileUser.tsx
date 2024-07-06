@@ -13,6 +13,7 @@ import {
   Rate,
   ConfigProvider,
   message as antMessage,
+  Spin,
 } from "antd";
 import PhotoCollage from "../../components/photoCollage";
 import {
@@ -48,6 +49,7 @@ interface FeedbackData {
 }
 
 const CoachProfileUser = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { useBreakpoint } = Grid;
   const { coachId } = useParams();
   console.log("Coach ID +++++++++++++++++++++++++++++++++++++++:", coachId);
@@ -139,6 +141,7 @@ const CoachProfileUser = () => {
   };
   const [coachDetails, setCoachDetails] = useState<Coach>();
   useEffect(() => {
+    setIsLoading(true);
     axiosInstance
       .get(`/api/auth/getcoachDetailsForUsers`, {
         params: {
@@ -148,6 +151,7 @@ const CoachProfileUser = () => {
 
       .then((res) => {
         setCoachDetails(res.data);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -496,287 +500,240 @@ const CoachProfileUser = () => {
               flexDirection: "column",
             }}
           >
-            <div>
-              <h1
-                style={{
-                  color: "#000",
-
-                  fontSize: "32px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {coachDetails?.user.firstname} {coachDetails?.user.lastname}
-              </h1>
-              <p
-                style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
-
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
-                }}
-              >
-                First class rugby coach
-              </p>
-              <p
-                style={{
-                  marginTop: "4px",
-                  color: "#0E458E",
-                  fontFamily: "kanit",
-                  fontSize: "22px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
-                }}
-              >
-                Rate (per Hour):{coachDetails?.rate?.toString()}
-              </p>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-              }}
-            >
-              <Row>
-                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                  <p
-                    style={{
-                      color: "#0E458E",
-                      fontFamily: "kanit",
-                      fontSize: "39px",
-                      fontStyle: "normal",
-                      fontWeight: "500",
-                      lineHeight: "normal",
-                      margin: "0px",
-                    }}
-                  >
-                    {averageRating.toFixed(1)}
-                  </p>
-                </Col>
-
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={12}
-                  lg={12}
-                  xl={12}
+            <Spin spinning={isLoading}>
+              <div>
+                <h1
                   style={{
-                    display: "flex",
+                    color: "#000",
 
-                    alignItems: "center",
-                    justifyContent: "center",
+                    fontSize: "32px",
+                    fontStyle: "normal",
+                    fontWeight: "500",
+                    fontFamily: "kanit",
+                    lineHeight: "normal",
+                    marginBottom: "0px",
                   }}
                 >
-                  <div
-                    style={{
-                      height: "auto",
-                      position: "relative",
-                      width: "max-content",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "100%",
-                      }}
-                    >
-                      {/* <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
+                  {coachDetails?.user.firstname} {coachDetails?.user.lastname}
+                </h1>
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
 
-                      <Rate
-                        allowHalf
-                        disabled
-                        value={roundedAverageRating}
-                        style={{
-                          scale: "0.7",
-                          display: "flex",
-                          flexDirection: "row",
-                          color: "#0E458E",
-                          fillOpacity: "0.8",
-                          borderBlockEnd: "dashed",
-                        }}
-                      />
-                    </div>
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  First class rugby coach
+                </p>
+                <p
+                  style={{
+                    marginTop: "4px",
+                    color: "#0E458E",
+                    fontFamily: "kanit",
+                    fontSize: "22px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  Rate (per Hour):{coachDetails?.rate?.toString()}
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <p
                       style={{
-                        color: "#000",
-                        opacity: "0.64",
+                        color: "#0E458E",
                         fontFamily: "kanit",
-                        fontSize: "10px",
+                        fontSize: "39px",
                         fontStyle: "normal",
                         fontWeight: "500",
                         lineHeight: "normal",
                         margin: "0px",
                       }}
                     >
-                      ({totalFeedbacks} Feedbacks)
+                      {averageRating.toFixed(1)}
                     </p>
-                  </div>{" "}
-                </Col>
-              </Row>
-            </div>
+                  </Col>
 
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Qlifications
-            </Typography>
-
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "1",
-              }}
-              itemLayout="horizontal"
-              dataSource={QulificationsGetToArry(qulifications)}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    position: "relative",
-
-                    listStyle: "none",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
+                  <Col
+                    xs={24}
+                    sm={24}
+                    md={12}
+                    lg={12}
+                    xl={12}
                     style={{
                       display: "flex",
-                      flexDirection: "row",
+
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "20px",
-                      fontFamily: "kanit",
                     }}
                   >
-                    {" "}
-                    <span
+                    <div
                       style={{
-                        fontSize: "30px",
-                        marginLeft: "10px",
-                        marginRight: "10px",
+                        height: "auto",
+                        position: "relative",
+                        width: "max-content",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      &#8226;
-                    </span>
-                    {item}
-                  </div>
-                </List.Item>
-              )}
-            />
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%",
+                        }}
+                      >
+                        {/* <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
 
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
+                        <Rate
+                          allowHalf
+                          disabled
+                          value={averageRating}
+                          style={{
+                            scale: "0.7",
+                            display: "flex",
+                            flexDirection: "row",
+                            color: "#0E458E",
+                            fillOpacity: "0.8",
+                            borderBlockEnd: "dashed",
+                          }}
+                        />
+                      </div>
+                      <p
+                        style={{
+                          color: "#000",
+                          opacity: "0.64",
+                          fontFamily: "kanit",
+                          fontSize: "10px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                          lineHeight: "normal",
+                          margin: "0px",
+                        }}
+                      >
+                        ({totalFeedbacks} Feedbacks)
+                      </p>
+                    </div>{" "}
+                  </Col>
+                </Row>
+              </div>
 
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Expertise
-            </Typography>
-
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.5",
-              }}
-              itemLayout="horizontal"
-            >
-              <List.Item
+              <Typography
                 style={{
-                  position: "relative",
-                  listStyle: "none",
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "20px",
-                    fontFamily: "kanit",
-                  }}
-                >
-                  <span
+                Qlifications
+              </Typography>
+
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "1",
+                }}
+                itemLayout="horizontal"
+                dataSource={QulificationsGetToArry(qulifications)}
+                renderItem={(item) => (
+                  <List.Item
                     style={{
-                      fontSize: "30px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
+                      position: "relative",
+
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
                     }}
                   >
-                    &#8226;
-                  </span>
-                  {expertice}
-                </div>
-              </List.Item>
-            </List>
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
+                        fontFamily: "kanit",
+                      }}
+                    >
 
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Session Types
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
-              }}
-              itemLayout="horizontal"
-              dataSource={["Physical"]}
-              renderItem={(item) => (
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+
+                      {" "}
+                      <span
+
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Expertise
+              </Typography>
+
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.5",
+                }}
+                itemLayout="horizontal"
+              >
                 <List.Item
                   style={{
                     position: "relative",
@@ -792,11 +749,10 @@ const CoachProfileUser = () => {
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontFamily: "kanit",
                       fontSize: "20px",
+                      fontFamily: "kanit",
                     }}
                   >
-                    {" "}
                     <span
                       style={{
                         fontSize: "30px",
@@ -806,87 +762,146 @@ const CoachProfileUser = () => {
                     >
                       &#8226;
                     </span>
-                    {item}
+                    {expertice}
                   </div>
                 </List.Item>
-              )}
-            />
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
+              </List>
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
 
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Available Times
-            </Typography>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-              }}
-            >
-              {Object.keys(groupedByDay).map((day) => (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    fontSize: "20px",
-                    fontFamily: "kanit",
-                  }}
-                  key={day}
-                >
-                  <span
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Session Types
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.4",
+                }}
+                itemLayout="horizontal"
+                dataSource={["Physical"]}
+                renderItem={(item) => (
+                  <List.Item
                     style={{
-                      fontSize: lg ? "24px" : "18px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                      width: "1%",
+                      position: "relative",
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
                     }}
                   >
-                    &#8226;
-                  </span>
-                  <Typography
-                    style={{
-                      color: "#000",
-                      fontFamily: "kanit",
-                      width: "30%",
-                      fontStyle: "normal",
-                      fontWeight: "400",
-                      lineHeight: "normal",
-                      marginTop: "5px",
-                      fontSize: lg ? "24px" : "18px",
-                    }}
-                  >
-                    {day}
-                  </Typography>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "kanit",
+                        fontSize: "20px",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Available Times
+              </Typography>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                }}
+              >
+                {Object.keys(groupedByDay).map((day) => (
                   <div
                     style={{
-                      marginTop: "5px",
-                      fontSize: lg ? "18px" : "14px",
-                      fontFamily: "kanit",
                       display: "flex",
-                      flexDirection: "column",
-                      width: "40%",
-                      fontWeight: "300",
-                      justifyContent: "flex-start",
-                      marginLeft: "10px",
+                      flexDirection: "row",
+                      width: "100%",
+                      fontSize: "20px",
+                      fontFamily: "kanit",
                     }}
+                    key={day}
                   >
-                    {groupedByDay[day].map((time, index) => (
-                      <div key={index}>{time}</div>
-                    ))}
+                    <span
+                      style={{
+                        fontSize: lg ? "24px" : "18px",
+                        marginLeft: "10px",
+                        marginRight: "10px",
+                        width: "1%",
+                      }}
+                    >
+                      &#8226;
+                    </span>
+                    <Typography
+                      style={{
+                        color: "#000",
+                        fontFamily: "kanit",
+                        width: "30%",
+                        fontStyle: "normal",
+                        fontWeight: "400",
+                        lineHeight: "normal",
+                        marginTop: "5px",
+                        fontSize: lg ? "24px" : "18px",
+                      }}
+                    >
+                      {day}
+                    </Typography>
+                    <div
+                      style={{
+                        marginTop: "5px",
+                        fontSize: lg ? "18px" : "14px",
+                        fontFamily: "kanit",
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "40%",
+                        fontWeight: "300",
+                        justifyContent: "flex-start",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      {groupedByDay[day].map((time, index) => (
+                        <div key={index}>{time}</div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </Spin>
           </div>
         </Col>
       </Row>

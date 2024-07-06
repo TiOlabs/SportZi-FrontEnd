@@ -374,8 +374,8 @@ const ArcadeEdit = ({
                   whitespace: true,
                 },
                 {
-                  max: 100,
-                  message: "Description must be at least 100 characters",
+                  max: 200,
+                  message: "Description must be at least 200 characters",
                 },
               ]}
               style={{}}
@@ -399,7 +399,7 @@ const ArcadeEdit = ({
                   whitespace: true,
                 },
                 {
-                  pattern: /^[A-Za-z, ]+$/,
+                  pattern: /^[A-Za-z0-9, /]+$/,
                   message: "Enter address using comma to separate the address",
                 },
               ]}

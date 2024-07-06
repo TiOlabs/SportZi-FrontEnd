@@ -118,10 +118,10 @@ const CoachReqestList = (props: any) => {
       cloudName,
     },
   });
-  const [date, timeWithZ] = props.date.split('T');
+  const [date, timeWithZ] = props.date.split("T");
 
-// Remove the 'Z' from the time
-const time = timeWithZ.replace('Z', '');
+  // Remove the 'Z' from the time
+  const time = timeWithZ.replace("Z", "");
   return (
     <>
       <Row
@@ -232,6 +232,12 @@ const time = timeWithZ.replace('Z', '');
             xl={6}
           >
             <Button
+              disabled={
+                props.status === "canceled_By_Coach" ||
+                props.status === "canceled_By_Arcade" ||
+                props.status === "canceled_By_Player" ||
+                props.status === "canceled_By_Admin"
+              }
               style={{
                 borderColor: "#5587CC",
                 borderRadius: "3px",

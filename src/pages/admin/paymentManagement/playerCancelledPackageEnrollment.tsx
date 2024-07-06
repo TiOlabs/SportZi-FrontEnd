@@ -1,4 +1,4 @@
-import { Col, Row, Button, Modal, Spin, Empty } from "antd";
+import { Col, Row, Button, Modal, Spin, Empty, Checkbox } from "antd";
 import React, { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { Radio } from "antd";
@@ -205,6 +205,10 @@ function DataRow(props: any) {
         marginTop: "63px",
       }}
     >
+      {" "}
+      <Col span={1} style={{ display: "flex", justifyContent: "center" }}>
+        <Checkbox></Checkbox>
+      </Col>
       <Col span={8} style={{}}>
         <AdvancedImage
           style={{
@@ -247,7 +251,7 @@ function DataRow(props: any) {
           LKR {props.rate}
         </div>
       </Col>
-      <Col span={8}>
+      <Col span={7}>
         <Link to={`/profile/`}>
           <AdvancedImage
             style={{

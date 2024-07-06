@@ -16,6 +16,7 @@ import {
   Flex,
   Rate,
   message,
+  Spin,
 } from "antd";
 import { Grid } from "antd";
 
@@ -55,10 +56,12 @@ import { UserContext } from "../../context/userContext";
 import React from "react";
 
 const ArcadeProfileUser = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { useBreakpoint } = Grid;
   const { lg, md, sm, xs } = useBreakpoint();
   const { ArcadeId } = useParams();
-  console.log("ArcadeId", ArcadeId);
+  const cleanedArcadeId = ArcadeId?.replace(":", "") ?? "";
+  console.log("ArcadeId", cleanedArcadeId);
   const [arcadeDetails1, setArcadeDetails] = useState<any>(null);
   const [arcade, setArcade] = useState<Arcade>();
 
@@ -85,26 +88,28 @@ const ArcadeProfileUser = () => {
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
 
   useEffect(() => {
+    setIsLoading(true);
     axiosInstance
       .get("/api/auth/getarchadedetails", {
         params: {
-          ArcadeId: ArcadeId,
+          ArcadeId: cleanedArcadeId,
         },
       })
       .then((res) => {
         setArcadeDetails(res.data);
         console.log("dataaaaaa", res.data);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log("daddds", err);
       });
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${ArcadeId}`
+          `${process.env.REACT_APP_API_URL}api/getZoneDetailsForArcade/${cleanedArcadeId}`
         );
         const data = await res.data;
         console.log(data);
@@ -114,7 +119,7 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   console.log(arcade);
 
@@ -122,7 +127,7 @@ const ArcadeProfileUser = () => {
     try {
       const fetchData = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${ArcadeId}`
+          `${process.env.REACT_APP_API_URL}api/getPackageDetails/${cleanedArcadeId}`
         );
         const data = await res.data;
         console.log(data);
@@ -132,14 +137,14 @@ const ArcadeProfileUser = () => {
     } catch (e) {
       console.log(e);
     }
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   console.log(arcadePackages);
 
   useEffect(() => {
     axios
       .get(
-        `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${ArcadeId}`,
+        `${process.env.REACT_APP_API_URL}api/getCoachApplyingDetailsById/${cleanedArcadeId}`,
         {}
       )
       .then((res) => {
@@ -152,13 +157,13 @@ const ArcadeProfileUser = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/getarcadefeedbacks/${ArcadeId}`
+          `/api/getarcadefeedbacks/${cleanedArcadeId}`
         );
         // const fName = response.data[0].feedback.user.firstname;
         // console.log("Fname ----------------:",fName);
@@ -177,7 +182,7 @@ const ArcadeProfileUser = () => {
     const fetchRatings = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/getaverageratingbyarcadeId/${ArcadeId}`
+          `/api/getaverageratingbyarcadeId/${cleanedArcadeId}`
         );
         console.log("response:", response.data);
 
@@ -198,7 +203,7 @@ const ArcadeProfileUser = () => {
     };
 
     fetchRatings();
-  }, [ArcadeId]);
+  }, [cleanedArcadeId]);
 
   console.log("arcade", arcade?.arcade_image);
   const [cloudName] = useState("dle0txcgt");
@@ -241,7 +246,7 @@ const ArcadeProfileUser = () => {
         `${process.env.REACT_APP_API_URL}api/addreportarcade`,
         {
           reporter_user_id: id,
-          victim_arcade_id: ArcadeId,
+          victim_arcade_id: cleanedArcadeId,
           report_reason: reason,
           description: description,
         }
@@ -259,7 +264,7 @@ const ArcadeProfileUser = () => {
   const submitFeedback = async () => {
     try {
       const response = await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}api/addarcadefeedbacks/${ArcadeId}`,
+        `${process.env.REACT_APP_API_URL}api/addarcadefeedbacks/${cleanedArcadeId}`,
         {
           comment,
           rating,
@@ -270,7 +275,7 @@ const ArcadeProfileUser = () => {
       setComment("");
       setRating(0);
       // alert("feedback was submitted successfully");
-      message.success("feedback submitted successfully")
+      message.success("feedback submitted successfully");
       setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
@@ -416,8 +421,6 @@ const ArcadeProfileUser = () => {
                     borderColor: "#0E458E",
                     marginTop: "10px",
                     marginBottom: "45%",
-
-             
                   }}
                   onClick={() => {
                     if (userDetails.id === "") {
@@ -429,7 +432,6 @@ const ArcadeProfileUser = () => {
                     } else {
                       showModalForReport();
                     }
-
                   }}
                 >
                   Report User
@@ -526,203 +528,331 @@ const ArcadeProfileUser = () => {
               flexDirection: "column",
             }}
           >
-            <div>
-              <h1
-                style={{
-                  color: "#000",
-
-                  fontSize: "32px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  fontFamily: "kanit",
-                  lineHeight: "normal",
-                  marginBottom: "0px",
-                }}
-              >
-                {arcadeDetails1 && arcadeDetails1.arcade_name}
-              </h1>
-              <p
-                style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
-
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  lineHeight: "normal",
-                }}
-              >
-                Manager : {arcadeDetails1?.manager.user.firstname}{" "}
-                {arcadeDetails1?.manager.user.lastname}
-              </p>
-              <p
-                style={{
-                  margin: "0px",
-                  color: "#000",
-                  fontFamily: "kanit",
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "300",
-                  lineHeight: "normal",
-                  width: "150px",
-                }}
-              >
-                {arcadeDetails1?.address &&
-                  arcadeDetails1?.address
-
-                    .split(",")
-                    .map(
-                      (
-                        line:
-                          | string
-                          | number
-                          | boolean
-                          | React.ReactElement<
-                              any,
-                              string | React.JSXElementConstructor<any>
-                            >
-                          | Iterable<React.ReactNode>
-                          | React.ReactPortal
-                          | null
-                          | undefined,
-                        index: React.Key | null | undefined
-                      ) => (
-                        <React.Fragment key={index}>
-                          {line}
-                          <br />
-                        </React.Fragment>
-                      )
-                    )}
-              </p>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-              }}
-            >
-              <Row>
-                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                  <p
-                    style={{
-                      color: "#0E458E",
-                      fontFamily: "kanit",
-                      fontSize: "39px",
-                      fontStyle: "normal",
-                      fontWeight: "500",
-                      lineHeight: "normal",
-                      margin: "0px",
-                    }}
-                  >
-                    {/* 5.0 */}
-                    {averageRating.toFixed(1)}
-                  </p>
-                </Col>
-
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={12}
-                  lg={12}
-                  xl={12}
+            <Spin spinning={isLoading}>
+              <div>
+                <h1
                   style={{
-                    display: "flex",
+                    color: "#000",
 
-                    alignItems: "center",
-                    justifyContent: "center",
+                    fontSize: "32px",
+                    fontStyle: "normal",
+                    fontWeight: "500",
+                    fontFamily: "kanit",
+                    lineHeight: "normal",
+                    marginBottom: "0px",
                   }}
                 >
-                  <div
-                    style={{
-                      height: "auto",
-                      position: "relative",
-                      width: "max-content",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "100%",
-                      }}
-                    >
-                      {/* <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarFilled style={{ color: "#0E458E" }} />
-                      <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
+                  {arcadeDetails1 && arcadeDetails1.arcade_name}
+                </h1>
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
 
-                      <Rate
-                        allowHalf
-                        disabled
-                        defaultValue={0}
-                        value={roundedAverageRating}
-                        style={{
-                          scale: "0.7",
-                          display: "flex",
-                          flexDirection: "row",
-                          color: "#0E458E",
-                          fillOpacity: "0.8",
-                          borderBlockEnd: "dashed",
-                        }}
-                      />
-                    </div>
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    lineHeight: "normal",
+                  }}
+                >
+                  Manager : {arcadeDetails1?.manager.user.firstname}{" "}
+                  {arcadeDetails1?.manager.user.lastname}
+                </p>
+                <p
+                  style={{
+                    margin: "0px",
+                    color: "#000",
+                    fontFamily: "kanit",
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: "300",
+                    lineHeight: "normal",
+                    width: "150px",
+                  }}
+                >
+                  {arcadeDetails1?.address &&
+                    arcadeDetails1?.address
+
+                      .split(",")
+                      .map(
+                        (
+                          line:
+                            | string
+                            | number
+                            | boolean
+                            | React.ReactElement<
+                                any,
+                                string | React.JSXElementConstructor<any>
+                              >
+                            | Iterable<React.ReactNode>
+                            | React.ReactPortal
+                            | null
+                            | undefined,
+                          index: React.Key | null | undefined
+                        ) => (
+                          <React.Fragment key={index}>
+                            {line}
+                            <br />
+                          </React.Fragment>
+                        )
+                      )}
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <p
                       style={{
-                        color: "#000",
-                        opacity: "0.64",
+                        color: "#0E458E",
                         fontFamily: "kanit",
-                        fontSize: "10px",
+                        fontSize: "39px",
                         fontStyle: "normal",
                         fontWeight: "500",
                         lineHeight: "normal",
                         margin: "0px",
                       }}
                     >
-                      {/* 120 Feedbacks */}({totalFeedbacks} Feedbacks)
+                      {/* 5.0 */}
+                      {averageRating.toFixed(1)}
                     </p>
-                  </div>{" "}
-                </Col>
-              </Row>
-            </div>
+                  </Col>
 
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
+                  <Col
+                    xs={24}
+                    sm={24}
+                    md={12}
+                    lg={12}
+                    xl={12}
+                    style={{
+                      display: "flex",
 
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Expertise
-            </Typography>
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: "auto",
+                        position: "relative",
+                        width: "max-content",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%",
+                        }}
+                      >
+                        {/* <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
 
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.5",
-              }}
-              itemLayout="horizontal"
-              dataSource={sport}
-              renderItem={(item) => (
+                        <Rate
+                          allowHalf
+                          disabled
+                          defaultValue={0}
+                          value={averageRating}
+                          style={{
+                            scale: "0.7",
+                            display: "flex",
+                            flexDirection: "row",
+                            color: "#0E458E",
+                            fillOpacity: "0.8",
+                            borderBlockEnd: "dashed",
+                          }}
+                        />
+                      </div>
+                      <p
+                        style={{
+                          color: "#000",
+                          opacity: "0.64",
+                          fontFamily: "kanit",
+                          fontSize: "10px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                          lineHeight: "normal",
+                          margin: "0px",
+                        }}
+                      >
+                        {/* 120 Feedbacks */}({totalFeedbacks} Feedbacks)
+                      </p>
+                    </div>{" "}
+                  </Col>
+                </Row>
+              </div>
+
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Expertise
+              </Typography>
+
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.5",
+                }}
+                itemLayout="horizontal"
+                dataSource={sport}
+                renderItem={(item) => (
+                  <List.Item
+                    style={{
+                      position: "relative",
+
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
+                        fontFamily: "kanit",
+                      }}
+                    >
+
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+
+                      {" "}
+                      <span
+
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Payment Types
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.4",
+                }}
+                itemLayout="horizontal"
+                dataSource={["Online payment"]}
+                renderItem={(item) => (
+                  <List.Item
+                    style={{
+                      position: "relative",
+
+                      listStyle: "none",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "kanit",
+                        fontSize: "20px",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontSize: "30px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        &#8226;
+                      </span>
+                      {item}
+                    </div>
+                  </List.Item>
+                )}
+              />
+              <Typography
+                style={{
+                  color: "#000",
+                  fontFamily: "kanit",
+
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  lineHeight: "normal",
+                  marginTop: "0px",
+                  fontSize: lg ? "24px" : "18px",
+                }}
+              >
+                Available Times
+              </Typography>
+              <List
+                style={{
+                  padding: "0px",
+                  fontWeight: "200",
+                  color: "#000",
+                  fontFamily: "kanit",
+                  lineHeight: "0.4",
+                }}
+                itemLayout="horizontal"
+              >
                 <List.Item
                   style={{
                     position: "relative",
-
-                    listStyle: "none",
+                    listStyle: "dotted",
                     display: "flex",
                     justifyContent: "flex-start",
                     alignItems: "center",
@@ -734,11 +864,10 @@ const ArcadeProfileUser = () => {
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "20px",
                       fontFamily: "kanit",
+                      fontSize: "20px",
                     }}
                   >
-                    {" "}
                     <span
                       style={{
                         fontSize: "30px",
@@ -748,41 +877,13 @@ const ArcadeProfileUser = () => {
                     >
                       &#8226;
                     </span>
-                    {item}
+                    Open Time : {arcadeDetails1?.open_time}
                   </div>
                 </List.Item>
-              )}
-            />
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Payment Types
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
-              }}
-              itemLayout="horizontal"
-              dataSource={["Online payment"]}
-              renderItem={(item) => (
                 <List.Item
                   style={{
                     position: "relative",
-
-                    listStyle: "none",
+                    listStyle: "dotted",
                     display: "flex",
                     justifyContent: "flex-start",
                     alignItems: "center",
@@ -798,7 +899,6 @@ const ArcadeProfileUser = () => {
                       fontSize: "20px",
                     }}
                   >
-                    {" "}
                     <span
                       style={{
                         fontSize: "30px",
@@ -808,98 +908,11 @@ const ArcadeProfileUser = () => {
                     >
                       &#8226;
                     </span>
-                    {item}
+                    Close Time : {arcadeDetails1?.close_time}
                   </div>
                 </List.Item>
-              )}
-            />
-            <Typography
-              style={{
-                color: "#000",
-                fontFamily: "kanit",
-
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "normal",
-                marginTop: "0px",
-                fontSize: lg ? "24px" : "18px",
-              }}
-            >
-              Available Times
-            </Typography>
-            <List
-              style={{
-                padding: "0px",
-                fontWeight: "200",
-                color: "#000",
-                fontFamily: "kanit",
-                lineHeight: "0.4",
-              }}
-              itemLayout="horizontal"
-            >
-              <List.Item
-                style={{
-                  position: "relative",
-                  listStyle: "dotted",
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: "kanit",
-                    fontSize: "20px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "30px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                    }}
-                  >
-                    &#8226;
-                  </span>
-                  Open Time : {arcadeDetails1?.open_time}
-                </div>
-              </List.Item>
-              <List.Item
-                style={{
-                  position: "relative",
-                  listStyle: "dotted",
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: "kanit",
-                    fontSize: "20px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "30px",
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                    }}
-                  >
-                    &#8226;
-                  </span>
-                  Close Time : {arcadeDetails1?.close_time}
-                </div>
-              </List.Item>
-            </List>
+              </List>
+            </Spin>
           </div>
         </Col>
       </Row>
@@ -1197,7 +1210,7 @@ const ArcadeProfileUser = () => {
                 package_id={package1.package_id}
                 player_id={userDetails.id}
                 zone_id={package1.zone_id}
-                arcade_id={ArcadeId}
+                arcade_id={cleanedArcadeId}
                 coachPresentage={package1.percentageForCoach}
                 zone_name={package1.zone.zone_name}
                 day={package1.packageDayAndTime.map((item) => item.day)}
@@ -1254,7 +1267,6 @@ const ArcadeProfileUser = () => {
             marginBottom: "5%",
             paddingBottom: "100px",
             // backgroundColor:"#453245"
-
           }}
           xs={24}
           sm={24}
@@ -1269,7 +1281,6 @@ const ArcadeProfileUser = () => {
               fontWeight: md ? "400" : "300",
               fontSize: md ? "32px" : "24px",
               color: "#0E458E",
-             
             }}
           >
             Reviews

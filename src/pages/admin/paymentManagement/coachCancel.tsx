@@ -7,6 +7,7 @@ import {
   Radio,
   RadioChangeEvent,
   Spin,
+  Checkbox,
 } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -198,6 +199,9 @@ function DataRow(props: any) {
 
   return (
     <Row style={{ backgroundColor: "white", padding: "1%", marginTop: "63px" }}>
+      <Col span={1} style={{ display: "flex", justifyContent: "center" }}>
+        <Checkbox></Checkbox>
+      </Col>
       <Col span={8}>
         <AdvancedImage
           onClick={handleClick}
@@ -236,7 +240,7 @@ function DataRow(props: any) {
           LKR {props.rate}
         </div>
       </Col>
-      <Col span={8}>
+      <Col span={7}>
         <Link to={`/profile/`}>
           <AdvancedImage
             style={{
