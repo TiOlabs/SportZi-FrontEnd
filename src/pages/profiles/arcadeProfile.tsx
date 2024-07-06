@@ -584,6 +584,7 @@ const ArcadeProfileArcade = () => {
   //For display reviews and averageRate
   const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
   const [averageRating, setAverageRating] = useState(0.0);
+  const [roundedAverageRating, setRoundedAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -616,7 +617,8 @@ const ArcadeProfileArcade = () => {
         // console.log("averageRating:::", averageRate);
         const roundedRating = Math.round(averageRate * 2) / 2;
 
-        setAverageRating(roundedRating);
+        setAverageRating(averageRate);
+        setRoundedAverageRating(roundedRating);
         setTotalFeedbacks(totalFeedbacks);
 
         // console.log("roundedRating", roundedRating);
@@ -1020,8 +1022,17 @@ const ArcadeProfileArcade = () => {
                         fontFamily: "kanit",
                       }}
                     >
+
+                      {/* <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarFilled style={{ color: "#0E458E" }} />
+                      <StarTwoTone twoToneColor="#0E458E" />
+                      <StarTwoTone twoToneColor="#0E458E" /> */}
+
+
                       {" "}
                       <span
+
                         style={{
                           fontSize: "30px",
                           marginLeft: "10px",

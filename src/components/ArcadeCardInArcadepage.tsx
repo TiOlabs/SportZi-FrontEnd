@@ -119,7 +119,7 @@ const ArcadeCard = (props: any) => {
                 disabled
                 defaultValue={0}
                 value={roundedRate}
-                style={{ color: "#FFD700", fontSize: "12px" }}
+                style={{ color: "#5587CC", fontSize: "12px" }}
               />
             </div>
             <div>
