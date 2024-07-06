@@ -81,6 +81,7 @@ const ArcadeProfileUser = () => {
   const [rating, setRating] = useState(0.0);
   const [allFeedbacks, setAllFeedbacks] = useState<ArcadeFeedback[]>([]);
   const [averageRating, setAverageRating] = useState(0.0);
+  const [roundedAverageRating, setRoundedAverageRating] = useState(0.0);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0.0);
 
   useEffect(() => {
@@ -185,7 +186,8 @@ const ArcadeProfileUser = () => {
         // console.log("averageRating:::", averageRate);
         const roundedRating = Math.round(averageRate * 2) / 2;
 
-        setAverageRating(roundedRating);
+        setAverageRating(averageRate);
+        setRoundedAverageRating(roundedRating);
         setTotalFeedbacks(totalFeedbacks);
 
         // console.log("roundedRating", roundedRating);
@@ -660,7 +662,7 @@ const ArcadeProfileUser = () => {
                         allowHalf
                         disabled
                         defaultValue={0}
-                        value={averageRating}
+                        value={roundedAverageRating}
                         style={{
                           scale: "0.7",
                           display: "flex",

@@ -109,7 +109,7 @@ const Login = () => {
     } catch (error: any) {
       console.log("Error sending password reset email::", error);
       antMessage.error("Something Error!");
-      setIsModalVisible(false);
+      // setIsModalVisible(false);
     }finally{
       setloading(false);
     }
@@ -262,19 +262,22 @@ const Login = () => {
       >
         <Form layout="vertical">
           <Form.Item
+            name="email"
             label="Email"
             rules={[
-              {
-                type: "email",
-                message: "The input is not valid E-mail!",
-              },
               {
                 required: true,
                 message: "Please input your E-mail!",
               },
+              {
+                type: "email",
+                message: "The input is not valid E-mail!",
+              },
+              
             ]}
           >
             <Input
+              value={email}
               placeholder="Enter the email"
               onChange={(e) => setResetEmail(e.target.value)}
             />

@@ -430,7 +430,8 @@ const PlayerProfile = () => {
                 />
               </div>
             </div>
-            <div
+            
+            {/* <div
               style={{
                 display: "flex",
                 flexDirection: "row",
@@ -508,7 +509,7 @@ const PlayerProfile = () => {
                   </div>{" "}
                 </Col>
               </Row>
-            </div>
+            </div> */}
             <p
               style={{
                 color: "#000",

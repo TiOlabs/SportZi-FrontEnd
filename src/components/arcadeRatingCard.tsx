@@ -4,8 +4,9 @@ import { Rate } from "antd";
 import { Button } from "antd";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { AdvancedImage } from "@cloudinary/react";
+import axiosInstance from "../axiosInstance";
 
 const ArcadeRatingCard = (props: any) => {
   console.log("props", props);
@@ -20,8 +21,37 @@ const ArcadeRatingCard = (props: any) => {
     navigate(`/arcadeProfile/${props.arcade_id}`);
   };
   const { md } = useBreakpoint();
+  const ArcadeId = props.arcade_id;
 
-  const roundedAvgRate = Math.round(props.arcadeAverageRate * 2) / 2;
+  const [roundedAverageRating, setRoundedAverageRating] = useState(0.0);
+
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/getaverageratingbyarcadeId/${ArcadeId}`
+        );
+        console.log("response:", response.data);
+
+        const averageRate = response.data.averageRating.averageRate;
+        const totalFeedbacks = response.data.totalFeedbacks;
+        // console.log("averageRating:::", averageRate);
+        const roundedRating = Math.round(averageRate * 2) / 2;
+
+        setRoundedAverageRating(roundedRating);
+        // setTotalFeedbacks(totalFeedbacks);
+
+        // console.log("roundedRating", roundedRating);
+        // console.log("totalFeedbacks", totalFeedbacks);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchRatings();
+  }, [ArcadeId]);
+  // const roundedAvgRate = Math.round(props.arcadeAverageRate * 2) / 2;
 
   const cld = new Cloudinary({
     cloud: {
@@ -141,7 +171,7 @@ const ArcadeRatingCard = (props: any) => {
                 allowHalf
                 disabled
                 defaultValue={0}
-                value={roundedAvgRate}
+                value={roundedAverageRating}
                 style={{ color: "#5587CC", fontSize: "12px" }}
               />
             </div>
