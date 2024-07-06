@@ -1186,7 +1186,7 @@ const CoachProfileUser = () => {
           />
           <TextArea
             showCount
-            maxLength={60}
+            maxLength={100}
             value={comment}
             onChange={(e: any) => setComment(e.target.value)}
             placeholder="Write your feedback"

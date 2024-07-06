@@ -374,8 +374,8 @@ const ArcadeEdit = ({
                   whitespace: true,
                 },
                 {
-                  max: 200,
-                  message: "Description must be at least 200 characters",
+                  max: 300,
+                  message: "Description must be at least 300 characters",
                 },
               ]}
               style={{}}
