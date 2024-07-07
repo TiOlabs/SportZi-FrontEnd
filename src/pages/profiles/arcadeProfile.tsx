@@ -2586,7 +2586,7 @@ const ArcadeProfileArcade = () => {
             marginBottom: lg ? "-5%" : "5%",
           }}
         >
-          <Typography
+          {/* <Typography
             style={{
               alignItems: "center",
               color: "#ad0508",
@@ -2599,7 +2599,7 @@ const ArcadeProfileArcade = () => {
             }}
           >
             Canceled
-          </Typography>
+          </Typography> */}
         </Col>
 
         {/* Spacer for larger screens */}
