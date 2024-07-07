@@ -182,7 +182,7 @@ const SignupArcadeManager: React.FC = () => {
                   block
                   className="animated-button kanit-regular"
                 >
-                  I'm an Athlete
+                  I'm a Player
                 </Button>
               </Link>
 

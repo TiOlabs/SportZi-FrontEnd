@@ -608,7 +608,7 @@ const CoachProfileUser = () => {
                         <Rate
                           allowHalf
                           disabled
-                          value={averageRating}
+                          value={roundedAverageRating}
                           style={{
                             scale: "0.7",
                             display: "flex",

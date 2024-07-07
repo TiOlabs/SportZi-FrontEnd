@@ -665,7 +665,7 @@ const ArcadeProfileUser = () => {
                           allowHalf
                           disabled
                           defaultValue={0}
-                          value={averageRating}
+                          value={roundedAverageRating}
                           style={{
                             scale: "0.7",
                             display: "flex",
@@ -985,13 +985,14 @@ const ArcadeProfileUser = () => {
               >
                 <CoachCard
                   coachName={`${coach.coach.user.firstname} ${coach.coach.user.lastname}`}
-                  coachImage={coach.coach.user.user_image}
+                  coach_image={coach.coach.user.user_image}
                   short_description={coach.description}
                   date={coach.assigned_date}
                   rate={coach.coach.rate}
                   sport={coach.coach.sport.sport_name}
                   role={userDetails.role}
                   coach_id={coach.coach_id}
+                  averageRate={coach.coach.averageRate}
                 />
               </Col>
             ))}

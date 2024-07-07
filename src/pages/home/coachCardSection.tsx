@@ -1,7 +1,7 @@
 import { Button, Col, Empty, Row, Skeleton, Typography } from "antd";
 import CoachCard from "../../components/CoachCard";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useMemo } from "react";
 import { Coach } from "../../types";
 import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
@@ -18,9 +18,19 @@ const CoachCardSection = () => {
     setCurrentPage(page);
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = coachAssignDetails.slice(startIndex, endIndex);
+  const sortedCoaches = useMemo(() => {
+    return coachAssignDetails.sort((a:any, b:any) => b.averageRate - a.averageRate);
+  }, [coachAssignDetails]);
+
+  // const startIndex = (currentPage - 1) * itemsPerPage;
+  // const endIndex = startIndex + itemsPerPage;
+  // const currentItems = coachAssignDetails.slice(startIndex, endIndex);
+
+  const currentItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sortedCoaches.slice(startIndex, endIndex);
+  }, [sortedCoaches, currentPage, itemsPerPage]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,6 +103,7 @@ const CoachCardSection = () => {
                   color: " #0E458E",
                   fontSize: md ? "30px" : "20px",
                   fontFamily: "Kanit",
+                  marginBottom:"10px"
                 }}
               >
                 Our Best Coaches
@@ -109,27 +120,29 @@ const CoachCardSection = () => {
               }}
             >
               <Row
+                // gutter={[16, 16]}
                 style={{
-                  overflowX: "hidden",
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "450px",
-                  overflowY: "scroll",
-                  flexWrap: "nowrap",
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: 'auto',
                 }}
               >
                 {" "}
                 {coachAssignDetails.length === 0 ? (
                   <Empty description={"No Coaches Availiable"} />
                 ) : (
-                  coachAssignDetails.map((coach: Coach) => (
+                  currentItems.map((coach: Coach) => (
                     <Col
-                      lg={{ span: 5 }}
+                      lg={{ span: 6 }}
                       md={{ span: 8 }}
                       sm={{ span: 12 }}
                       xs={{ span: 24 }}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                      }}
                       // Adding a unique key for each element
                     >
                       <CoachCard
@@ -149,10 +162,10 @@ const CoachCardSection = () => {
                 )}
               </Row>
               <Pagination
-                style={{ marginTop: "-30px" }}
+                // style={{ marginBottom: "10px" }}
                 current={currentPage}
                 onChange={handlePageChange}
-                total={coachAssignDetails.length}
+                total={sortedCoaches.length}
                 pageSize={itemsPerPage}
               />
             </div>
