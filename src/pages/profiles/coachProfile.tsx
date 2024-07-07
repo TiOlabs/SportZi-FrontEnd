@@ -210,16 +210,16 @@ const CoachProfile = () => {
 
         if (value2 === 4) {
           // Filter for status = "success"
-          const successData = data.filter(
+          const pendingData = data.filter(
             (item: { status: string }) => item.status === "pending"
           );
-          setCoachAssignDetails(successData);
+          setCoachAssignDetails(pendingData);
         } else if (value2 === 5) {
           // Filter for status = "pending"
-          const pendingData = data.filter(
+          const successData = data.filter(
             (item: { status: string }) => item.status === "success"
           );
-          setCoachAssignDetails(pendingData);
+          setCoachAssignDetails(successData);
         }
 
         console.log(data);
@@ -758,10 +758,8 @@ const CoachProfile = () => {
                         fontFamily: "kanit",
                       }}
                     >
-
                       {" "}
                       <span
-
                         style={{
                           fontSize: "30px",
                           marginLeft: "10px",

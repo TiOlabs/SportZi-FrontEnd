@@ -239,7 +239,7 @@ const CoachReqestForArcade = (props: any) => {
             xl={4}
           >
             <Button
-               disabled={
+              disabled={
                 props.status === "canceled_By_Coach" ||
                 props.status === "canceled_By_Arcade" ||
                 props.status === "canceled_By_Player" ||
@@ -269,6 +269,13 @@ const CoachReqestForArcade = (props: any) => {
         onCancel={handleCancel}
         footer={[
           <Button
+            disabled={
+              props.status === "canceled_By_Coach" ||
+              props.status === "canceled_By_Arcade" ||
+              props.status === "canceled_By_Player" ||
+              props.status === "canceled_By_Admin" ||
+              props.status === "success"
+            }
             style={{
               backgroundColor: "#5587CC",
               color: "#fff",

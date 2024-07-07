@@ -350,7 +350,6 @@ const ArcadeProfileArcade = () => {
           );
         });
         setIsLoading(false);
-
       })
       .catch((error) => {
         console.log(error);
@@ -394,6 +393,7 @@ const ArcadeProfileArcade = () => {
             description={coachAssign.description}
             duration={coachAssign.duration}
             sport={coachAssign.coach.sport.sport_name}
+            status={coachAssign.status}
           />
         )
       )
@@ -1022,17 +1022,12 @@ const ArcadeProfileArcade = () => {
                         fontFamily: "kanit",
                       }}
                     >
-
                       {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
-
-
-                      {" "}
+                      <StarTwoTone twoToneColor="#0E458E" /> */}{" "}
                       <span
-
                         style={{
                           fontSize: "30px",
                           marginLeft: "10px",
@@ -1419,12 +1414,10 @@ const ArcadeProfileArcade = () => {
                   zoneImage={zone.zone_image}
                   description={zone.description}
                   discount_percentage={
-
                     zone.discount ? zone.discount.discount_percentage : 0
                   }
                   discount_description={
                     zone.discount ? zone.discount.description : ""
-
                   }
                   id={zone.zone_id}
                   capacity={zone.capacity}
@@ -1569,7 +1562,7 @@ const ArcadeProfileArcade = () => {
               fontSize: lg ? "32px" : "24px",
               paddingBottom: "10px",
               marginBottom: "0px",
-               textAlign:"center"
+              textAlign: "center",
             }}
           >
             Availale bookings for your complex
@@ -1994,7 +1987,7 @@ const ArcadeProfileArcade = () => {
               fontSize: "32px",
               paddingBottom: "10px",
               marginBottom: "0px",
-              textAlign:"center"
+              textAlign: "center",
             }}
           >
             Available Coach bookings for your complex
@@ -2592,7 +2585,6 @@ const ArcadeProfileArcade = () => {
             justifyContent: "center",
             marginBottom: lg ? "-5%" : "5%",
           }}
-
         >
           <Typography
             style={{
@@ -2629,7 +2621,6 @@ const ArcadeProfileArcade = () => {
             marginTop: "3%",
           }}
         >
-
           <Select
             defaultValue="enroll_date"
             style={{
@@ -2780,7 +2771,6 @@ const ArcadeProfileArcade = () => {
             overflowY: "scroll",
           }}
         >
-
           <div
             style={{
               width: "100%",
@@ -2816,7 +2806,6 @@ const ArcadeProfileArcade = () => {
               <Empty description="No Package Enrollments Yet" />
             )}
           </div>
-
         </div>
       </Row>
 
