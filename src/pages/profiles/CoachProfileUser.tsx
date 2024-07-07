@@ -90,7 +90,6 @@ const CoachProfileUser = () => {
         // console.log("averageRating:", averageRating);
         const roundedRating = Math.round(averageRate * 2) / 2;
 
-
         setAverageRating(averageRate);
         setRoundedAverageRating(roundedRating);
         setTotalFeedbacks(totalFeedbacks);
@@ -213,7 +212,7 @@ const CoachProfileUser = () => {
       setismodelopen(false);
       // setAverageRating(response.data.averageRating); // Update average rating
     } catch (error) {
-      console.error("Error submitting feedback=====================",error);
+      console.error("Error submitting feedback=====================", error);
       antMessage.error("Error submitting feedback:");
     }
   };
@@ -684,17 +683,12 @@ const CoachProfileUser = () => {
                         fontFamily: "kanit",
                       }}
                     >
-
                       {/* <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarFilled style={{ color: "#0E458E" }} />
                       <StarTwoTone twoToneColor="#0E458E" />
-                      <StarTwoTone twoToneColor="#0E458E" /> */}
-
-
-                      {" "}
+                      <StarTwoTone twoToneColor="#0E458E" /> */}{" "}
                       <span
-
                         style={{
                           fontSize: "30px",
                           marginLeft: "10px",

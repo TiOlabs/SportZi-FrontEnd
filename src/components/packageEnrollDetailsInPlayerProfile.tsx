@@ -324,9 +324,7 @@ const PackageEnrollmentDetailsInPlayerProfile = (props: any) => {
             xl={4}
           >
             Status:{" "}
-            {props.status === "canceled_By_Player"
-              ? "Canceled By Player"
-              : "Success"}
+            {props.status}
           </Col>
         </Row>
       </Modal>

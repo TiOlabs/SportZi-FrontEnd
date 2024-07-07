@@ -168,22 +168,17 @@ const PlayerProfile = () => {
             return false;
           }
         );
-        setPackageEnrollmentForPlayer(filteredDataForPlayerEnroll);
 
-        setPackageEnrollmentForPlayer((prev: any) => {
-          return prev.filter(
-            (playerEnrollDetails: PackageEnroolDetailsForPlayer) =>
-              playerEnrollDetails.status === "success" &&
-              playerEnrollDetails.player_id === userDetails?.id
-          );
-        });
+        console.log("filteredDataForPlayerEnroll", filteredDataForPlayerEnroll);
+        setPackageEnrollmentForPlayer(filteredDataForPlayerEnroll);
         setLoading(false);
       })
-
       .catch((error) => {
         console.log(error);
+        setLoading(false);
       });
   }, [userDetails, enrollValue]);
+
   console.log("userDetails", userDetails);
 
   useEffect(() => {
@@ -321,11 +316,7 @@ const PlayerProfile = () => {
   );
   const filteredPackageEnrollmentForPlayer = packageEnrollmentForPlayer.filter(
     (item: PackageEnroolDetailsForPlayer) => {
-      if (filterBy === "package_name") {
-        return item.package.package_name
-          .toLowerCase()
-          .includes(filterValue.toLowerCase());
-      } else if (filterBy === "date") {
+      if (filterBy === "date") {
         return item.enrolled_date.includes(filterValue);
       } else if (filterBy === "rate") {
         return item.rate.toString().includes(filterValue);
@@ -469,7 +460,7 @@ const PlayerProfile = () => {
                 />
               </div>
             </div>
-            
+
             {/* <div
               style={{
                 display: "flex",
@@ -2391,6 +2382,7 @@ const PlayerProfile = () => {
                   duration={enroll.duration}
                   zone_name={enroll.package.zone.zone_name}
                   player_id={userDetails.id}
+                  status={enroll.status}
                   // zone={enroll.package.}
                 />
               )
