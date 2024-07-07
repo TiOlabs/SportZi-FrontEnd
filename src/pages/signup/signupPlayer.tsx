@@ -157,7 +157,7 @@ const SignupPlayer = () => {
                   color: "#fff",
                 }}
               >
-                I'm an Athlete
+                I'm a Player
               </Button>
 
               <Link to="/signupCoach">
