@@ -312,12 +312,15 @@ function DataRow(props: any) {
                   <Col>
                     <b>Close Time :</b> {arcadedetails.close_time}
                   </Col>
+                  <Col span={24}>
+                  <b>Phone No:</b> 0717118459
+                </Col>
                 </Col>
               </Row>
             </div>
           </Modal>
 
-          <Button
+          {/* <Button
             type="primary"
             ghost
             style={{ width: "100px", marginLeft: "20px" }}
@@ -333,7 +336,7 @@ function DataRow(props: any) {
             >
               Delete
             </div>
-          </Button>
+          </Button> */}
         </div>
       </Col>
     </Row>

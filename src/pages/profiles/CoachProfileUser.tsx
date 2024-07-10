@@ -42,6 +42,8 @@ import { CoachFeedback } from "../../types";
 
 import { any } from "prop-types";
 import NavbarLogin from "../../components/NavBarLogin";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 interface FeedbackData {
   feedback: string;
@@ -267,7 +269,12 @@ const CoachProfileUser = () => {
       {} as { [key: string]: string[] }
     );
   }
-
+  const [cloudName] = useState("dle0txcgt");
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName,
+    },
+  });
   return (
     <>
       <style>
@@ -316,10 +323,13 @@ const CoachProfileUser = () => {
               xl={24}
             >
               {" "}
-              <Image
-                width={300}
-                src={profilePic}
-                preview={{ src: profilePic }}
+              <AdvancedImage
+                style={{ height: "300px", width: "300px" }}
+                cldImg={
+                  cld.image(coachDetails?.user.user_image as string)
+                  // .resize(Resize.crop().width(200).height(200).gravity('auto'))
+                  // .resize(Resize.scale().width(200).height(200))
+                }
               />
             </Col>
           </Row>

@@ -221,11 +221,14 @@ function DataRow(props: any) {
                 <Col span={24}>
                   <b>Country :</b> {playerdetails.user.country || "N/A"}
                 </Col>
+                <Col span={24}>
+                  <b>Phone No:</b> 0760071102
+                </Col>
               </Row>
             </div>
           </Modal>
 
-          <Button
+          {/* <Button
             type="primary"
             ghost
             style={{ width: "100px", marginLeft: "20px" }}
@@ -241,7 +244,7 @@ function DataRow(props: any) {
             >
               Delete
             </div>
-          </Button>
+          </Button> */}
         </div>
       </Col>
     </Row>
