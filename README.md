@@ -1,4 +1,4 @@
-SportZi - Sport Facility Management System
+# SportZi - Sport Facility Management System
 
 # Getting Started with Create React App
 
