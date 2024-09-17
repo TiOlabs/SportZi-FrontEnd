@@ -1,5 +1,7 @@
 # SportZi - Sport Facility Management System
 
+In today's fast-paced world, sports and physical fitness play a vital role in promoting health, personal growth, and teamwork. Athletes and enthusiasts often face challenges in synchronizing their schedules with coaches and accessing nearby sports facilities. To address these issues, this platform connects players, coaches, and sports complexes in one unified system. By streamlining scheduling and offering personalized training options, the platform ensures efficient sports management, empowering athletes and coaches alike to reach their full potential.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
